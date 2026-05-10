@@ -26,6 +26,21 @@ public partial class HomeViewModel : BaseViewModel
 
     [ObservableProperty] int _cartCount;
 
+    // ── Localized display strings ─────────────────────────────────
+
+    /// <summary>"Hey, " or "أهلاً، " depending on current language.</summary>
+    public string GreetingPrefix => LocalizationService.Current.TwoLetterISOLanguageName == "ar"
+        ? "أهلاً، "
+        : "Hey, ";
+
+    /// <summary>Placeholder text for the search bar.</summary>
+    public string SearchHint => LocalizationService.Get("SearchPlaceholder");
+
+    /// <summary>Section header above the restaurant list.</summary>
+    public string SectionTitle => LocalizationService.Get("RestaurantsNearYou");
+
+    // ─────────────────────────────────────────────────────────────
+
     public ObservableCollection<Restaurant> Restaurants { get; } = new();
 
     public HomeViewModel(ApiService api, AuthService auth, CartService cart)
@@ -83,4 +98,3 @@ public partial class HomeViewModel : BaseViewModel
     static Task OpenCart() => Shell.Current.GoToAsync("CartPage");
 
 }
-

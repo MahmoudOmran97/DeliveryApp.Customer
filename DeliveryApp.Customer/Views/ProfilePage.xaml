@@ -192,6 +192,40 @@
 
 				</Border>
 
+				<!-- Language Toggle -->
+
+				<Border BackgroundColor="White" StrokeShape="RoundRectangle 14"
+                        Stroke="#E0E0E0" StrokeThickness="1" Padding="16,14">
+
+					<Grid ColumnDefinitions="32,*,Auto">
+
+						<Label Grid.Column="0" Text="🌐" FontSize="20" VerticalOptions="Center"/>
+
+						<VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+
+							<Label Text="{Binding LanguageLabel}" FontFamily="CairoBold"
+                                   FontSize="14" TextColor="#212121"/>
+
+							<Label Text="{Binding CurrentLangDisplay}" FontFamily="CairoRegular"
+                                   FontSize="12" TextColor="#757575"/>
+
+						</VerticalStackLayout>
+
+						<Label Grid.Column="2" Text="›" FontFamily="CairoBold" FontSize="22"
+                               TextColor="#BDBDBD" VerticalOptions="Center">
+
+							<Label.GestureRecognizers>
+
+								<TapGestureRecognizer Command="{Binding ToggleLanguageCommand}"/>
+
+							</Label.GestureRecognizers>
+
+						</Label>
+
+					</Grid>
+
+				</Border>
+
 				<!-- Logout -->
 
 				<Button Text="Logout  👋" Command="{Binding LogoutCommand}"

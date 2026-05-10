@@ -6,6 +6,8 @@
 
        xmlns:views="clr-namespace:DeliveryApp.Customer.Views"
 
+       xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+
        x:Class="DeliveryApp.Customer.AppShell"
 
        Shell.NavBarIsVisible="False"
@@ -30,7 +32,7 @@
 
     <TabBar>
 
-        <ShellContent Title="Home"
+        <ShellContent Title="{loc:Loc Key=Tab_Home}"
 
                       Icon="icon_home.png"
 
@@ -38,7 +40,7 @@
 
                       Route="HomePage" />
 
-        <ShellContent Title="Orders"
+        <ShellContent Title="{loc:Loc Key=Tab_Orders}"
 
                       Icon="icon_orders.png"
 
@@ -46,7 +48,7 @@
 
                       Route="OrdersPage" />
 
-        <ShellContent Title="Alerts"
+        <ShellContent Title="{loc:Loc Key=Tab_Alerts}"
 
                       Icon="icon_bell.png"
 
@@ -54,7 +56,7 @@
 
                       Route="NotificationsPage" />
 
-        <ShellContent Title="Profile"
+        <ShellContent Title="{loc:Loc Key=Tab_Profile}"
 
                       Icon="icon_profile.png"
 
@@ -65,4 +67,3 @@
     </TabBar>
 
 </Shell>
-

@@ -29,7 +29,17 @@ public partial class ProfileViewModel : BaseViewModel
 
     [ObservableProperty] string _editAddress = string.Empty;
 
-    public ProfileViewModel(ApiService api, AuthService auth, LoginPage loginPage) { _api = api; _auth = auth; _loginPage = loginPage; }
+    // ── Localization ──────────────────────────────────────────────
+    public string LanguageLabel => LocalizationService.Get("ChangeLanguage");
+
+    public string CurrentLangDisplay => LocalizationService.Current.TwoLetterISOLanguageName == "ar"
+        ? "العربية 🇸🇦"
+        : "English 🇬🇧";
+
+    public ProfileViewModel(ApiService api, AuthService auth, LoginPage loginPage)
+    {
+        _api = api; _auth = auth; _loginPage = loginPage;
+    }
 
     [RelayCommand]
 
@@ -85,14 +95,28 @@ public partial class ProfileViewModel : BaseViewModel
 
     [RelayCommand] void CancelEdit() => IsEditing = false;
 
+    // ── Language toggle ───────────────────────────────────────────
+    [RelayCommand]
+    async Task ToggleLanguage()
+    {
+        var next = LocalizationService.ToggleLanguage();
+        var msg = LocalizationService.Get("LanguageChanged");
+        await Shell.Current.DisplayAlert(
+            LocalizationService.Get("Notice"), msg, LocalizationService.Get("Ok"));
+        // Notify bindings
+        OnPropertyChanged(nameof(LanguageLabel));
+        OnPropertyChanged(nameof(CurrentLangDisplay));
+    }
+
     [RelayCommand]
     async Task Logout()
     {
-        if (!await Shell.Current.DisplayAlert("Logout", "Are you sure?", "Yes", "Cancel")) return;
+        var confirm = LocalizationService.Get("LogoutConfirm");
+        if (!await Shell.Current.DisplayAlert(
+            LocalizationService.Get("Logout"), confirm,
+            LocalizationService.Get("Ok"), LocalizationService.Get("Cancel"))) return;
         _auth.Logout();
-        // ✅ بدل new LoginPage()
         Application.Current!.MainPage = new NavigationPage(_loginPage);
     }
 
 }
-

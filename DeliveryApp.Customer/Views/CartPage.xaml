@@ -14,205 +14,205 @@
 
              Shell.NavBarIsVisible="False">
 
-	<Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto">
 
-		<!-- Header -->
+        <!-- Header -->
 
-		<Grid Grid.Row="0" Padding="16,52,16,12" ColumnDefinitions="44,*,Auto">
+        <Grid Grid.Row="0" Padding="16,52,16,12" ColumnDefinitions="44,*,Auto">
 
-			<Label Grid.Column="0" Text="←" FontFamily="CairoBold" FontSize="24" TextColor="#212121"
+            <Label Grid.Column="0" Text="←" FontFamily="CairoBold" FontSize="24" TextColor="#212121"
 
                    VerticalOptions="Center">
 
-				<Label.GestureRecognizers>
+                <Label.GestureRecognizers>
 
-					<TapGestureRecognizer Command="{Binding Source={x:Static Shell.Current}, Path=GoToAsync}" CommandParameter=".."/>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
 
-				</Label.GestureRecognizers>
+                </Label.GestureRecognizers>
 
-			</Label>
+            </Label>
 
-			<Label Grid.Column="1" Text="My Cart" FontFamily="CairoBold" FontSize="22"
+            <Label Grid.Column="1" Text="My Cart" FontFamily="CairoBold" FontSize="22"
 
                    TextColor="#212121" HorizontalOptions="Center" VerticalOptions="Center"/>
 
-			<Label Grid.Column="2" Text="Clear All" FontFamily="CairoRegular" FontSize="13"
+            <Label Grid.Column="2" Text="Clear All" FontFamily="CairoRegular" FontSize="13"
 
                    TextColor="#F44336" VerticalOptions="Center"
 
                    IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
 
-				<Label.GestureRecognizers>
+                <Label.GestureRecognizers>
 
-					<TapGestureRecognizer Command="{Binding ClearCommand}"/>
+                    <TapGestureRecognizer Command="{Binding ClearCommand}"/>
 
-				</Label.GestureRecognizers>
+                </Label.GestureRecognizers>
 
-			</Label>
+            </Label>
 
-		</Grid>
+        </Grid>
 
-		<!-- Empty -->
+        <!-- Empty -->
 
-		<VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsEmpty}"
+        <VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsEmpty}"
 
                              HorizontalOptions="Center" VerticalOptions="Center" Spacing="14">
 
-			<Label Text="🛒" FontSize="72" HorizontalOptions="Center"/>
+            <Label Text="🛒" FontSize="72" HorizontalOptions="Center"/>
 
-			<Label Text="Your cart is empty" FontFamily="CairoBold" FontSize="20" TextColor="#212121" HorizontalOptions="Center"/>
+            <Label Text="Your cart is empty" FontFamily="CairoBold" FontSize="20" TextColor="#212121" HorizontalOptions="Center"/>
 
-			<Label Text="Browse restaurants and add items!" FontFamily="CairoRegular" FontSize="14" TextColor="#757575" HorizontalOptions="Center"/>
+            <Label Text="Browse restaurants and add items!" FontFamily="CairoRegular" FontSize="14" TextColor="#757575" HorizontalOptions="Center"/>
 
-		</VerticalStackLayout>
+        </VerticalStackLayout>
 
-		<!-- Items -->
+        <!-- Items -->
 
-		<CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None"
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None"
 
                         IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}"
 
                         Margin="16,0">
 
-			<CollectionView.ItemTemplate>
+            <CollectionView.ItemTemplate>
 
-				<DataTemplate x:DataType="m:CartItem">
+                <DataTemplate x:DataType="m:CartItem">
 
-					<Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,12">
 
-						<Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
+                        <Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
 
-							<Border Grid.Column="0" BackgroundColor="#F0F0F0"
+                            <Border Grid.Column="0" BackgroundColor="#F0F0F0"
 
                                     StrokeShape="RoundRectangle 10" Stroke="Transparent" HeightRequest="64">
 
-								<Label Text="🍛" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Text="🍛" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"/>
 
-							</Border>
+                            </Border>
 
-							<VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                            <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
 
-								<Label Text="{Binding Product.Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+                                <Label Text="{Binding Product.Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
 
-								<Label Text="{Binding TotalPriceText}" FontFamily="CairoBold" FontSize="14" TextColor="#FF5722"/>
+                                <Label Text="{Binding TotalPriceText}" FontFamily="CairoBold" FontSize="14" TextColor="#FF5722"/>
 
-							</VerticalStackLayout>
+                            </VerticalStackLayout>
 
-							<!-- Qty Controls -->
+                            <!-- Qty Controls -->
 
-							<HorizontalStackLayout Grid.Column="2" Spacing="10" VerticalOptions="Center">
+                            <HorizontalStackLayout Grid.Column="2" Spacing="10" VerticalOptions="Center">
 
-								<Border BackgroundColor="#EEEEEE" StrokeShape="RoundRectangle 8"
+                                <Border BackgroundColor="#EEEEEE" StrokeShape="RoundRectangle 8"
 
                                         Stroke="Transparent" WidthRequest="32" HeightRequest="32">
 
-									<Label Text="−" FontFamily="CairoBold" FontSize="18"
+                                    <Label Text="−" FontFamily="CairoBold" FontSize="18"
 
                                            HorizontalOptions="Center" VerticalOptions="Center">
 
-										<Label.GestureRecognizers>
+                                        <Label.GestureRecognizers>
 
-											<TapGestureRecognizer
+                                            <TapGestureRecognizer
 
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CartViewModel}}, Path=DecCommand}"
 
                                                 CommandParameter="{Binding .}"/>
 
-										</Label.GestureRecognizers>
+                                        </Label.GestureRecognizers>
 
-									</Label>
+                                    </Label>
 
-								</Border>
+                                </Border>
 
-								<Label Text="{Binding Quantity}" FontFamily="CairoBold" FontSize="16"
+                                <Label Text="{Binding Quantity}" FontFamily="CairoBold" FontSize="16"
 
                                        TextColor="#212121" VerticalOptions="Center" WidthRequest="22"
 
                                        HorizontalTextAlignment="Center"/>
 
-								<Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 8"
+                                <Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 8"
 
                                         Stroke="Transparent" WidthRequest="32" HeightRequest="32">
 
-									<Label Text="+" FontFamily="CairoBold" FontSize="18" TextColor="White"
+                                    <Label Text="+" FontFamily="CairoBold" FontSize="18" TextColor="White"
 
                                            HorizontalOptions="Center" VerticalOptions="Center">
 
-										<Label.GestureRecognizers>
+                                        <Label.GestureRecognizers>
 
-											<TapGestureRecognizer
+                                            <TapGestureRecognizer
 
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CartViewModel}}, Path=IncCommand}"
 
                                                 CommandParameter="{Binding .}"/>
 
-										</Label.GestureRecognizers>
+                                        </Label.GestureRecognizers>
 
-									</Label>
+                                    </Label>
 
-								</Border>
+                                </Border>
 
-							</HorizontalStackLayout>
+                            </HorizontalStackLayout>
 
-						</Grid>
+                        </Grid>
 
-					</Border>
+                    </Border>
 
-				</DataTemplate>
+                </DataTemplate>
 
-			</CollectionView.ItemTemplate>
+            </CollectionView.ItemTemplate>
 
-		</CollectionView>
+        </CollectionView>
 
-		<!-- Footer -->
+        <!-- Footer -->
 
-		<Border Grid.Row="2" BackgroundColor="White" StrokeShape="RoundRectangle 24,24,0,0"
+        <Border Grid.Row="2" BackgroundColor="White" StrokeShape="RoundRectangle 24,24,0,0"
 
                 Stroke="Transparent" Padding="20,18,20,34"
 
                 IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
 
-			<Border.Shadow>
+            <Border.Shadow>
 
-				<Shadow Brush="Black" Offset="0,-4" Opacity="0.07" Radius="14"/>
+                <Shadow Brush="Black" Offset="0,-4" Opacity="0.07" Radius="14"/>
 
-			</Border.Shadow>
+            </Border.Shadow>
 
-			<VerticalStackLayout Spacing="14">
+            <VerticalStackLayout Spacing="14">
 
-				<Grid ColumnDefinitions="*,Auto">
+                <Grid ColumnDefinitions="*,Auto">
 
-					<Label Grid.Column="0" Text="Total" FontFamily="CairoRegular" FontSize="15"
+                    <Label Grid.Column="0" Text="Total" FontFamily="CairoRegular" FontSize="15"
 
                            TextColor="#757575" VerticalOptions="Center"/>
 
-					<Label Grid.Column="1" FontFamily="CairoBold" FontSize="22" TextColor="#FF5722">
+                    <Label Grid.Column="1" FontFamily="CairoBold" FontSize="22" TextColor="#FF5722">
 
-						<Label.FormattedText>
+                        <Label.FormattedText>
 
-							<FormattedString>
+                            <FormattedString>
 
-								<Span Text="{Binding Total, StringFormat='{0:F0}'}"/>
+                                <Span Text="{Binding Total, StringFormat='{0:F0}'}"/>
 
-								<Span Text=" EGP"/>
+                                <Span Text=" EGP"/>
 
-							</FormattedString>
+                            </FormattedString>
 
-						</Label.FormattedText>
+                        </Label.FormattedText>
 
-					</Label>
+                    </Label>
 
-				</Grid>
+                </Grid>
 
-				<Button Text="Proceed to Checkout →" Command="{Binding CheckoutCommand}"
+                <Button Text="Proceed to Checkout →" Command="{Binding CheckoutCommand}"
 
                         Style="{StaticResource PrimaryBtn}"/>
 
-			</VerticalStackLayout>
+            </VerticalStackLayout>
 
-		</Border>
+        </Border>
 
-	</Grid>
+    </Grid>
 
 </ContentPage>
 

@@ -36,7 +36,7 @@
 
 					<Label.GestureRecognizers>
 
-						<TapGestureRecognizer Command="{Binding Source={x:Static Shell.Current}, Path=GoToAsync}" CommandParameter=".."/>
+						<TapGestureRecognizer Command="{Binding GoBackCommand}"/>
 
 					</Label.GestureRecognizers>
 

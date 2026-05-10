@@ -1,138 +1,95 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
-
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
-
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.OrdersPage"
-
              x:DataType="vm:OrdersViewModel"
-
              Shell.NavBarIsVisible="False">
 
 	<Grid RowDefinitions="Auto,*">
 
+		<!-- Header -->
 		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,18">
-
-			<Label Text="My Orders" FontFamily="CairoBold" FontSize="24" TextColor="White" HorizontalOptions="Center"/>
-
+			<Label Text="{loc:Loc Key=MyOrders}"
+                   FontFamily="CairoBold" FontSize="24" TextColor="White" HorizontalOptions="Center"/>
 		</Grid>
 
+		<!-- Loading -->
 		<ActivityIndicator Grid.Row="1" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
-
                            Color="#FF5722" VerticalOptions="Center"/>
 
+		<!-- Empty state -->
 		<VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsEmpty}"
-
                              HorizontalOptions="Center" VerticalOptions="Center" Spacing="14">
-
 			<Label Text="📦" FontSize="72" HorizontalOptions="Center"/>
-
-			<Label Text="No orders yet" FontFamily="CairoBold" FontSize="20" TextColor="#212121" HorizontalOptions="Center"/>
-
-			<Label Text="Your order history will appear here" FontFamily="CairoRegular" FontSize="14"
-
-                   TextColor="#757575" HorizontalOptions="Center"/>
-
+			<Label Text="{loc:Loc Key=NoOrders}"
+                   FontFamily="CairoBold" FontSize="20" TextColor="#212121" HorizontalOptions="Center"/>
+			<Label Text="{loc:Loc Key=NoOrdersSub}"
+                   FontFamily="CairoRegular" FontSize="14" TextColor="#757575" HorizontalOptions="Center"/>
 		</VerticalStackLayout>
 
-		<RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}"
-
+		<!-- List -->
+		<RefreshView Grid.Row="1"
+                     Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}"
                      IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
 
 			<CollectionView ItemsSource="{Binding Orders}" SelectionMode="None" Margin="16,14,16,0">
-
 				<CollectionView.ItemTemplate>
-
 					<DataTemplate x:DataType="m:Order">
-
 						<Border Style="{StaticResource Card}" Margin="0,0,0,12">
-
 							<Border.GestureRecognizers>
-
 								<TapGestureRecognizer
-
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OrdersViewModel}}, Path=OpenOrderCommand}"
-
                                     CommandParameter="{Binding .}"/>
-
 							</Border.GestureRecognizers>
 
 							<Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
 
+								<!-- Row 0: restaurant name + status badge -->
 								<Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-
 									<Label Grid.Column="0" Text="{Binding RestaurantName}"
-
                                            FontFamily="CairoBold" FontSize="15" TextColor="#212121"/>
-
-									<Border Grid.Column="1" StrokeShape="RoundRectangle 8" Stroke="Transparent"
-
-                                            Padding="9,4" BackgroundColor="{Binding StatusColor}">
-
+									<Border Grid.Column="1" StrokeShape="RoundRectangle 8"
+                                            Stroke="Transparent" Padding="9,4"
+                                            BackgroundColor="{Binding StatusColor}">
 										<Label Text="{Binding StatusText}" TextColor="White"
-
                                                FontFamily="CairoBold" FontSize="11"/>
-
 									</Border>
-
 								</Grid>
 
+								<!-- Row 1: items count + date + total -->
 								<Grid Grid.Row="1" ColumnDefinitions="*,Auto">
-
 									<Label Grid.Column="0" FontFamily="CairoRegular" FontSize="13" TextColor="#757575">
-
 										<Label.FormattedText>
-
 											<FormattedString>
-
 												<Span Text="{Binding ItemCount}"/>
-
-												<Span Text=" items  •  "/>
-
+												<Span Text="  •  "/>
 												<Span Text="{Binding CreatedAt, StringFormat='{0:MMM dd  HH:mm}'}"/>
-
 											</FormattedString>
-
 										</Label.FormattedText>
-
 									</Label>
-
 									<Label Grid.Column="1" Text="{Binding TotalAmountText}"
-
                                            FontFamily="CairoBold" FontSize="16" TextColor="#FF5722"/>
-
 								</Grid>
 
-								<Border Grid.Row="2" BackgroundColor="#FFF3EF" StrokeShape="RoundRectangle 8"
-
-                                        Stroke="Transparent" Padding="10,5"
-
-                                        HorizontalOptions="End" IsVisible="{Binding IsActive}">
-
-									<Label Text="Track Order →" TextColor="#FF5722"
-
-                                           FontFamily="CairoBold" FontSize="12"/>
-
+								<!-- Row 2: track button (active orders only) -->
+								<Border Grid.Row="2" BackgroundColor="#FFF3EF"
+                                        StrokeShape="RoundRectangle 8" Stroke="Transparent"
+                                        Padding="10,5" HorizontalOptions="End"
+                                        IsVisible="{Binding IsActive}">
+									<Label Text="{loc:Loc Key=TrackOrder}"
+                                           TextColor="#FF5722" FontFamily="CairoBold" FontSize="12"/>
 								</Border>
 
 							</Grid>
-
 						</Border>
-
 					</DataTemplate>
-
 				</CollectionView.ItemTemplate>
-
 			</CollectionView>
 
 		</RefreshView>
-
 	</Grid>
-
 </ContentPage>
-

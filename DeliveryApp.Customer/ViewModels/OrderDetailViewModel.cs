@@ -81,4 +81,3 @@ public partial class OrderDetailViewModel : BaseViewModel
     }
 
 }
-

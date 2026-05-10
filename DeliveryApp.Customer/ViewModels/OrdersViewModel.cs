@@ -61,4 +61,3 @@ public partial class OrdersViewModel : BaseViewModel
         : Shell.Current.GoToAsync($"OrderDetailPage?orderId={o.Id}");
 
 }
-

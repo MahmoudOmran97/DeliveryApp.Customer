@@ -17,6 +17,9 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
 
     {
+        // ── Apply persisted language before anything renders ──
+        LocalizationService.Apply(
+            Preferences.Get(LocalizationService.LangKey, LocalizationService.English));
 
         var builder = MauiApp.CreateBuilder();
 
@@ -47,6 +50,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<ApiService>();
 
         builder.Services.AddSingleton<SignalRService>();
+
+        builder.Services.AddSingleton<Converters.LocaleStrings>();
 
         // ── ViewModels ────────────────────────────
 
@@ -110,4 +115,3 @@ public static class MauiProgram
     }
 
 }
-

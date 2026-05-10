@@ -14,13 +14,14 @@
 
              Shell.NavBarIsVisible="False">
 
-	<Grid RowDefinitions="Auto,*">
+	<!-- Root: two rows — header (Auto) + body (*) — zero overlap -->
+	<Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA">
 
-		<!-- Header -->
+		<!-- ══════ HEADER ══════ -->
+		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,16" RowDefinitions="Auto,14,Auto" RowSpacing="0">
 
-		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,16">
-
-			<Grid ColumnDefinitions="*,44">
+			<!-- Greeting row -->
+			<Grid Grid.Row="0" ColumnDefinitions="*,44">
 
 				<VerticalStackLayout Grid.Column="0" Spacing="2">
 
@@ -32,7 +33,7 @@
 
 							<FormattedString>
 
-								<Span Text="Hey, "/>
+								<Span Text="{Binding GreetingPrefix}"/>
 
 								<Span Text="{Binding UserName}"/>
 
@@ -46,15 +47,14 @@
 
 				</VerticalStackLayout>
 
-				<!-- Cart Button -->
-
-				<Grid Grid.Column="1">
+				<!-- Cart icon + badge -->
+				<Grid Grid.Column="1" WidthRequest="44" HeightRequest="44">
 
 					<Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
-
                             Stroke="Transparent" WidthRequest="44" HeightRequest="44">
 
-						<Label Text="🛒" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center">
+						<Label Text="🛒" FontSize="22"
+                               HorizontalOptions="Center" VerticalOptions="Center">
 
 							<Label.GestureRecognizers>
 
@@ -67,18 +67,14 @@
 					</Border>
 
 					<Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10"
-
                             Stroke="Transparent"
-
                             IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
-
                             WidthRequest="20" HeightRequest="20"
-
                             HorizontalOptions="End" VerticalOptions="Start">
 
 						<Label Text="{Binding CartCount}" FontFamily="CairoBold" FontSize="10"
-
-                               TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
+                               TextColor="White"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
 
 					</Border>
 
@@ -86,40 +82,38 @@
 
 			</Grid>
 
-			<!-- Search -->
+			<!-- Spacer row (14 dp) -->
+			<BoxView Grid.Row="1" Color="Transparent"/>
 
-			<Border BackgroundColor="White" StrokeShape="RoundRectangle 12"
+			<!-- Search bar row -->
+			<Border Grid.Row="2" BackgroundColor="White"
+                    StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="4,0">
 
-                    Stroke="Transparent" Padding="12,0" Margin="0,14,0,0">
-
-				<SearchBar Placeholder="Search restaurants or food..."
-
+				<SearchBar Placeholder="{Binding SearchHint}"
                            Text="{Binding SearchText}"
-
                            SearchCommand="{Binding SearchCommand}"
-
                            BackgroundColor="Transparent"
-
                            FontFamily="CairoRegular" FontSize="14" TextColor="#212121"/>
 
 			</Border>
 
 		</Grid>
 
-		<!-- Restaurant List -->
-
-		<RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+		<!-- ══════ BODY ══════ -->
+		<RefreshView Grid.Row="1"
+                     Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
 
 			<ScrollView>
 
-				<VerticalStackLayout Padding="16,14" Spacing="0">
+				<VerticalStackLayout Padding="16,16,16,16" Spacing="0">
 
-					<Label Text="Restaurants Near You" FontFamily="CairoBold" FontSize="18"
-
+					<Label Text="{Binding SectionTitle}"
+                           FontFamily="CairoBold" FontSize="18"
                            TextColor="#212121" Margin="0,0,0,14"/>
 
-					<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
-
+					<ActivityIndicator IsRunning="{Binding IsBusy}"
+                                       IsVisible="{Binding IsBusy}"
                                        Color="#FF5722" Margin="0,20"/>
 
 					<CollectionView ItemsSource="{Binding Restaurants}" SelectionMode="None">
@@ -133,25 +127,18 @@
 									<Border.GestureRecognizers>
 
 										<TapGestureRecognizer
-
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=OpenRestaurantCommand}"
-
                                             CommandParameter="{Binding .}"/>
 
 									</Border.GestureRecognizers>
 
 									<Grid ColumnDefinitions="95,*" ColumnSpacing="14">
 
-										<!-- Image placeholder -->
-
 										<Border Grid.Column="0" BackgroundColor="#F0F0F0"
-
                                                 StrokeShape="RoundRectangle 12" Stroke="Transparent"
-
-                                                HeightRequest="88">
+                                                HeightRequest="88" WidthRequest="95">
 
 											<Label Text="🍽️" FontSize="38"
-
                                                    HorizontalOptions="Center" VerticalOptions="Center"/>
 
 										</Border>
@@ -161,31 +148,24 @@
 											<Grid ColumnDefinitions="*,Auto">
 
 												<Label Grid.Column="0" Text="{Binding Name}"
-
-                                                       FontFamily="CairoBold" FontSize="15" TextColor="#212121"/>
-
-												<!-- Open/Closed badge -->
+                                                       FontFamily="CairoBold" FontSize="15"
+                                                       TextColor="#212121" LineBreakMode="TailTruncation"/>
 
 												<Border Grid.Column="1" StrokeShape="RoundRectangle 8"
-
                                                         Stroke="Transparent" Padding="7,3"
-
                                                         BackgroundColor="{Binding StatusBg}">
 
 													<Label Text="{Binding StatusText}"
-
                                                            TextColor="{Binding StatusColor}"
-
                                                            FontFamily="CairoBold" FontSize="10"/>
 
 												</Border>
 
 											</Grid>
 
-											<Label Text="{Binding Description}" FontFamily="CairoRegular"
-
-                                                   FontSize="12" TextColor="#757575" MaxLines="1"
-
+											<Label Text="{Binding Description}"
+                                                   FontFamily="CairoRegular" FontSize="12"
+                                                   TextColor="#757575" MaxLines="1"
                                                    LineBreakMode="TailTruncation"/>
 
 											<HorizontalStackLayout Spacing="12">
@@ -194,9 +174,9 @@
 
 													<Label Text="⭐" FontSize="12" VerticalOptions="Center"/>
 
-													<Label Text="{Binding RatingText}" FontFamily="CairoBold"
-
-                                                           FontSize="12" TextColor="#212121" VerticalOptions="Center"/>
+													<Label Text="{Binding RatingText}"
+                                                           FontFamily="CairoBold" FontSize="12"
+                                                           TextColor="#212121" VerticalOptions="Center"/>
 
 												</HorizontalStackLayout>
 
@@ -204,15 +184,15 @@
 
 													<Label Text="🕐" FontSize="12" VerticalOptions="Center"/>
 
-													<Label Text="{Binding EstimatedTimeText}" FontFamily="CairoRegular"
-
-                                                           FontSize="12" TextColor="#757575" VerticalOptions="Center"/>
+													<Label Text="{Binding EstimatedTimeText}"
+                                                           FontFamily="CairoRegular" FontSize="12"
+                                                           TextColor="#757575" VerticalOptions="Center"/>
 
 												</HorizontalStackLayout>
 
-												<Label Text="{Binding DeliveryFeeText}" FontFamily="CairoBold"
-
-                                                       FontSize="12" TextColor="#FF5722"/>
+												<Label Text="{Binding DeliveryFeeText}"
+                                                       FontFamily="CairoBold" FontSize="12"
+                                                       TextColor="#FF5722"/>
 
 											</HorizontalStackLayout>
 
@@ -237,4 +217,3 @@
 	</Grid>
 
 </ContentPage>
-
