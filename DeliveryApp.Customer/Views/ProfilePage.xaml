@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+
+             x:Class="DeliveryApp.Customer.Views.ProfilePage"
+
+             x:DataType="vm:ProfileViewModel"
+
+             Shell.NavBarIsVisible="False">
+
+	<Grid RowDefinitions="Auto,*">
+
+		<!-- Header -->
+
+		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,30">
+
+			<VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+
+				<Border BackgroundColor="White" StrokeShape="RoundRectangle 50"
+
+                        Stroke="White" StrokeThickness="3"
+
+                        WidthRequest="92" HeightRequest="92" HorizontalOptions="Center">
+
+					<Label Text="👤" FontSize="50" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+				</Border>
+
+				<Label Text="{Binding User.FullName}" FontFamily="CairoBold" FontSize="20"
+
+                       TextColor="White" HorizontalOptions="Center"/>
+
+				<Label Text="{Binding User.Email}" FontFamily="CairoRegular" FontSize="13"
+
+                       TextColor="#FFCCBC" HorizontalOptions="Center"/>
+
+			</VerticalStackLayout>
+
+		</Grid>
+
+		<!-- Body -->
+
+		<ScrollView Grid.Row="1">
+
+			<VerticalStackLayout Padding="16,18" Spacing="14">
+
+				<!-- View Mode -->
+
+				<Border Style="{StaticResource Card}" IsVisible="{Binding IsEditing, Converter={StaticResource InvertBool}}">
+
+					<VerticalStackLayout Spacing="14">
+
+						<Label Text="Personal Info" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+
+						<BoxView Color="#E0E0E0" HeightRequest="1"/>
+
+						<Grid ColumnDefinitions="30,*">
+
+							<Label Grid.Column="0" Text="📞" FontSize="17" VerticalOptions="Center"/>
+
+							<VerticalStackLayout Grid.Column="1" Spacing="2">
+
+								<Label Text="Phone" FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+
+								<Label Text="{Binding User.Phone}" FontFamily="CairoRegular" FontSize="15" TextColor="#212121"/>
+
+							</VerticalStackLayout>
+
+						</Grid>
+
+						<Grid ColumnDefinitions="30,*">
+
+							<Label Grid.Column="0" Text="📍" FontSize="17" VerticalOptions="Center"/>
+
+							<VerticalStackLayout Grid.Column="1" Spacing="2">
+
+								<Label Text="Address" FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+
+								<Label Text="{Binding User.Address}" FontFamily="CairoRegular" FontSize="15" TextColor="#212121"/>
+
+							</VerticalStackLayout>
+
+						</Grid>
+
+						<Button Text="Edit Profile ✏️" Command="{Binding StartEditCommand}"
+
+                                Style="{StaticResource OutlineBtn}"/>
+
+					</VerticalStackLayout>
+
+				</Border>
+
+				<!-- Edit Mode -->
+
+				<Border Style="{StaticResource Card}" IsVisible="{Binding IsEditing}">
+
+					<VerticalStackLayout Spacing="14">
+
+						<Label Text="Edit Profile" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+
+						<BoxView Color="#E0E0E0" HeightRequest="1"/>
+
+						<VerticalStackLayout Spacing="5">
+
+							<Label Text="Full Name" FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
+
+							<Border Style="{StaticResource InputBorder}">
+
+								<Entry Text="{Binding EditName}" HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="14"/>
+
+							</Border>
+
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Spacing="5">
+
+							<Label Text="Phone" FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
+
+							<Border Style="{StaticResource InputBorder}">
+
+								<Entry Text="{Binding EditPhone}" Keyboard="Telephone" HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="14"/>
+
+							</Border>
+
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Spacing="5">
+
+							<Label Text="Address" FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
+
+							<Border Style="{StaticResource InputBorder}">
+
+								<Entry Text="{Binding EditAddress}" HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="14"/>
+
+							</Border>
+
+						</VerticalStackLayout>
+
+						<Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+
+							<Button Grid.Column="0" Text="Cancel" Command="{Binding CancelEditCommand}" Style="{StaticResource OutlineBtn}"/>
+
+							<Button Grid.Column="1" Text="Save" Command="{Binding SaveCommand}"
+
+                                    IsEnabled="{Binding IsNotBusy}" Style="{StaticResource PrimaryBtn}"/>
+
+						</Grid>
+
+					</VerticalStackLayout>
+
+				</Border>
+
+				<!-- Settings Links -->
+
+				<Border Style="{StaticResource Card}">
+
+					<VerticalStackLayout Spacing="0">
+
+						<Label Text="Settings" FontFamily="CairoBold" FontSize="16" TextColor="#212121" Margin="0,0,0,10"/>
+
+						<HorizontalStackLayout Padding="0,12" Spacing="12">
+
+							<Label Text="🛟" FontSize="18" VerticalOptions="Center"/>
+
+							<Label Text="Help &amp; Support" FontFamily="CairoRegular" FontSize="15"
+
+                                   TextColor="#212121" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
+
+							<Label Text="›" FontFamily="CairoBold" FontSize="22" TextColor="#BDBDBD" VerticalOptions="Center"/>
+
+						</HorizontalStackLayout>
+
+						<BoxView Color="#E0E0E0" HeightRequest="1"/>
+
+						<HorizontalStackLayout Padding="0,12" Spacing="12">
+
+							<Label Text="ℹ️" FontSize="18" VerticalOptions="Center"/>
+
+							<Label Text="About App" FontFamily="CairoRegular" FontSize="15"
+
+                                   TextColor="#212121" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
+
+							<Label Text="›" FontFamily="CairoBold" FontSize="22" TextColor="#BDBDBD" VerticalOptions="Center"/>
+
+						</HorizontalStackLayout>
+
+					</VerticalStackLayout>
+
+				</Border>
+
+				<!-- Logout -->
+
+				<Button Text="Logout  👋" Command="{Binding LogoutCommand}"
+
+                        BackgroundColor="#FFF3EF" TextColor="#F44336"
+
+                        FontFamily="CairoBold" FontSize="16"
+
+                        CornerRadius="14" HeightRequest="52"/>
+
+				<BoxView HeightRequest="40" Color="Transparent"/>
+
+			</VerticalStackLayout>
+
+		</ScrollView>
+
+	</Grid>
+
+</ContentPage>
+

@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+
+             xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+
+             x:Class="DeliveryApp.Customer.Views.CartPage"
+
+             x:DataType="vm:CartViewModel"
+
+             Shell.NavBarIsVisible="False">
+
+	<Grid RowDefinitions="Auto,*,Auto">
+
+		<!-- Header -->
+
+		<Grid Grid.Row="0" Padding="16,52,16,12" ColumnDefinitions="44,*,Auto">
+
+			<Label Grid.Column="0" Text="←" FontFamily="CairoBold" FontSize="24" TextColor="#212121"
+
+                   VerticalOptions="Center">
+
+				<Label.GestureRecognizers>
+
+					<TapGestureRecognizer Command="{Binding Source={x:Static Shell.Current}, Path=GoToAsync}" CommandParameter=".."/>
+
+				</Label.GestureRecognizers>
+
+			</Label>
+
+			<Label Grid.Column="1" Text="My Cart" FontFamily="CairoBold" FontSize="22"
+
+                   TextColor="#212121" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+			<Label Grid.Column="2" Text="Clear All" FontFamily="CairoRegular" FontSize="13"
+
+                   TextColor="#F44336" VerticalOptions="Center"
+
+                   IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
+
+				<Label.GestureRecognizers>
+
+					<TapGestureRecognizer Command="{Binding ClearCommand}"/>
+
+				</Label.GestureRecognizers>
+
+			</Label>
+
+		</Grid>
+
+		<!-- Empty -->
+
+		<VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsEmpty}"
+
+                             HorizontalOptions="Center" VerticalOptions="Center" Spacing="14">
+
+			<Label Text="🛒" FontSize="72" HorizontalOptions="Center"/>
+
+			<Label Text="Your cart is empty" FontFamily="CairoBold" FontSize="20" TextColor="#212121" HorizontalOptions="Center"/>
+
+			<Label Text="Browse restaurants and add items!" FontFamily="CairoRegular" FontSize="14" TextColor="#757575" HorizontalOptions="Center"/>
+
+		</VerticalStackLayout>
+
+		<!-- Items -->
+
+		<CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None"
+
+                        IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}"
+
+                        Margin="16,0">
+
+			<CollectionView.ItemTemplate>
+
+				<DataTemplate x:DataType="m:CartItem">
+
+					<Border Style="{StaticResource Card}" Margin="0,0,0,12">
+
+						<Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
+
+							<Border Grid.Column="0" BackgroundColor="#F0F0F0"
+
+                                    StrokeShape="RoundRectangle 10" Stroke="Transparent" HeightRequest="64">
+
+								<Label Text="🍛" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+							</Border>
+
+							<VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+
+								<Label Text="{Binding Product.Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+
+								<Label Text="{Binding TotalPriceText}" FontFamily="CairoBold" FontSize="14" TextColor="#FF5722"/>
+
+							</VerticalStackLayout>
+
+							<!-- Qty Controls -->
+
+							<HorizontalStackLayout Grid.Column="2" Spacing="10" VerticalOptions="Center">
+
+								<Border BackgroundColor="#EEEEEE" StrokeShape="RoundRectangle 8"
+
+                                        Stroke="Transparent" WidthRequest="32" HeightRequest="32">
+
+									<Label Text="−" FontFamily="CairoBold" FontSize="18"
+
+                                           HorizontalOptions="Center" VerticalOptions="Center">
+
+										<Label.GestureRecognizers>
+
+											<TapGestureRecognizer
+
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CartViewModel}}, Path=DecCommand}"
+
+                                                CommandParameter="{Binding .}"/>
+
+										</Label.GestureRecognizers>
+
+									</Label>
+
+								</Border>
+
+								<Label Text="{Binding Quantity}" FontFamily="CairoBold" FontSize="16"
+
+                                       TextColor="#212121" VerticalOptions="Center" WidthRequest="22"
+
+                                       HorizontalTextAlignment="Center"/>
+
+								<Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 8"
+
+                                        Stroke="Transparent" WidthRequest="32" HeightRequest="32">
+
+									<Label Text="+" FontFamily="CairoBold" FontSize="18" TextColor="White"
+
+                                           HorizontalOptions="Center" VerticalOptions="Center">
+
+										<Label.GestureRecognizers>
+
+											<TapGestureRecognizer
+
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CartViewModel}}, Path=IncCommand}"
+
+                                                CommandParameter="{Binding .}"/>
+
+										</Label.GestureRecognizers>
+
+									</Label>
+
+								</Border>
+
+							</HorizontalStackLayout>
+
+						</Grid>
+
+					</Border>
+
+				</DataTemplate>
+
+			</CollectionView.ItemTemplate>
+
+		</CollectionView>
+
+		<!-- Footer -->
+
+		<Border Grid.Row="2" BackgroundColor="White" StrokeShape="RoundRectangle 24,24,0,0"
+
+                Stroke="Transparent" Padding="20,18,20,34"
+
+                IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
+
+			<Border.Shadow>
+
+				<Shadow Brush="Black" Offset="0,-4" Opacity="0.07" Radius="14"/>
+
+			</Border.Shadow>
+
+			<VerticalStackLayout Spacing="14">
+
+				<Grid ColumnDefinitions="*,Auto">
+
+					<Label Grid.Column="0" Text="Total" FontFamily="CairoRegular" FontSize="15"
+
+                           TextColor="#757575" VerticalOptions="Center"/>
+
+					<Label Grid.Column="1" FontFamily="CairoBold" FontSize="22" TextColor="#FF5722">
+
+						<Label.FormattedText>
+
+							<FormattedString>
+
+								<Span Text="{Binding Total, StringFormat='{0:F0}'}"/>
+
+								<Span Text=" EGP"/>
+
+							</FormattedString>
+
+						</Label.FormattedText>
+
+					</Label>
+
+				</Grid>
+
+				<Button Text="Proceed to Checkout →" Command="{Binding CheckoutCommand}"
+
+                        Style="{StaticResource PrimaryBtn}"/>
+
+			</VerticalStackLayout>
+
+		</Border>
+
+	</Grid>
+
+</ContentPage>
+

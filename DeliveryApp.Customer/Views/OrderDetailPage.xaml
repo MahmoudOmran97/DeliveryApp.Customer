@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+
+             xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+
+             x:Class="DeliveryApp.Customer.Views.OrderDetailPage"
+
+             x:DataType="vm:OrderDetailViewModel"
+
+             Title="Order Details">
+
+	<ScrollView>
+
+		<VerticalStackLayout Padding="16" Spacing="14">
+
+			<!-- Status -->
+
+			<Border Style="{StaticResource Card}">
+
+				<VerticalStackLayout Spacing="10">
+
+					<Label FontFamily="CairoRegular" FontSize="14" TextColor="#757575">
+
+						<Label.FormattedText>
+
+							<FormattedString>
+
+								<Span Text="Order #"/>
+
+								<Span Text="{Binding OrderId}" FontAttributes="Bold" TextColor="#212121"/>
+
+							</FormattedString>
+
+						</Label.FormattedText>
+
+					</Label>
+
+					<Border StrokeShape="RoundRectangle 10" Stroke="Transparent" Padding="12,7"
+
+                            HorizontalOptions="Start" BackgroundColor="{Binding Order.StatusColor}">
+
+						<Label Text="{Binding Order.StatusText}" TextColor="White" FontFamily="CairoBold" FontSize="13"/>
+
+					</Border>
+
+					<Label Text="{Binding Order.CreatedAt, StringFormat='Placed: {0:MMM dd, yyyy  HH:mm}'}"
+
+                           FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+
+				</VerticalStackLayout>
+
+			</Border>
+
+			<!-- Items -->
+
+			<Border Style="{StaticResource Card}">
+
+				<VerticalStackLayout Spacing="10">
+
+					<Label Text="Items" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+
+					<BoxView Color="#E0E0E0" HeightRequest="1"/>
+
+					<CollectionView ItemsSource="{Binding Order.Items}" SelectionMode="None">
+
+						<CollectionView.ItemTemplate>
+
+							<DataTemplate x:DataType="m:OrderItem">
+
+								<Grid ColumnDefinitions="*,Auto" Padding="0,5,0,5">
+
+									<Label Grid.Column="0" FontFamily="CairoRegular" FontSize="14" TextColor="#212121">
+
+										<Label.FormattedText>
+
+											<FormattedString>
+
+												<Span Text="{Binding Quantity}" FontAttributes="Bold"/>
+
+												<Span Text="×  "/>
+
+												<Span Text="{Binding ProductName}"/>
+
+											</FormattedString>
+
+										</Label.FormattedText>
+
+									</Label>
+
+									<Label Grid.Column="1" Text="{Binding TotalPriceText}"
+
+                                           FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+
+								</Grid>
+
+							</DataTemplate>
+
+						</CollectionView.ItemTemplate>
+
+					</CollectionView>
+
+					<BoxView Color="#E0E0E0" HeightRequest="1"/>
+
+					<Grid ColumnDefinitions="*,Auto">
+
+						<Label Grid.Column="0" Text="Total" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+
+						<Label Grid.Column="1" Text="{Binding Order.TotalAmountText}"
+
+                               FontFamily="CairoBold" FontSize="20" TextColor="#FF5722"/>
+
+					</Grid>
+
+				</VerticalStackLayout>
+
+			</Border>
+
+			<!-- Cancel Button -->
+
+			<Button Text="Cancel Order" Command="{Binding CancelCommand}"
+
+                    Style="{StaticResource OutlineBtn}"
+
+                    IsVisible="{Binding Order.CanCancel}"/>
+
+			<!-- Rate Button -->
+
+			<Button Text="⭐  Rate Your Experience" Command="{Binding RateCommand}"
+
+                    Style="{StaticResource PrimaryBtn}"
+
+                    IsVisible="{Binding Order.CanRate}"/>
+
+			<!-- Rating Panel -->
+
+			<Border Style="{StaticResource Card}" IsVisible="{Binding ShowRating}">
+
+				<VerticalStackLayout Spacing="14">
+
+					<Label Text="Rate Your Order" FontFamily="CairoBold" FontSize="18" TextColor="#212121"/>
+
+					<Label Text="Restaurant (1 - 5)" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+
+					<Stepper Value="{Binding RestaurantRating}" Minimum="1" Maximum="5" Increment="1" HorizontalOptions="Start"/>
+
+					<Label Text="Driver (1 - 5)" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+
+					<Stepper Value="{Binding DriverRating}" Minimum="1" Maximum="5" Increment="1" HorizontalOptions="Start"/>
+
+					<Border Style="{StaticResource InputBorder}" Padding="12">
+
+						<Editor Text="{Binding Comment}" Placeholder="Leave a comment (optional)"
+
+                                FontFamily="CairoRegular" FontSize="14" HeightRequest="80"
+
+                                BackgroundColor="Transparent"/>
+
+					</Border>
+
+					<Button Text="Submit Rating" Command="{Binding SubmitRatingCommand}"
+
+                            Style="{StaticResource PrimaryBtn}"/>
+
+				</VerticalStackLayout>
+
+			</Border>
+
+		</VerticalStackLayout>
+
+	</ScrollView>
+
+</ContentPage>
+

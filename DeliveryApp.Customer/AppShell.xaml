@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+
+       xmlns:views="clr-namespace:DeliveryApp.Customer.Views"
+
+       x:Class="DeliveryApp.Customer.AppShell"
+
+       Shell.NavBarIsVisible="False"
+
+       FlyoutBehavior="Disabled">
+
+    <Shell.Resources>
+
+        <Style TargetType="TabBar">
+
+            <Setter Property="Shell.TabBarBackgroundColor" Value="White" />
+
+            <Setter Property="Shell.TabBarForegroundColor" Value="#FF5722" />
+
+            <Setter Property="Shell.TabBarTitleColor"      Value="#FF5722" />
+
+            <Setter Property="Shell.TabBarUnselectedColor" Value="#BDBDBD" />
+
+        </Style>
+
+    </Shell.Resources>
+
+    <TabBar>
+
+        <ShellContent Title="Home"
+
+                      Icon="icon_home.png"
+
+                      ContentTemplate="{DataTemplate views:HomePage}"
+
+                      Route="HomePage" />
+
+        <ShellContent Title="Orders"
+
+                      Icon="icon_orders.png"
+
+                      ContentTemplate="{DataTemplate views:OrdersPage}"
+
+                      Route="OrdersPage" />
+
+        <ShellContent Title="Alerts"
+
+                      Icon="icon_bell.png"
+
+                      ContentTemplate="{DataTemplate views:NotificationsPage}"
+
+                      Route="NotificationsPage" />
+
+        <ShellContent Title="Profile"
+
+                      Icon="icon_profile.png"
+
+                      ContentTemplate="{DataTemplate views:ProfilePage}"
+
+                      Route="ProfilePage" />
+
+    </TabBar>
+
+</Shell>
+

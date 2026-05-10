@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+
+             xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+
+             x:Class="DeliveryApp.Customer.Views.RestaurantPage"
+
+             x:DataType="vm:RestaurantViewModel"
+
+             Shell.NavBarIsVisible="False">
+
+	<Grid RowDefinitions="220,*">
+
+		<!-- Cover -->
+
+		<Grid Grid.Row="0" BackgroundColor="#EEEEEE">
+
+			<Label Text="🍽️" FontSize="80" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+			<!-- Back -->
+
+			<Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
+
+                    WidthRequest="42" HeightRequest="42" Margin="16,48,0,0"
+
+                    HorizontalOptions="Start" VerticalOptions="Start">
+
+				<Label Text="←" FontFamily="CairoBold" FontSize="22" TextColor="#212121"
+
+                       HorizontalOptions="Center" VerticalOptions="Center">
+
+					<Label.GestureRecognizers>
+
+						<TapGestureRecognizer Command="{Binding Source={x:Static Shell.Current}, Path=GoToAsync}" CommandParameter=".."/>
+
+					</Label.GestureRecognizers>
+
+				</Label>
+
+			</Border>
+
+			<!-- Cart -->
+
+			<Grid HorizontalOptions="End" VerticalOptions="Start" Margin="0,48,16,0">
+
+				<Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
+
+                        WidthRequest="42" HeightRequest="42">
+
+					<Label Text="🛒" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center">
+
+						<Label.GestureRecognizers>
+
+							<TapGestureRecognizer Command="{Binding OpenCartCommand}"/>
+
+						</Label.GestureRecognizers>
+
+					</Label>
+
+				</Border>
+
+				<Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10" Stroke="Transparent"
+
+                        IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
+
+                        WidthRequest="18" HeightRequest="18" HorizontalOptions="End" VerticalOptions="Start">
+
+					<Label Text="{Binding CartCount}" FontSize="9" FontFamily="CairoBold"
+
+                           TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+				</Border>
+
+			</Grid>
+
+		</Grid>
+
+		<!-- Content -->
+
+		<ScrollView Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0">
+
+			<VerticalStackLayout Spacing="0">
+
+				<!-- Info Card -->
+
+				<Border BackgroundColor="White" StrokeShape="RoundRectangle 24,24,0,0"
+
+                        Stroke="Transparent" Padding="20,22,20,16">
+
+					<VerticalStackLayout Spacing="8">
+
+						<Label Text="{Binding Restaurant.Name}" FontFamily="CairoBold" FontSize="22" TextColor="#212121"/>
+
+						<Label Text="{Binding Restaurant.Description}" FontFamily="CairoRegular"
+
+                               FontSize="13" TextColor="#757575"/>
+
+						<HorizontalStackLayout Spacing="20" Margin="0,6,0,0">
+
+							<VerticalStackLayout Spacing="1">
+
+								<Label Text="⭐ Rating" FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+
+								<Label Text="{Binding Restaurant.RatingText}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+
+							</VerticalStackLayout>
+
+							<BoxView Color="#E0E0E0" WidthRequest="1" HeightRequest="38"/>
+
+							<VerticalStackLayout Spacing="1">
+
+								<Label Text="🚴 Delivery" FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+
+								<Label Text="{Binding Restaurant.DeliveryFeeText}" FontFamily="CairoBold" FontSize="16" TextColor="#FF5722"/>
+
+							</VerticalStackLayout>
+
+							<BoxView Color="#E0E0E0" WidthRequest="1" HeightRequest="38"/>
+
+							<VerticalStackLayout Spacing="1">
+
+								<Label Text="⏱ Est." FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+
+								<Label Text="{Binding Restaurant.EstimatedTimeText}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+
+							</VerticalStackLayout>
+
+						</HorizontalStackLayout>
+
+					</VerticalStackLayout>
+
+				</Border>
+
+				<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+
+                                   Color="#FF5722" Margin="0,16"/>
+
+				<!-- Menu Categories -->
+
+				<CollectionView ItemsSource="{Binding Menu}" SelectionMode="None"
+
+                                BackgroundColor="#F8F9FA">
+
+					<CollectionView.ItemTemplate>
+
+						<DataTemplate x:DataType="m:Category">
+
+							<VerticalStackLayout Padding="16,0" Spacing="10">
+
+								<Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="17"
+
+                                       TextColor="#212121" Margin="0,18,0,2"/>
+
+								<CollectionView ItemsSource="{Binding Products}" SelectionMode="None">
+
+									<CollectionView.ItemTemplate>
+
+										<DataTemplate x:DataType="m:Product">
+
+											<Border Style="{StaticResource Card}" Margin="0,0,0,10">
+
+												<Grid ColumnDefinitions="*,84" ColumnSpacing="12">
+
+													<VerticalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
+
+														<Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+
+														<Label Text="{Binding Description}" FontFamily="CairoRegular"
+
+                                                               FontSize="12" TextColor="#757575" MaxLines="2" LineBreakMode="TailTruncation"/>
+
+														<HorizontalStackLayout Spacing="8">
+
+															<Label Text="{Binding PriceText}" FontFamily="CairoBold"
+
+                                                                   FontSize="15" TextColor="#FF5722"/>
+
+															<Label Text="{Binding OriginalPriceText}" FontFamily="CairoRegular"
+
+                                                                   FontSize="12" TextColor="#BDBDBD"
+
+                                                                   IsVisible="{Binding HasDiscount}"
+
+                                                                   TextDecorations="Strikethrough"/>
+
+														</HorizontalStackLayout>
+
+													</VerticalStackLayout>
+
+													<Grid Grid.Column="1">
+
+														<Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 10"
+
+                                                                Stroke="Transparent" HeightRequest="84">
+
+															<Label Text="🍛" FontSize="36"
+
+                                                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+
+														</Border>
+
+														<!-- Add Button -->
+
+														<Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 10"
+
+                                                                Stroke="Transparent" WidthRequest="30" HeightRequest="30"
+
+                                                                HorizontalOptions="End" VerticalOptions="End">
+
+															<Label Text="+" TextColor="White" FontFamily="CairoBold" FontSize="20"
+
+                                                                   HorizontalOptions="Center" VerticalOptions="Center">
+
+																<Label.GestureRecognizers>
+
+																	<TapGestureRecognizer
+
+                                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RestaurantViewModel}}, Path=AddToCartCommand}"
+
+                                                                        CommandParameter="{Binding .}"/>
+
+																</Label.GestureRecognizers>
+
+															</Label>
+
+														</Border>
+
+													</Grid>
+
+												</Grid>
+
+											</Border>
+
+										</DataTemplate>
+
+									</CollectionView.ItemTemplate>
+
+								</CollectionView>
+
+							</VerticalStackLayout>
+
+						</DataTemplate>
+
+					</CollectionView.ItemTemplate>
+
+				</CollectionView>
+
+				<BoxView HeightRequest="100" Color="Transparent"/>
+
+			</VerticalStackLayout>
+
+		</ScrollView>
+
+		<!-- Floating View Cart Button -->
+
+		<Border Grid.Row="1"
+
+                BackgroundColor="#FF5722"
+
+                StrokeShape="RoundRectangle 16"
+
+                Stroke="Transparent"
+
+                IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
+
+                Padding="18,13"
+
+                Margin="16,0,16,28"
+
+                VerticalOptions="End">
+
+			<Border.Shadow>
+
+				<Shadow Brush="#FF5722" Offset="0,5" Opacity="0.45" Radius="12"/>
+
+			</Border.Shadow>
+
+			<Border.GestureRecognizers>
+
+				<TapGestureRecognizer Command="{Binding OpenCartCommand}"/>
+
+			</Border.GestureRecognizers>
+
+			<Grid ColumnDefinitions="Auto,*,Auto">
+
+				<Border Grid.Column="0" BackgroundColor="#BF4000" StrokeShape="RoundRectangle 8"
+
+                        Stroke="Transparent" Padding="8,4">
+
+					<Label Text="{Binding CartCount}" TextColor="White" FontFamily="CairoBold" FontSize="14"/>
+
+				</Border>
+
+				<Label Grid.Column="1" Text="View Cart" TextColor="White"
+
+                       FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center"/>
+
+				<Label Grid.Column="2" Text="→" TextColor="White" FontFamily="CairoBold" FontSize="18"/>
+
+			</Grid>
+
+		</Border>
+
+	</Grid>
+
+</ContentPage>
+
