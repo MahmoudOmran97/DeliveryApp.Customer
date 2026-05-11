@@ -1,186 +1,111 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
-
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.CheckoutPage"
-
              x:DataType="vm:CheckoutViewModel"
-
-             Title="Checkout">
+             Title="{loc:Loc Key=Checkout}">
 
 	<Grid RowDefinitions="*,Auto">
 
 		<ScrollView Grid.Row="0">
-
 			<VerticalStackLayout Padding="16,16,16,0" Spacing="14">
 
 				<!-- Delivery Address -->
-
 				<Border Style="{StaticResource Card}">
-
 					<VerticalStackLayout Spacing="12">
-
 						<HorizontalStackLayout Spacing="8">
-
 							<Label Text="📍" FontSize="18" VerticalOptions="Center"/>
-
-							<Label Text="Delivery Address" FontFamily="CairoBold" FontSize="16" TextColor="#212121" VerticalOptions="Center"/>
-
+							<Label Text="{loc:Loc Key=DeliveryAddress}" FontFamily="CairoBold" FontSize="16"
+                                   TextColor="#212121" VerticalOptions="Center"/>
 						</HorizontalStackLayout>
-
 						<Border Style="{StaticResource InputBorder}">
-
-							<Entry Text="{Binding Address}" Placeholder="Enter your delivery address"
-
-                                   HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="14"/>
-
+							<Entry Text="{Binding Address}" Placeholder="{loc:Loc Key=AddressPlaceholder}"
+                                   HeightRequest="50" BackgroundColor="Transparent"
+                                   FontFamily="CairoRegular" FontSize="14"/>
 						</Border>
-
 						<Border Style="{StaticResource InputBorder}">
-
-							<Entry Text="{Binding Notes}" Placeholder="Notes for driver (optional)"
-
-                                   HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="14"/>
-
+							<Entry Text="{Binding Notes}" Placeholder="{loc:Loc Key=NotesPlaceholder}"
+                                   HeightRequest="50" BackgroundColor="Transparent"
+                                   FontFamily="CairoRegular" FontSize="14"/>
 						</Border>
-
 					</VerticalStackLayout>
-
 				</Border>
 
-				<!-- Payment -->
-
+				<!-- Payment Method -->
 				<Border Style="{StaticResource Card}">
-
 					<VerticalStackLayout Spacing="10">
-
 						<HorizontalStackLayout Spacing="8">
-
 							<Label Text="💳" FontSize="18" VerticalOptions="Center"/>
-
-							<Label Text="Payment Method" FontFamily="CairoBold" FontSize="16" TextColor="#212121" VerticalOptions="Center"/>
-
+							<Label Text="{loc:Loc Key=PaymentMethod}" FontFamily="CairoBold" FontSize="16"
+                                   TextColor="#212121" VerticalOptions="Center"/>
 						</HorizontalStackLayout>
-
 						<Picker ItemsSource="{Binding PaymentMethods}" SelectedItem="{Binding PaymentMethod}"
-
                                 FontFamily="CairoRegular" FontSize="14" TextColor="#212121"
-
                                 BackgroundColor="#F5F5F5" HeightRequest="50"/>
-
 					</VerticalStackLayout>
-
 				</Border>
 
-				<!-- Summary -->
-
+				<!-- Order Summary -->
 				<Border Style="{StaticResource Card}">
-
 					<VerticalStackLayout Spacing="12">
-
-						<Label Text="Order Summary" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
-
+						<Label Text="{loc:Loc Key=OrderSummary}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
 						<BoxView Color="#E0E0E0" HeightRequest="1"/>
-
 						<Grid ColumnDefinitions="*,Auto">
-
-							<Label Grid.Column="0" Text="Subtotal" FontFamily="CairoRegular" FontSize="14" TextColor="#757575"/>
-
+							<Label Grid.Column="0" Text="{loc:Loc Key=Subtotal}" FontFamily="CairoRegular"
+                                   FontSize="14" TextColor="#757575"/>
 							<Label Grid.Column="1" FontFamily="CairoRegular" FontSize="14" TextColor="#212121">
-
 								<Label.FormattedText>
-
 									<FormattedString>
-
 										<Span Text="{Binding SubTotal, StringFormat='{0:F0}'}"/>
-
 										<Span Text=" EGP"/>
-
 									</FormattedString>
-
 								</Label.FormattedText>
-
 							</Label>
-
 						</Grid>
-
 						<Grid ColumnDefinitions="*,Auto">
-
-							<Label Grid.Column="0" Text="Delivery fee" FontFamily="CairoRegular" FontSize="14" TextColor="#757575"/>
-
+							<Label Grid.Column="0" Text="{loc:Loc Key=DeliveryFee}" FontFamily="CairoRegular"
+                                   FontSize="14" TextColor="#757575"/>
 							<Label Grid.Column="1" FontFamily="CairoRegular" FontSize="14" TextColor="#212121">
-
 								<Label.FormattedText>
-
 									<FormattedString>
-
 										<Span Text="{Binding DeliveryFee, StringFormat='{0:F0}'}"/>
-
 										<Span Text=" EGP"/>
-
 									</FormattedString>
-
 								</Label.FormattedText>
-
 							</Label>
-
 						</Grid>
-
 						<BoxView Color="#E0E0E0" HeightRequest="1"/>
-
 						<Grid ColumnDefinitions="*,Auto">
-
-							<Label Grid.Column="0" Text="Total" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
-
+							<Label Grid.Column="0" Text="{loc:Loc Key=Total}" FontFamily="CairoBold"
+                                   FontSize="17" TextColor="#212121"/>
 							<Label Grid.Column="1" FontFamily="CairoBold" FontSize="20" TextColor="#FF5722">
-
 								<Label.FormattedText>
-
 									<FormattedString>
-
 										<Span Text="{Binding Total, StringFormat='{0:F0}'}"/>
-
 										<Span Text=" EGP"/>
-
 									</FormattedString>
-
 								</Label.FormattedText>
-
 							</Label>
-
 						</Grid>
-
 					</VerticalStackLayout>
-
 				</Border>
 
 				<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#FF5722"/>
 
 			</VerticalStackLayout>
-
 		</ScrollView>
 
 		<Border Grid.Row="1" BackgroundColor="White" Stroke="Transparent"
-
                 StrokeShape="RoundRectangle 0" Padding="16,14,16,34">
-
 			<Border.Shadow>
-
 				<Shadow Brush="Black" Offset="0,-3" Opacity="0.06" Radius="10"/>
-
 			</Border.Shadow>
-
-			<Button Text="Place Order 🎉" Command="{Binding PlaceOrderCommand}"
-
+			<Button Text="{loc:Loc Key=PlaceOrder}" Command="{Binding PlaceOrderCommand}"
                     IsEnabled="{Binding IsNotBusy}" Style="{StaticResource PrimaryBtn}"/>
-
 		</Border>
 
 	</Grid>
 
 </ContentPage>
-

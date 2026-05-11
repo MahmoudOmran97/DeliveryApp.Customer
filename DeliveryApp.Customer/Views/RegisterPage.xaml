@@ -1,148 +1,95 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
-
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.RegisterPage"
-
              x:DataType="vm:RegisterViewModel"
-
              NavigationPage.HasNavigationBar="False">
 
-	<ScrollView>
+    <ScrollView>
+        <VerticalStackLayout Padding="28,56,28,40" Spacing="16">
 
-		<VerticalStackLayout Padding="28,56,28,40" Spacing="16">
+            <HorizontalStackLayout>
+                <Label Text="←" FontSize="24" TextColor="#212121" VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
 
-			<HorizontalStackLayout>
+            <Label Text="{loc:Loc Key=CreateAccount}" FontFamily="CairoBold" FontSize="28" TextColor="#212121"/>
+            <Label Text="{loc:Loc Key=FillDetails}" FontFamily="CairoRegular" FontSize="14" TextColor="#757575"/>
 
-				<Label Text="←" FontSize="24" TextColor="#212121" VerticalOptions="Center">
+            <!-- Full Name -->
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{loc:Loc Key=FullName}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Placeholder="{loc:Loc Key=FullNamePlaceholder}" Text="{Binding FullName}"
+                           HeightRequest="50" BackgroundColor="Transparent"
+                           FontFamily="CairoRegular" FontSize="15"/>
+                </Border>
+            </VerticalStackLayout>
 
-					<Label.GestureRecognizers>
+            <!-- Email -->
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{loc:Loc Key=Email}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Placeholder="{loc:Loc Key=EmailPlaceholder}" Text="{Binding Email}" Keyboard="Email"
+                           HeightRequest="50" BackgroundColor="Transparent"
+                           FontFamily="CairoRegular" FontSize="15"/>
+                </Border>
+            </VerticalStackLayout>
 
-						<TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+            <!-- Phone -->
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{loc:Loc Key=PhoneNumber}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Placeholder="{loc:Loc Key=PhonePlaceholder}" Text="{Binding Phone}" Keyboard="Telephone"
+                           HeightRequest="50" BackgroundColor="Transparent"
+                           FontFamily="CairoRegular" FontSize="15"/>
+                </Border>
+            </VerticalStackLayout>
 
-					</Label.GestureRecognizers>
+            <!-- Password -->
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{loc:Loc Key=Password}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Placeholder="{loc:Loc Key=MinPasswordHint}" Text="{Binding Password}" IsPassword="True"
+                           HeightRequest="50" BackgroundColor="Transparent"
+                           FontFamily="CairoRegular" FontSize="15"/>
+                </Border>
+            </VerticalStackLayout>
 
-				</Label>
-
-			</HorizontalStackLayout>
-
-			<Label Text="Create Account" FontFamily="CairoBold" FontSize="28" TextColor="#212121"/>
-
-			<Label Text="Fill in your details to get started" FontFamily="CairoRegular" FontSize="14" TextColor="#757575"/>
-
-			<!-- Full Name -->
-
-			<VerticalStackLayout Spacing="6">
-
-				<Label Text="Full Name" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-
-				<Border Style="{StaticResource InputBorder}">
-
-					<Entry Placeholder="Ahmed Mohamed" Text="{Binding FullName}"
-
-                           HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="15"/>
-
-				</Border>
-
-			</VerticalStackLayout>
-
-			<!-- Email -->
-
-			<VerticalStackLayout Spacing="6">
-
-				<Label Text="Email" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-
-				<Border Style="{StaticResource InputBorder}">
-
-					<Entry Placeholder="your@email.com" Text="{Binding Email}" Keyboard="Email"
-
-                           HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="15"/>
-
-				</Border>
-
-			</VerticalStackLayout>
-
-			<!-- Phone -->
-
-			<VerticalStackLayout Spacing="6">
-
-				<Label Text="Phone Number" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-
-				<Border Style="{StaticResource InputBorder}">
-
-					<Entry Placeholder="01XXXXXXXXX" Text="{Binding Phone}" Keyboard="Telephone"
-
-                           HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="15"/>
-
-				</Border>
-
-			</VerticalStackLayout>
-
-			<!-- Password -->
-
-			<VerticalStackLayout Spacing="6">
-
-				<Label Text="Password" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-
-				<Border Style="{StaticResource InputBorder}">
-
-					<Entry Placeholder="Min 8 characters" Text="{Binding Password}" IsPassword="True"
-
-                           HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="15"/>
-
-				</Border>
-
-			</VerticalStackLayout>
-
-			<!-- Confirm Password -->
-
-			<VerticalStackLayout Spacing="6">
-
-				<Label Text="Confirm Password" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-
-				<Border Style="{StaticResource InputBorder}">
-
-					<Entry Placeholder="Repeat password" Text="{Binding ConfirmPassword}" IsPassword="True"
-
-                           HeightRequest="50" BackgroundColor="Transparent" FontFamily="CairoRegular" FontSize="15"
-
+            <!-- Confirm Password -->
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{loc:Loc Key=ConfirmPassword}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Placeholder="{loc:Loc Key=ConfirmPasswordPlaceholder}" Text="{Binding ConfirmPassword}"
+                           IsPassword="True" HeightRequest="50" BackgroundColor="Transparent"
+                           FontFamily="CairoRegular" FontSize="15"
                            ReturnCommand="{Binding RegisterCommand}"/>
+                </Border>
+            </VerticalStackLayout>
 
-				</Border>
-
-			</VerticalStackLayout>
-
-			<Button Text="Create Account" Command="{Binding RegisterCommand}"
-
+            <Button Text="{loc:Loc Key=CreateAccount}" Command="{Binding RegisterCommand}"
                     IsEnabled="{Binding IsNotBusy}" Style="{StaticResource PrimaryBtn}" Margin="0,8,0,0"/>
 
-			<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
-
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
                                Color="#FF5722" HorizontalOptions="Center"/>
 
-			<HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                <Label Text="{loc:Loc Key=AlreadyHaveAccount}" FontFamily="CairoRegular" FontSize="14"
+                       TextColor="#757575" VerticalOptions="Center"/>
+                <Label Text="{loc:Loc Key=Login}" FontFamily="CairoBold" FontSize="14"
+                       TextColor="#FF5722" VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
 
-				<Label Text="Already have an account?" FontFamily="CairoRegular" FontSize="14" TextColor="#757575" VerticalOptions="Center"/>
-
-				<Label Text="Login" FontFamily="CairoBold" FontSize="14" TextColor="#FF5722" VerticalOptions="Center">
-
-					<Label.GestureRecognizers>
-
-						<TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-
-					</Label.GestureRecognizers>
-
-				</Label>
-
-			</HorizontalStackLayout>
-
-		</VerticalStackLayout>
-
-	</ScrollView>
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>
-

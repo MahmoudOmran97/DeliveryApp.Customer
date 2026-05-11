@@ -353,4 +353,35 @@
 	<data name="UpdateFailed">
 		<value>Update failed</value>
 	</data>
+
+	<!-- Register -->
+	<data name="CreateAccount">
+		<value>Create Account</value>
+	</data>
+	<data name="FillDetails">
+		<value>Fill in your details to get started</value>
+	</data>
+	<data name="PhoneNumber">
+		<value>Phone Number</value>
+	</data>
+	<data name="ConfirmPassword">
+		<value>Confirm Password</value>
+	</data>
+	<data name="MinPasswordHint">
+		<value>Min 8 characters</value>
+	</data>
+	<data name="ConfirmPasswordPlaceholder">
+		<value>Repeat password</value>
+	</data>
+
+	<!-- Profile Settings -->
+	<data name="Settings">
+		<value>Settings</value>
+	</data>
+	<data name="HelpAndSupport">
+		<value>Help &amp; Support</value>
+	</data>
+	<data name="AboutApp">
+		<value>About App</value>
+	</data>
 </root>

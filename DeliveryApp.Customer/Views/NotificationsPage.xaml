@@ -1,138 +1,77 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
-
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
-
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.NotificationsPage"
-
              x:DataType="vm:NotificationsViewModel"
-
              Shell.NavBarIsVisible="False">
 
 	<Grid RowDefinitions="Auto,*">
 
 		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,18" ColumnDefinitions="*,Auto">
-
-			<Label Grid.Column="0" Text="Notifications" FontFamily="CairoBold" FontSize="24"
-
+			<Label Grid.Column="0" Text="{loc:Loc Key=Notifications}" FontFamily="CairoBold" FontSize="24"
                    TextColor="White" VerticalOptions="Center"/>
-
-			<Label Grid.Column="1" Text="Mark all read" FontFamily="CairoRegular" FontSize="13"
-
+			<Label Grid.Column="1" Text="{loc:Loc Key=MarkAllRead}" FontFamily="CairoRegular" FontSize="13"
                    TextColor="#FFCCBC" VerticalOptions="Center">
-
 				<Label.GestureRecognizers>
-
 					<TapGestureRecognizer Command="{Binding MarkAllReadCommand}"/>
-
 				</Label.GestureRecognizers>
-
 			</Label>
-
 		</Grid>
 
 		<ActivityIndicator Grid.Row="1" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
-
                            Color="#FF5722" VerticalOptions="Center"/>
 
 		<VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsEmpty}"
-
                              HorizontalOptions="Center" VerticalOptions="Center" Spacing="14">
-
 			<Label Text="🔔" FontSize="72" HorizontalOptions="Center"/>
-
-			<Label Text="No notifications" FontFamily="CairoBold" FontSize="20"
-
+			<Label Text="{loc:Loc Key=NoNotifications}" FontFamily="CairoBold" FontSize="20"
                    TextColor="#212121" HorizontalOptions="Center"/>
-
 		</VerticalStackLayout>
 
 		<RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}"
-
                      IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
-
 			<CollectionView ItemsSource="{Binding Notifications}" SelectionMode="None" Margin="16,14,16,0">
-
 				<CollectionView.ItemTemplate>
-
 					<DataTemplate x:DataType="m:Notification">
-
 						<Border BackgroundColor="{Binding BackgroundColor}"
-
                                 StrokeShape="RoundRectangle 14" Stroke="Transparent"
-
                                 Padding="14" Margin="0,0,0,10">
-
 							<Border.Shadow>
-
 								<Shadow Brush="Black" Offset="0,2" Opacity="0.06" Radius="10"/>
-
 							</Border.Shadow>
-
 							<Border.GestureRecognizers>
-
 								<TapGestureRecognizer
-
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:NotificationsViewModel}}, Path=TapCommand}"
-
                                     CommandParameter="{Binding .}"/>
-
 							</Border.GestureRecognizers>
-
 							<Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
-
 								<Border Grid.Column="0" BackgroundColor="#FFF3EF"
-
                                         StrokeShape="RoundRectangle 24" Stroke="Transparent"
-
                                         WidthRequest="48" HeightRequest="48">
-
 									<Label Text="🔔" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
-
 								</Border>
-
 								<VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-
 									<Label Text="{Binding Title}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
-
 									<Label Text="{Binding Body}" FontFamily="CairoRegular" FontSize="12"
-
                                            TextColor="#757575" MaxLines="2" LineBreakMode="TailTruncation"/>
-
 								</VerticalStackLayout>
-
 								<VerticalStackLayout Grid.Column="2" VerticalOptions="Start" Spacing="8">
-
 									<Label Text="{Binding TimeText}" FontFamily="CairoRegular" FontSize="11" TextColor="#BDBDBD"/>
-
 									<Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 6"
-
                                             Stroke="Transparent" WidthRequest="8" HeightRequest="8"
-
                                             HorizontalOptions="End"
-
                                             IsVisible="{Binding IsRead, Converter={StaticResource InvertBool}}"/>
-
 								</VerticalStackLayout>
-
 							</Grid>
-
 						</Border>
-
 					</DataTemplate>
-
 				</CollectionView.ItemTemplate>
-
 			</CollectionView>
-
 		</RefreshView>
 
 	</Grid>
 
 </ContentPage>
-

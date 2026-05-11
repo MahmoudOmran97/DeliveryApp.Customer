@@ -352,4 +352,35 @@
 	<data name="UpdateFailed">
 		<value>فشل التحديث</value>
 	</data>
+
+	<!-- Register -->
+	<data name="CreateAccount">
+		<value>إنشاء حساب</value>
+	</data>
+	<data name="FillDetails">
+		<value>أدخل بياناتك للبدء</value>
+	</data>
+	<data name="PhoneNumber">
+		<value>رقم الهاتف</value>
+	</data>
+	<data name="ConfirmPassword">
+		<value>تأكيد كلمة المرور</value>
+	</data>
+	<data name="MinPasswordHint">
+		<value>٨ أحرف على الأقل</value>
+	</data>
+	<data name="ConfirmPasswordPlaceholder">
+		<value>أعد كتابة كلمة المرور</value>
+	</data>
+
+	<!-- Profile Settings -->
+	<data name="Settings">
+		<value>الإعدادات</value>
+	</data>
+	<data name="HelpAndSupport">
+		<value>المساعدة والدعم</value>
+	</data>
+	<data name="AboutApp">
+		<value>عن التطبيق</value>
+	</data>
 </root>

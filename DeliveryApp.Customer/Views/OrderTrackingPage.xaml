@@ -1,174 +1,105 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
-
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
-
              x:Class="DeliveryApp.Customer.Views.OrderTrackingPage"
-
              x:DataType="vm:OrderTrackingViewModel"
-
              Shell.NavBarIsVisible="False">
 
 	<Grid RowDefinitions="*,300">
 
 		<!-- Map -->
-
 		<maps:Map x:Name="MapView" Grid.Row="0" IsShowingUser="True"/>
 
 		<!-- Back Button -->
-
 		<Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
-
                 WidthRequest="44" HeightRequest="44" Margin="16,52,0,0"
-
                 HorizontalOptions="Start" VerticalOptions="Start">
-
 			<Label Text="←" FontFamily="CairoBold" FontSize="22" TextColor="#212121"
-
                    HorizontalOptions="Center" VerticalOptions="Center">
-
 				<Label.GestureRecognizers>
-
 					<TapGestureRecognizer Command="{Binding Source={x:Static Shell.Current}, Path=GoToAsync}" CommandParameter=".."/>
-
 				</Label.GestureRecognizers>
-
 			</Label>
-
 		</Border>
 
 		<!-- Info Panel -->
-
 		<Border Grid.Row="1" BackgroundColor="White" StrokeShape="RoundRectangle 26,26,0,0" Stroke="Transparent">
-
 			<Border.Shadow>
-
 				<Shadow Brush="Black" Offset="0,-4" Opacity="0.1" Radius="16"/>
-
 			</Border.Shadow>
-
 			<ScrollView>
-
 				<VerticalStackLayout Padding="22,18" Spacing="16">
 
 					<!-- Handle bar -->
-
 					<BoxView BackgroundColor="#E0E0E0" HeightRequest="4" WidthRequest="44"
-
                              HorizontalOptions="Center" CornerRadius="2"/>
 
 					<Label Text="{Binding StatusMsg}" FontFamily="CairoBold" FontSize="17"
-
                            TextColor="#212121" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
 
 					<!-- Progress Bar -->
-
 					<ProgressBar Progress="{Binding Progress}" ProgressColor="#FF5722"
-
                                  BackgroundColor="#EEEEEE" HeightRequest="8"/>
 
 					<!-- Step Icons -->
-
 					<Grid ColumnDefinitions="*,*,*,*,*">
-
 						<VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="3">
-
 							<Label Text="📋" FontSize="18" HorizontalOptions="Center"/>
-
-							<Label Text="Placed" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-
+							<Label Text="{loc:Loc Key=Step_Placed}" FontFamily="CairoRegular" FontSize="10"
+                                   TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
-
 						<VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="3">
-
 							<Label Text="✅" FontSize="18" HorizontalOptions="Center"/>
-
-							<Label Text="Accepted" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-
+							<Label Text="{loc:Loc Key=Step_Accepted}" FontFamily="CairoRegular" FontSize="10"
+                                   TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
-
 						<VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="3">
-
 							<Label Text="🍳" FontSize="18" HorizontalOptions="Center"/>
-
-							<Label Text="Cooking" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-
+							<Label Text="{loc:Loc Key=Step_Cooking}" FontFamily="CairoRegular" FontSize="10"
+                                   TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
-
 						<VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="3">
-
 							<Label Text="🛵" FontSize="18" HorizontalOptions="Center"/>
-
-							<Label Text="On Way" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-
+							<Label Text="{loc:Loc Key=Step_OnWay}" FontFamily="CairoRegular" FontSize="10"
+                                   TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
-
 						<VerticalStackLayout Grid.Column="4" HorizontalOptions="Center" Spacing="3">
-
 							<Label Text="🎉" FontSize="18" HorizontalOptions="Center"/>
-
-							<Label Text="Delivered" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-
+							<Label Text="{loc:Loc Key=Step_Delivered}" FontFamily="CairoRegular" FontSize="10"
+                                   TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
-
 					</Grid>
 
 					<!-- Driver card -->
-
 					<Border BackgroundColor="#F8F9FA" StrokeShape="RoundRectangle 14"
-
                             Stroke="Transparent" Padding="14" IsVisible="{Binding HasDriver}">
-
 						<Grid ColumnDefinitions="52,*,44">
-
 							<Border Grid.Column="0" BackgroundColor="#FF5722" StrokeShape="RoundRectangle 26"
-
                                     Stroke="Transparent" WidthRequest="52" HeightRequest="52">
-
 								<Label Text="🚴" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center"/>
-
 							</Border>
-
 							<VerticalStackLayout Grid.Column="1" Margin="12,0" Spacing="3" VerticalOptions="Center">
-
 								<Label Text="{Binding Order.Driver.Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
-
 								<HorizontalStackLayout Spacing="3">
-
 									<Label Text="⭐" FontSize="11" VerticalOptions="Center"/>
-
 									<Label Text="{Binding Order.Driver.Rating, StringFormat='{0:F1}'}"
-
                                            FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
-
 								</HorizontalStackLayout>
-
 							</VerticalStackLayout>
-
 							<Border Grid.Column="2" BackgroundColor="#E8F5E9" StrokeShape="RoundRectangle 22"
-
                                     Stroke="Transparent" WidthRequest="44" HeightRequest="44">
-
 								<Label Text="📞" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
-
 							</Border>
-
 						</Grid>
-
 					</Border>
 
 				</VerticalStackLayout>
-
 			</ScrollView>
-
 		</Border>
 
 	</Grid>
 
 </ContentPage>
-
