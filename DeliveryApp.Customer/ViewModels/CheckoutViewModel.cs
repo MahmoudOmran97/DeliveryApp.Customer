@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using DeliveryApp.Customer.Services;
 using System.Net;
+using static DeliveryApp.Customer.Services.ApiService;
 
 namespace DeliveryApp.Customer.ViewModels;
 
@@ -44,47 +45,33 @@ public partial class CheckoutViewModel : BaseViewModel
     partial void OnDeliveryFeeChanged(decimal v) => Total = SubTotal + v;
 
     [RelayCommand]
-
     async Task PlaceOrder()
-
     {
-
         if (string.IsNullOrWhiteSpace(Address))
-
         { await AlertAsync("Please enter your delivery address"); return; }
 
         IsBusy = true;
-
         try
-
         {
-
-            // Default Cairo coordinates — replace with real GPS from Geolocation API
-
             var order = await _api.PlaceOrderAsync(
-
                 _cart.RestaurantId!.Value, _cart.Items.ToList(),
-
                 Address, 30.0444, 31.2357, Notes, PaymentMethod);
 
             if (order != null)
-
             {
-
                 _cart.Clear();
-
                 await Shell.Current.GoToAsync($"//OrdersPage");
-
                 await Shell.Current.GoToAsync($"OrderTrackingPage?orderId={order.Id}");
-
             }
-
-            else await AlertAsync("Failed to place order. Please try again.");
-
+            else
+                await AlertAsync("Failed to place order. Please try again.");
         }
-
+        catch (ApiException ex)
+        {
+            // ← دلوقتي بيطلع السبب الحقيقي: "Restaurant is closed", "Minimum order is X EGP" إلخ
+            await AlertAsync(ex.Message);
+        }
         finally { IsBusy = false; }
-
     }
 
 }

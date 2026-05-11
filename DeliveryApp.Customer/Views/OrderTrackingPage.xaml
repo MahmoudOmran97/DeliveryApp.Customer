@@ -3,15 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
-             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              x:Class="DeliveryApp.Customer.Views.OrderTrackingPage"
              x:DataType="vm:OrderTrackingViewModel"
              Shell.NavBarIsVisible="False">
 
 	<Grid RowDefinitions="*,300">
 
-		<!-- Map -->
-		<maps:Map x:Name="MapView" Grid.Row="0" IsShowingUser="True"/>
+		<!-- ✅ ContentView placeholder - هنحط الـ Map فيه من الكود -->
+		<ContentView x:Name="MapContainer" Grid.Row="0" />
 
 		<!-- Back Button -->
 		<Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
@@ -25,55 +24,41 @@
 			</Label>
 		</Border>
 
-		<!-- Info Panel -->
+		<!-- Info Panel - زي ما هو -->
 		<Border Grid.Row="1" BackgroundColor="White" StrokeShape="RoundRectangle 26,26,0,0" Stroke="Transparent">
 			<Border.Shadow>
 				<Shadow Brush="Black" Offset="0,-4" Opacity="0.1" Radius="16"/>
 			</Border.Shadow>
 			<ScrollView>
 				<VerticalStackLayout Padding="22,18" Spacing="16">
-
-					<!-- Handle bar -->
 					<BoxView BackgroundColor="#E0E0E0" HeightRequest="4" WidthRequest="44"
                              HorizontalOptions="Center" CornerRadius="2"/>
-
 					<Label Text="{Binding StatusMsg}" FontFamily="CairoBold" FontSize="17"
                            TextColor="#212121" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
-
-					<!-- Progress Bar -->
 					<ProgressBar Progress="{Binding Progress}" ProgressColor="#FF5722"
                                  BackgroundColor="#EEEEEE" HeightRequest="8"/>
-
-					<!-- Step Icons -->
 					<Grid ColumnDefinitions="*,*,*,*,*">
 						<VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="3">
 							<Label Text="📋" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_Placed}" FontFamily="CairoRegular" FontSize="10"
-                                   TextColor="#757575" HorizontalOptions="Center"/>
+							<Label Text="{loc:Loc Key=Step_Placed}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
 						<VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="3">
 							<Label Text="✅" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_Accepted}" FontFamily="CairoRegular" FontSize="10"
-                                   TextColor="#757575" HorizontalOptions="Center"/>
+							<Label Text="{loc:Loc Key=Step_Accepted}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
 						<VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="3">
 							<Label Text="🍳" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_Cooking}" FontFamily="CairoRegular" FontSize="10"
-                                   TextColor="#757575" HorizontalOptions="Center"/>
+							<Label Text="{loc:Loc Key=Step_Cooking}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
 						<VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="3">
 							<Label Text="🛵" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_OnWay}" FontFamily="CairoRegular" FontSize="10"
-                                   TextColor="#757575" HorizontalOptions="Center"/>
+							<Label Text="{loc:Loc Key=Step_OnWay}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
 						<VerticalStackLayout Grid.Column="4" HorizontalOptions="Center" Spacing="3">
 							<Label Text="🎉" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_Delivered}" FontFamily="CairoRegular" FontSize="10"
-                                   TextColor="#757575" HorizontalOptions="Center"/>
+							<Label Text="{loc:Loc Key=Step_Delivered}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
 						</VerticalStackLayout>
 					</Grid>
-
-					<!-- Driver card -->
 					<Border BackgroundColor="#F8F9FA" StrokeShape="RoundRectangle 14"
                             Stroke="Transparent" Padding="14" IsVisible="{Binding HasDriver}">
 						<Grid ColumnDefinitions="52,*,44">
@@ -95,11 +80,9 @@
 							</Border>
 						</Grid>
 					</Border>
-
 				</VerticalStackLayout>
 			</ScrollView>
 		</Border>
 
 	</Grid>
-
 </ContentPage>

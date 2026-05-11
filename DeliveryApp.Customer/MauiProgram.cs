@@ -29,7 +29,7 @@ public static class MauiProgram
 
             .UseMauiCommunityToolkit()
 
-            .UseMauiMaps()
+           
 
             .ConfigureFonts(fonts =>
 

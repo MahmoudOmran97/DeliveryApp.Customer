@@ -67,29 +67,36 @@ public class ApiService
         return default;
 
     }
+    public class ApiException : Exception
+    {
+        public ApiException(string message) : base(message) { }
+    }
 
     private async Task<T?> PostAsync<T>(string path, object payload)
-
     {
-
         SetAuth();
-
         try
-
         {
-
             var r = await _http.PostAsJsonAsync($"{Base}/{path}", payload);
-
             if (r.IsSuccessStatusCode)
-
                 return await r.Content.ReadFromJsonAsync<T>(_json);
 
+            // ← قراءة رسالة الخطأ من الـ API
+            var errorBody = await r.Content.ReadAsStringAsync();
+            try
+            {
+                var doc = System.Text.Json.JsonDocument.Parse(errorBody);
+                if (doc.RootElement.TryGetProperty("message", out var msg))
+                    throw new ApiException(msg.GetString()!);
+            }
+            catch (ApiException) { throw; }
+            catch { }
+
+            throw new ApiException($"Request failed ({(int)r.StatusCode})");
         }
-
+        catch (ApiException) { throw; }
         catch (Exception ex) { Debug(ex, path); }
-
         return default;
-
     }
 
     private async Task<bool> PutAsync(string path, object? payload = null)

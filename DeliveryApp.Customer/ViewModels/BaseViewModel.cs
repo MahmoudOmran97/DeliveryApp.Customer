@@ -32,9 +32,13 @@ public partial class BaseViewModel : ObservableObject
         }
     }
 
-    protected static async Task AlertAsync(string msg) =>
-        await Shell.Current.DisplayAlert(
+    protected static async Task AlertAsync(string msg)
+    {
+        var page = Shell.Current as Page
+                   ?? Application.Current!.MainPage!;
+
+        await page.DisplayAlert(
             Services.LocalizationService.Get("Notice"), msg,
             Services.LocalizationService.Get("Ok"));
-
+    }
 }
