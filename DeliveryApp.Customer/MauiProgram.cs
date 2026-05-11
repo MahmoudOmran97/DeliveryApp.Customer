@@ -7,6 +7,7 @@ using DeliveryApp.Customer.ViewModels;
 using DeliveryApp.Customer.Views;
 
 using Microsoft.Extensions.Logging;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace DeliveryApp.Customer;
 
@@ -29,7 +30,7 @@ public static class MauiProgram
 
             .UseMauiCommunityToolkit()
 
-           
+           .UseSkiaSharp()
 
             .ConfigureFonts(fonts =>
 
