@@ -28,15 +28,16 @@ public partial class OrderTrackingPage : ContentPage
     void SetupMap()
     {
         _map.Layers.Add(OpenStreetMap.CreateTileLayer());
-        _mapControl.Map = _map;
 
-        // ✅ حط الـ MapControl في الـ placeholder
+        // ✅ أضف السطر ده يوقف الـ logging widget
+        Mapsui.Logging.Logger.LogDelegate = null;
+
+        _mapControl.Map = _map;
         MapContainer.Content = _mapControl;
 
-        var (x, y) = SphericalMercator.FromLonLat(32.8998, 24.0889); // أسوان
+        var (x, y) = SphericalMercator.FromLonLat(32.8998, 24.0889);
         _map.Navigator.CenterOnAndZoomTo(new MPoint(x, y), _map.Navigator.Resolutions[14]);
     }
-
     void RefreshDriverPin()
     {
         MainThread.BeginInvokeOnMainThread(() =>
@@ -69,5 +70,6 @@ public partial class OrderTrackingPage : ContentPage
         base.OnDisappearing();
         _vm.MapUpdated -= RefreshDriverPin;
         _vm.Cleanup();
+
     }
 }

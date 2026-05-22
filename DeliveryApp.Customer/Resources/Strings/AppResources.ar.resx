@@ -383,4 +383,22 @@
 	<data name="AboutApp">
 		<value>عن التطبيق</value>
 	</data>
+	<data name="Status_Pending">
+		<value>في انتظار قبول المطعم ⏳</value>
+	</data>
+	<data name="Status_Accepted">
+		<value>المطعم قبل طلبك ✓</value>
+	</data>
+	<data name="Status_Preparing">
+		<value>جاري تحضير طعامك 🍳</value>
+	</data>
+	<data name="Status_ReadyForPickup">
+		<value>جاهز — المندوب في الطريق 📦</value>
+	</data>
+	<data name="Status_OnTheWay">
+		<value>المندوب في الطريق! 🛵</value>
+	</data>
+	<data name="Status_Delivered">
+		<value>تم التوصيل! بالهنا والشفا 🎉</value>
+	</data>
 </root>

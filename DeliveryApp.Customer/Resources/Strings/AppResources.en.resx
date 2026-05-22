@@ -373,7 +373,24 @@
 	<data name="ConfirmPasswordPlaceholder">
 		<value>Repeat password</value>
 	</data>
-
+	<data name="Status_Pending">
+		<value>Waiting for restaurant to accept ⏳</value>
+	</data>
+	<data name="Status_Accepted">
+		<value>Restaurant accepted your order ✓</value>
+	</data>
+	<data name="Status_Preparing">
+		<value>Preparing your food 🍳</value>
+	</data>
+	<data name="Status_ReadyForPickup">
+		<value>Ready — driver is coming 📦</value>
+	</data>
+	<data name="Status_OnTheWay">
+		<value>Driver is on the way! 🛵</value>
+	</data>
+	<data name="Status_Delivered">
+		<value>Delivered! Enjoy your meal 🎉</value>
+	</data>
 	<!-- Profile Settings -->
 	<data name="Settings">
 		<value>Settings</value>

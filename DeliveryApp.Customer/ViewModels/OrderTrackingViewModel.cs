@@ -110,23 +110,14 @@ public partial class OrderTrackingViewModel : BaseViewModel
     }
 
     void RefreshStatus() => (StatusMsg, Progress) = Order?.Status switch
-
     {
-
-        "Pending" => ("Waiting for restaurant to accept ⏳", 0.1),
-
-        "Accepted" => ("Restaurant accepted your order ✓", 0.3),
-
-        "Preparing" => ("Preparing your food 🍳", 0.55),
-
-        "ReadyForPickup" => ("Ready — driver is coming 📦", 0.70),
-
-        "OnTheWay" => ("Driver is on the way! 🛵", 0.88),
-
-        "Delivered" => ("Delivered! Enjoy your meal 🎉", 1.0),
-
+        "Pending" => (LocalizationService.Get("Status_Pending"), 0.1),
+        "Accepted" => (LocalizationService.Get("Status_Accepted"), 0.3),
+        "Preparing" => (LocalizationService.Get("Status_Preparing"), 0.55),
+        "ReadyForPickup" => (LocalizationService.Get("Status_ReadyForPickup"), 0.70),
+        "OnTheWay" => (LocalizationService.Get("Status_OnTheWay"), 0.88),
+        "Delivered" => (LocalizationService.Get("Status_Delivered"), 1.0),
         _ => (Order?.StatusText ?? "", 0)
-
     };
 
     public void Cleanup()

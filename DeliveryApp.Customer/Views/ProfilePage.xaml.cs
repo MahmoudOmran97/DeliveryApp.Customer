@@ -13,4 +13,3 @@ public partial class ProfilePage : ContentPage
     protected override void OnAppearing() { base.OnAppearing(); _vm.LoadCommand.Execute(null); }
 
 }
-
