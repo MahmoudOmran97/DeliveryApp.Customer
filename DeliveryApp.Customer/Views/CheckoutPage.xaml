@@ -5,107 +5,119 @@
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.CheckoutPage"
              x:DataType="vm:CheckoutViewModel"
-             Title="{loc:Loc Key=Checkout}">
+             Shell.NavBarIsVisible="False">
 
-	<Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto">
 
-		<ScrollView Grid.Row="0">
-			<VerticalStackLayout Padding="16,16,16,0" Spacing="14">
+        <!-- Header with Back Button -->
+        <Grid Grid.Row="0" Padding="16,52,16,12" ColumnDefinitions="44,*">
+            <Label Grid.Column="0" Text="←" FontFamily="CairoBold" FontSize="24" TextColor="#212121"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Grid.Column="1" Text="{loc:Loc Key=Checkout}" FontFamily="CairoBold" FontSize="22"
+                   TextColor="#212121" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Grid>
 
-				<!-- Delivery Address -->
-				<Border Style="{StaticResource Card}">
-					<VerticalStackLayout Spacing="12">
-						<HorizontalStackLayout Spacing="8">
-							<Label Text="📍" FontSize="18" VerticalOptions="Center"/>
-							<Label Text="{loc:Loc Key=DeliveryAddress}" FontFamily="CairoBold" FontSize="16"
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,16,16,0" Spacing="14">
+
+                <!-- Delivery Address -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="📍" FontSize="18" VerticalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=DeliveryAddress}" FontFamily="CairoBold" FontSize="16"
                                    TextColor="#212121" VerticalOptions="Center"/>
-						</HorizontalStackLayout>
-						<Border Style="{StaticResource InputBorder}">
-							<Entry Text="{Binding Address}" Placeholder="{loc:Loc Key=AddressPlaceholder}"
+                        </HorizontalStackLayout>
+                        <Border Style="{StaticResource InputBorder}">
+                            <Entry Text="{Binding Address}" Placeholder="{loc:Loc Key=AddressPlaceholder}"
                                    HeightRequest="50" BackgroundColor="Transparent"
                                    FontFamily="CairoRegular" FontSize="14"/>
-						</Border>
-						<Border Style="{StaticResource InputBorder}">
-							<Entry Text="{Binding Notes}" Placeholder="{loc:Loc Key=NotesPlaceholder}"
+                        </Border>
+                        <Border Style="{StaticResource InputBorder}">
+                            <Entry Text="{Binding Notes}" Placeholder="{loc:Loc Key=NotesPlaceholder}"
                                    HeightRequest="50" BackgroundColor="Transparent"
                                    FontFamily="CairoRegular" FontSize="14"/>
-						</Border>
-					</VerticalStackLayout>
-				</Border>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
 
-				<!-- Payment Method -->
-				<Border Style="{StaticResource Card}">
-					<VerticalStackLayout Spacing="10">
-						<HorizontalStackLayout Spacing="8">
-							<Label Text="💳" FontSize="18" VerticalOptions="Center"/>
-							<Label Text="{loc:Loc Key=PaymentMethod}" FontFamily="CairoBold" FontSize="16"
+                <!-- Payment Method -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="💳" FontSize="18" VerticalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=PaymentMethod}" FontFamily="CairoBold" FontSize="16"
                                    TextColor="#212121" VerticalOptions="Center"/>
-						</HorizontalStackLayout>
-						<Picker ItemsSource="{Binding PaymentMethods}" SelectedItem="{Binding PaymentMethod}"
+                        </HorizontalStackLayout>
+                        <Picker ItemsSource="{Binding PaymentMethods}" SelectedItem="{Binding PaymentMethod}"
                                 FontFamily="CairoRegular" FontSize="14" TextColor="#212121"
                                 BackgroundColor="#F5F5F5" HeightRequest="50"/>
-					</VerticalStackLayout>
-				</Border>
+                    </VerticalStackLayout>
+                </Border>
 
-				<!-- Order Summary -->
-				<Border Style="{StaticResource Card}">
-					<VerticalStackLayout Spacing="12">
-						<Label Text="{loc:Loc Key=OrderSummary}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
-						<BoxView Color="#E0E0E0" HeightRequest="1"/>
-						<Grid ColumnDefinitions="*,Auto">
-							<Label Grid.Column="0" Text="{loc:Loc Key=Subtotal}" FontFamily="CairoRegular"
+                <!-- Order Summary -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{loc:Loc Key=OrderSummary}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+                        <BoxView Color="#E0E0E0" HeightRequest="1"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" Text="{loc:Loc Key=Subtotal}" FontFamily="CairoRegular"
                                    FontSize="14" TextColor="#757575"/>
-							<Label Grid.Column="1" FontFamily="CairoRegular" FontSize="14" TextColor="#212121">
-								<Label.FormattedText>
-									<FormattedString>
-										<Span Text="{Binding SubTotal, StringFormat='{0:F0}'}"/>
-										<Span Text=" EGP"/>
-									</FormattedString>
-								</Label.FormattedText>
-							</Label>
-						</Grid>
-						<Grid ColumnDefinitions="*,Auto">
-							<Label Grid.Column="0" Text="{loc:Loc Key=DeliveryFee}" FontFamily="CairoRegular"
+                            <Label Grid.Column="1" FontFamily="CairoRegular" FontSize="14" TextColor="#212121">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding SubTotal, StringFormat='{0:F0}'}"/>
+                                        <Span Text=" EGP"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" Text="{loc:Loc Key=DeliveryFee}" FontFamily="CairoRegular"
                                    FontSize="14" TextColor="#757575"/>
-							<Label Grid.Column="1" FontFamily="CairoRegular" FontSize="14" TextColor="#212121">
-								<Label.FormattedText>
-									<FormattedString>
-										<Span Text="{Binding DeliveryFee, StringFormat='{0:F0}'}"/>
-										<Span Text=" EGP"/>
-									</FormattedString>
-								</Label.FormattedText>
-							</Label>
-						</Grid>
-						<BoxView Color="#E0E0E0" HeightRequest="1"/>
-						<Grid ColumnDefinitions="*,Auto">
-							<Label Grid.Column="0" Text="{loc:Loc Key=Total}" FontFamily="CairoBold"
+                            <Label Grid.Column="1" FontFamily="CairoRegular" FontSize="14" TextColor="#212121">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding DeliveryFee, StringFormat='{0:F0}'}"/>
+                                        <Span Text=" EGP"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+                        <BoxView Color="#E0E0E0" HeightRequest="1"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" Text="{loc:Loc Key=Total}" FontFamily="CairoBold"
                                    FontSize="17" TextColor="#212121"/>
-							<Label Grid.Column="1" FontFamily="CairoBold" FontSize="20" TextColor="#FF5722">
-								<Label.FormattedText>
-									<FormattedString>
-										<Span Text="{Binding Total, StringFormat='{0:F0}'}"/>
-										<Span Text=" EGP"/>
-									</FormattedString>
-								</Label.FormattedText>
-							</Label>
-						</Grid>
-					</VerticalStackLayout>
-				</Border>
+                            <Label Grid.Column="1" FontFamily="CairoBold" FontSize="20" TextColor="#FF5722">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding Total, StringFormat='{0:F0}'}"/>
+                                        <Span Text=" EGP"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
 
-				<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#FF5722"/>
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#FF5722"/>
 
-			</VerticalStackLayout>
-		</ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
 
-		<Border Grid.Row="1" BackgroundColor="White" Stroke="Transparent"
+        <Border Grid.Row="2" BackgroundColor="White" Stroke="Transparent"
                 StrokeShape="RoundRectangle 0" Padding="16,14,16,34">
-			<Border.Shadow>
-				<Shadow Brush="Black" Offset="0,-3" Opacity="0.06" Radius="10"/>
-			</Border.Shadow>
-			<Button Text="{loc:Loc Key=PlaceOrder}" Command="{Binding PlaceOrderCommand}"
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="0,-3" Opacity="0.06" Radius="10"/>
+            </Border.Shadow>
+            <Button Text="{loc:Loc Key=PlaceOrder}" Command="{Binding PlaceOrderCommand}"
                     IsEnabled="{Binding IsNotBusy}" Style="{StaticResource PrimaryBtn}"/>
-		</Border>
+        </Border>
 
-	</Grid>
+    </Grid>
 
 </ContentPage>
