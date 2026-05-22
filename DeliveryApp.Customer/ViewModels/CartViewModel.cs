@@ -35,17 +35,22 @@ public partial class CartViewModel : BaseViewModel
     }
 
     void Sync()
-
     {
+        // ✅ بدل Clear() + ReAdd، حدّث الموجود بس
+        var toRemove = Items.Where(i => !_cart.Items.Any(c => c.Product.Id == i.Product.Id)).ToList();
+        foreach (var r in toRemove) Items.Remove(r);
 
-        Items.Clear();
-
-        foreach (var i in _cart.Items) Items.Add(i);
+        foreach (var cartItem in _cart.Items)
+        {
+            var existing = Items.FirstOrDefault(i => i.Product.Id == cartItem.Product.Id);
+            if (existing != null)
+                existing.Quantity = cartItem.Quantity;  // ✅ OnPropertyChanged هيتعمل تلقائياً
+            else
+                Items.Add(cartItem);
+        }
 
         Total = _cart.TotalPrice;
-
-        IsEmpty = _cart.IsEmpty;
-
+        IsEmpty = !Items.Any();
     }
 
     [RelayCommand] void Inc(CartItem i) => _cart.UpdateQuantity(i.Product.Id, i.Quantity + 1);
