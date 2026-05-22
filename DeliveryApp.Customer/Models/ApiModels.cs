@@ -1,4 +1,6 @@
-﻿namespace DeliveryApp.Customer.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace DeliveryApp.Customer.Models;
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
 
@@ -144,7 +146,7 @@ public class Product
 
 // ─── Cart ────────────────────────────────────────────────────────────────────
 
-public class CartItem
+public partial class CartItem : ObservableObject
 
 {
 
@@ -152,11 +154,14 @@ public class CartItem
 
     public Product Product { get; set; } = null!;
 
-    public int Quantity { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotalPrice))]
+    [NotifyPropertyChangedFor(nameof(TotalPriceText))]
+   private int _Quantity;
 
     public string? Notes { get; set; }
 
-    public decimal TotalPrice => Product.EffectivePrice * Quantity;
+    public decimal TotalPrice => Product.EffectivePrice * _Quantity;
 
     public string TotalPriceText => $"{TotalPrice:F0} EGP";
 
