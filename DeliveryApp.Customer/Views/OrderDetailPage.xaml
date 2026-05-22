@@ -12,12 +12,12 @@
 
         <!-- Header with Back Button -->
         <Grid Grid.Row="0" Padding="16,52,16,12" ColumnDefinitions="44,*">
-            <Label Grid.Column="0" Text="←" FontFamily="CairoBold" FontSize="24" TextColor="#212121"
+            <Image Grid.Column="0" Source="icon_back.png" WidthRequest="38" HeightRequest="38"
                    VerticalOptions="Center">
-                <Label.GestureRecognizers>
+                <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-                </Label.GestureRecognizers>
-            </Label>
+                </Image.GestureRecognizers>
+            </Image>
             <Label Grid.Column="1" Text="{loc:Loc Key=OrderDetails}" FontFamily="CairoBold" FontSize="22"
                    TextColor="#212121" HorizontalOptions="Center" VerticalOptions="Center"/>
         </Grid>

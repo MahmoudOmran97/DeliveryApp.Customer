@@ -11,11 +11,11 @@
         <VerticalStackLayout Padding="28,56,28,40" Spacing="16">
 
             <HorizontalStackLayout>
-                <Label Text="←" FontSize="24" TextColor="#212121" VerticalOptions="Center">
-                    <Label.GestureRecognizers>
+                <Image Source="icon_back.png" WidthRequest="38" HeightRequest="38" VerticalOptions="Center">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-                    </Label.GestureRecognizers>
-                </Label>
+                    </Image.GestureRecognizers>
+                </Image>
             </HorizontalStackLayout>
 
             <Label Text="{loc:Loc Key=CreateAccount}" FontFamily="CairoBold" FontSize="28" TextColor="#212121"/>

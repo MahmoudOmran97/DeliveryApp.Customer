@@ -12,12 +12,12 @@
 
         <!-- Header -->
         <Grid Grid.Row="0" Padding="16,52,16,12" ColumnDefinitions="44,*,Auto">
-            <Label Grid.Column="0" Text="←" FontFamily="CairoBold" FontSize="24" TextColor="#212121"
-                   VerticalOptions="Center">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-                </Label.GestureRecognizers>
-            </Label>
+            <ImageButton Grid.Column="0"
+                         Source="icon_back.png"
+                         WidthRequest="38" HeightRequest="38"
+                         BackgroundColor="Transparent"
+                         VerticalOptions="Center"
+                         Command="{Binding GoBackCommand}"/>
             <Label Grid.Column="1" Text="{loc:Loc Key=MyCart}" FontFamily="CairoBold" FontSize="22"
                    TextColor="#212121" HorizontalOptions="Center" VerticalOptions="Center"/>
             <Label Grid.Column="2" Text="{loc:Loc Key=ClearAll}" FontFamily="CairoRegular" FontSize="13"
@@ -40,48 +40,55 @@
         </VerticalStackLayout>
 
         <!-- Items -->
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None"
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Items}"
+                        SelectionMode="None"
                         IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}"
                         Margin="16,0">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="m:CartItem">
                     <Border Style="{StaticResource Card}" Margin="0,0,0,12">
                         <Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
+
+                            <!-- Product image placeholder -->
                             <Border Grid.Column="0" BackgroundColor="#F0F0F0"
                                     StrokeShape="RoundRectangle 10" Stroke="Transparent" HeightRequest="64">
-                                <Label Text="🍛" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                <Label Text="🍛" FontSize="30"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
                             </Border>
+
+                            <!-- Name + price -->
                             <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
-                                <Label Text="{Binding Product.Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
-                                <Label Text="{Binding TotalPriceText}" FontFamily="CairoBold" FontSize="14" TextColor="#FF5722"/>
+                                <Label Text="{Binding Product.Name}"
+                                       FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+                                <Label Text="{Binding TotalPriceText}"
+                                       FontFamily="CairoBold" FontSize="14" TextColor="#FF5722"/>
                             </VerticalStackLayout>
-                            <!-- Qty Controls -->
+
+                            <!-- ✅ Qty Controls — ImageButton works reliably inside CollectionView -->
                             <HorizontalStackLayout Grid.Column="2" Spacing="10" VerticalOptions="Center">
-                                <Border BackgroundColor="#EEEEEE" StrokeShape="RoundRectangle 8"
-                                        Stroke="Transparent" WidthRequest="32" HeightRequest="32">
-                                    <Label Text="−" FontFamily="CairoBold" FontSize="18"
-                                           HorizontalOptions="Center" VerticalOptions="Center">
-                                        <Label.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CartViewModel}}, Path=DecCommand}"
-                                                CommandParameter="{Binding .}"/>
-                                        </Label.GestureRecognizers>
-                                    </Label>
-                                </Border>
-                                <Label Text="{Binding Quantity}" FontFamily="CairoBold" FontSize="16"
-                                       TextColor="#212121" VerticalOptions="Center" WidthRequest="22"
+
+                                <ImageButton Source="icon_minus.png"
+                                             WidthRequest="34" HeightRequest="34"
+                                             BackgroundColor="Transparent"
+                                             Aspect="AspectFit"
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CartViewModel}}, Path=DecCommand}"
+                                             CommandParameter="{Binding .}"/>
+
+                                <Label Text="{Binding Quantity}"
+                                       FontFamily="CairoBold" FontSize="18"
+                                       TextColor="#212121"
+                                       VerticalOptions="Center"
+                                       WidthRequest="26"
                                        HorizontalTextAlignment="Center"/>
-                                <Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 8"
-                                        Stroke="Transparent" WidthRequest="32" HeightRequest="32">
-                                    <Label Text="+" FontFamily="CairoBold" FontSize="18" TextColor="White"
-                                           HorizontalOptions="Center" VerticalOptions="Center">
-                                        <Label.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CartViewModel}}, Path=IncCommand}"
-                                                CommandParameter="{Binding .}"/>
-                                        </Label.GestureRecognizers>
-                                    </Label>
-                                </Border>
+
+                                <ImageButton Source="icon_plus.png"
+                                             WidthRequest="34" HeightRequest="34"
+                                             BackgroundColor="Transparent"
+                                             Aspect="AspectFit"
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CartViewModel}}, Path=IncCommand}"
+                                             CommandParameter="{Binding .}"/>
+
                             </HorizontalStackLayout>
                         </Grid>
                     </Border>
@@ -109,7 +116,8 @@
                         </Label.FormattedText>
                     </Label>
                 </Grid>
-                <Button Text="{loc:Loc Key=ProceedToCheckout}" Command="{Binding CheckoutCommand}"
+                <Button Text="{loc:Loc Key=ProceedToCheckout}"
+                        Command="{Binding CheckoutCommand}"
                         Style="{StaticResource PrimaryBtn}"/>
             </VerticalStackLayout>
         </Border>

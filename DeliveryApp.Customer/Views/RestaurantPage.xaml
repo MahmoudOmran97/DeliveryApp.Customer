@@ -26,25 +26,12 @@
 
             <!-- Back -->
 
-            <Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
-
-                    WidthRequest="42" HeightRequest="42" Margin="16,48,0,0"
-
-                    HorizontalOptions="Start" VerticalOptions="Start">
-
-                <Label Text="←" FontFamily="CairoBold" FontSize="22" TextColor="#212121"
-
-                       HorizontalOptions="Center" VerticalOptions="Center">
-
-                    <Label.GestureRecognizers>
-
-                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-
-                    </Label.GestureRecognizers>
-
-                </Label>
-
-            </Border>
+            <Image Source="icon_back.png" WidthRequest="42" HeightRequest="42"
+                   Margin="16,48,0,0" HorizontalOptions="Start" VerticalOptions="Start">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                </Image.GestureRecognizers>
+            </Image>
 
             <!-- Cart -->
 
@@ -208,29 +195,14 @@
 
                                                         <!-- Add Button -->
 
-                                                        <Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 10"
-
-                                                                Stroke="Transparent" WidthRequest="30" HeightRequest="30"
-
-                                                                HorizontalOptions="End" VerticalOptions="End">
-
-                                                            <Label Text="+" TextColor="White" FontFamily="CairoBold" FontSize="20"
-
-                                                                   HorizontalOptions="Center" VerticalOptions="Center">
-
-                                                                <Label.GestureRecognizers>
-
-                                                                    <TapGestureRecognizer
-
-                                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RestaurantViewModel}}, Path=AddToCartCommand}"
-
-                                                                        CommandParameter="{Binding .}"/>
-
-                                                                </Label.GestureRecognizers>
-
-                                                            </Label>
-
-                                                        </Border>
+                                                        <Image Source="icon_plus.png" WidthRequest="34" HeightRequest="34"
+                                       HorizontalOptions="End" VerticalOptions="End">
+                                                            <Image.GestureRecognizers>
+                                                                <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RestaurantViewModel}}, Path=AddToCartCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                                            </Image.GestureRecognizers>
+                                                        </Image>
 
                                                     </Grid>
 

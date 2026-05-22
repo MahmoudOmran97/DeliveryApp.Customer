@@ -7,82 +7,82 @@
              x:DataType="vm:OrderTrackingViewModel"
              Shell.NavBarIsVisible="False">
 
-	<Grid RowDefinitions="*,300">
+    <Grid RowDefinitions="*,300">
 
-		<!-- ✅ ContentView placeholder - هنحط الـ Map فيه من الكود -->
-		<ContentView x:Name="MapContainer" Grid.Row="0" />
+        <!-- Map Container -->
+        <ContentView x:Name="MapContainer" Grid.Row="0" />
 
-		<!-- Back Button -->
-		<Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
+        <!-- Back Button — FIXED: now uses GoBackCommand from ViewModel -->
+        <Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
                 WidthRequest="44" HeightRequest="44" Margin="16,52,0,0"
                 HorizontalOptions="Start" VerticalOptions="Start">
-			<Label Text="←" FontFamily="CairoBold" FontSize="22" TextColor="#212121"
+            <Image Source="icon_back.png" WidthRequest="30" HeightRequest="30"
                    HorizontalOptions="Center" VerticalOptions="Center">
-				<Label.GestureRecognizers>
-					<TapGestureRecognizer Command="{Binding Source={x:Static Shell.Current}, Path=GoToAsync}" CommandParameter=".."/>
-				</Label.GestureRecognizers>
-			</Label>
-		</Border>
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                </Image.GestureRecognizers>
+            </Image>
+        </Border>
 
-		<!-- Info Panel - زي ما هو -->
-		<Border Grid.Row="1" BackgroundColor="White" StrokeShape="RoundRectangle 26,26,0,0" Stroke="Transparent">
-			<Border.Shadow>
-				<Shadow Brush="Black" Offset="0,-4" Opacity="0.1" Radius="16"/>
-			</Border.Shadow>
-			<ScrollView>
-				<VerticalStackLayout Padding="22,18" Spacing="16">
-					<BoxView BackgroundColor="#E0E0E0" HeightRequest="4" WidthRequest="44"
+        <!-- Info Panel -->
+        <Border Grid.Row="1" BackgroundColor="White" StrokeShape="RoundRectangle 26,26,0,0" Stroke="Transparent">
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="0,-4" Opacity="0.1" Radius="16"/>
+            </Border.Shadow>
+            <ScrollView>
+                <VerticalStackLayout Padding="22,18" Spacing="16">
+                    <BoxView BackgroundColor="#E0E0E0" HeightRequest="4" WidthRequest="44"
                              HorizontalOptions="Center" CornerRadius="2"/>
-					<Label Text="{Binding StatusMsg}" FontFamily="CairoBold" FontSize="17"
+                    <Label Text="{Binding StatusMsg}" FontFamily="CairoBold" FontSize="17"
                            TextColor="#212121" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
-					<ProgressBar Progress="{Binding Progress}" ProgressColor="#FF5722"
+                    <ProgressBar Progress="{Binding Progress}" ProgressColor="#FF5722"
                                  BackgroundColor="#EEEEEE" HeightRequest="8"/>
-					<Grid ColumnDefinitions="*,*,*,*,*">
-						<VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="3">
-							<Label Text="📋" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_Placed}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-						</VerticalStackLayout>
-						<VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="3">
-							<Label Text="✅" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_Accepted}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-						</VerticalStackLayout>
-						<VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="3">
-							<Label Text="🍳" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_Cooking}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-						</VerticalStackLayout>
-						<VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="3">
-							<Label Text="🛵" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_OnWay}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-						</VerticalStackLayout>
-						<VerticalStackLayout Grid.Column="4" HorizontalOptions="Center" Spacing="3">
-							<Label Text="🎉" FontSize="18" HorizontalOptions="Center"/>
-							<Label Text="{loc:Loc Key=Step_Delivered}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
-						</VerticalStackLayout>
-					</Grid>
-					<Border BackgroundColor="#F8F9FA" StrokeShape="RoundRectangle 14"
+                    <Grid ColumnDefinitions="*,*,*,*,*">
+                        <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="3">
+                            <Label Text="📋" FontSize="18" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_Placed}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="3">
+                            <Label Text="✅" FontSize="18" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_Accepted}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="3">
+                            <Label Text="🍳" FontSize="18" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_Cooking}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="3">
+                            <Label Text="🛵" FontSize="18" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_OnWay}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="4" HorizontalOptions="Center" Spacing="3">
+                            <Label Text="🎉" FontSize="18" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_Delivered}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Border BackgroundColor="#F8F9FA" StrokeShape="RoundRectangle 14"
                             Stroke="Transparent" Padding="14" IsVisible="{Binding HasDriver}">
-						<Grid ColumnDefinitions="52,*,44">
-							<Border Grid.Column="0" BackgroundColor="#FF5722" StrokeShape="RoundRectangle 26"
+                        <Grid ColumnDefinitions="52,*,44">
+                            <Border Grid.Column="0" BackgroundColor="#FF5722" StrokeShape="RoundRectangle 26"
                                     Stroke="Transparent" WidthRequest="52" HeightRequest="52">
-								<Label Text="🚴" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center"/>
-							</Border>
-							<VerticalStackLayout Grid.Column="1" Margin="12,0" Spacing="3" VerticalOptions="Center">
-								<Label Text="{Binding Order.Driver.Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
-								<HorizontalStackLayout Spacing="3">
-									<Label Text="⭐" FontSize="11" VerticalOptions="Center"/>
-									<Label Text="{Binding Order.Driver.Rating, StringFormat='{0:F1}'}"
+                                <Label Text="🚴" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Margin="12,0" Spacing="3" VerticalOptions="Center">
+                                <Label Text="{Binding Order.Driver.Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+                                <HorizontalStackLayout Spacing="3">
+                                    <Label Text="⭐" FontSize="11" VerticalOptions="Center"/>
+                                    <Label Text="{Binding Order.Driver.Rating, StringFormat='{0:F1}'}"
                                            FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
-								</HorizontalStackLayout>
-							</VerticalStackLayout>
-							<Border Grid.Column="2" BackgroundColor="#E8F5E9" StrokeShape="RoundRectangle 22"
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                            <Border Grid.Column="2" BackgroundColor="#E8F5E9" StrokeShape="RoundRectangle 22"
                                     Stroke="Transparent" WidthRequest="44" HeightRequest="44">
-								<Label Text="📞" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
-							</Border>
-						</Grid>
-					</Border>
-				</VerticalStackLayout>
-			</ScrollView>
-		</Border>
+                                <Label Text="📞" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Border>
 
-	</Grid>
+    </Grid>
 </ContentPage>
