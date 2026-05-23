@@ -66,3 +66,18 @@ public class IsReadToColorConverter : IValueConverter
 
 }
 
+
+// null or empty string → false, any text → true
+// Pass ConverterParameter="invert" to flip: null → true (show placeholder), has value → false
+public class NullOrEmptyToBoolConverter : IValueConverter
+{
+    public object Convert(object? v, Type t, object? p, CultureInfo c)
+    {
+        bool hasValue = !string.IsNullOrEmpty(v as string);
+        bool invert = p is string s && s == "invert";
+        return invert ? !hasValue : hasValue;
+    }
+
+    public object ConvertBack(object? v, Type t, object? p, CultureInfo c)
+        => throw new NotImplementedException();
+}

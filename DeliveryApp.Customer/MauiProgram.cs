@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using FFImageLoading.Maui;
 
 using DeliveryApp.Customer.Services;
 
@@ -31,6 +32,7 @@ public static class MauiProgram
             .UseMauiCommunityToolkit()
 
            .UseSkiaSharp()
+           .UseFFImageLoading()
 
             .ConfigureFonts(fonts =>
 

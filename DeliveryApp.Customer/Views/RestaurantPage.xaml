@@ -9,6 +9,7 @@
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
 
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
 
              x:Class="DeliveryApp.Customer.Views.RestaurantPage"
 
@@ -22,7 +23,15 @@
 
         <Grid Grid.Row="0" BackgroundColor="#EEEEEE">
 
-            <Label Text="🍽️" FontSize="80" HorizontalOptions="Center" VerticalOptions="Center"/>
+            <!-- Fallback placeholder (shown when no cover image) -->
+            <Label Text="🍽️" FontSize="80" HorizontalOptions="Center" VerticalOptions="Center"
+                   IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}" />
+
+            <!-- Actual restaurant cover image -->
+            <ff:CachedImage Source="{Binding Restaurant.FullCoverImageUrl}"
+                   Aspect="AspectFill"
+                   CacheDuration="7"
+                   IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}}" />
 
             <!-- Back -->
 
@@ -184,13 +193,19 @@
                                                     <Grid Grid.Column="1">
 
                                                         <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 10"
-
                                                                 Stroke="Transparent" HeightRequest="84">
-
-                                                            <Label Text="🍛" FontSize="36"
-
-                                                                   HorizontalOptions="Center" VerticalOptions="Center"/>
-
+                                                            <Grid>
+                                                                <!-- Placeholder emoji -->
+                                                                <Label Text="🍛" FontSize="36"
+                                                                       HorizontalOptions="Center" VerticalOptions="Center"
+                                                                       IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}" />
+                                                                <!-- Actual product image -->
+                                                                <ff:CachedImage Source="{Binding FullImageUrl}"
+                                                                       Aspect="AspectFill"
+                                                                       HeightRequest="84" WidthRequest="84"
+                                                                       CacheDuration="7"
+                                                                       IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}" />
+                                                            </Grid>
                                                         </Border>
 
                                                         <!-- Add Button -->

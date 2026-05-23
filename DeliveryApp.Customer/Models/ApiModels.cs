@@ -82,6 +82,19 @@ public class Restaurant
 
     public double? DistanceKm { get; set; }
 
+    // ── Image URL helpers ────────────────────────────────────────────────────
+    private const string _imgBase = "https://deliveryappapi.runasp.net";
+
+    private static string? BuildUrl(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return null;
+        if (url.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return url;
+        return _imgBase + (url.StartsWith("/") ? url : "/" + url);
+    }
+
+    public string? FullImageUrl => BuildUrl(ImageUrl);
+    public string? FullCoverImageUrl => BuildUrl(CoverImageUrl);
+
     public string RatingText => $"{Rating:F1} ★";
 
     public string DeliveryFeeText => DeliveryFee == 0 ? "Free Delivery" : $"{DeliveryFee:F0} EGP";
@@ -134,6 +147,17 @@ public class Product
 
     public bool IsAvailable { get; set; }
 
+    private const string _pImgBase = "https://deliveryappapi.runasp.net";
+    public string? FullImageUrl
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(ImageUrl)) return null;
+            if (ImageUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return ImageUrl;
+            return _pImgBase + (ImageUrl.StartsWith("/") ? ImageUrl : "/" + ImageUrl);
+        }
+    }
+
     public decimal EffectivePrice => DiscountedPrice ?? Price;
 
     public bool HasDiscount => DiscountedPrice.HasValue && DiscountedPrice < Price;
@@ -157,7 +181,7 @@ public partial class CartItem : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalPrice))]
     [NotifyPropertyChangedFor(nameof(TotalPriceText))]
-   private int _Quantity;
+    private int _Quantity;
 
     public string? Notes { get; set; }
 
@@ -386,4 +410,3 @@ public class PagedResult<T>
     public List<T> Data { get; set; } = new();
 
 }
-

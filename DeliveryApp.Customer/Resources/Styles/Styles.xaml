@@ -16,6 +16,8 @@
 
     <conv:IsReadToColorConverter x:Key="IsReadColor" />
 
+    <conv:NullOrEmptyToBoolConverter x:Key="HasImage" />
+
     <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
 
         <Setter Property="BackgroundColor" Value="{StaticResource Background}" />
