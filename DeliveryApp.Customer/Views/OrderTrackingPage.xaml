@@ -12,7 +12,7 @@
         <!-- Map Container -->
         <ContentView x:Name="MapContainer" Grid.Row="0" />
 
-        <!-- Back Button — FIXED: now uses GoBackCommand from ViewModel -->
+        <!-- Back Button -->
         <Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
                 WidthRequest="44" HeightRequest="44" Margin="16,52,0,0"
                 HorizontalOptions="Start" VerticalOptions="Start">
@@ -22,6 +22,43 @@
                     <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
                 </Image.GestureRecognizers>
             </Image>
+        </Border>
+
+        <!-- Debug Label (امسحه بعد ما تتأكد إن كل حاجة شغالة) -->
+        <Border BackgroundColor="#CC000000" StrokeShape="RoundRectangle 8" Stroke="Transparent"
+                Padding="8,4" Margin="16,52,0,0"
+                HorizontalOptions="End" VerticalOptions="Start">
+            <Label x:Name="DebugLabel"
+                   Text="loading..."
+                   TextColor="White"
+                   FontSize="10"
+                   FontFamily="CairoRegular"/>
+        </Border>
+
+        <!-- Map Legend -->
+        <Border BackgroundColor="#EEFFFFFF" StrokeShape="RoundRectangle 12" Stroke="Transparent"
+                Padding="10,8" Margin="0,52,12,0"
+                HorizontalOptions="End" VerticalOptions="End">
+            <VerticalStackLayout Spacing="5">
+                <HorizontalStackLayout Spacing="6">
+                    <BoxView Color="#2196F3" WidthRequest="14" HeightRequest="14"
+                             CornerRadius="7" VerticalOptions="Center"/>
+                    <Label Text="أنت" FontSize="11" FontFamily="CairoRegular" TextColor="#212121"
+                           VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="6">
+                    <BoxView Color="#4CAF50" WidthRequest="14" HeightRequest="14"
+                             CornerRadius="7" VerticalOptions="Center"/>
+                    <Label Text="المطعم" FontSize="11" FontFamily="CairoRegular" TextColor="#212121"
+                           VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="6">
+                    <BoxView Color="#FF5722" WidthRequest="14" HeightRequest="14"
+                             CornerRadius="7" VerticalOptions="Center"/>
+                    <Label Text="الدليفري" FontSize="11" FontFamily="CairoRegular" TextColor="#212121"
+                           VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
         </Border>
 
         <!-- Info Panel -->

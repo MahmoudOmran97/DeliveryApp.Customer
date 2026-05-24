@@ -53,9 +53,24 @@ public partial class CheckoutViewModel : BaseViewModel
         IsBusy = true;
         try
         {
+            // ── جيب الموقع الحقيقي للعميل ──────────────────────────────
+            double lat = 30.0444, lng = 31.2357; // fallback لو الـ GPS مش شغال
+            try
+            {
+                var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(8));
+                var location = await Geolocation.Default.GetLocationAsync(request);
+                if (location != null)
+                {
+                    lat = location.Latitude;
+                    lng = location.Longitude;
+                }
+            }
+            catch { /* لو الـ GPS رفض نكمل بالـ fallback */ }
+            // ────────────────────────────────────────────────────────────
+
             var order = await _api.PlaceOrderAsync(
                 _cart.RestaurantId!.Value, _cart.Items.ToList(),
-                Address, 30.0444, 31.2357, Notes, PaymentMethod);
+                Address, lat, lng, Notes, PaymentMethod);
 
             if (order != null)
             {
@@ -68,11 +83,9 @@ public partial class CheckoutViewModel : BaseViewModel
         }
         catch (ApiException ex)
         {
-            // ← دلوقتي بيطلع السبب الحقيقي: "Restaurant is closed", "Minimum order is X EGP" إلخ
             await AlertAsync(ex.Message);
         }
         finally { IsBusy = false; }
     }
 
 }
-

@@ -345,6 +345,10 @@ public class OrderRestaurantInfo
 
     public string? Phone { get; set; }
 
+    public double Latitude { get; set; }
+
+    public double Longitude { get; set; }
+
 }
 
 // ─── Notifications ───────────────────────────────────────────────────────────

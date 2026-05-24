@@ -37,6 +37,14 @@ public partial class OrderTrackingViewModel : BaseViewModel
 
     [ObservableProperty] bool _hasDriver;
 
+    // موقع العميل (وجهة التوصيل)
+    [ObservableProperty] double _customerLat;
+    [ObservableProperty] double _customerLng;
+
+    // موقع المطعم
+    [ObservableProperty] double _restaurantLat;
+    [ObservableProperty] double _restaurantLng;
+
     public event Action? MapUpdated;
 
     public OrderTrackingViewModel(ApiService api, SignalRService hub, AuthService auth)
@@ -93,6 +101,23 @@ public partial class OrderTrackingViewModel : BaseViewModel
 
         RefreshStatus();
 
+        // موقع العميل (وجهة التوصيل)
+        if (Order.DeliveryLatitude != 0 && Order.DeliveryLongitude != 0)
+        {
+            CustomerLat = Order.DeliveryLatitude;
+            CustomerLng = Order.DeliveryLongitude;
+        }
+
+        // موقع المطعم
+        if (Order.Restaurant != null && Order.Restaurant.Latitude != 0)
+        {
+            RestaurantLat = Order.Restaurant.Latitude;
+            RestaurantLng = Order.Restaurant.Longitude;
+        }
+
+        // بعث MapUpdated عشان تتعمل الـ pins والـ route
+        MapUpdated?.Invoke();
+
         if (Order.Driver?.CurrentLatitude.HasValue == true)
 
         {
@@ -131,4 +156,3 @@ public partial class OrderTrackingViewModel : BaseViewModel
     }
 
 }
-

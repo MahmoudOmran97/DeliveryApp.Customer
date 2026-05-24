@@ -5,6 +5,7 @@ using Mapsui.Projections;
 using Mapsui.Styles;
 using Mapsui.Tiling;
 using Mapsui.UI.Maui;
+using System.Text.Json;
 
 namespace DeliveryApp.Customer.Views;
 
@@ -12,8 +13,14 @@ public partial class OrderTrackingPage : ContentPage
 {
     readonly OrderTrackingViewModel _vm;
     readonly Mapsui.Map _map = new();
-    readonly MapControl _mapControl = new();  // ✅ بنعمله هنا مش في XAML
+    readonly MapControl _mapControl = new();
+
     MemoryLayer? _driverLayer;
+    MemoryLayer? _customerLayer;
+    MemoryLayer? _restaurantLayer;
+    MemoryLayer? _routeLayer;
+
+    bool _staticPinsDrawn = false;
 
     public OrderTrackingPage(OrderTrackingViewModel vm)
     {
@@ -22,54 +29,225 @@ public partial class OrderTrackingPage : ContentPage
         BindingContext = vm;
 
         SetupMap();
-        vm.MapUpdated += RefreshDriverPin;
+        vm.MapUpdated += OnMapUpdated;
     }
 
     void SetupMap()
     {
-        _map.Layers.Add(OpenStreetMap.CreateTileLayer());
+        // ── شغّل الـ logging عشان تشوف لو في errors في تحميل الـ tiles ──────
+        Mapsui.Logging.Logger.LogDelegate = (level, msg, ex) =>
+            System.Diagnostics.Debug.WriteLine($"[Mapsui/{level}] {msg} {ex?.Message}");
 
-        // ✅ أضف السطر ده يوقف الـ logging widget
-        Mapsui.Logging.Logger.LogDelegate = null;
+        _map.Layers.Add(OpenStreetMap.CreateTileLayer());
 
         _mapControl.Map = _map;
         MapContainer.Content = _mapControl;
 
-        var (x, y) = SphericalMercator.FromLonLat(32.8998, 24.0889);
-        _map.Navigator.CenterOnAndZoomTo(new MPoint(x, y), _map.Navigator.Resolutions[14]);
+        // center على القاهرة كـ fallback
+        var (x, y) = SphericalMercator.FromLonLat(31.2357, 30.0444);
+        _map.Navigator.CenterOnAndZoomTo(new MPoint(x, y), _map.Navigator.Resolutions[13]);
     }
-    void RefreshDriverPin()
+
+    protected override void OnAppearing()
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        base.OnAppearing();
+        // اجبر الـ map يعيد رسم الـ tiles لما الصفحة تبان
+        _mapControl.Refresh();
+    }
+
+    // ─── بيتنادى لما الـ VM يلود الأوردر أو يتحدث موقع الدرايفر ─────────────
+    void OnMapUpdated()
+    {
+        MainThread.BeginInvokeOnMainThread(async () =>
         {
-            if (_driverLayer != null)
-                _map.Layers.Remove(_driverLayer);
+            // ── Debug: اطبع القيم في Output عشان تعرف إيه الجاي ─────────────
+            System.Diagnostics.Debug.WriteLine(
+                $"[Map] Customer: {_vm.CustomerLat},{_vm.CustomerLng} | " +
+                $"Restaurant: {_vm.RestaurantLat},{_vm.RestaurantLng} | " +
+                $"Driver: {_vm.DriverLat},{_vm.DriverLng} HasDriver={_vm.HasDriver}");
 
-            var (x, y) = SphericalMercator.FromLonLat(_vm.DriverLng, _vm.DriverLat);
-            var point = new MPoint(x, y);
+            // ── اعرض القيم على الشاشة مؤقتاً ─────────────────────────────────
+            DebugLabel.Text =
+                $"C:{_vm.CustomerLat:F4},{_vm.CustomerLng:F4}\n" +
+                $"R:{_vm.RestaurantLat:F4},{_vm.RestaurantLng:F4}";
 
-            _driverLayer = new MemoryLayer
+            // ── Pins ثابتة: ارسمهم بمجرد ما عندنا أي إحداثيات ──────────────
+            if (!_staticPinsDrawn)
             {
-                Name = "DriverLayer",
-                Features = new[] { new PointFeature(point) },
-                Style = new SymbolStyle
+                bool hasCustomer = _vm.CustomerLat != 0;
+                bool hasRestaurant = _vm.RestaurantLat != 0;
+
+                if (hasCustomer || hasRestaurant)
                 {
-                    SymbolScale = 0.8,
-                    Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.FromString("#FF5722"))
+                    _staticPinsDrawn = true;
+
+                    if (hasCustomer)
+                        DrawCustomerPin(_vm.CustomerLat, _vm.CustomerLng);
+
+                    if (hasRestaurant)
+                        DrawRestaurantPin(_vm.RestaurantLat, _vm.RestaurantLng);
+
+                    // Route بس لو عندنا الاتنين
+                    if (hasCustomer && hasRestaurant)
+                    {
+                        await DrawRouteAsync(
+                            _vm.RestaurantLat, _vm.RestaurantLng,
+                            _vm.CustomerLat, _vm.CustomerLng);
+
+                        FitBounds(_vm.RestaurantLat, _vm.RestaurantLng,
+                                  _vm.CustomerLat, _vm.CustomerLng);
+                    }
+                    else
+                    {
+                        // سنتر على اللي موجود
+                        double lat = hasCustomer ? _vm.CustomerLat : _vm.RestaurantLat;
+                        double lng = hasCustomer ? _vm.CustomerLng : _vm.RestaurantLng;
+                        var (cx, cy) = SphericalMercator.FromLonLat(lng, lat);
+                        _map.Navigator.CenterOnAndZoomTo(new MPoint(cx, cy), _map.Navigator.Resolutions[15]);
+                    }
+                }
+            }
+
+            // ── Pin الدرايفر (بيتحرك) ────────────────────────────────────────
+            if (_vm.HasDriver)
+                DrawDriverPin(_vm.DriverLat, _vm.DriverLng);
+
+            _mapControl.Refresh();
+        });
+    }
+
+    // ─── Pin العميل (أزرق) ───────────────────────────────────────────────────
+    void DrawCustomerPin(double lat, double lng)
+    {
+        if (_customerLayer != null) _map.Layers.Remove(_customerLayer);
+        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
+        _customerLayer = new MemoryLayer
+        {
+            Name = "CustomerLayer",
+            Features = new[] { new PointFeature(new MPoint(x, y)) },
+            Style = new SymbolStyle
+            {
+                SymbolScale = 1.0,
+                Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.FromString("#2196F3")),
+                Outline = new Pen(Mapsui.Styles.Color.White, 2)
+            }
+        };
+        _map.Layers.Add(_customerLayer);
+    }
+
+    // ─── Pin المطعم (أخضر) ───────────────────────────────────────────────────
+    void DrawRestaurantPin(double lat, double lng)
+    {
+        if (_restaurantLayer != null) _map.Layers.Remove(_restaurantLayer);
+        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
+        _restaurantLayer = new MemoryLayer
+        {
+            Name = "RestaurantLayer",
+            Features = new[] { new PointFeature(new MPoint(x, y)) },
+            Style = new SymbolStyle
+            {
+                SymbolScale = 1.1,
+                Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.FromString("#4CAF50")),
+                Outline = new Pen(Mapsui.Styles.Color.White, 2)
+            }
+        };
+        _map.Layers.Add(_restaurantLayer);
+    }
+
+    // ─── Pin الدرايفر (برتقالي) ──────────────────────────────────────────────
+    void DrawDriverPin(double lat, double lng)
+    {
+        if (_driverLayer != null) _map.Layers.Remove(_driverLayer);
+        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
+        _driverLayer = new MemoryLayer
+        {
+            Name = "DriverLayer",
+            Features = new[] { new PointFeature(new MPoint(x, y)) },
+            Style = new SymbolStyle
+            {
+                SymbolScale = 0.9,
+                Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.FromString("#FF5722")),
+                Outline = new Pen(Mapsui.Styles.Color.White, 2)
+            }
+        };
+        _map.Layers.Add(_driverLayer);
+    }
+
+    // ─── Route من OSRM (مجاني, بدون API key) ─────────────────────────────────
+    async Task DrawRouteAsync(double fromLat, double fromLng, double toLat, double toLng)
+    {
+        try
+        {
+            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+            var url = $"https://router.project-osrm.org/route/v1/driving/" +
+                      $"{fromLng},{fromLat};{toLng},{toLat}" +
+                      $"?overview=full&geometries=geojson";
+
+            var json = await http.GetStringAsync(url);
+            var doc = JsonDocument.Parse(json);
+
+            var coords = doc.RootElement
+                            .GetProperty("routes")[0]
+                            .GetProperty("geometry")
+                            .GetProperty("coordinates");
+
+            var points = new List<MPoint>();
+            foreach (var c in coords.EnumerateArray())
+            {
+                var (mx, my) = SphericalMercator.FromLonLat(c[0].GetDouble(), c[1].GetDouble());
+                points.Add(new MPoint(mx, my));
+            }
+
+            if (points.Count < 2) return;
+            if (_routeLayer != null) _map.Layers.Remove(_routeLayer);
+
+            var lineString = new NetTopologySuite.Geometries.LineString(
+                points.Select(p => new NetTopologySuite.Geometries.Coordinate(p.X, p.Y)).ToArray());
+
+            _routeLayer = new MemoryLayer
+            {
+                Name = "RouteLayer",
+                Features = new[] { new Mapsui.Nts.GeometryFeature(lineString) },
+                Style = new VectorStyle
+                {
+                    Line = new Pen(Mapsui.Styles.Color.FromString("#FF5722"), 4)
                 }
             };
 
-            _map.Layers.Add(_driverLayer);
-            _map.Navigator.CenterOnAndZoomTo(point, _map.Navigator.Resolutions[15]);
-            _mapControl.Refresh();
-        });
+            _map.Layers.Insert(1, _routeLayer); // تحت الـ pins فوق الـ tiles
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Route] Failed: {ex.Message}");
+        }
+    }
+
+    // ─── اضبط الـ viewport يشمل نقطتين ──────────────────────────────────────
+    void FitBounds(double lat1, double lng1, double lat2, double lng2)
+    {
+        var (x1, y1) = SphericalMercator.FromLonLat(lng1, lat1);
+        var (x2, y2) = SphericalMercator.FromLonLat(lng2, lat2);
+
+        var dist = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
+        int zoom = dist switch
+        {
+            < 2000 => 16,
+            < 5000 => 15,
+            < 10000 => 14,
+            < 20000 => 13,
+            < 50000 => 12,
+            _ => 11
+        };
+
+        _map.Navigator.CenterOnAndZoomTo(
+            new MPoint((x1 + x2) / 2, (y1 + y2) / 2),
+            _map.Navigator.Resolutions[zoom]);
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        _vm.MapUpdated -= RefreshDriverPin;
+        _vm.MapUpdated -= OnMapUpdated;
         _vm.Cleanup();
-
     }
 }
