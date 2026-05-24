@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             x:Class="DeliveryApp.Customer.Views.LocationPickerPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
+
+	<Grid RowDefinitions="Auto,*,Auto">
+		<!-- الهيدر -->
+		<Grid Grid.Row="0" Padding="16,52,16,12" ColumnDefinitions="44,*,44" BackgroundColor="White">
+			<Image Grid.Column="0" Source="icon_back.png" WidthRequest="38" HeightRequest="38">
+				<Image.GestureRecognizers>
+					<TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+				</Image.GestureRecognizers>
+			</Image>
+			<Label Grid.Column="1" Text="{loc:Loc Key=PickLocation}" FontFamily="CairoBold" FontSize="20"
+                   TextColor="#212121" HorizontalOptions="Center" VerticalOptions="Center"/>
+		</Grid>
+
+		<!-- الخريطة -->
+		<mapsui:MapControl x:Name="MapControl" Grid.Row="1" />
+
+		<!-- دبوس ثابت في المركز للإرشاد -->
+		<Label Grid.Row="1" Text="📍" FontSize="48"
+               HorizontalOptions="Center" VerticalOptions="Center" ZIndex="10"/>
+
+		<!-- لوحة التأكيد السفلية -->
+		<Border Grid.Row="2" BackgroundColor="White" Padding="16,14,16,34">
+			<VerticalStackLayout Spacing="12">
+				<Label x:Name="CoordinatesLabel" Text="Tap to select location"
+                       FontFamily="CairoRegular" FontSize="13" HorizontalOptions="Center"/>
+				<Button Text="{loc:Loc Key=ConfirmLocation}"
+                        Command="{Binding ConfirmLocationCommand}"
+                        IsEnabled="{Binding IsLocationSelected}"
+                        Style="{StaticResource PrimaryBtn}"/>
+			</VerticalStackLayout>
+		</Border>
+	</Grid>
+</ContentPage>

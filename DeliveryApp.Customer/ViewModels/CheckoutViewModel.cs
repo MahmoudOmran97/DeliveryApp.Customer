@@ -2,9 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Services;
 using static DeliveryApp.Customer.Services.ApiService;
+using Microsoft.Maui.ApplicationModel;
 
 namespace DeliveryApp.Customer.ViewModels;
 
+[QueryProperty(nameof(Lat), "lat")]
+[QueryProperty(nameof(Lng), "lng")]
 public partial class CheckoutViewModel : BaseViewModel
 {
     readonly ApiService _api;
@@ -17,9 +20,15 @@ public partial class CheckoutViewModel : BaseViewModel
     [ObservableProperty] decimal _deliveryFee = 15;
     [ObservableProperty] decimal _total;
 
-    // ← الإحداثيات تيجي من الخريطة في الـ View
-    public double DeliveryLat { get; set; } = 0;
-    public double DeliveryLng { get; set; } = 0;
+    // ← الإحداثيات تيجي من الخريطة في الـ View أو من الـ GPS
+    [ObservableProperty] double _deliveryLat = 0;
+    [ObservableProperty] double _deliveryLng = 0;
+    [ObservableProperty] bool _hasLocationSelected = false;
+    [ObservableProperty] string _locationButtonText = string.Empty;
+
+    // متغيرات لاستقبال البيانات من صفحة الخريطة
+    [ObservableProperty] string _lat = "";
+    [ObservableProperty] string _lng = "";
 
     public string[] PaymentMethods { get; } = { "Cash", "Card", "Wallet" };
 
@@ -29,9 +38,75 @@ public partial class CheckoutViewModel : BaseViewModel
         _cart = cart;
         SubTotal = cart.TotalPrice;
         Total = SubTotal + DeliveryFee;
+        UpdateLocationButtonText();
     }
 
     partial void OnDeliveryFeeChanged(decimal v) => Total = SubTotal + v;
+
+    // تحديث الإحداثيات عند استقبالها من صفحة الخريطة
+    partial void OnLatChanged(string v)
+    {
+        if (double.TryParse(v, out var val)) DeliveryLat = val;
+    }
+
+    partial void OnLngChanged(string v)
+    {
+        if (double.TryParse(v, out var val)) DeliveryLng = val;
+    }
+
+    // تحديث حالة الزر عند تغير الإحداثيات
+    partial void OnDeliveryLatChanged(double v) => UpdateLocationButtonText();
+    partial void OnDeliveryLngChanged(double v) => UpdateLocationButtonText();
+
+    void UpdateLocationButtonText()
+    {
+        if (DeliveryLat != 0 && DeliveryLng != 0)
+        {
+            HasLocationSelected = true;
+            LocationButtonText = $"✓ {DeliveryLat:F4}, {DeliveryLng:F4}";
+        }
+        else
+        {
+            HasLocationSelected = false;
+            LocationButtonText = LocalizationService.Get("PickAddressOnMap");
+        }
+    }
+
+    [RelayCommand]
+    async Task UseCurrentLocation()
+    {
+        IsBusy = true;
+        try
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+            if (status != PermissionStatus.Granted)
+                status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+
+            if (status == PermissionStatus.Granted)
+            {
+                var req = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(8));
+                var loc = await Geolocation.Default.GetLocationAsync(req);
+                if (loc != null)
+                {
+                    DeliveryLat = loc.Latitude;
+                    DeliveryLng = loc.Longitude;
+                    await AlertAsync($"Location: {DeliveryLat:F4}, {DeliveryLng:F4}");
+                }
+                else
+                    await AlertAsync(LocalizationService.Get("LocationError"));
+            }
+            else
+                await AlertAsync(LocalizationService.Get("LocationPermissionDenied"));
+        }
+        catch (Exception ex) { await AlertAsync($"Error: {ex.Message}"); }
+        finally { IsBusy = false; }
+    }
+
+    [RelayCommand]
+    async Task PickLocationOnMap()
+    {
+        await Shell.Current.GoToAsync("LocationPickerPage");
+    }
 
     [RelayCommand]
     async Task PlaceOrder()

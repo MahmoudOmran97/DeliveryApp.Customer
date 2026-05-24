@@ -52,7 +52,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ProfileViewModel>();
         builder.Services.AddTransient<SupportChatViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
-
+        builder.Services.AddTransient<LocationPickerViewModel>();
         // ── Pages ─────────────────────────────────
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<SplashPage>();
@@ -69,7 +69,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ProfilePage>();
         builder.Services.AddTransient<SupportChatPage>();
         builder.Services.AddTransient<SettingsPage>();
-
+        builder.Services.AddTransient<LocationPickerPage>();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

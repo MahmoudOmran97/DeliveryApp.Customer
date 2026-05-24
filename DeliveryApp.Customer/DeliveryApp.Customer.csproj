@@ -86,6 +86,9 @@
 	  <MauiXaml Update="Views\HomePage.xaml">
 	    <Generator></Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\LocationPickerPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\LoginPage.xaml">
 	    <Generator></Generator>
 	  </MauiXaml>
