@@ -3,14 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
              x:Class="DeliveryApp.Customer.Views.OrderTrackingPage"
              x:DataType="vm:OrderTrackingViewModel"
              Shell.NavBarIsVisible="False">
 
     <Grid RowDefinitions="*,300">
 
-        <!-- Map Container -->
-        <ContentView x:Name="MapContainer" Grid.Row="0" />
+        <!-- Map مباشرة في الـ XAML بدل ContentView -->
+        <mapsui:MapControl x:Name="MapControl" Grid.Row="0" />
 
         <!-- Back Button -->
         <Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
