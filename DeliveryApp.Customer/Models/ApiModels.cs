@@ -410,3 +410,11 @@ public class PagedResult<T>
     public List<T> Data { get; set; } = new();
 
 }
+public class ChatMessage
+{
+    public string Text { get; set; } = string.Empty;
+    public bool IsFromAi { get; set; }
+    public bool IsFromUser => !IsFromAi;
+    public DateTime Time { get; set; } = DateTime.Now;
+    public string TimeDisplay => Time.ToString("hh:mm tt");
+}

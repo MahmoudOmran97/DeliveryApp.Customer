@@ -79,6 +79,8 @@ public static class MauiProgram
         builder.Services.AddTransient<NotificationsViewModel>();
 
         builder.Services.AddTransient<ProfileViewModel>();
+        builder.Services.AddTransient<SupportChatViewModel>();
+        builder.Services.AddTransient<SettingsViewModel>();
 
         // ── Pages ─────────────────────────────────
         builder.Services.AddSingleton<AppShell>();
@@ -106,6 +108,8 @@ public static class MauiProgram
         builder.Services.AddTransient<NotificationsPage>();
 
         builder.Services.AddTransient<ProfilePage>();
+        builder.Services.AddTransient<SupportChatPage>();
+        builder.Services.AddTransient<SettingsPage>();
 
 #if DEBUG
 

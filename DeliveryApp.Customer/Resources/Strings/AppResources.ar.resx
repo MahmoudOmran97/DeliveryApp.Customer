@@ -115,6 +115,15 @@
 	<data name="Tab_Alerts">
 		<value>الإشعارات</value>
 	</data>
+	<data name="Tab_Settings">
+		<value>الإعدادات</value>
+	</data>
+	<data name="Support">
+		<value>الدعم</value>
+	</data>
+	<data name="ChatWithUs">
+		<value>تحدث معنا · مدعوم بالذكاء الاصطناعي</value>
+	</data>
 	<data name="Tab_Profile">
 		<value>حسابي</value>
 	</data>
@@ -400,5 +409,15 @@
 	</data>
 	<data name="Status_Delivered">
 		<value>تم التوصيل! بالهنا والشفا 🎉</value>
+	</data>
+	<!-- Support Chat -->
+	<data name="SupportChat">
+		<value>دردشة الدعم</value>
+	</data>
+	<data name="ChatPlaceholder">
+		<value>اكتب رسالتك...</value>
+	</data>
+	<data name="AiPowered">
+		<value>مدعوم بالذكاء الاصطناعي · متاح دائمًا</value>
 	</data>
 </root>

@@ -116,6 +116,15 @@
 	<data name="Tab_Alerts">
 		<value>Alerts</value>
 	</data>
+	<data name="Tab_Settings">
+		<value>Settings</value>
+	</data>
+	<data name="Support">
+		<value>Support</value>
+	</data>
+	<data name="ChatWithUs">
+		<value>Chat with us · AI-powered</value>
+	</data>
 	<data name="Tab_Profile">
 		<value>Profile</value>
 	</data>
@@ -400,5 +409,15 @@
 	</data>
 	<data name="AboutApp">
 		<value>About App</value>
+	</data>
+	<!-- Support Chat -->
+	<data name="SupportChat">
+		<value>Support Chat</value>
+	</data>
+	<data name="ChatPlaceholder">
+		<value>Type your message...</value>
+	</data>
+	<data name="AiPowered">
+		<value>AI-powered · Always online</value>
 	</data>
 </root>
