@@ -31,13 +31,17 @@
                 HorizontalOptions="Start" VerticalOptions="Start">
             <HorizontalStackLayout Spacing="10">
                 <VerticalStackLayout>
-                    <Label Text="الوقت المتوقع" FontSize="10" FontFamily="CairoRegular" TextColor="#757575"/>
-                    <Label Text="{Binding TravelTime}" FontSize="14" FontFamily="CairoBold" TextColor="#212121"/>
+                    <Label Text="{loc:Loc Key=ETA}"
+                           FontSize="10" FontFamily="CairoRegular" TextColor="#757575"/>
+                    <Label Text="{Binding TravelTime}"
+                           FontSize="14" FontFamily="CairoBold" TextColor="#212121"/>
                 </VerticalStackLayout>
                 <BoxView Color="#E0E0E0" WidthRequest="1" VerticalOptions="Fill"/>
                 <VerticalStackLayout>
-                    <Label Text="المسافة" FontSize="10" FontFamily="CairoRegular" TextColor="#757575"/>
-                    <Label Text="{Binding Distance}" FontSize="14" FontFamily="CairoBold" TextColor="#212121"/>
+                    <Label Text="{loc:Loc Key=Distance}"
+                           FontSize="10" FontFamily="CairoRegular" TextColor="#757575"/>
+                    <Label Text="{Binding Distance}"
+                           FontSize="14" FontFamily="CairoBold" TextColor="#212121"/>
                 </VerticalStackLayout>
             </HorizontalStackLayout>
         </Border>
@@ -49,15 +53,18 @@
             <VerticalStackLayout Spacing="8">
                 <HorizontalStackLayout Spacing="8">
                     <Image Source="marker_user.png" WidthRequest="20" HeightRequest="20"/>
-                    <Label Text="أنت" FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
+                    <Label Text="{loc:Loc Key=LegendYou}"
+                           FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
                 <HorizontalStackLayout Spacing="8">
                     <Image Source="marker_restaurant.png" WidthRequest="20" HeightRequest="20"/>
-                    <Label Text="المطعم" FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
+                    <Label Text="{loc:Loc Key=LegendRestaurant}"
+                           FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
                 <HorizontalStackLayout Spacing="8">
                     <Image Source="marker_delivery.png" WidthRequest="20" HeightRequest="20"/>
-                    <Label Text="الدليفري" FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
+                    <Label Text="{loc:Loc Key=LegendDelivery}"
+                           FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
             </VerticalStackLayout>
         </Border>
@@ -80,23 +87,28 @@
                     <Grid ColumnDefinitions="*,*,*,*,*">
                         <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="3">
                             <Label Text="📋" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="طلب" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_Order}"
+                                   FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="3">
                             <Label Text="✅" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="قبول" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_Accept}"
+                                   FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="3">
                             <Label Text="🍳" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="تجهيز" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_Prepare}"
+                                   FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="3">
                             <Label Text="🛵" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="في الطريق" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_OnRoute}"
+                                   FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="4" HorizontalOptions="Center" Spacing="3">
                             <Label Text="🎉" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="وصل" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=Step_Arrived}"
+                                   FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                     </Grid>
 
@@ -109,7 +121,8 @@
                                 <Label Text="🚴" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center"/>
                             </Border>
                             <VerticalStackLayout Grid.Column="1" Margin="12,0" Spacing="3" VerticalOptions="Center">
-                                <Label Text="{Binding Order.Driver.Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+                                <Label Text="{Binding Order.Driver.Name}"
+                                       FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
                                 <HorizontalStackLayout Spacing="3">
                                     <Label Text="⭐" FontSize="11" VerticalOptions="Center"/>
                                     <Label Text="{Binding Order.Driver.Rating, StringFormat='{0:F1}'}"

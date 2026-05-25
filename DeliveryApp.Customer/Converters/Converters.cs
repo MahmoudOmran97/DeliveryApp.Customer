@@ -81,3 +81,13 @@ public class NullOrEmptyToBoolConverter : IValueConverter
     public object ConvertBack(object? v, Type t, object? p, CultureInfo c)
         => throw new NotImplementedException();
 }
+
+// bool true → Primary border/color, false → gray
+public class BoolToColorConverter : IValueConverter
+{
+    public object Convert(object? v, Type t, object? p, CultureInfo c)
+        => v is true ? Color.FromArgb("#FF5722") : Color.FromArgb("#E0E0E0");
+
+    public object ConvertBack(object? v, Type t, object? p, CultureInfo c)
+        => throw new NotImplementedException();
+}

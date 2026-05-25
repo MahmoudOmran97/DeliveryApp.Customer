@@ -9,6 +9,8 @@
     <!-- Converters (global) -->
 
     <conv:InvertedBoolConverter  x:Key="InvertBool" />
+    <conv:InvertedBoolConverter  x:Key="InvertedBoolConverter" />
+    <conv:BoolToColorConverter   x:Key="BoolToColorConverter" />
 
     <conv:IntToBoolConverter     x:Key="IntToBool" />
 
@@ -17,6 +19,35 @@
     <conv:IsReadToColorConverter x:Key="IsReadColor" />
 
     <conv:NullOrEmptyToBoolConverter x:Key="HasImage" />
+
+
+    <!-- ── Implicit styles: تمنع اللون الأزرق الافتراضي لـ MAUI ── -->
+    <Style TargetType="Label" ApplyToDerivedTypes="True">
+        <Setter Property="TextColor"  Value="{StaticResource TextPrimary}" />
+        <Setter Property="FontFamily" Value="CairoRegular" />
+    </Style>
+
+    <Style TargetType="Entry">
+        <Setter Property="TextColor"        Value="{StaticResource TextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource Gray400}" />
+        <Setter Property="FontFamily"       Value="CairoRegular" />
+        <Setter Property="BackgroundColor"  Value="Transparent" />
+    </Style>
+
+    <Style TargetType="Editor">
+        <Setter Property="TextColor"        Value="{StaticResource TextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource Gray400}" />
+        <Setter Property="FontFamily"       Value="CairoRegular" />
+        <Setter Property="BackgroundColor"  Value="Transparent" />
+    </Style>
+
+    <Style TargetType="SearchBar">
+        <Setter Property="TextColor"        Value="{StaticResource TextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource Gray400}" />
+        <Setter Property="FontFamily"       Value="CairoRegular" />
+        <Setter Property="BackgroundColor"  Value="Transparent" />
+        <Setter Property="CancelButtonColor" Value="{StaticResource Primary}" />
+    </Style>
 
     <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
 

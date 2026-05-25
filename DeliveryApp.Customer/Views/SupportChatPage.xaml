@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              xmlns:models="clr-namespace:DeliveryApp.Customer.Models"
              x:Class="DeliveryApp.Customer.Views.SupportChatPage"
              x:DataType="vm:SupportChatViewModel"
@@ -22,10 +23,10 @@
                            HorizontalOptions="Center" VerticalOptions="Center"/>
 				</Border>
 				<VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">
-					<Label Text="💬 Support Chat" FontFamily="CairoBold"
-                           FontSize="17" TextColor="White" HorizontalOptions="Center"/>
-					<Label Text="AI-powered · Always online" FontFamily="CairoRegular"
-                           FontSize="11" TextColor="#FFCCBC" HorizontalOptions="Center"/>
+					<Label Text="{loc:Loc Key=SupportChatTitle}"
+                           FontFamily="CairoBold" FontSize="17" TextColor="White" HorizontalOptions="Center"/>
+					<Label Text="{loc:Loc Key=AiOnline}"
+                           FontFamily="CairoRegular" FontSize="11" TextColor="#FFCCBC" HorizontalOptions="Center"/>
 				</VerticalStackLayout>
 			</Grid>
 		</Grid>
@@ -47,13 +48,12 @@
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsFromAi}">
 							<VerticalStackLayout Spacing="4">
-								<Label Text="🤖 Support" FontFamily="CairoBold"
-                                       FontSize="11" TextColor="#FF5722"/>
+								<Label Text="{loc:Loc Key=AiLabel}"
+                                       FontFamily="CairoBold" FontSize="11" TextColor="#FF5722"/>
 								<Label Text="{Binding Text}" FontFamily="CairoRegular"
                                        FontSize="14" TextColor="#212121"/>
 								<Label Text="{Binding TimeDisplay}" FontFamily="CairoRegular"
-                                       FontSize="10" TextColor="#BDBDBD"
-                                       HorizontalOptions="End"/>
+                                       FontSize="10" TextColor="#BDBDBD" HorizontalOptions="End"/>
 							</VerticalStackLayout>
 						</Border>
 
@@ -69,8 +69,7 @@
 								<Label Text="{Binding Text}" FontFamily="CairoRegular"
                                        FontSize="14" TextColor="White"/>
 								<Label Text="{Binding TimeDisplay}" FontFamily="CairoRegular"
-                                       FontSize="10" TextColor="#FFCCBC"
-                                       HorizontalOptions="End"/>
+                                       FontSize="10" TextColor="#FFCCBC" HorizontalOptions="End"/>
 							</VerticalStackLayout>
 						</Border>
 					</Grid>
@@ -78,14 +77,14 @@
 			</CollectionView.ItemTemplate>
 		</CollectionView>
 
-		<!-- Typing Indicator (overlay on bottom of list) -->
+		<!-- Typing Indicator -->
 		<HorizontalStackLayout Grid.Row="1" VerticalOptions="End"
                                Margin="20,0,0,8" Spacing="6"
                                IsVisible="{Binding IsTyping}">
 			<Border BackgroundColor="White" StrokeShape="RoundRectangle 14"
                     Stroke="#E0E0E0" Padding="14,10">
-				<Label Text="🤖  Typing..." FontFamily="CairoRegular"
-                       FontSize="13" TextColor="#757575"/>
+				<Label Text="{loc:Loc Key=AiTyping}"
+                       FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
 			</Border>
 		</HorizontalStackLayout>
 
@@ -95,7 +94,6 @@
                 Stroke="#E0E0E0" StrokeThickness="1"
                 Padding="12,10,12,30">
 			<Grid ColumnDefinitions="*,56" ColumnSpacing="10">
-				<!-- Text input -->
 				<Border Grid.Column="0"
                         BackgroundColor="#F5F5F5"
                         StrokeShape="RoundRectangle 24"
@@ -103,7 +101,7 @@
                         Padding="16,0">
 					<Entry x:Name="MessageEntry"
                            Text="{Binding InputText}"
-                           Placeholder="Type your message..."
+                           Placeholder="{loc:Loc Key=ChatPlaceholder}"
                            PlaceholderColor="#BDBDBD"
                            FontFamily="CairoRegular"
                            FontSize="14"
@@ -112,7 +110,6 @@
                            HeightRequest="46"
                            ReturnCommand="{Binding SendCommand}"/>
 				</Border>
-				<!-- Send button -->
 				<Border Grid.Column="1"
                         BackgroundColor="#FF5722"
                         StrokeShape="RoundRectangle 28"
