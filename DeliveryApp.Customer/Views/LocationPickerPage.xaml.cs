@@ -5,84 +5,140 @@ using Mapsui.Projections;
 using Mapsui.Styles;
 using Mapsui.Tiling;
 using Mapsui.UI.Maui;
-using System.Linq;
 
 namespace DeliveryApp.Customer.Views;
 
 public partial class LocationPickerPage : ContentPage
 {
     readonly LocationPickerViewModel _vm;
-    MemoryLayer? _selectedLocationLayer;
+    MemoryLayer? _pinLayer;
 
     public LocationPickerPage(LocationPickerViewModel vm)
     {
         InitializeComponent();
         _vm = vm;
         BindingContext = vm;
-
-        SetupMap();
-    }
-
-    void SetupMap()
-    {
-        // إضافة طبقة الخرائط
-        MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
-
-        // المركز الافتراضي (القاهرة)
-        var (x, y) = SphericalMercator.FromLonLat(31.2357, 30.0444);
-        MapControl.Map.Navigator.CenterOnAndZoomTo(
-            new MPoint(x, y),
-            MapControl.Map.Navigator.Resolutions[13]);
-
-        // رسم الدبوس الأولي (باستخدام شكل برمجي)
-        DrawLocationPin(30.0444, 31.2357);
-
-        // الحدث عند الضغط على الخريطة
-        MapControl.MapTapped += OnMapTapped;
-    }
-
-    private void OnMapTapped(object? sender, MapEventArgs e)
-    {
-        var mapInfo = e.GetMapInfo(MapControl.Map.Layers);
-        if (mapInfo?.WorldPosition == null) return;
-
-        var worldPos = mapInfo.WorldPosition;
-        var lonLat = SphericalMercator.ToLonLat(worldPos.X, worldPos.Y);
-
-        // التعديل: استخدام الأسماء الصحيحة الموجودة في الـ ViewModel
-        _vm.SelectedLat = lonLat.lat;
-        _vm.SelectedLng = lonLat.lon;
-
-        // تحديث الدبوس على الخريطة
-        DrawLocationPin(lonLat.lat, lonLat.lon);
-    }
-    void DrawLocationPin(double lat, double lng)
-    {
-        if (_selectedLocationLayer != null)
-            MapControl.Map.Layers.Remove(_selectedLocationLayer);
-
-        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
-
-        _selectedLocationLayer = new MemoryLayer
-        {
-            Name = "SelectedLocationLayer",
-            Features = new[] { new PointFeature(new MPoint(x, y)) },
-            Style = new SymbolStyle
-            {
-                SymbolScale = 1.5,
-                SymbolType = SymbolType.Ellipse, // استخدام شكل برمجي بدلاً من صورة
-                Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.Blue),
-                Outline = new Pen(Mapsui.Styles.Color.White, 2)
-            }
-        };
-
-        MapControl.Map.Layers.Add(_selectedLocationLayer);
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        SetupMap();
+    }
+
+    async void SetupMap()
+    {
+        // تنظيف الـ layers القديمة
+        MapControl.Map.Layers.Clear();
+        MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
+
+        // الإحداثيات الافتراضية (القاهرة)
+        double lat = 30.0444;
+        double lng = 31.2357;
+
+        // ── محاولة الحصول على موقع المستخدم الحقيقي ──
+        try
+        {
+            var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            if (status == PermissionStatus.Granted)
+            {
+                var loc = await Geolocation.Default.GetLocationAsync(
+                    new GeolocationRequest(GeolocationAccuracy.Medium)
+                    {
+                        Timeout = TimeSpan.FromSeconds(8)
+                    });
+
+                if (loc != null)
+                {
+                    lat = loc.Latitude;
+                    lng = loc.Longitude;
+
+                    // تحديث الـ ViewModel بالموقع الحقيقي
+                    _vm.SelectedLat = lat;
+                    _vm.SelectedLng = lng;
+                }
+            }
+        }
+        catch { /* فشل GPS → نبقى على القاهرة */ }
+
+        // ── تمركز الخريطة على الموقع ──
+        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
+        MapControl.Map.Navigator.CenterOnAndZoomTo(
+            new MPoint(x, y),
+            MapControl.Map.Navigator.Resolutions[15]);
+
+        DrawLocationPin(lat, lng);
+        UpdateLabel(lat, lng);
+
+        MapControl.MapTapped -= OnMapTapped;
+        MapControl.MapTapped += OnMapTapped;
+
         MapControl.Refresh();
+    }
+
+    void OnMapTapped(object? sender, MapEventArgs e)
+    {
+        var info = e.GetMapInfo(MapControl.Map.Layers);
+        if (info?.WorldPosition == null) return;
+
+        var lonLat = SphericalMercator.ToLonLat(info.WorldPosition.X, info.WorldPosition.Y);
+        _vm.SelectedLat = lonLat.lat;
+        _vm.SelectedLng = lonLat.lon;
+
+        DrawLocationPin(lonLat.lat, lonLat.lon);
+        UpdateLabel(lonLat.lat, lonLat.lon);
+    }
+
+    void DrawLocationPin(double lat, double lng)
+    {
+        // إزالة الـ layer القديم
+        if (_pinLayer != null)
+            MapControl.Map.Layers.Remove(_pinLayer);
+
+        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
+
+        // ── الدبوس الخارجي (دائرة برتقالية كبيرة) ──
+        var outerStyle = new SymbolStyle
+        {
+            SymbolType = SymbolType.Ellipse,
+            Fill = new Mapsui.Styles.Brush(new Mapsui.Styles.Color(255, 87, 34)),   // #FF5722 برتقالي
+            Outline = new Pen(new Mapsui.Styles.Color(255, 255, 255), 3), // حدود بيضاء
+            SymbolScale = 1.4,
+            Offset = new Offset(0, 0)
+        };
+
+        // ── النقطة الداخلية (دائرة بيضاء صغيرة) ──
+        var innerStyle = new SymbolStyle
+        {
+            SymbolType = SymbolType.Ellipse,
+            Fill = new Mapsui.Styles.Brush(new Mapsui.Styles.Color(255, 255, 255)), // أبيض
+            Outline = new Pen(new Mapsui.Styles.Color(255, 87, 34), 1),
+            SymbolScale = 0.5,
+            Offset = new Offset(0, 0)
+        };
+
+        var feature = new PointFeature(new MPoint(x, y));
+        // نضع الـ styles في list
+        feature.Styles.Clear();
+        feature.Styles.Add(outerStyle);
+        feature.Styles.Add(innerStyle);
+
+        _pinLayer = new MemoryLayer
+        {
+            Name = "PinLayer",
+            Features = [feature]
+        };
+
+        MapControl.Map.Layers.Add(_pinLayer);
+        MapControl.Refresh();
+    }
+
+    void UpdateLabel(double lat, double lng)
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            CoordinatesLabel.Text = $"📍 {lat:F5}, {lng:F5}";
+        });
     }
 
     protected override void OnDisappearing()
