@@ -34,46 +34,28 @@ public partial class LocationPickerPage : ContentPage
             new MPoint(x, y),
             MapControl.Map.Navigator.Resolutions[13]);
 
-        // رسم الدبوس الأولي
+        // رسم الدبوس الأولي (باستخدام شكل برمجي)
         DrawLocationPin(30.0444, 31.2357);
 
-        // الحدث الصحيح في إصدار 5.0 هو MapTapped ويستخدم MapEventArgs
+        // الحدث عند الضغط على الخريطة
         MapControl.MapTapped += OnMapTapped;
     }
 
     private void OnMapTapped(object? sender, MapEventArgs e)
     {
-        // جلب المعلومات من الحدث
-        // ملاحظة: GetMapInfo هي extension method موجودة في Mapsui.UI.Maui
         var mapInfo = e.GetMapInfo(MapControl.Map.Layers);
-
         if (mapInfo?.WorldPosition == null) return;
 
-        var worldPosition = mapInfo.WorldPosition;
+        var worldPos = mapInfo.WorldPosition;
+        var lonLat = SphericalMercator.ToLonLat(worldPos.X, worldPos.Y);
 
-        // تحويل الإحداثيات إلى خط طول وعرض
-        // تأكدنا من النوع لفك التفكيك (Deconstruction) بشكل صحيح
-        MPoint pos = worldPosition;
-        var lonLat = SphericalMercator.ToLonLat(pos.X, pos.Y);
-        double lon = lonLat.lon;
-        double lat = lonLat.lat;
+        // التعديل: استخدام الأسماء الصحيحة الموجودة في الـ ViewModel
+        _vm.SelectedLat = lonLat.lat;
+        _vm.SelectedLng = lonLat.lon;
 
-        // تحديث الـ ViewModel
-        _vm.SelectedLat = lat;
-        _vm.SelectedLng = lon;
-
-        // تحديث مكان الدبوس
-        DrawLocationPin(lat, lon);
-
-        // تحديث النص في الواجهة
-        if (CoordinatesLabel != null)
-        {
-            CoordinatesLabel.Text = $"📍 {lat:F4}, {lon:F4}";
-        }
-
-        MapControl.Refresh();
+        // تحديث الدبوس على الخريطة
+        DrawLocationPin(lonLat.lat, lonLat.lon);
     }
-
     void DrawLocationPin(double lat, double lng)
     {
         if (_selectedLocationLayer != null)
@@ -87,9 +69,10 @@ public partial class LocationPickerPage : ContentPage
             Features = new[] { new PointFeature(new MPoint(x, y)) },
             Style = new SymbolStyle
             {
-                SymbolScale = 1.2,
-                Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.FromString("#FF5722")),
-                Outline = new Pen(Mapsui.Styles.Color.White, 3)
+                SymbolScale = 1.5,
+                SymbolType = SymbolType.Ellipse, // استخدام شكل برمجي بدلاً من صورة
+                Fill = new Mapsui.Styles.Brush(Mapsui.Styles.Color.Blue),
+                Outline = new Pen(Mapsui.Styles.Color.White, 2)
             }
         };
 

@@ -26,7 +26,7 @@ public partial class AppShell : Shell
 
         Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
         Routing.RegisterRoute(nameof(SupportChatPage), typeof(SupportChatPage));
-
+        Routing.RegisterRoute(nameof(LocationPickerPage), typeof(LocationPickerPage));
     }
 
 }

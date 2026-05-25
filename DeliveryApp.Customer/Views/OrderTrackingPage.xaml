@@ -10,7 +10,7 @@
 
     <Grid RowDefinitions="*,300">
 
-        <!-- Map مباشرة في الـ XAML بدل ContentView -->
+        <!-- Map Control -->
         <mapsui:MapControl x:Name="MapControl" Grid.Row="0" />
 
         <!-- Back Button -->
@@ -25,39 +25,39 @@
             </Image>
         </Border>
 
-        <!-- Debug Label (امسحه بعد ما تتأكد إن كل حاجة شغالة) -->
-        <Border BackgroundColor="#CC000000" StrokeShape="RoundRectangle 8" Stroke="Transparent"
-                Padding="8,4" Margin="16,52,0,0"
-                HorizontalOptions="End" VerticalOptions="Start">
-            <Label x:Name="DebugLabel"
-                   Text="loading..."
-                   TextColor="White"
-                   FontSize="10"
-                   FontFamily="CairoRegular"/>
+        <!-- ETA and Distance Badge -->
+        <Border BackgroundColor="#EEFFFFFF" StrokeShape="RoundRectangle 12" Stroke="Transparent"
+                Padding="12,8" Margin="16,110,0,0"
+                HorizontalOptions="Start" VerticalOptions="Start">
+            <HorizontalStackLayout Spacing="10">
+                <VerticalStackLayout>
+                    <Label Text="الوقت المتوقع" FontSize="10" FontFamily="CairoRegular" TextColor="#757575"/>
+                    <Label Text="{Binding TravelTime}" FontSize="14" FontFamily="CairoBold" TextColor="#212121"/>
+                </VerticalStackLayout>
+                <BoxView Color="#E0E0E0" WidthRequest="1" VerticalOptions="Fill"/>
+                <VerticalStackLayout>
+                    <Label Text="المسافة" FontSize="10" FontFamily="CairoRegular" TextColor="#757575"/>
+                    <Label Text="{Binding Distance}" FontSize="14" FontFamily="CairoBold" TextColor="#212121"/>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
         </Border>
 
         <!-- Map Legend -->
         <Border BackgroundColor="#EEFFFFFF" StrokeShape="RoundRectangle 12" Stroke="Transparent"
                 Padding="10,8" Margin="0,52,12,0"
                 HorizontalOptions="End" VerticalOptions="End">
-            <VerticalStackLayout Spacing="5">
-                <HorizontalStackLayout Spacing="6">
-                    <BoxView Color="#2196F3" WidthRequest="14" HeightRequest="14"
-                             CornerRadius="7" VerticalOptions="Center"/>
-                    <Label Text="أنت" FontSize="11" FontFamily="CairoRegular" TextColor="#212121"
-                           VerticalOptions="Center"/>
+            <VerticalStackLayout Spacing="8">
+                <HorizontalStackLayout Spacing="8">
+                    <Image Source="marker_user.png" WidthRequest="20" HeightRequest="20"/>
+                    <Label Text="أنت" FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
-                <HorizontalStackLayout Spacing="6">
-                    <BoxView Color="#4CAF50" WidthRequest="14" HeightRequest="14"
-                             CornerRadius="7" VerticalOptions="Center"/>
-                    <Label Text="المطعم" FontSize="11" FontFamily="CairoRegular" TextColor="#212121"
-                           VerticalOptions="Center"/>
+                <HorizontalStackLayout Spacing="8">
+                    <Image Source="marker_restaurant.png" WidthRequest="20" HeightRequest="20"/>
+                    <Label Text="المطعم" FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
-                <HorizontalStackLayout Spacing="6">
-                    <BoxView Color="#FF5722" WidthRequest="14" HeightRequest="14"
-                             CornerRadius="7" VerticalOptions="Center"/>
-                    <Label Text="الدليفري" FontSize="11" FontFamily="CairoRegular" TextColor="#212121"
-                           VerticalOptions="Center"/>
+                <HorizontalStackLayout Spacing="8">
+                    <Image Source="marker_delivery.png" WidthRequest="20" HeightRequest="20"/>
+                    <Label Text="الدليفري" FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
             </VerticalStackLayout>
         </Border>
@@ -75,28 +75,32 @@
                            TextColor="#212121" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
                     <ProgressBar Progress="{Binding Progress}" ProgressColor="#FF5722"
                                  BackgroundColor="#EEEEEE" HeightRequest="8"/>
+
+                    <!-- Steps Indicator -->
                     <Grid ColumnDefinitions="*,*,*,*,*">
                         <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" Spacing="3">
                             <Label Text="📋" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="{loc:Loc Key=Step_Placed}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="طلب" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="3">
                             <Label Text="✅" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="{loc:Loc Key=Step_Accepted}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="قبول" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="3">
                             <Label Text="🍳" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="{loc:Loc Key=Step_Cooking}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="تجهيز" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="3" HorizontalOptions="Center" Spacing="3">
                             <Label Text="🛵" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="{loc:Loc Key=Step_OnWay}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="في الطريق" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="4" HorizontalOptions="Center" Spacing="3">
                             <Label Text="🎉" FontSize="18" HorizontalOptions="Center"/>
-                            <Label Text="{loc:Loc Key=Step_Delivered}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
+                            <Label Text="وصل" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                     </Grid>
+
+                    <!-- Driver Info -->
                     <Border BackgroundColor="#F8F9FA" StrokeShape="RoundRectangle 14"
                             Stroke="Transparent" Padding="14" IsVisible="{Binding HasDriver}">
                         <Grid ColumnDefinitions="52,*,44">
@@ -121,6 +125,5 @@
                 </VerticalStackLayout>
             </ScrollView>
         </Border>
-
     </Grid>
 </ContentPage>

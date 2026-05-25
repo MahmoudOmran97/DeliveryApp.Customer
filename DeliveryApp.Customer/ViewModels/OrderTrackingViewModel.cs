@@ -40,7 +40,8 @@ public partial class OrderTrackingViewModel : BaseViewModel
     // موقع العميل (وجهة التوصيل)
     [ObservableProperty] double _customerLat;
     [ObservableProperty] double _customerLng;
-
+    [ObservableProperty] string _travelTime = "0 min";
+    [ObservableProperty] string _distance = "0 km";
     // موقع المطعم
     [ObservableProperty] double _restaurantLat;
     [ObservableProperty] double _restaurantLng;
