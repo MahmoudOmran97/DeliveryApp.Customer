@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:models="clr-namespace:DeliveryApp.Customer.Models"
+             x:Class="DeliveryApp.Customer.Views.DriverChatPage"
+             x:DataType="vm:DriverChatViewModel"
+             Shell.NavBarIsVisible="False">
+
+	<Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F5F5F5">
+
+		<!-- Header -->
+		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="16,48,16,16">
+			<Grid ColumnDefinitions="44,*,44">
+				<Border Grid.Column="0" BackgroundColor="#CC4419"
+                        StrokeShape="RoundRectangle 22" WidthRequest="36" HeightRequest="36"
+                        VerticalOptions="Center" HorizontalOptions="Start">
+					<Border.GestureRecognizers>
+						<TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+					</Border.GestureRecognizers>
+					<Label Text="‹" FontFamily="CairoBold" FontSize="22" TextColor="White"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+				</Border>
+
+				<VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">
+					<Label Text="{Binding DriverName}"
+                           FontFamily="CairoBold" FontSize="17" TextColor="White"
+                           HorizontalOptions="Center"/>
+					<HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+						<Ellipse WidthRequest="8" HeightRequest="8"
+                                 Fill="#4CAF50" VerticalOptions="Center"
+                                 IsVisible="{Binding IsConnected}"/>
+						<Label Text="🛵 مندوب التوصيل"
+                               FontFamily="CairoRegular" FontSize="11" TextColor="#FFCCBC"/>
+					</HorizontalStackLayout>
+				</VerticalStackLayout>
+
+				<!-- Placeholder for symmetry -->
+				<BoxView Grid.Column="2" Color="Transparent" WidthRequest="44"/>
+			</Grid>
+		</Grid>
+
+		<!-- Messages List -->
+		<CollectionView Grid.Row="1"
+                        x:Name="ChatList"
+                        ItemsSource="{Binding Messages}"
+                        Margin="0,8,0,0">
+			<CollectionView.EmptyView>
+				<VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="12" Margin="40">
+					<Label Text="💬" FontSize="48" HorizontalOptions="Center"/>
+					<Label Text="ابدأ المحادثة مع مندوب التوصيل"
+                           FontFamily="CairoBold" FontSize="15" TextColor="#9E9E9E"
+                           HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+					<Label Text="يمكنك تنسيق التوصيل أو الاستفسار عن موعد الوصول"
+                           FontFamily="CairoRegular" FontSize="13" TextColor="#BDBDBD"
+                           HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+				</VerticalStackLayout>
+			</CollectionView.EmptyView>
+			<CollectionView.ItemTemplate>
+				<DataTemplate x:DataType="models:DriverChatMessage">
+					<Grid Margin="12,4">
+
+						<!-- Driver message (left) -->
+						<HorizontalStackLayout HorizontalOptions="Start"
+                                               IsVisible="{Binding IsFromOther}"
+                                               Spacing="8">
+							<!-- Driver Avatar -->
+							<Border BackgroundColor="#FF5722"
+                                    StrokeShape="RoundRectangle 20"
+                                    Stroke="Transparent"
+                                    WidthRequest="36" HeightRequest="36"
+                                    VerticalOptions="End">
+								<Label Text="🛵" FontSize="18"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+							</Border>
+
+							<Border BackgroundColor="White"
+                                    StrokeShape="RoundRectangle 18,18,18,4"
+                                    Stroke="#E0E0E0" StrokeThickness="1"
+                                    Padding="14,10"
+                                    MaximumWidthRequest="250"
+                                    VerticalOptions="End">
+								<VerticalStackLayout Spacing="4">
+									<Label Text="{Binding Text}"
+                                           FontFamily="CairoRegular"
+                                           FontSize="14" TextColor="#212121"/>
+									<Label Text="{Binding TimeDisplay}"
+                                           FontFamily="CairoRegular"
+                                           FontSize="10" TextColor="#BDBDBD"
+                                           HorizontalOptions="End"/>
+								</VerticalStackLayout>
+							</Border>
+						</HorizontalStackLayout>
+
+						<!-- Customer message (right) -->
+						<HorizontalStackLayout HorizontalOptions="End"
+                                               IsVisible="{Binding IsFromMe}"
+                                               Spacing="8">
+							<Border BackgroundColor="#FF5722"
+                                    StrokeShape="RoundRectangle 18,18,4,18"
+                                    Stroke="Transparent" StrokeThickness="0"
+                                    Padding="14,10"
+                                    MaximumWidthRequest="250"
+                                    VerticalOptions="End">
+								<VerticalStackLayout Spacing="4">
+									<Label Text="{Binding Text}"
+                                           FontFamily="CairoRegular"
+                                           FontSize="14" TextColor="White"/>
+									<Label Text="{Binding TimeDisplay}"
+                                           FontFamily="CairoRegular"
+                                           FontSize="10" TextColor="#FFCCBC"
+                                           HorizontalOptions="End"/>
+								</VerticalStackLayout>
+							</Border>
+
+							<!-- Customer Avatar -->
+							<Border BackgroundColor="#2196F3"
+                                    StrokeShape="RoundRectangle 20"
+                                    Stroke="Transparent"
+                                    WidthRequest="36" HeightRequest="36"
+                                    VerticalOptions="End">
+								<Label Text="👤" FontSize="18"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+							</Border>
+						</HorizontalStackLayout>
+
+					</Grid>
+				</DataTemplate>
+			</CollectionView.ItemTemplate>
+		</CollectionView>
+
+		<!-- Input Bar -->
+		<Border Grid.Row="2" BackgroundColor="White"
+                StrokeShape="RoundRectangle 0"
+                Stroke="#E0E0E0" StrokeThickness="1"
+                Padding="12,10,12,30">
+			<Grid ColumnDefinitions="*,56" ColumnSpacing="10">
+				<Border Grid.Column="0"
+                        BackgroundColor="#F5F5F5"
+                        StrokeShape="RoundRectangle 24"
+                        Stroke="#E0E0E0" StrokeThickness="1"
+                        Padding="16,0">
+					<Entry x:Name="MessageEntry"
+                           Text="{Binding InputText}"
+                           Placeholder="اكتب رسالة..."
+                           PlaceholderColor="#BDBDBD"
+                           FontFamily="CairoRegular"
+                           FontSize="14"
+                           TextColor="#212121"
+                           BackgroundColor="Transparent"
+                           HeightRequest="46"
+                           ReturnCommand="{Binding SendCommand}"/>
+				</Border>
+
+				<Border Grid.Column="1"
+                        BackgroundColor="#FF5722"
+                        StrokeShape="RoundRectangle 28"
+                        Stroke="Transparent"
+                        WidthRequest="50" HeightRequest="50"
+                        VerticalOptions="Center">
+					<Border.GestureRecognizers>
+						<TapGestureRecognizer Command="{Binding SendCommand}"/>
+					</Border.GestureRecognizers>
+					<Label Text="➤" FontSize="20" TextColor="White"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+				</Border>
+			</Grid>
+		</Border>
+
+	</Grid>
+</ContentPage>

@@ -115,7 +115,7 @@
                     <!-- Driver Info -->
                     <Border BackgroundColor="#F8F9FA" StrokeShape="RoundRectangle 14"
                             Stroke="Transparent" Padding="14" IsVisible="{Binding HasDriver}">
-                        <Grid ColumnDefinitions="52,*,44">
+                        <Grid ColumnDefinitions="52,*,44,44">
                             <Border Grid.Column="0" BackgroundColor="#FF5722" StrokeShape="RoundRectangle 26"
                                     Stroke="Transparent" WidthRequest="52" HeightRequest="52">
                                 <Label Text="🚴" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center"/>
@@ -129,7 +129,16 @@
                                            FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
                                 </HorizontalStackLayout>
                             </VerticalStackLayout>
-                            <Border Grid.Column="2" BackgroundColor="#E8F5E9" StrokeShape="RoundRectangle 22"
+                            <!-- Chat Button -->
+                            <Border Grid.Column="2" BackgroundColor="#FFF3E0" StrokeShape="RoundRectangle 22"
+                                    Stroke="Transparent" WidthRequest="44" HeightRequest="44" Margin="0,0,6,0">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenChatCommand}"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="💬" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <!-- Call Button -->
+                            <Border Grid.Column="3" BackgroundColor="#E8F5E9" StrokeShape="RoundRectangle 22"
                                     Stroke="Transparent" WidthRequest="44" HeightRequest="44">
                                 <Label Text="📞" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
                             </Border>

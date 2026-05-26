@@ -36,6 +36,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<CartService>();
         builder.Services.AddSingleton<ApiService>();
         builder.Services.AddSingleton<SignalRService>();
+        builder.Services.AddSingleton<ChatNotificationService>();
         builder.Services.AddSingleton<Converters.LocaleStrings>();
 
         // ── ViewModels ────────────────────────────
@@ -51,6 +52,7 @@ public static class MauiProgram
         builder.Services.AddTransient<NotificationsViewModel>();
         builder.Services.AddTransient<ProfileViewModel>();
         builder.Services.AddTransient<SupportChatViewModel>();
+        builder.Services.AddTransient<DriverChatViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<LocationPickerViewModel>();
         // ── Pages ─────────────────────────────────
@@ -68,6 +70,7 @@ public static class MauiProgram
         builder.Services.AddTransient<NotificationsPage>();
         builder.Services.AddTransient<ProfilePage>();
         builder.Services.AddTransient<SupportChatPage>();
+        builder.Services.AddTransient<DriverChatPage>();
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<LocationPickerPage>();
 #if DEBUG

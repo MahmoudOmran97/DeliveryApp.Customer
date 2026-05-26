@@ -422,3 +422,20 @@ public class ChatMessage
     public DateTime Time { get; set; } = DateTime.Now;
     public string TimeDisplay => Time.ToString("hh:mm tt");
 }
+// ─── Driver Chat ─────────────────────────────────────────────────────────────
+public class DriverChatMessage
+{
+    public string Text { get; set; } = string.Empty;
+    public bool IsFromMe { get; set; }
+    public bool IsFromOther => !IsFromMe;
+    public DateTime Timestamp { get; set; } = DateTime.Now;
+    public string TimeDisplay => Timestamp.ToString("hh:mm tt");
+}
+
+// ─── Chat Notification ────────────────────────────────────────────────────────
+public class ChatNotification
+{
+    public int OrderId { get; set; }
+    public string DriverName { get; set; } = string.Empty;
+    public string LastMessage { get; set; } = string.Empty;
+}

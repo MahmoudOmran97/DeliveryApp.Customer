@@ -83,6 +83,9 @@
 	  <MauiXaml Update="Views\CheckoutPage.xaml">
 	    <Generator></Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\DriverChatPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\HomePage.xaml">
 	    <Generator></Generator>
 	  </MauiXaml>

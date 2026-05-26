@@ -21,6 +21,8 @@ public partial class OrderTrackingViewModel : BaseViewModel
 
     readonly AuthService _auth;
 
+    readonly ChatNotificationService _chatNotif;
+
     System.Timers.Timer? _timer;
 
     [ObservableProperty] int _orderId;
@@ -48,11 +50,11 @@ public partial class OrderTrackingViewModel : BaseViewModel
 
     public event Action? MapUpdated;
 
-    public OrderTrackingViewModel(ApiService api, SignalRService hub, AuthService auth)
+    public OrderTrackingViewModel(ApiService api, SignalRService hub, AuthService auth, ChatNotificationService chatNotif)
 
     {
 
-        _api = api; _hub = hub; _auth = auth;
+        _api = api; _hub = hub; _auth = auth; _chatNotif = chatNotif;
 
         _hub.OrderStatusChanged += (id, s) => { if (id == OrderId) _ = LoadAsync(); };
 
@@ -133,6 +135,18 @@ public partial class OrderTrackingViewModel : BaseViewModel
 
         }
 
+        // سجّل الطلب مع ChatNotificationService لما يجي chat notification
+        if (Order.Driver != null)
+            _chatNotif.RegisterOrder(Order.Id, Order.Driver.Name);
+
+    }
+
+    [RelayCommand]
+    async Task OpenChatAsync()
+    {
+        var driverName = Order?.Driver?.Name ?? "المندوب";
+        await Shell.Current.GoToAsync(
+            $"DriverChatPage?orderId={OrderId}&driverName={Uri.EscapeDataString(driverName)}");
     }
 
     void RefreshStatus() => (StatusMsg, Progress) = Order?.Status switch
@@ -153,6 +167,8 @@ public partial class OrderTrackingViewModel : BaseViewModel
         _timer?.Stop(); _timer?.Dispose();
 
         _ = _hub.LeaveOrderAsync(OrderId);
+
+        _chatNotif.UnregisterOrder(OrderId);
 
     }
 
