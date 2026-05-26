@@ -13,12 +13,23 @@ public partial class DriverChatPage : ContentPage
         BindingContext = vm;
 
         // Auto-scroll to latest message
-        _vm.Messages.CollectionChanged += (_, _) =>
+        // نستخدم Task.Delay عشان ننتظر الـ CollectionView يعمل layout للـ item الجديد على Android
+        // بدون الـ delay بتيجي: Java.Lang.IllegalArgumentException: Invalid target position
+        _vm.Messages.CollectionChanged += async (_, _) =>
         {
+            if (_vm.Messages.Count == 0) return;
+            await Task.Delay(100); // ننتظر الـ render يخلص
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                if (_vm.Messages.Count > 0)
-                    ChatList.ScrollTo(_vm.Messages[^1], ScrollToPosition.End, animate: true);
+                try
+                {
+                    if (_vm.Messages.Count > 0)
+                        ChatList.ScrollTo(_vm.Messages[^1], ScrollToPosition.End, animate: true);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[ScrollTo] {ex.Message}");
+                }
             });
         };
     }
