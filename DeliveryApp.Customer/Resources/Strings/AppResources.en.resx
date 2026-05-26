@@ -420,4 +420,54 @@
 	<data name="AiPowered">
 		<value>AI-powered · Always online</value>
 	</data>
+	<!-- Driver Specific -->
+	<data name="Tab_Earnings">
+		<value>Earnings</value>
+		
+	</data>
+		<data name="AvailableOrders">
+				<value>Available Orders</value>
+		
+	</data>
+		<data name="ActiveDelivery">
+				<value>Active Delivery</value>
+		
+	</data>
+		<data name="AcceptOrder">
+				<value>Accept Order</value>
+		
+	</data>
+		<data name="RejectOrder">
+				<value>Reject Order</value>
+		
+	</data>
+		<data name="Navigate">
+				<value>Navigate</value>
+		
+	</data>
+		<data name="CallCustomer">
+				<value>Call Customer</value>
+		
+	</data>
+	<data name="ChatWithCustomer">
+				<value>Chat with Customer</value>
+		
+	</data>
+		<data name="Earnings">
+				<value>Earnings</value>
+		
+	</data>
+		<data name="TodayEarnings">
+				<value>Today's Earnings</value>
+		
+	</data>
+		<data name="TotalEarnings">
+				<value>Total Earnings</value>
+		
+	</data>
+		<data name="CompletedOrders">
+				<value>Completed Orders</value>
+		
+	</data>
+	
 </root>

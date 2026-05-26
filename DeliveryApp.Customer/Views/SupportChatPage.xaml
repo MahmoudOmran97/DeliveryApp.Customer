@@ -8,98 +8,98 @@
              x:DataType="vm:SupportChatViewModel"
              Shell.NavBarIsVisible="False">
 
-	<Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F5F5F5">
+    <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F5F5F5">
 
-		<!-- Header -->
-		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="16,48,16,16">
-			<Grid ColumnDefinitions="44,*,44">
-				<Border Grid.Column="0" BackgroundColor="#CC4419"
+        <!-- Header -->
+        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="16,48,16,16">
+            <Grid ColumnDefinitions="44,*,44">
+                <Border Grid.Column="0" BackgroundColor="#CC4419"
                         StrokeShape="RoundRectangle 22" WidthRequest="36" HeightRequest="36"
                         VerticalOptions="Center" HorizontalOptions="Start">
-					<Border.GestureRecognizers>
-						<TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-					</Border.GestureRecognizers>
-					<Label Text="‹" FontFamily="CairoBold" FontSize="22" TextColor="White"
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="‹" FontFamily="CairoBold" FontSize="22" TextColor="White"
                            HorizontalOptions="Center" VerticalOptions="Center"/>
-				</Border>
-				<VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">
-					<Label Text="{loc:Loc Key=SupportChatTitle}"
+                </Border>
+                <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">
+                    <Label Text="{loc:Loc Key=SupportChatTitle}"
                            FontFamily="CairoBold" FontSize="17" TextColor="White" HorizontalOptions="Center"/>
-					<Label Text="{loc:Loc Key=AiOnline}"
+                    <Label Text="{loc:Loc Key=AiOnline}"
                            FontFamily="CairoRegular" FontSize="11" TextColor="#FFCCBC" HorizontalOptions="Center"/>
-				</VerticalStackLayout>
-			</Grid>
-		</Grid>
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
 
-		<!-- Messages List -->
-		<CollectionView Grid.Row="1"
+        <!-- Messages List -->
+        <CollectionView Grid.Row="1"
                         x:Name="ChatList"
                         ItemsSource="{Binding Messages}"
                         Margin="0,4,0,0">
-			<CollectionView.ItemTemplate>
-				<DataTemplate x:DataType="models:ChatMessage">
-					<Grid Margin="12,4">
-						<!-- AI message (left) -->
-						<Border BackgroundColor="White"
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ChatMessage">
+                    <Grid Margin="12,4">
+                        <!-- AI message (left) -->
+                        <Border BackgroundColor="White"
                                 StrokeShape="RoundRectangle 18,18,18,4"
                                 Stroke="#E0E0E0" StrokeThickness="1"
                                 Padding="14,10"
                                 MaximumWidthRequest="280"
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsFromAi}">
-							<VerticalStackLayout Spacing="4">
-								<Label Text="{loc:Loc Key=AiLabel}"
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{loc:Loc Key=AiLabel}"
                                        FontFamily="CairoBold" FontSize="11" TextColor="#FF5722"/>
-								<Label Text="{Binding Text}" FontFamily="CairoRegular"
+                                <Label Text="{Binding Text}" FontFamily="CairoRegular"
                                        FontSize="14" TextColor="#212121"/>
-								<Label Text="{Binding TimeDisplay}" FontFamily="CairoRegular"
+                                <Label Text="{Binding TimeDisplay}" FontFamily="CairoRegular"
                                        FontSize="10" TextColor="#BDBDBD" HorizontalOptions="End"/>
-							</VerticalStackLayout>
-						</Border>
+                            </VerticalStackLayout>
+                        </Border>
 
-						<!-- User message (right) -->
-						<Border BackgroundColor="#FF5722"
+                        <!-- User message (right) -->
+                        <Border BackgroundColor="#FF5722"
                                 StrokeShape="RoundRectangle 18,18,4,18"
                                 Stroke="Transparent" StrokeThickness="0"
                                 Padding="14,10"
                                 MaximumWidthRequest="280"
                                 HorizontalOptions="End"
                                 IsVisible="{Binding IsFromUser}">
-							<VerticalStackLayout Spacing="4">
-								<Label Text="{Binding Text}" FontFamily="CairoRegular"
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Text}" FontFamily="CairoRegular"
                                        FontSize="14" TextColor="White"/>
-								<Label Text="{Binding TimeDisplay}" FontFamily="CairoRegular"
+                                <Label Text="{Binding TimeDisplay}" FontFamily="CairoRegular"
                                        FontSize="10" TextColor="#FFCCBC" HorizontalOptions="End"/>
-							</VerticalStackLayout>
-						</Border>
-					</Grid>
-				</DataTemplate>
-			</CollectionView.ItemTemplate>
-		</CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-		<!-- Typing Indicator -->
-		<HorizontalStackLayout Grid.Row="1" VerticalOptions="End"
+        <!-- Typing Indicator -->
+        <HorizontalStackLayout Grid.Row="1" VerticalOptions="End"
                                Margin="20,0,0,8" Spacing="6"
                                IsVisible="{Binding IsTyping}">
-			<Border BackgroundColor="White" StrokeShape="RoundRectangle 14"
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 14"
                     Stroke="#E0E0E0" Padding="14,10">
-				<Label Text="{loc:Loc Key=AiTyping}"
+                <Label Text="{loc:Loc Key=AiTyping}"
                        FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-			</Border>
-		</HorizontalStackLayout>
+            </Border>
+        </HorizontalStackLayout>
 
-		<!-- Input Bar -->
-		<Border Grid.Row="2" BackgroundColor="White"
+        <!-- Input Bar -->
+        <Border Grid.Row="2" BackgroundColor="White"
                 StrokeShape="RoundRectangle 0"
                 Stroke="#E0E0E0" StrokeThickness="1"
                 Padding="12,10,12,30">
-			<Grid ColumnDefinitions="*,56" ColumnSpacing="10">
-				<Border Grid.Column="0"
+            <Grid ColumnDefinitions="*,56" ColumnSpacing="10">
+                <Border Grid.Column="0"
                         BackgroundColor="#F5F5F5"
                         StrokeShape="RoundRectangle 24"
                         Stroke="#E0E0E0" StrokeThickness="1"
                         Padding="16,0">
-					<Entry x:Name="MessageEntry"
+                    <Entry x:Name="MessageEntry"
                            Text="{Binding InputText}"
                            Placeholder="{loc:Loc Key=ChatPlaceholder}"
                            PlaceholderColor="#BDBDBD"
@@ -109,21 +109,21 @@
                            BackgroundColor="Transparent"
                            HeightRequest="46"
                            ReturnCommand="{Binding SendCommand}"/>
-				</Border>
-				<Border Grid.Column="1"
+                </Border>
+                <Border Grid.Column="1"
                         BackgroundColor="#FF5722"
                         StrokeShape="RoundRectangle 28"
                         Stroke="Transparent"
                         WidthRequest="50" HeightRequest="50"
                         VerticalOptions="Center">
-					<Border.GestureRecognizers>
-						<TapGestureRecognizer Command="{Binding SendCommand}"/>
-					</Border.GestureRecognizers>
-					<Label Text="➤" FontSize="20" TextColor="White"
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SendCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="➤" FontSize="20" TextColor="White"
                            HorizontalOptions="Center" VerticalOptions="Center"/>
-				</Border>
-			</Grid>
-		</Border>
+                </Border>
+            </Grid>
+        </Border>
 
-	</Grid>
+    </Grid>
 </ContentPage>

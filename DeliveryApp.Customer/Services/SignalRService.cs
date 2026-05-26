@@ -17,6 +17,8 @@ public class SignalRService
     public event Action<int, string>? OrderStatusChanged;
 
     public event Action<double, double>? DriverLocationUpdated;
+    public event Action<int, string, string>? ChatMessageReceived;
+    public event Action<int, int>? IncomingVoiceCall;
 
     public bool IsConnected => _hub?.State == HubConnectionState.Connected;
 
@@ -55,7 +57,21 @@ public class SignalRService
             var lng = el.GetProperty("longitude").GetDouble();
 
             MainThread.BeginInvokeOnMainThread(() => DriverLocationUpdated?.Invoke(lat, lng));
+        });
 
+        _hub.On<JsonElement>("ChatMessageReceived", el =>
+        {
+            var orderId = el.GetProperty("orderId").GetInt32();
+            var senderId = el.GetProperty("senderId").GetInt32();
+            var message = el.GetProperty("message").GetString() ?? "";
+            MainThread.BeginInvokeOnMainThread(() => ChatMessageReceived?.Invoke(orderId, senderId.ToString(), message));
+        });
+
+        _hub.On<JsonElement>("IncomingVoiceCall", el =>
+        {
+            var orderId = el.GetProperty("orderId").GetInt32();
+            var callerId = el.GetProperty("callerId").GetInt32();
+            MainThread.BeginInvokeOnMainThread(() => IncomingVoiceCall?.Invoke(orderId, callerId));
         });
 
         try { await _hub.StartAsync(); }
@@ -80,6 +96,16 @@ public class SignalRService
 
         if (IsConnected) await _hub!.InvokeAsync("LeaveOrderTracking", orderId);
 
+    }
+
+    public async Task SendChatMessageAsync(int orderId, string message)
+    {
+        if (IsConnected) await _hub!.InvokeAsync("SendChatMessage", orderId, message);
+    }
+
+    public async Task StartVoiceCallAsync(int orderId)
+    {
+        if (IsConnected) await _hub!.InvokeAsync("StartVoiceCall", orderId);
     }
 
     public async Task DisconnectAsync()
