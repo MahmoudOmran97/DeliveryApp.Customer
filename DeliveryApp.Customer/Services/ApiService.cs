@@ -220,26 +220,21 @@ public class ApiService
     // ─── Ratings ─────────────────────────────────────────────────────────────
 
     public async Task<bool> RateOrderAsync(int orderId, int restaurantRating, int? driverRating, string? comment)
-
     {
-
         var result = await PostAsync<object>("ratings", new
-
         {
-
             OrderId = orderId,
-
             RestaurantRating = restaurantRating,
-
             DriverRating = driverRating,
-
             Comment = comment
-
         });
-
         return result != null;
-
     }
+
+    // ─── Chat ────────────────────────────────────────────────────────────────
+
+    public Task<List<DriverChatMessage>?> GetChatMessagesAsync(int orderId)
+        => GetAsync<List<DriverChatMessage>>($"chatmessages/{orderId}");
 
     private static void Debug(Exception ex, string path)
 

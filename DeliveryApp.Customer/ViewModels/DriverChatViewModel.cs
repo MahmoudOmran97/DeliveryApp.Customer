@@ -12,6 +12,7 @@ public partial class DriverChatViewModel : BaseViewModel
 {
     private readonly SignalRService _signalR;
     private readonly AuthService _auth;
+    private readonly ApiService _api;
 
     [ObservableProperty] private int _orderId;
     [ObservableProperty] private string _driverName = string.Empty;
@@ -23,10 +24,14 @@ public partial class DriverChatViewModel : BaseViewModel
 
     public ObservableCollection<DriverChatMessage> Messages { get; } = new();
 
-    public DriverChatViewModel(SignalRService signalR, AuthService auth)
+    private readonly ChatNotificationService _chatNotif;
+
+    public DriverChatViewModel(SignalRService signalR, AuthService auth, ChatNotificationService chatNotif, ApiService api)
     {
         _signalR = signalR;
         _auth = auth;
+        _chatNotif = chatNotif;
+        _api = api;
 
         _signalR.ChatMessageReceived += OnChatMessageReceived;
     }
@@ -34,7 +39,10 @@ public partial class DriverChatViewModel : BaseViewModel
     partial void OnOrderIdChanged(int value)
     {
         if (value > 0)
+        {
+            _chatNotif.ActiveChatOrderId = value;
             _ = EnsureConnectedAsync();
+        }
     }
 
     private async Task EnsureConnectedAsync()
@@ -43,9 +51,33 @@ public partial class DriverChatViewModel : BaseViewModel
             await _signalR.ConnectAsync(_auth.GetToken());
 
         // الانضمام لغرفة الطلب عشان يستقبل الرسائل
+        // Note: Tracking page also joins this group, but SignalR handles multiple joins gracefully.
         await _signalR.JoinOrderAsync(OrderId);
 
         IsConnected = _signalR.IsConnected;
+
+        // تحميل الرسائل القديمة
+        await LoadHistoryAsync();
+    }
+
+    private async Task LoadHistoryAsync()
+    {
+        try
+        {
+            var history = await _api.GetChatMessagesAsync(OrderId);
+            if (history != null)
+            {
+                Messages.Clear();
+                foreach (var msg in history)
+                {
+                    Messages.Add(msg);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ChatHistory] {ex.Message}");
+        }
     }
 
     private void OnChatMessageReceived(int orderId, string senderId, string message)
@@ -86,6 +118,7 @@ public partial class DriverChatViewModel : BaseViewModel
 
     public void Cleanup()
     {
+        _chatNotif.ActiveChatOrderId = null;
         _signalR.ChatMessageReceived -= OnChatMessageReceived;
     }
 }

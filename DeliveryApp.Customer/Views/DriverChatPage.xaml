@@ -8,150 +8,150 @@
              x:DataType="vm:DriverChatViewModel"
              Shell.NavBarIsVisible="False">
 
-	<ContentPage.Resources>
-		<cv:InvertedBoolConverter x:Key="InvertBool"/>
-	</ContentPage.Resources>
+    <ContentPage.Resources>
+        <cv:InvertedBoolConverter x:Key="InvertBool"/>
+    </ContentPage.Resources>
 
-	<Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F5F5F5">
+    <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F5F5F5">
 
-		<!-- Header -->
-		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="16,50,16,14">
-			<Grid ColumnDefinitions="44,*,44">
+        <!-- Header -->
+        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="16,50,16,14">
+            <Grid ColumnDefinitions="44,*,44">
 
-				<!-- Back -->
-				<Border Grid.Column="0" BackgroundColor="#CC4419"
+                <!-- Back -->
+                <Border Grid.Column="0" BackgroundColor="#CC4419"
                         StrokeShape="RoundRectangle 22" WidthRequest="38" HeightRequest="38"
                         VerticalOptions="Center" HorizontalOptions="Start">
-					<Border.GestureRecognizers>
-						<TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-					</Border.GestureRecognizers>
-					<Label Text="‹" FontFamily="CairoBold" FontSize="22" TextColor="White"
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="‹" FontFamily="CairoBold" FontSize="22" TextColor="White"
                            HorizontalOptions="Center" VerticalOptions="Center"/>
-				</Border>
+                </Border>
 
-				<!-- Title -->
-				<VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">
-					<Label Text="{Binding DriverName}"
+                <!-- Title -->
+                <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">
+                    <Label Text="{Binding DriverName}"
                            FontFamily="CairoBold" FontSize="16" TextColor="White"
                            HorizontalOptions="Center"/>
-					<HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
-						<!-- Online dot -->
-						<Ellipse WidthRequest="8" HeightRequest="8" Fill="#4CAF50"
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                        <!-- Online dot -->
+                        <Ellipse WidthRequest="8" HeightRequest="8" Fill="#4CAF50"
                                  VerticalOptions="Center"
                                  IsVisible="{Binding IsConnected}"/>
-						<Ellipse WidthRequest="8" HeightRequest="8" Fill="#BDBDBD"
+                        <Ellipse WidthRequest="8" HeightRequest="8" Fill="#BDBDBD"
                                  VerticalOptions="Center"
                                  IsVisible="{Binding IsConnected, Converter={StaticResource InvertBool}}"/>
-						<Label Text="🛵 مندوب التوصيل"
+                        <Label Text="🛵 مندوب التوصيل"
                                FontFamily="CairoRegular" FontSize="11" TextColor="#FFCCBC"
                                VerticalOptions="Center"/>
-					</HorizontalStackLayout>
-				</VerticalStackLayout>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
 
-				<BoxView Grid.Column="2" Color="Transparent"/>
-			</Grid>
-		</Grid>
+                <BoxView Grid.Column="2" Color="Transparent"/>
+            </Grid>
+        </Grid>
 
-		<!-- Messages List -->
-		<CollectionView Grid.Row="1"
+        <!-- Messages List -->
+        <CollectionView Grid.Row="1"
                         x:Name="ChatList"
                         ItemsSource="{Binding Messages}"
                         Margin="0,6,0,0">
-			<CollectionView.EmptyView>
-				<VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center"
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center"
                                      Spacing="12" Margin="40,60">
-					<Label Text="💬" FontSize="52" HorizontalOptions="Center"/>
-					<Label Text="ابدأ المحادثة مع مندوب التوصيل"
+                    <Label Text="💬" FontSize="52" HorizontalOptions="Center"/>
+                    <Label Text="ابدأ المحادثة مع مندوب التوصيل"
                            FontFamily="CairoBold" FontSize="15" TextColor="#9E9E9E"
                            HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
-					<Label Text="يمكنك تنسيق التوصيل أو الاستفسار عن وقت الوصول"
+                    <Label Text="يمكنك تنسيق التوصيل أو الاستفسار عن وقت الوصول"
                            FontFamily="CairoRegular" FontSize="13" TextColor="#BDBDBD"
                            HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
-				</VerticalStackLayout>
-			</CollectionView.EmptyView>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
 
-			<CollectionView.ItemTemplate>
-				<DataTemplate x:DataType="models:DriverChatMessage">
-					<Grid Margin="12,5">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:DriverChatMessage">
+                    <Grid Margin="12,5">
 
-						<!-- ── رسالة من الدرايفر (يسار) ── -->
-						<HorizontalStackLayout HorizontalOptions="Start"
+                        <!-- ── رسالة من الدرايفر (يسار) ── -->
+                        <HorizontalStackLayout HorizontalOptions="Start"
                                                IsVisible="{Binding IsFromOther}"
                                                Spacing="8" MaximumWidthRequest="300">
-							<!-- Driver avatar -->
-							<Border BackgroundColor="#FF5722"
+                            <!-- Driver avatar -->
+                            <Border BackgroundColor="#FF5722"
                                     StrokeShape="RoundRectangle 18"
                                     Stroke="Transparent"
                                     WidthRequest="34" HeightRequest="34"
                                     VerticalOptions="End">
-								<Label Text="🛵" FontSize="16"
+                                <Label Text="🛵" FontSize="16"
                                        HorizontalOptions="Center" VerticalOptions="Center"/>
-							</Border>
+                            </Border>
 
-							<Border BackgroundColor="White"
+                            <Border BackgroundColor="White"
                                     StrokeShape="RoundRectangle 18,18,18,4"
                                     Stroke="#E8E8E8" StrokeThickness="1"
                                     Padding="12,9">
-								<VerticalStackLayout Spacing="4">
-									<Label Text="{Binding Text}"
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="{Binding Text}"
                                            FontFamily="CairoRegular"
                                            FontSize="14" TextColor="#212121"/>
-									<Label Text="{Binding TimeDisplay}"
+                                    <Label Text="{Binding TimeDisplay}"
                                            FontFamily="CairoRegular"
                                            FontSize="10" TextColor="#BDBDBD"
                                            HorizontalOptions="End"/>
-								</VerticalStackLayout>
-							</Border>
-						</HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </HorizontalStackLayout>
 
-						<!-- ── رسالة من العميل (يمين) ── -->
-						<HorizontalStackLayout HorizontalOptions="End"
+                        <!-- ── رسالة من العميل (يمين) ── -->
+                        <HorizontalStackLayout HorizontalOptions="End"
                                                IsVisible="{Binding IsFromMe}"
                                                Spacing="8" MaximumWidthRequest="300">
 
-							<Border BackgroundColor="#FF5722"
+                            <Border BackgroundColor="#FF5722"
                                     StrokeShape="RoundRectangle 18,18,4,18"
                                     Stroke="Transparent"
                                     Padding="12,9">
-								<VerticalStackLayout Spacing="4">
-									<Label Text="{Binding Text}"
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="{Binding Text}"
                                            FontFamily="CairoRegular"
                                            FontSize="14" TextColor="White"/>
-									<Label Text="{Binding TimeDisplay}"
+                                    <Label Text="{Binding TimeDisplay}"
                                            FontFamily="CairoRegular"
                                            FontSize="10" TextColor="#FFCCBC"
                                            HorizontalOptions="End"/>
-								</VerticalStackLayout>
-							</Border>
+                                </VerticalStackLayout>
+                            </Border>
 
-							<!-- Customer avatar -->
-							<Border BackgroundColor="#2196F3"
+                            <!-- Customer avatar -->
+                            <Border BackgroundColor="#2196F3"
                                     StrokeShape="RoundRectangle 18"
                                     Stroke="Transparent"
                                     WidthRequest="34" HeightRequest="34"
                                     VerticalOptions="End">
-								<Label Text="👤" FontSize="16"
+                                <Label Text="👤" FontSize="16"
                                        HorizontalOptions="Center" VerticalOptions="Center"/>
-							</Border>
-						</HorizontalStackLayout>
+                            </Border>
+                        </HorizontalStackLayout>
 
-					</Grid>
-				</DataTemplate>
-			</CollectionView.ItemTemplate>
-		</CollectionView>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-		<!-- Input Bar -->
-		<Border Grid.Row="2" BackgroundColor="White"
+        <!-- Input Bar -->
+        <Border Grid.Row="2" BackgroundColor="White"
                 Stroke="#E8E8E8" StrokeThickness="1"
                 Padding="12,10,12,32">
-			<Grid ColumnDefinitions="*,52" ColumnSpacing="10">
+            <Grid ColumnDefinitions="*,52" ColumnSpacing="10">
 
-				<Border Grid.Column="0"
+                <Border Grid.Column="0"
                         BackgroundColor="#F5F5F5"
                         StrokeShape="RoundRectangle 24"
                         Stroke="#E0E0E0" StrokeThickness="1"
                         Padding="16,0">
-					<Entry x:Name="MessageEntry"
+                    <Entry x:Name="MessageEntry"
                            Text="{Binding InputText}"
                            Placeholder="اكتب رسالة..."
                            PlaceholderColor="#BDBDBD"
@@ -161,23 +161,23 @@
                            BackgroundColor="Transparent"
                            HeightRequest="46"
                            ReturnCommand="{Binding SendCommand}"/>
-				</Border>
+                </Border>
 
-				<Border Grid.Column="1"
+                <Border Grid.Column="1"
                         BackgroundColor="#FF5722"
                         StrokeShape="RoundRectangle 26"
                         Stroke="Transparent"
                         WidthRequest="50" HeightRequest="50"
                         VerticalOptions="Center">
-					<Border.GestureRecognizers>
-						<TapGestureRecognizer Command="{Binding SendCommand}"/>
-					</Border.GestureRecognizers>
-					<Label Text="➤" FontSize="20" TextColor="White"
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SendCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="➤" FontSize="20" TextColor="White"
                            HorizontalOptions="Center" VerticalOptions="Center"/>
-				</Border>
+                </Border>
 
-			</Grid>
-		</Border>
+            </Grid>
+        </Border>
 
-	</Grid>
+    </Grid>
 </ContentPage>

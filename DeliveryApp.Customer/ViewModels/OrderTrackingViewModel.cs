@@ -161,15 +161,17 @@ public partial class OrderTrackingViewModel : BaseViewModel
     };
 
     public void Cleanup()
-
     {
+        _timer?.Stop();
+        _timer?.Dispose();
 
-        _timer?.Stop(); _timer?.Dispose();
-
-        _ = _hub.LeaveOrderAsync(OrderId);
+        // BUG FIX: We should NOT leave the SignalR group here if we are navigating to the Chat page.
+        // If we leave, the customer won't receive messages in the chat page because the SignalR connection is shared.
+        // Instead, we let the ChatPage handle its own connection/cleanup or keep the tracking group active.
+        // For now, let's keep the group active so notifications and chat work.
+        // _ = _hub.LeaveOrderAsync(OrderId); 
 
         _chatNotif.UnregisterOrder(OrderId);
-
     }
 
 }
