@@ -4,7 +4,6 @@ using Mapsui.Layers;
 using Mapsui.Projections;
 using Mapsui.Styles;
 using Mapsui.Tiling;
-using Mapsui.UI.Maui;
 using System.Text.Json;
 using System.Diagnostics;
 
@@ -17,7 +16,13 @@ public partial class OrderTrackingPage : ContentPage
     MemoryLayer? _customerLayer;
     MemoryLayer? _restaurantLayer;
     MemoryLayer? _routeLayer;
+    MemoryLayer? _driverRouteLayer;
     bool _staticPinsDrawn = false;
+
+    // ── SVG sources (بيتبنوا مرة واحدة) ──────────────────────────────────────
+    static readonly string _customerSvg = BuildPinSvg("#2196F3", "#1565C0");
+    static readonly string _restaurantSvg = BuildPinSvg("#4CAF50", "#2E7D32");
+    static readonly string _driverSvg = BuildCircleSvg("#FF5722", "#BF360C");
 
     public OrderTrackingPage(OrderTrackingViewModel vm)
     {
@@ -28,11 +33,36 @@ public partial class OrderTrackingPage : ContentPage
         vm.MapUpdated += OnMapUpdated;
     }
 
+    // ─── SVG: شكل teardrop pin للمواقع الثابتة ───────────────────────────────
+    static string BuildPinSvg(string fill, string dark) =>
+        $"svg-content://<svg xmlns='http://www.w3.org/2000/svg' width='56' height='72' viewBox='0 0 56 72'>" +
+        $"<defs><filter id='sh'><feDropShadow dx='0' dy='2' stdDeviation='2.5' flood-color='#00000055'/></filter></defs>" +
+        $"<g filter='url(#sh)'>" +
+        $"<path d='M28 4C14.7 4 4 14.7 4 28C4 44 28 68 28 68C28 68 52 44 52 28C52 14.7 41.3 4 28 4Z' fill='{fill}' stroke='white' stroke-width='2'/>" +
+        $"</g>" +
+        $"<circle cx='28' cy='28' r='10' fill='white' opacity='0.9'/>" +
+        $"<circle cx='28' cy='28' r='7' fill='{dark}'/>" +
+        $"</svg>";
+
+    // ─── SVG: دائرة للدرايفر (بيتحرك) ────────────────────────────────────────
+    static string BuildCircleSvg(string fill, string dark) =>
+        $"svg-content://<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'>" +
+        $"<defs><filter id='sh'><feDropShadow dx='0' dy='2' stdDeviation='3' flood-color='#00000060'/></filter></defs>" +
+        $"<circle cx='30' cy='30' r='26' fill='{fill}' stroke='white' stroke-width='3' filter='url(#sh)'/>" +
+        $"<circle cx='30' cy='30' r='16' fill='white' opacity='0.2'/>" +
+        $"<text x='30' y='38' text-anchor='middle' font-size='22' fill='white'>🛵</text>" +
+        $"</svg>";
+
+    // ─── إعداد الخريطة ────────────────────────────────────────────────────────
     void SetupMap()
     {
+        Mapsui.Logging.Logger.LogDelegate = (level, msg, ex) =>
+            Debug.WriteLine($"[Mapsui/{level}] {msg} {ex?.Message}");
+
         MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
         var (x, y) = SphericalMercator.FromLonLat(31.2357, 30.0444);
-        MapControl.Map.Navigator.CenterOnAndZoomTo(new MPoint(x, y), MapControl.Map.Navigator.Resolutions[13]);
+        MapControl.Map.Navigator.CenterOnAndZoomTo(
+            new MPoint(x, y), MapControl.Map.Navigator.Resolutions[13]);
     }
 
     protected override void OnAppearing()
@@ -41,6 +71,7 @@ public partial class OrderTrackingPage : ContentPage
         MapControl.Refresh();
     }
 
+    // ─── يتنادى لما الـ VM يجيب بيانات أو يتحدث موقع الدرايفر ───────────────
     void OnMapUpdated()
     {
         MainThread.BeginInvokeOnMainThread(async () =>
@@ -51,118 +82,186 @@ public partial class OrderTrackingPage : ContentPage
             if (!_staticPinsDrawn && hasCustomer && hasRestaurant)
             {
                 _staticPinsDrawn = true;
-                DrawCustomerPin(_vm.CustomerLat, _vm.CustomerLng);
-                DrawRestaurantPin(_vm.RestaurantLat, _vm.RestaurantLng);
-                await DrawRouteAsync(_vm.RestaurantLat, _vm.RestaurantLng, _vm.CustomerLat, _vm.CustomerLng);
-                FitBounds(_vm.RestaurantLat, _vm.RestaurantLng, _vm.CustomerLat, _vm.CustomerLng);
+
+                DrawImagePin(ref _customerLayer, "CustomerLayer",
+                    _vm.CustomerLat, _vm.CustomerLng, _customerSvg, 1.0);
+
+                DrawImagePin(ref _restaurantLayer, "RestaurantLayer",
+                    _vm.RestaurantLat, _vm.RestaurantLng, _restaurantSvg, 1.0);
+
+                var routeLayer = _routeLayer;
+                await DrawRouteAsync(
+                    _vm.RestaurantLat, _vm.RestaurantLng,
+                    _vm.CustomerLat, _vm.CustomerLng,
+                    "#FF5722", 5, "RouteLayer",
+                    onComplete: layer => _routeLayer = layer);
+
+                FitBounds(
+                    _vm.RestaurantLat, _vm.RestaurantLng,
+                    _vm.CustomerLat, _vm.CustomerLng);
+            }
+            else if (!_staticPinsDrawn && (hasCustomer || hasRestaurant))
+            {
+                double lat = hasCustomer ? _vm.CustomerLat : _vm.RestaurantLat;
+                double lng = hasCustomer ? _vm.CustomerLng : _vm.RestaurantLng;
+                var (cx, cy) = SphericalMercator.FromLonLat(lng, lat);
+                MapControl.Map.Navigator.CenterOnAndZoomTo(
+                    new MPoint(cx, cy), MapControl.Map.Navigator.Resolutions[15]);
             }
 
-            if (_vm.HasDriver)
-                DrawDriverPin(_vm.DriverLat, _vm.DriverLng);
+            // ── Driver ───────────────────────────────────────────────────────
+            if (_vm.HasDriver && _vm.DriverLat != 0)
+            {
+                DrawImagePin(ref _driverLayer, "DriverLayer",
+                    _vm.DriverLat, _vm.DriverLng, _driverSvg, 0.9);
+
+                if (hasCustomer)
+                {
+                    await DrawRouteAsync(
+                        _vm.DriverLat, _vm.DriverLng,
+                        _vm.CustomerLat, _vm.CustomerLng,
+                        "#FF9800", 3, "DriverRouteLayer",
+                        onComplete: layer => _driverRouteLayer = layer);
+                }
+            }
 
             MapControl.Refresh();
         });
     }
 
-
-
-    // دالة إنشاء الطبقة باستخدام رموز برمجية (بدون صور)
-    MemoryLayer CreateMarkerLayer(string name, double x, double y, Mapsui.Styles.Color color, SymbolType type)
+    // ─── رسم Pin بـ ImageStyle (Mapsui 5 API الصح) ────────────────────────────
+    void DrawImagePin(ref MemoryLayer? existing, string name,
+                      double lat, double lng,
+                      string svgSource, double scale)
     {
-        return new MemoryLayer
+        if (existing != null) MapControl.Map.Layers.Remove(existing);
+
+        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
+        var feature = new PointFeature(new MPoint(x, y));
+        feature.Styles = new List<IStyle>
         {
-            Name = name,
-            Features = new[] { new PointFeature(new MPoint(x, y)) },
-            Style = new SymbolStyle
+            new ImageStyle
             {
-                SymbolScale = 1.2,
-                SymbolType = type, // في 5.0 نستخدم SymbolType
-                Fill = new Mapsui.Styles.Brush(color),
-                Outline = new Pen(Mapsui.Styles.Color.White, 2)
+                Image       = svgSource,   // "svg-content://..." → Mapsui 5 API
+                SymbolScale = scale,
+                // Offset للـ teardrop: نحرك الـ pin لفوق عشان الـ tip يبقى على الإحداثي
+               RelativeOffset = new RelativeOffset(0.0, 0.5)
             }
         };
+
+        existing = new MemoryLayer
+        {
+            Name = name,
+            Features = new[] { feature },
+            Style = null
+        };
+
+        MapControl.Map.Layers.Add(existing);
     }
 
-    // تعديل دوال الرسم
-    void DrawCustomerPin(double lat, double lng)
-    {
-        if (_customerLayer != null) MapControl.Map.Layers.Remove(_customerLayer);
-        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
-        // دائرة زرقاء للعميل
-        _customerLayer = CreateMarkerLayer("CustomerLayer", x, y, Mapsui.Styles.Color.Blue, SymbolType.Ellipse);
-        MapControl.Map.Layers.Add(_customerLayer);
-    }
-
-    void DrawRestaurantPin(double lat, double lng)
-    {
-        if (_restaurantLayer != null) MapControl.Map.Layers.Remove(_restaurantLayer);
-        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
-        // مربع أخضر للمطعم
-        _restaurantLayer = CreateMarkerLayer("RestaurantLayer", x, y, Mapsui.Styles.Color.Green, SymbolType.Rectangle);
-        MapControl.Map.Layers.Add(_restaurantLayer);
-    }
-
-    void DrawDriverPin(double lat, double lng)
-    {
-        if (_driverLayer != null) MapControl.Map.Layers.Remove(_driverLayer);
-        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
-        // مثلث برتقالي للدليفري
-        _driverLayer = CreateMarkerLayer("DriverLayer", x, y, Mapsui.Styles.Color.Orange, SymbolType.Triangle);
-        MapControl.Map.Layers.Add(_driverLayer);
-    }
-    async Task DrawRouteAsync(double fromLat, double fromLng, double toLat, double toLng)
+    // ─── Route من OSRM (بدون ref في async) ───────────────────────────────────
+    async Task DrawRouteAsync(
+        double fromLat, double fromLng,
+        double toLat, double toLng,
+        string colorHex, double width,
+        string layerName,
+        Action<MemoryLayer> onComplete)
     {
         try
         {
             using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
-            var url = $"https://router.project-osrm.org/route/v1/driving/{fromLng},{fromLat};{toLng},{toLat}?overview=full&geometries=geojson";
+            var url = $"https://router.project-osrm.org/route/v1/driving/" +
+                      $"{fromLng},{fromLat};{toLng},{toLat}" +
+                      $"?overview=full&geometries=geojson";
+
             var json = await http.GetStringAsync(url);
             var doc = JsonDocument.Parse(json);
             var route = doc.RootElement.GetProperty("routes")[0];
 
-            _vm.Distance = $"{route.GetProperty("distance").GetDouble() / 1000:F1} km";
-            _vm.TravelTime = $"{Math.Ceiling(route.GetProperty("duration").GetDouble() / 60)} min";
+            if (layerName == "RouteLayer")
+            {
+                _vm.Distance = $"{route.GetProperty("distance").GetDouble() / 1000:F1} km";
+                _vm.TravelTime = $"{Math.Ceiling(route.GetProperty("duration").GetDouble() / 60):F0} min";
+            }
 
             var coords = route.GetProperty("geometry").GetProperty("coordinates");
-            var points = coords.EnumerateArray().Select(c => {
-                var (mx, my) = SphericalMercator.FromLonLat(c[0].GetDouble(), c[1].GetDouble());
-                return new MPoint(mx, my);
-            }).ToList();
-
-            if (points.Count < 2) return;
-            if (_routeLayer != null) MapControl.Map.Layers.Remove(_routeLayer);
-
-            var lineString = new NetTopologySuite.Geometries.LineString(points.Select(p => new NetTopologySuite.Geometries.Coordinate(p.X, p.Y)).ToArray());
-            _routeLayer = new MemoryLayer
+            var points = new List<MPoint>();
+            foreach (var c in coords.EnumerateArray())
             {
-                Name = "RouteLayer",
-                Features = new[] { new Mapsui.Nts.GeometryFeature(lineString) },
-                Style = new VectorStyle { Line = new Pen(Mapsui.Styles.Color.FromString("#FF5722"), 4) }
+                var (mx, my) = SphericalMercator.FromLonLat(c[0].GetDouble(), c[1].GetDouble());
+                points.Add(new MPoint(mx, my));
+            }
+            if (points.Count < 2) return;
+
+            // احذف الـ layer القديم لو موجود
+            var existingByName = MapControl.Map.Layers
+                .FirstOrDefault(l => l.Name == layerName);
+            if (existingByName != null) MapControl.Map.Layers.Remove(existingByName);
+
+            var line = new NetTopologySuite.Geometries.LineString(
+                points.Select(p =>
+                    new NetTopologySuite.Geometries.Coordinate(p.X, p.Y)).ToArray());
+            var feature = new Mapsui.Nts.GeometryFeature(line);
+            feature.Styles = new List<IStyle>
+            {
+                // Shadow تحت الـ route
+                new VectorStyle
+                {
+                    Line = new Pen(Mapsui.Styles.Color.FromArgb(50, 0, 0, 0), width + 4)
+                },
+                // Main route
+                new VectorStyle
+                {
+                    Line = new Pen(Mapsui.Styles.Color.FromString(colorHex), width)
+                },
+                // Dashes بيضاء فوق
+                new VectorStyle
+                {
+                    Line = new Pen(Mapsui.Styles.Color.White, 1.5f)
+                    {
+                        PenStyle = PenStyle.Dash
+                    }
+                }
             };
-            MapControl.Map.Layers.Insert(1, _routeLayer);
+
+            var newLayer = new MemoryLayer
+            {
+                Name = layerName,
+                Features = new[] { feature },
+                Style = null
+            };
+
+            int insertIdx = Math.Min(1, Math.Max(0, MapControl.Map.Layers.Count - 1));
+            MapControl.Map.Layers.Insert(insertIdx, newLayer);
+
+            // نرجع الـ layer بـ callback بدل ref
+            onComplete(newLayer);
         }
-        catch (Exception ex) { Debug.WriteLine(ex.Message); }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Route:{layerName}] {ex.Message}");
+        }
     }
 
+    // ─── Fit Viewport ─────────────────────────────────────────────────────────
     void FitBounds(double lat1, double lng1, double lat2, double lng2)
     {
-        var points = new List<MPoint>();
         var (x1, y1) = SphericalMercator.FromLonLat(lng1, lat1);
         var (x2, y2) = SphericalMercator.FromLonLat(lng2, lat2);
-        points.Add(new MPoint(x1, y1)); points.Add(new MPoint(x2, y2));
 
-        if (_vm.HasDriver)
+        double dist = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
+        int zoom = dist switch
         {
-            var (dx, dy) = SphericalMercator.FromLonLat(_vm.DriverLng, _vm.DriverLat);
-            points.Add(new MPoint(dx, dy));
-        }
+            < 3000 => 16,
+            < 7000 => 15,
+            < 15000 => 14,
+            < 30000 => 13,
+            _ => 12
+        };
 
-        double minX = points.Min(p => p.X), maxX = points.Max(p => p.X);
-        double minY = points.Min(p => p.Y), maxY = points.Max(p => p.Y);
-        double dist = Math.Sqrt(Math.Pow(maxX - minX, 2) + Math.Pow(maxY - minY, 2));
-        int zoom = dist switch { < 3000 => 16, < 7000 => 15, < 15000 => 14, < 30000 => 13, _ => 12 };
-
-        MapControl.Map.Navigator.CenterOnAndZoomTo(new MPoint((minX + maxX) / 2, (minY + maxY) / 2), MapControl.Map.Navigator.Resolutions[zoom]);
+        MapControl.Map.Navigator.CenterOnAndZoomTo(
+            new MPoint((x1 + x2) / 2, (y1 + y2) / 2),
+            MapControl.Map.Navigator.Resolutions[Math.Max(zoom - 1, 0)]);
     }
 
     protected override void OnDisappearing()
