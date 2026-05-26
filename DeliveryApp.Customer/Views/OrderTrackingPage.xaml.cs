@@ -12,14 +12,19 @@ namespace DeliveryApp.Customer.Views;
 public partial class OrderTrackingPage : ContentPage
 {
     readonly OrderTrackingViewModel _vm;
+
     MemoryLayer? _driverLayer;
     MemoryLayer? _customerLayer;
     MemoryLayer? _restaurantLayer;
     MemoryLayer? _routeLayer;
     MemoryLayer? _driverRouteLayer;
-    bool _staticPinsDrawn = false;
 
-    // ── SVG sources (بيتبنوا مرة واحدة) ──────────────────────────────────────
+    // حالة الرسم - نتعقب آخر إحداثيات رُسمت عليها الـ pins
+    bool _staticPinsDrawn = false;
+    double _lastDriverRouteFromLat = 0, _lastDriverRouteFromLng = 0;
+    DateTime _lastDriverRouteTime = DateTime.MinValue;
+
+    // SVGs
     static readonly string _customerSvg = BuildPinSvg("#2196F3", "#1565C0");
     static readonly string _restaurantSvg = BuildPinSvg("#4CAF50", "#2E7D32");
     static readonly string _driverSvg = BuildCircleSvg("#FF5722", "#BF360C");
@@ -33,7 +38,7 @@ public partial class OrderTrackingPage : ContentPage
         vm.MapUpdated += OnMapUpdated;
     }
 
-    // ─── SVG: شكل teardrop pin للمواقع الثابتة ───────────────────────────────
+    // ─── SVG: teardrop pin ────────────────────────────────────────────────────
     static string BuildPinSvg(string fill, string dark) =>
         $"svg-content://<svg xmlns='http://www.w3.org/2000/svg' width='56' height='72' viewBox='0 0 56 72'>" +
         $"<defs><filter id='sh'><feDropShadow dx='0' dy='2' stdDeviation='2.5' flood-color='#00000055'/></filter></defs>" +
@@ -44,7 +49,7 @@ public partial class OrderTrackingPage : ContentPage
         $"<circle cx='28' cy='28' r='7' fill='{dark}'/>" +
         $"</svg>";
 
-    // ─── SVG: دائرة للدرايفر (بيتحرك) ────────────────────────────────────────
+    // ─── SVG: driver circle ───────────────────────────────────────────────────
     static string BuildCircleSvg(string fill, string dark) =>
         $"svg-content://<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'>" +
         $"<defs><filter id='sh'><feDropShadow dx='0' dy='2' stdDeviation='3' flood-color='#00000060'/></filter></defs>" +
@@ -60,6 +65,8 @@ public partial class OrderTrackingPage : ContentPage
             Debug.WriteLine($"[Mapsui/{level}] {msg} {ex?.Message}");
 
         MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
+
+        // Center on Cairo as default until real coordinates arrive
         var (x, y) = SphericalMercator.FromLonLat(31.2357, 30.0444);
         MapControl.Map.Navigator.CenterOnAndZoomTo(
             new MPoint(x, y), MapControl.Map.Navigator.Resolutions[13]);
@@ -71,7 +78,7 @@ public partial class OrderTrackingPage : ContentPage
         MapControl.Refresh();
     }
 
-    // ─── يتنادى لما الـ VM يجيب بيانات أو يتحدث موقع الدرايفر ───────────────
+    // ─── Main handler: يتنادى لما ViewModel يجيب data أو يتحدث موقع الدرايفر ──
     void OnMapUpdated()
     {
         MainThread.BeginInvokeOnMainThread(async () =>
@@ -79,48 +86,64 @@ public partial class OrderTrackingPage : ContentPage
             bool hasCustomer = _vm.CustomerLat != 0 && _vm.CustomerLng != 0;
             bool hasRestaurant = _vm.RestaurantLat != 0 && _vm.RestaurantLng != 0;
 
+            // ── الـ Static Pins (مطعم + عميل) ─────────────────────────────
+            // FIX: نرسمهم لما يكون عندنا إحداثيات حتى لو مرة واحدة فقط
             if (!_staticPinsDrawn && hasCustomer && hasRestaurant)
             {
                 _staticPinsDrawn = true;
 
-                DrawImagePin(ref _customerLayer, "CustomerLayer",
+                DrawPin(ref _customerLayer, "CustomerLayer",
                     _vm.CustomerLat, _vm.CustomerLng, _customerSvg, 1.0);
 
-                DrawImagePin(ref _restaurantLayer, "RestaurantLayer",
+                DrawPin(ref _restaurantLayer, "RestaurantLayer",
                     _vm.RestaurantLat, _vm.RestaurantLng, _restaurantSvg, 1.0);
 
-                var routeLayer = _routeLayer;
-                await DrawRouteAsync(
+                // رسم الـ Route بين المطعم والعميل
+                await DrawRouteAndUpdateEtaAsync(
                     _vm.RestaurantLat, _vm.RestaurantLng,
                     _vm.CustomerLat, _vm.CustomerLng,
                     "#FF5722", 5, "RouteLayer",
+                    updateEta: true,
                     onComplete: layer => _routeLayer = layer);
 
+                // Fit map to show both pins
                 FitBounds(
                     _vm.RestaurantLat, _vm.RestaurantLng,
                     _vm.CustomerLat, _vm.CustomerLng);
             }
-            else if (!_staticPinsDrawn && (hasCustomer || hasRestaurant))
+            else if (!_staticPinsDrawn && hasCustomer)
             {
-                double lat = hasCustomer ? _vm.CustomerLat : _vm.RestaurantLat;
-                double lng = hasCustomer ? _vm.CustomerLng : _vm.RestaurantLng;
-                var (cx, cy) = SphericalMercator.FromLonLat(lng, lat);
-                MapControl.Map.Navigator.CenterOnAndZoomTo(
-                    new MPoint(cx, cy), MapControl.Map.Navigator.Resolutions[15]);
+                // لو في موقع عميل بس، اعرضه وانتظر المطعم
+                DrawPin(ref _customerLayer, "CustomerLayer",
+                    _vm.CustomerLat, _vm.CustomerLng, _customerSvg, 1.0);
+                CenterOn(_vm.CustomerLat, _vm.CustomerLng, 15);
+            }
+            else if (!_staticPinsDrawn && hasRestaurant)
+            {
+                DrawPin(ref _restaurantLayer, "RestaurantLayer",
+                    _vm.RestaurantLat, _vm.RestaurantLng, _restaurantSvg, 1.0);
+                CenterOn(_vm.RestaurantLat, _vm.RestaurantLng, 15);
             }
 
-            // ── Driver ───────────────────────────────────────────────────────
+            // ── الدرايفر ─────────────────────────────────────────────────────
             if (_vm.HasDriver && _vm.DriverLat != 0)
             {
-                DrawImagePin(ref _driverLayer, "DriverLayer",
+                // تحديث pin الدرايفر دايما
+                DrawPin(ref _driverLayer, "DriverLayer",
                     _vm.DriverLat, _vm.DriverLng, _driverSvg, 0.9);
 
-                if (hasCustomer)
+                // FIX: تحديث Route الدرايفر → العميل كل 15 ثانية أو لو تحرك أكتر من 50m
+                if (hasCustomer && ShouldUpdateDriverRoute())
                 {
-                    await DrawRouteAsync(
+                    _lastDriverRouteFromLat = _vm.DriverLat;
+                    _lastDriverRouteFromLng = _vm.DriverLng;
+                    _lastDriverRouteTime = DateTime.Now;
+
+                    await DrawRouteAndUpdateEtaAsync(
                         _vm.DriverLat, _vm.DriverLng,
                         _vm.CustomerLat, _vm.CustomerLng,
-                        "#FF9800", 3, "DriverRouteLayer",
+                        "#FF9800", 4, "DriverRouteLayer",
+                        updateEta: true, // FIX: تحديث ETA من route الدرايفر مش المطعم
                         onComplete: layer => _driverRouteLayer = layer);
                 }
             }
@@ -129,12 +152,32 @@ public partial class OrderTrackingPage : ContentPage
         });
     }
 
-    // ─── رسم Pin بـ ImageStyle (Mapsui 5 API الصح) ────────────────────────────
-    void DrawImagePin(ref MemoryLayer? existing, string name,
-                      double lat, double lng,
-                      string svgSource, double scale)
+    // ─── هل لازم نحدث route الدرايفر؟ ────────────────────────────────────────
+    bool ShouldUpdateDriverRoute()
     {
-        if (existing != null) MapControl.Map.Layers.Remove(existing);
+        // أول مرة
+        if (_lastDriverRouteFromLat == 0) return true;
+
+        // كل 15 ثانية على الأقل
+        if ((DateTime.Now - _lastDriverRouteTime).TotalSeconds > 15) return true;
+
+        // لو تحرك أكتر من ~50 متر
+        double dlat = _vm.DriverLat - _lastDriverRouteFromLat;
+        double dlng = _vm.DriverLng - _lastDriverRouteFromLng;
+        double distDeg = Math.Sqrt(dlat * dlat + dlng * dlng);
+        return distDeg > 0.0005; // ~55 متر
+    }
+
+    // ─── رسم Pin ──────────────────────────────────────────────────────────────
+    void DrawPin(ref MemoryLayer? existing, string name,
+                 double lat, double lng, string svgSource, double scale)
+    {
+        // FIX: Remove safely - check layer is still in map before removing
+        if (existing != null)
+        {
+            try { MapControl.Map.Layers.Remove(existing); }
+            catch { /* layer may already be gone */ }
+        }
 
         var (x, y) = SphericalMercator.FromLonLat(lng, lat);
         var feature = new PointFeature(new MPoint(x, y));
@@ -142,10 +185,12 @@ public partial class OrderTrackingPage : ContentPage
         {
             new ImageStyle
             {
-                Image       = svgSource,   // "svg-content://..." → Mapsui 5 API
+                Image = svgSource,
                 SymbolScale = scale,
-                // Offset للـ teardrop: نحرك الـ pin لفوق عشان الـ tip يبقى على الإحداثي
-               RelativeOffset = new RelativeOffset(0.0, 0.5)
+                // FIX: RelativeOffset صح - تجيب الـ tip تحت على الإحداثي
+                // بالنسبة للـ SVG viewBox: center = (0.5, 0.5)، tip في الأسفل
+                // RelativeOffset(x=0, y=0.5) يحرك الـ image لفوق بنص الارتفاع
+                RelativeOffset = new RelativeOffset(0.0, 0.5)
             }
         };
 
@@ -159,12 +204,13 @@ public partial class OrderTrackingPage : ContentPage
         MapControl.Map.Layers.Add(existing);
     }
 
-    // ─── Route من OSRM (بدون ref في async) ───────────────────────────────────
-    async Task DrawRouteAsync(
+    // ─── رسم Route + تحديث ETA/Distance ──────────────────────────────────────
+    async Task DrawRouteAndUpdateEtaAsync(
         double fromLat, double fromLng,
         double toLat, double toLng,
         string colorHex, double width,
         string layerName,
+        bool updateEta,
         Action<MemoryLayer> onComplete)
     {
         try
@@ -176,14 +222,29 @@ public partial class OrderTrackingPage : ContentPage
 
             var json = await http.GetStringAsync(url);
             var doc = JsonDocument.Parse(json);
-            var route = doc.RootElement.GetProperty("routes")[0];
+            var routes = doc.RootElement.GetProperty("routes");
+            if (routes.GetArrayLength() == 0) return;
 
-            if (layerName == "RouteLayer")
+            var route = routes[0];
+
+            // FIX: تحديث ETA والمسافة - سواء من الدرايفر أو من المطعم
+            if (updateEta)
             {
-                _vm.Distance = $"{route.GetProperty("distance").GetDouble() / 1000:F1} km";
-                _vm.TravelTime = $"{Math.Ceiling(route.GetProperty("duration").GetDouble() / 60):F0} min";
+                double distanceM = route.GetProperty("distance").GetDouble();
+                double durationS = route.GetProperty("duration").GetDouble();
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    _vm.Distance = distanceM < 1000
+                        ? $"{distanceM:F0} م"
+                        : $"{distanceM / 1000:F1} كم";
+                    _vm.TravelTime = durationS < 60
+                        ? "< 1 دقيقة"
+                        : $"{Math.Ceiling(durationS / 60):F0} دقيقة";
+                });
             }
 
+            // بناء نقاط الـ route
             var coords = route.GetProperty("geometry").GetProperty("coordinates");
             var points = new List<MPoint>();
             foreach (var c in coords.EnumerateArray())
@@ -193,28 +254,33 @@ public partial class OrderTrackingPage : ContentPage
             }
             if (points.Count < 2) return;
 
-            // احذف الـ layer القديم لو موجود
+            // FIX: حذف الـ layer القديم بالاسم بشكل آمن
             var existingByName = MapControl.Map.Layers
                 .FirstOrDefault(l => l.Name == layerName);
-            if (existingByName != null) MapControl.Map.Layers.Remove(existingByName);
+            if (existingByName != null)
+            {
+                try { MapControl.Map.Layers.Remove(existingByName); }
+                catch { }
+            }
 
             var line = new NetTopologySuite.Geometries.LineString(
                 points.Select(p =>
                     new NetTopologySuite.Geometries.Coordinate(p.X, p.Y)).ToArray());
+
             var feature = new Mapsui.Nts.GeometryFeature(line);
             feature.Styles = new List<IStyle>
             {
-                // Shadow تحت الـ route
+                // Shadow
                 new VectorStyle
                 {
                     Line = new Pen(Mapsui.Styles.Color.FromArgb(50, 0, 0, 0), width + 4)
                 },
-                // Main route
+                // Main line
                 new VectorStyle
                 {
                     Line = new Pen(Mapsui.Styles.Color.FromString(colorHex), width)
                 },
-                // Dashes بيضاء فوق
+                // White dashes
                 new VectorStyle
                 {
                     Line = new Pen(Mapsui.Styles.Color.White, 1.5f)
@@ -231,10 +297,19 @@ public partial class OrderTrackingPage : ContentPage
                 Style = null
             };
 
-            int insertIdx = Math.Min(1, Math.Max(0, MapControl.Map.Layers.Count - 1));
-            MapControl.Map.Layers.Insert(insertIdx, newLayer);
+            // FIX: أضف route layers تحت Pin layers (index 1)
+            // Tile layer is index 0, routes at 1, pins at top
+            int insertIdx = Math.Max(1, MapControl.Map.Layers.Count - 1);
+            // إذا في pin layers بالفعل، أضف الـ route قبلهم
+            int pinLayerIdx = MapControl.Map.Layers
+                .ToList()
+                .FindIndex(l => l.Name is "CustomerLayer" or "RestaurantLayer" or "DriverLayer");
+            if (pinLayerIdx > 0)
+                insertIdx = pinLayerIdx;
+            else
+                insertIdx = Math.Min(1, MapControl.Map.Layers.Count);
 
-            // نرجع الـ layer بـ callback بدل ref
+            MapControl.Map.Layers.Insert(insertIdx, newLayer);
             onComplete(newLayer);
         }
         catch (Exception ex)
@@ -243,25 +318,41 @@ public partial class OrderTrackingPage : ContentPage
         }
     }
 
-    // ─── Fit Viewport ─────────────────────────────────────────────────────────
+    // ─── FitBounds: يضبط الـ viewport عشان يشمل نقطتين ──────────────────────
     void FitBounds(double lat1, double lng1, double lat2, double lng2)
     {
         var (x1, y1) = SphericalMercator.FromLonLat(lng1, lat1);
         var (x2, y2) = SphericalMercator.FromLonLat(lng2, lat2);
 
         double dist = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
+
+        // FIX: حساب zoom level أفضل بناءً على المسافة الفعلية
         int zoom = dist switch
         {
-            < 3000 => 16,
-            < 7000 => 15,
-            < 15000 => 14,
-            < 30000 => 13,
-            _ => 12
+            < 2000 => 16,
+            < 5000 => 15,
+            < 10000 => 14,
+            < 25000 => 13,
+            < 50000 => 12,
+            _ => 11
         };
 
+        // FIX: padding من الأطراف - نحرك المركز شوية لفوق عشان الـ info panel بيغطي الجزء السفلي
+        double centerX = (x1 + x2) / 2;
+        double centerY = (y1 + y2) / 2;
+        double verticalBias = (y2 - y1) * 0.15; // bias للأعلى
+
         MapControl.Map.Navigator.CenterOnAndZoomTo(
-            new MPoint((x1 + x2) / 2, (y1 + y2) / 2),
-            MapControl.Map.Navigator.Resolutions[Math.Max(zoom - 1, 0)]);
+            new MPoint(centerX, centerY + verticalBias),
+            MapControl.Map.Navigator.Resolutions[Math.Max(zoom, 0)]);
+    }
+
+    // ─── Center on single point ───────────────────────────────────────────────
+    void CenterOn(double lat, double lng, int zoom)
+    {
+        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
+        MapControl.Map.Navigator.CenterOnAndZoomTo(
+            new MPoint(x, y), MapControl.Map.Navigator.Resolutions[zoom]);
     }
 
     protected override void OnDisappearing()

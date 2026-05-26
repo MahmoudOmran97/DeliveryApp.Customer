@@ -410,6 +410,37 @@
 	<data name="Status_Delivered">
 		<value>تم التوصيل! بالهنا والشفا 🎉</value>
 	</data>
+	<!-- Tracking Page -->
+	<data name="ETA">
+		<value>وقت الوصول</value>
+	</data>
+	<data name="Distance">
+		<value>المسافة</value>
+	</data>
+	<data name="LegendYou">
+		<value>أنت</value>
+	</data>
+	<data name="LegendRestaurant">
+		<value>المطعم</value>
+	</data>
+	<data name="LegendDelivery">
+		<value>المندوب</value>
+	</data>
+	<data name="Step_Order">
+		<value>استُلم</value>
+	</data>
+	<data name="Step_Accept">
+		<value>قُبل</value>
+	</data>
+	<data name="Step_Prepare">
+		<value>يُحضَّر</value>
+	</data>
+	<data name="Step_OnRoute">
+		<value>في الطريق</value>
+	</data>
+	<data name="Step_Arrived">
+		<value>وصل</value>
+	</data>
 	<!-- Support Chat -->
 	<data name="SupportChat">
 		<value>دردشة الدعم</value>

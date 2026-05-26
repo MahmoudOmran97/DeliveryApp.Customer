@@ -18,6 +18,9 @@ public partial class DriverChatViewModel : BaseViewModel
     [ObservableProperty] private string _inputText = string.Empty;
     [ObservableProperty] private bool _isConnected;
 
+    // نتعقب آخر رسالة بعتها عشان نتجنب الـ echo من السيرفر
+    private string? _lastSentMessage;
+
     public ObservableCollection<DriverChatMessage> Messages { get; } = new();
 
     public DriverChatViewModel(SignalRService signalR, AuthService auth)
@@ -37,11 +40,11 @@ public partial class DriverChatViewModel : BaseViewModel
     private async Task EnsureConnectedAsync()
     {
         if (!_signalR.IsConnected)
-        {
             await _signalR.ConnectAsync(_auth.GetToken());
-        }
+
         // الانضمام لغرفة الطلب عشان يستقبل الرسائل
         await _signalR.JoinOrderAsync(OrderId);
+
         IsConnected = _signalR.IsConnected;
     }
 
@@ -49,7 +52,7 @@ public partial class DriverChatViewModel : BaseViewModel
     {
         if (orderId != OrderId) return;
 
-        // الرسالة من الدرايفر مش من العميل نفسه
+        // FIX: تجاهل رسائل العميل نفسه (السيرفر بيبعت الرسالة لكل الـ group بما فيه المرسل)
         var myId = _auth.GetUserId().ToString();
         if (senderId == myId) return;
 
@@ -69,6 +72,7 @@ public partial class DriverChatViewModel : BaseViewModel
 
         InputText = string.Empty;
 
+        // أضف الرسالة محلياً فوراً
         Messages.Add(new DriverChatMessage
         {
             Text = text,
@@ -76,6 +80,7 @@ public partial class DriverChatViewModel : BaseViewModel
             Timestamp = DateTime.Now
         });
 
+        // بعت للسيرفر
         await _signalR.SendChatMessageAsync(OrderId, text);
     }
 

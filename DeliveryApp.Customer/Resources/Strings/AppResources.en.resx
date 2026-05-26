@@ -420,54 +420,85 @@
 	<data name="AiPowered">
 		<value>AI-powered · Always online</value>
 	</data>
+	<!-- Tracking Page -->
+	<data name="ETA">
+		<value>ETA</value>
+	</data>
+	<data name="Distance">
+		<value>Distance</value>
+	</data>
+	<data name="LegendYou">
+		<value>You</value>
+	</data>
+	<data name="LegendRestaurant">
+		<value>Restaurant</value>
+	</data>
+	<data name="LegendDelivery">
+		<value>Driver</value>
+	</data>
+	<data name="Step_Order">
+		<value>Placed</value>
+	</data>
+	<data name="Step_Accept">
+		<value>Accepted</value>
+	</data>
+	<data name="Step_Prepare">
+		<value>Cooking</value>
+	</data>
+	<data name="Step_OnRoute">
+		<value>On Route</value>
+	</data>
+	<data name="Step_Arrived">
+		<value>Arrived</value>
+	</data>
 	<!-- Driver Specific -->
 	<data name="Tab_Earnings">
 		<value>Earnings</value>
-		
+
 	</data>
-		<data name="AvailableOrders">
-				<value>Available Orders</value>
-		
+	<data name="AvailableOrders">
+		<value>Available Orders</value>
+
 	</data>
-		<data name="ActiveDelivery">
-				<value>Active Delivery</value>
-		
+	<data name="ActiveDelivery">
+		<value>Active Delivery</value>
+
 	</data>
-		<data name="AcceptOrder">
-				<value>Accept Order</value>
-		
+	<data name="AcceptOrder">
+		<value>Accept Order</value>
+
 	</data>
-		<data name="RejectOrder">
-				<value>Reject Order</value>
-		
+	<data name="RejectOrder">
+		<value>Reject Order</value>
+
 	</data>
-		<data name="Navigate">
-				<value>Navigate</value>
-		
+	<data name="Navigate">
+		<value>Navigate</value>
+
 	</data>
-		<data name="CallCustomer">
-				<value>Call Customer</value>
-		
+	<data name="CallCustomer">
+		<value>Call Customer</value>
+
 	</data>
 	<data name="ChatWithCustomer">
-				<value>Chat with Customer</value>
-		
+		<value>Chat with Customer</value>
+
 	</data>
-		<data name="Earnings">
-				<value>Earnings</value>
-		
+	<data name="Earnings">
+		<value>Earnings</value>
+
 	</data>
-		<data name="TodayEarnings">
-				<value>Today's Earnings</value>
-		
+	<data name="TodayEarnings">
+		<value>Today's Earnings</value>
+
 	</data>
-		<data name="TotalEarnings">
-				<value>Total Earnings</value>
-		
+	<data name="TotalEarnings">
+		<value>Total Earnings</value>
+
 	</data>
-		<data name="CompletedOrders">
-				<value>Completed Orders</value>
-		
+	<data name="CompletedOrders">
+		<value>Completed Orders</value>
+
 	</data>
-	
+
 </root>

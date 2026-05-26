@@ -51,7 +51,7 @@
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-		
+
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
@@ -67,64 +67,67 @@
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />
-		
+
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\CartPage.xaml.cs">
-	    <CopyToOutputDirectory></CopyToOutputDirectory>
-	  </Compile>
+		<Compile Update="Views\CartPage.xaml.cs">
+			<CopyToOutputDirectory></CopyToOutputDirectory>
+		</Compile>
+		<Compile Update="Views\DriverChatPage.xaml.cs">
+			<DependentUpon>DriverChatPage.xaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\CartPage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\CheckoutPage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\DriverChatPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\HomePage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\LocationPickerPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\LoginPage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\NotificationsPage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\OrderDetailPage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\OrdersPage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\OrderTrackingPage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\ProfilePage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\RegisterPage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\RestaurantPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\SettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\SplashPage.xaml">
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\SupportChatPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+		<MauiXaml Update="Views\CartPage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\CheckoutPage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\DriverChatPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\HomePage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\LocationPickerPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\LoginPage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\NotificationsPage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\OrderDetailPage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\OrdersPage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\OrderTrackingPage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\ProfilePage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\RegisterPage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\RestaurantPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\SettingsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\SplashPage.xaml">
+			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\SupportChatPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 	</ItemGroup>
 
 </Project>
