@@ -7,14 +7,7 @@
        Shell.NavBarIsVisible="False"
        FlyoutBehavior="Disabled">
 
-    <Shell.Resources>
-        <Style TargetType="TabBar">
-            <Setter Property="Shell.TabBarBackgroundColor" Value="White" />
-            <Setter Property="Shell.TabBarForegroundColor" Value="#FF5722" />
-            <Setter Property="Shell.TabBarTitleColor"      Value="#FF5722" />
-            <Setter Property="Shell.TabBarUnselectedColor" Value="#BDBDBD" />
-        </Style>
-    </Shell.Resources>
+   
 
     <TabBar>
 

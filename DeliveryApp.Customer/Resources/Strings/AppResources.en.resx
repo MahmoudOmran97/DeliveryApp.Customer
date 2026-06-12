@@ -501,4 +501,12 @@
 
 	</data>
 
+	<!-- ── Tabs ── -->
+	<data name="Tab_Home"          xml:space="preserve"><value>Home</value></data>
+	<data name="Tab_Orders"        xml:space="preserve"><value>Orders</value></data>
+	<data name="Tab_Earnings"      xml:space="preserve"><value>Earnings</value></data>
+	<data name="Tab_Notifications" xml:space="preserve"><value>Alerts</value></data>
+	<data name="Tab_Profile"       xml:space="preserve"><value>Profile</value></data>
+	<data name="Tab_Settings"      xml:space="preserve"><value>Settings</value></data>
+
 </root>

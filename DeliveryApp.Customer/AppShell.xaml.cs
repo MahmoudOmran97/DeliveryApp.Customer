@@ -11,6 +11,8 @@ public partial class AppShell : Shell
     {
 
         InitializeComponent();
+        Shell.SetTabBarIsVisible(this, false);
+        Navigated += OnShellNavigated;
 
         Routing.RegisterRoute(nameof(RestaurantPage), typeof(RestaurantPage));
 
@@ -29,5 +31,10 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(DriverChatPage), typeof(DriverChatPage));
         Routing.RegisterRoute(nameof(LocationPickerPage), typeof(LocationPickerPage));
     }
-
+    void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
+    {
+        Shell.SetTabBarIsVisible(this, false);
+        if (CurrentPage is Page page)
+            Shell.SetTabBarIsVisible(page, false);
+    }
 }

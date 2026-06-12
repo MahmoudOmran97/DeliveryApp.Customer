@@ -3,12 +3,29 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-
+            xmlns:local="clr-namespace:DeliveryApp.Customer"
+             xmlns:converters="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.App">
 
     <Application.Resources>
 
         <ResourceDictionary>
+            <!-- Locale -->
+            <converters:LocaleStrings x:Key="LocStrings" />
+
+          
+            <!-- Bool converters -->
+            <converters:InvertedBoolConverter     x:Key="InvertedBool" />
+            <converters:BoolToColorConverter      x:Key="BoolToColorConverter" />
+
+           
+
+            <!-- String converters -->
+            <converters:NullOrEmptyToBoolConverter x:Key="StringNotEmpty" />
+
+            <!-- Color converters -->
+            <converters:IsOpenToColorConverter    x:Key="IsOpenColor" />
+            <converters:IsReadToColorConverter    x:Key="IsReadColor" />
 
             <ResourceDictionary.MergedDictionaries>
 
