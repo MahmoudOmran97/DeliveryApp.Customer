@@ -11,6 +11,7 @@
     <conv:InvertedBoolConverter  x:Key="InvertBool" />
     <conv:InvertedBoolConverter  x:Key="InvertedBoolConverter" />
     <conv:BoolToColorConverter   x:Key="BoolToColorConverter" />
+    <conv:BoolToColorConverter   x:Key="BoolToColor" />
 
     <conv:IntToBoolConverter     x:Key="IntToBool" />
 

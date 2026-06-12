@@ -287,3 +287,108 @@ public class ChatNotification
     public string DriverName { get; set; } = string.Empty;
     public string LastMessage { get; set; } = string.Empty;
 }
+
+// ─── Banner ───────────────────────────────────────────────────────────────────
+
+public class Banner
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string? SubTitle { get; set; }
+    public string? ImageUrl { get; set; }
+    public string? ActionUrl { get; set; }
+    public string? BackgroundColor { get; set; }
+    public int SortOrder { get; set; }
+
+    private const string _base = "https://deliveryappapi.runasp.net";
+    public string? FullImageUrl
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(ImageUrl)) return null;
+            if (ImageUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return ImageUrl;
+            return _base + (ImageUrl.StartsWith("/") ? ImageUrl : "/" + ImageUrl);
+        }
+    }
+
+    public bool HasImage => !string.IsNullOrWhiteSpace(ImageUrl);
+
+    public Color BgColor
+    {
+        get
+        {
+            try { return Color.FromArgb(BackgroundColor ?? "#FF5722"); }
+            catch { return Color.FromArgb("#FF5722"); }
+        }
+    }
+}
+
+// ─── Coupon ───────────────────────────────────────────────────────────────────
+
+public class Coupon
+{
+    public int Id { get; set; }
+    public string Code { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string DiscountType { get; set; } = "Fixed";
+    public decimal DiscountValue { get; set; }
+    public decimal? MinOrderAmount { get; set; }
+    public decimal? MaxDiscount { get; set; }
+    public int? RestaurantId { get; set; }
+    public string? RestaurantName { get; set; }
+    public int? UsageLimit { get; set; }
+    public int UsedCount { get; set; }
+    public DateTime? ExpiresAt { get; set; }
+    public int? ExpiresInDays { get; set; }
+
+    public string DiscountText => DiscountType == "Percentage"
+        ? $"{DiscountValue:F0}%"
+        : $"{DiscountValue:F0} جنيه";
+
+    public string MinOrderText => MinOrderAmount.HasValue
+        ? $"الحد الأدنى {MinOrderAmount:F0} جنيه"
+        : "بدون حد أدنى";
+
+    public string ExpiryText => ExpiresInDays.HasValue
+        ? (ExpiresInDays <= 0 ? "منتهي" : $"ينتهي بعد {ExpiresInDays} يوم")
+        : "بدون تاريخ انتهاء";
+
+    public bool IsExpiringSoon => ExpiresInDays.HasValue && ExpiresInDays <= 3 && ExpiresInDays > 0;
+
+    public Color ExpiryColor => IsExpiringSoon ? Colors.Red : Color.FromArgb("#757575");
+}
+
+// ─── Deal ─────────────────────────────────────────────────────────────────────
+
+public class Deal
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public string? ImageUrl { get; set; }
+    public int? RestaurantId { get; set; }
+    public string? RestaurantName { get; set; }
+    public string? RestaurantImage { get; set; }
+    public int? ProductId { get; set; }
+    public string? ProductName { get; set; }
+    public decimal? OriginalPrice { get; set; }
+    public decimal? DiscountedPrice { get; set; }
+    public int? DiscountPercent { get; set; }
+    public string? BadgeText { get; set; }
+    public string? BadgeColor { get; set; }
+    public int SortOrder { get; set; }
+
+    public string PriceText => DiscountedPrice.HasValue ? $"{DiscountedPrice:F0} جنيه" : "";
+    public string OriginalPriceText => OriginalPrice.HasValue ? $"{OriginalPrice:F0} جنيه" : "";
+    public bool HasDiscount => DiscountedPrice.HasValue && OriginalPrice.HasValue && DiscountedPrice < OriginalPrice;
+
+    public Color BadgeColorValue
+    {
+        get
+        {
+            try { return Color.FromArgb(BadgeColor ?? "#F44336"); }
+            catch { return Colors.Red; }
+        }
+    }
+}

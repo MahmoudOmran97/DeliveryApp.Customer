@@ -236,9 +236,57 @@ public class ApiService
     public Task<List<DriverChatMessage>?> GetChatMessagesAsync(int orderId)
         => GetAsync<List<DriverChatMessage>>($"chatmessages/{orderId}");
 
+    // ─── Banners ─────────────────────────────────────────────────────────────
+
+    public Task<List<Banner>?> GetBannersAsync()
+        => GetAsync<List<Banner>>("banners");
+
+    // ─── Coupons ─────────────────────────────────────────────────────────────
+
+    public Task<List<Coupon>?> GetCouponsAsync()
+        => GetAsync<List<Coupon>>("coupons");
+
+    public async Task<CouponValidationResult?> ValidateCouponAsync(string code, decimal orderAmount)
+    {
+        try
+        {
+            SetAuth();
+            var r = await _http.PostAsJsonAsync($"{Base}/coupons/validate",
+                new { Code = code, OrderAmount = orderAmount });
+            if (r.IsSuccessStatusCode)
+                return await r.Content.ReadFromJsonAsync<CouponValidationResult>(_json);
+            var body = await r.Content.ReadAsStringAsync();
+            try
+            {
+                var doc = System.Text.Json.JsonDocument.Parse(body);
+                if (doc.RootElement.TryGetProperty("message", out var msg))
+                    throw new ApiException(msg.GetString()!);
+            }
+            catch (ApiException) { throw; }
+            catch { }
+        }
+        catch (ApiException) { throw; }
+        catch (Exception ex) { Debug(ex, "coupons/validate"); }
+        return null;
+    }
+
+    // ─── Deals ───────────────────────────────────────────────────────────────
+
+    public Task<List<Deal>?> GetDealsAsync()
+        => GetAsync<List<Deal>>("deals");
+
     private static void Debug(Exception ex, string path)
 
         => System.Diagnostics.Debug.WriteLine($"[API] {path}: {ex.Message}");
 
+}
+
+public class CouponValidationResult
+{
+    public int Id { get; set; }
+    public string Code { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public decimal Discount { get; set; }
+    public decimal FinalAmount { get; set; }
 }
 

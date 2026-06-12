@@ -30,6 +30,8 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(SupportChatPage), typeof(SupportChatPage));
         Routing.RegisterRoute(nameof(DriverChatPage), typeof(DriverChatPage));
         Routing.RegisterRoute(nameof(LocationPickerPage), typeof(LocationPickerPage));
+        Routing.RegisterRoute(nameof(CouponsPage), typeof(CouponsPage));
+        Routing.RegisterRoute(nameof(RewardsPage), typeof(RewardsPage));
     }
     void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
     {

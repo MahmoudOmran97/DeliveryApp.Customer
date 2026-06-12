@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             x:Class="DeliveryApp.Customer.Views.RewardsPage"
+             x:DataType="vm:RewardsViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA">
+
+        <!-- ══════ HEADER ══════ -->
+        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,20"
+              ColumnDefinitions="44,*">
+            <Border Grid.Column="0" BackgroundColor="#FFFFFF22"
+                    StrokeShape="RoundRectangle 20" Stroke="Transparent"
+                    WidthRequest="36" HeightRequest="36">
+                <Label Text="←" FontSize="20" TextColor="White"
+                       HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnBackTapped"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </Border>
+            <Label Grid.Column="1" Text="المكافآت 🎁"
+                   FontFamily="CairoBold" FontSize="20"
+                   TextColor="White" VerticalOptions="Center"
+                   HorizontalOptions="Center"/>
+        </Grid>
+
+        <!-- ══════ BODY ══════ -->
+        <RefreshView Grid.Row="1"
+                     Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16,16,16,32" Spacing="16">
+
+                    <!-- Welcome card -->
+                    <Border BackgroundColor="#FF5722"
+                            StrokeShape="RoundRectangle 16"
+                            Stroke="Transparent"
+                            Padding="20,16">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4" FlowDirection="RightToLeft">
+                                <Label FontFamily="CairoBold" FontSize="18" TextColor="White">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="أهلاً "/>
+                                            <Span Text="{Binding UserName}"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label Text="بك في مكافآتك"
+                                       FontFamily="CairoRegular" FontSize="14"
+                                       TextColor="#FFCCBC"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1" Text="🎁" FontSize="48"
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Points summary row -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <!-- Points -->
+                        <Border Grid.Column="0"
+                                BackgroundColor="White"
+                                StrokeShape="RoundRectangle 14"
+                                Stroke="#F0F0F0" StrokeThickness="1"
+                                Padding="16,14">
+                            <VerticalStackLayout Spacing="4" FlowDirection="RightToLeft">
+                                <Label Text="0 نقطة"
+                                       FontFamily="CairoBold" FontSize="18"
+                                       TextColor="#212121"/>
+                                <Label Text="عرض السجل"
+                                       FontFamily="CairoRegular" FontSize="12"
+                                       TextColor="#FF5722"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <!-- Coupons count -->
+                        <Border Grid.Column="1"
+                                BackgroundColor="White"
+                                StrokeShape="RoundRectangle 14"
+                                Stroke="#F0F0F0" StrokeThickness="1"
+                                Padding="16,14">
+                            <VerticalStackLayout Spacing="4" FlowDirection="RightToLeft">
+                                <Label Text="0 قسائم"
+                                       FontFamily="CairoBold" FontSize="18"
+                                       TextColor="#212121"/>
+                                <Label Text="عرض القسائم"
+                                       FontFamily="CairoRegular" FontSize="12"
+                                       TextColor="#FF5722"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Tip banner -->
+                    <Border BackgroundColor="#FFF8E1"
+                            StrokeShape="RoundRectangle 10"
+                            Stroke="#FFE082"
+                            StrokeThickness="1"
+                            Padding="14,10">
+                        <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
+                            <Label Text="⚡" FontSize="16" VerticalOptions="Center"/>
+                            <Label Text="كل ما طلبت أكثر، كل ما حصلت على نقاط أكثر"
+                                   FontFamily="CairoRegular" FontSize="13"
+                                   TextColor="#F57F17" VerticalOptions="Center"
+                                   LineBreakMode="WordWrap"/>
+                        </HorizontalStackLayout>
+                    </Border>
+
+                    <!-- Loading -->
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                       IsVisible="{Binding IsBusy}"
+                                       Color="#FF5722"/>
+
+                    <!-- Empty state -->
+                    <VerticalStackLayout Spacing="12" HorizontalOptions="Center"
+                                         IsVisible="{Binding Deals.Count, Converter={StaticResource InvertBool}}"
+                                         Margin="0,20,0,0">
+                        <Label Text="🍽️" FontSize="64" HorizontalOptions="Center"/>
+                        <Label Text="لا توجد عروض حالياً"
+                               FontFamily="CairoBold" FontSize="18"
+                               TextColor="#212121" HorizontalOptions="Center"/>
+                        <Label Text="تابعنا لمعرفة أحدث عروض وتخفيضات المطاعم"
+                               FontFamily="CairoRegular" FontSize="13"
+                               TextColor="#757575" HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+
+                    <!-- Deals grouped by restaurant -->
+                    <CollectionView ItemsSource="{Binding DealGroups}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:DealGroup">
+                                <VerticalStackLayout Spacing="0" Margin="0,0,0,20">
+
+                                    <!-- Restaurant header -->
+                                    <Label Text="{Binding RestaurantName}"
+                                           FontFamily="CairoBold" FontSize="16"
+                                           TextColor="#212121"
+                                           Margin="0,0,0,10"
+                                           FlowDirection="RightToLeft"/>
+
+                                    <!-- Deals horizontal scroll -->
+                                    <ScrollView Orientation="Horizontal"
+                                                HorizontalScrollBarVisibility="Never">
+                                        <BindableLayout.ItemsSource>
+                                            <Binding Path="."/>
+                                        </BindableLayout.ItemsSource>
+                                        <HorizontalStackLayout Spacing="12"
+                                                               x:Name="dealsStack">
+                                        </HorizontalStackLayout>
+                                    </ScrollView>
+
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- Flat deals list (fallback / primary display) -->
+                    <Label Text="عروض المطاعم"
+                           FontFamily="CairoBold" FontSize="16"
+                           TextColor="#212121"
+                           FlowDirection="RightToLeft"
+                           IsVisible="{Binding Deals.Count, Converter={StaticResource IntToBool}}"/>
+
+                    <CollectionView ItemsSource="{Binding Deals}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical"
+                                             Span="2"
+                                             HorizontalItemSpacing="10"
+                                             VerticalItemSpacing="10"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="m:Deal">
+                                <Border BackgroundColor="White"
+                                        StrokeShape="RoundRectangle 14"
+                                        Stroke="#F0F0F0" StrokeThickness="1">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RewardsViewModel}}, Path=OpenRestaurantCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                    <Grid RowDefinitions="130,Auto">
+                                        <!-- Image -->
+                                        <Grid Grid.Row="0">
+                                            <Border BackgroundColor="#F0F0F0"
+                                                    StrokeShape="RoundRectangle 14,14,0,0"
+                                                    Stroke="Transparent">
+                                                <Label Text="🍽️" FontSize="48"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center"
+                                                       IsVisible="{Binding ImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                                            </Border>
+                                            <ff:CachedImage Source="{Binding ImageUrl}"
+                                                            Aspect="AspectFill"
+                                                            HeightRequest="130"
+                                                            IsVisible="{Binding ImageUrl, Converter={StaticResource HasImage}}"/>
+                                            <!-- Badge -->
+                                            <Border BackgroundColor="{Binding BadgeColorValue}"
+                                                    StrokeShape="RoundRectangle 6"
+                                                    Stroke="Transparent"
+                                                    Padding="8,4"
+                                                    HorizontalOptions="Start"
+                                                    VerticalOptions="Start"
+                                                    Margin="8"
+                                                    IsVisible="{Binding BadgeText, Converter={StaticResource HasImage}}">
+                                                <HorizontalStackLayout Spacing="3">
+                                                    <Label Text="🎁" FontSize="10"/>
+                                                    <Label Text="{Binding BadgeText}"
+                                                           FontFamily="CairoBold"
+                                                           FontSize="11"
+                                                           TextColor="White"/>
+                                                </HorizontalStackLayout>
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- Info -->
+                                        <VerticalStackLayout Grid.Row="1"
+                                                             Padding="10,8"
+                                                             Spacing="4"
+                                                             FlowDirection="RightToLeft">
+                                            <Label Text="{Binding Title}"
+                                                   FontFamily="CairoBold"
+                                                   FontSize="13"
+                                                   TextColor="#212121"
+                                                   MaxLines="2"
+                                                   LineBreakMode="WordWrap"/>
+                                            <Label Text="{Binding RestaurantName}"
+                                                   FontFamily="CairoRegular"
+                                                   FontSize="11"
+                                                   TextColor="#9E9E9E"
+                                                   IsVisible="{Binding RestaurantName, Converter={StaticResource HasImage}}"/>
+                                            <Grid ColumnDefinitions="*,Auto"
+                                                  IsVisible="{Binding HasDiscount}">
+                                                <Label Grid.Column="0"
+                                                       Text="{Binding PriceText}"
+                                                       FontFamily="CairoBold"
+                                                       FontSize="14"
+                                                       TextColor="#FF5722"/>
+                                                <Label Grid.Column="1"
+                                                       Text="{Binding OriginalPriceText}"
+                                                       FontFamily="CairoRegular"
+                                                       FontSize="11"
+                                                       TextColor="#BDBDBD"
+                                                       TextDecorations="Strikethrough"
+                                                       VerticalOptions="Center"/>
+                                            </Grid>
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+    </Grid>
+
+</ContentPage>

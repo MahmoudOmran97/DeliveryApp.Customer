@@ -1,227 +1,319 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
-
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
              xmlns:controls="clr-namespace:DeliveryApp.Customer.Controls"
              x:Class="DeliveryApp.Customer.Views.HomePage"
-
              x:DataType="vm:HomeViewModel"
-
              Shell.NavBarIsVisible="False">
 
-    <!-- Root: two rows — header (Auto) + body (*) — zero overlap -->
     <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F8F9FA">
 
         <!-- ══════ HEADER ══════ -->
-        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,16" RowDefinitions="Auto,14,Auto" RowSpacing="0">
+        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,16"
+              RowDefinitions="Auto,14,Auto" RowSpacing="0">
 
-            <!-- Greeting row -->
             <Grid Grid.Row="0" ColumnDefinitions="*,44">
-
                 <VerticalStackLayout Grid.Column="0" Spacing="2">
-
-                    <Label Text="📍 Aswan, Egypt" FontFamily="CairoRegular" FontSize="12" TextColor="#FFCCBC"/>
-
+                    <Label Text="📍 Aswan, Egypt" FontFamily="CairoRegular"
+                           FontSize="12" TextColor="#FFCCBC"/>
                     <Label FontFamily="CairoBold" FontSize="20" TextColor="White">
-
                         <Label.FormattedText>
-
                             <FormattedString>
-
                                 <Span Text="{Binding GreetingPrefix}"/>
-
                                 <Span Text="{Binding UserName}"/>
-
                                 <Span Text=" 👋"/>
-
                             </FormattedString>
-
                         </Label.FormattedText>
-
                     </Label>
-
                 </VerticalStackLayout>
 
-                <!-- Cart icon + badge -->
                 <Grid Grid.Column="1" WidthRequest="44" HeightRequest="44">
-
                     <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
                             Stroke="Transparent" WidthRequest="44" HeightRequest="44">
-
                         <Label Text="🛒" FontSize="22"
                                HorizontalOptions="Center" VerticalOptions="Center">
-
                             <Label.GestureRecognizers>
-
                                 <TapGestureRecognizer Command="{Binding OpenCartCommand}"/>
-
                             </Label.GestureRecognizers>
-
                         </Label>
-
                     </Border>
-
                     <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10"
                             Stroke="Transparent"
                             IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
                             WidthRequest="20" HeightRequest="20"
                             HorizontalOptions="End" VerticalOptions="Start">
-
                         <Label Text="{Binding CartCount}" FontFamily="CairoBold" FontSize="10"
                                TextColor="White"
                                HorizontalOptions="Center" VerticalOptions="Center"/>
-
                     </Border>
-
                 </Grid>
-
             </Grid>
 
-            <!-- Spacer row (14 dp) -->
             <BoxView Grid.Row="1" Color="Transparent"/>
 
-            <!-- Search bar row -->
             <Border Grid.Row="2" BackgroundColor="White"
                     StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="4,0">
-
                 <SearchBar Placeholder="{Binding SearchHint}"
                            Text="{Binding SearchText}"
                            SearchCommand="{Binding SearchCommand}"
                            BackgroundColor="Transparent"
                            FontFamily="CairoRegular" FontSize="14" TextColor="#212121"/>
-
             </Border>
-
         </Grid>
 
         <!-- ══════ BODY ══════ -->
         <RefreshView Grid.Row="1"
                      Command="{Binding RefreshCommand}"
                      IsRefreshing="{Binding IsRefreshing}">
-
             <ScrollView>
+                <VerticalStackLayout Padding="0,0,0,100" Spacing="0">
 
-                <VerticalStackLayout Padding="16,16,16,16" Spacing="0">
+                    <!-- ── Banners Carousel ── -->
+                    <CarouselView ItemsSource="{Binding Banners}"
+                                  HeightRequest="160"
+                                  Loop="True"
+                                  IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"
+                                  Margin="0,12,0,0">
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate x:DataType="m:Banner">
+                                <Grid Margin="12,0">
+                                    <Border StrokeShape="RoundRectangle 16"
+                                            Stroke="Transparent"
+                                            BackgroundColor="{Binding BgColor}"
+                                            HeightRequest="150">
+                                        <Grid ColumnDefinitions="*,Auto" Padding="20,16">
+                                            <!-- Text side -->
+                                            <VerticalStackLayout Grid.Column="0"
+                                                                 VerticalOptions="Center"
+                                                                 Spacing="6">
+                                                <Label Text="{Binding Title}"
+                                                       FontFamily="CairoBold"
+                                                       FontSize="18"
+                                                       TextColor="White"
+                                                       MaxLines="2"
+                                                       LineBreakMode="WordWrap"/>
+                                                <Label Text="{Binding SubTitle}"
+                                                       FontFamily="CairoRegular"
+                                                       FontSize="13"
+                                                       TextColor="#FFECB3"
+                                                       IsVisible="{Binding SubTitle, Converter={StaticResource HasImage}}"
+                                                       MaxLines="2"
+                                                       LineBreakMode="WordWrap"/>
+                                                <Border BackgroundColor="White"
+                                                        StrokeShape="RoundRectangle 8"
+                                                        Stroke="Transparent"
+                                                        Padding="14,6"
+                                                        HorizontalOptions="Start">
+                                                    <Label Text="اطلب الآن"
+                                                           FontFamily="CairoBold"
+                                                           FontSize="13"
+                                                           TextColor="#FF5722"/>
+                                                </Border>
+                                            </VerticalStackLayout>
+                                            <!-- Image side -->
+                                            <ff:CachedImage Grid.Column="1"
+                                                            Source="{Binding FullImageUrl}"
+                                                            WidthRequest="100"
+                                                            HeightRequest="110"
+                                                            Aspect="AspectFit"
+                                                            IsVisible="{Binding HasImage}"
+                                                            VerticalOptions="Center"/>
+                                            <Label Grid.Column="1"
+                                                   Text="🍔"
+                                                   FontSize="60"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"
+                                                   IsVisible="{Binding HasImage, Converter={StaticResource InvertBool}}"/>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </CarouselView.ItemTemplate>
+                    </CarouselView>
 
+                    <!-- ── Banner Dots Indicator ── -->
+                    <IndicatorView x:Name="bannerIndicator"
+                                   HorizontalOptions="Center"
+                                   IndicatorColor="#D1D8DB"
+                                   SelectedIndicatorColor="#FF5722"
+                                   Margin="0,6,0,0"
+                                   IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"/>
+
+                    <!-- ── Categories Row ── -->
+                    <Label Text="الفئات"
+                           FontFamily="CairoBold" FontSize="16"
+                           TextColor="#212121"
+                           Margin="16,18,16,10"
+                           FlowDirection="RightToLeft"/>
+
+                    <ScrollView Orientation="Horizontal"
+                                HorizontalScrollBarVisibility="Never"
+                                Margin="0,0,0,0">
+                        <HorizontalStackLayout Spacing="10" Padding="16,0" FlowDirection="RightToLeft">
+                            <!-- Category chips -->
+                            <Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 20"
+                                    Stroke="Transparent" Padding="16,8">
+                                <Label Text="🍽️ المطاعم" FontFamily="CairoBold" FontSize="13" TextColor="White"/>
+                            </Border>
+                            <Border BackgroundColor="White" StrokeShape="RoundRectangle 20"
+                                    Stroke="#E0E0E0" Padding="16,8">
+                                <Label Text="🛒 البقالة" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
+                            </Border>
+                            <Border BackgroundColor="White" StrokeShape="RoundRectangle 20"
+                                    Stroke="#E0E0E0" Padding="16,8">
+                                <Label Text="💊 صيدليات" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
+                            </Border>
+                            <Border BackgroundColor="White" StrokeShape="RoundRectangle 20"
+                                    Stroke="#E0E0E0" Padding="16,8">
+                                <Label Text="☕ مشروبات" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+
+                    <!-- ── Save & Earn Row ── -->
+                    <Label Text="استخدم ووفر"
+                           FontFamily="CairoBold" FontSize="16"
+                           TextColor="#212121"
+                           Margin="16,18,16,10"
+                           FlowDirection="RightToLeft"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="16,0">
+                        <!-- Rewards card -->
+                        <Border Grid.Column="0"
+                                BackgroundColor="White"
+                                StrokeShape="RoundRectangle 14"
+                                Stroke="#F0F0F0"
+                                StrokeThickness="1"
+                                Padding="16,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenRewardsCommand}"/>
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
+                                <Border BackgroundColor="#FFF3E0"
+                                        StrokeShape="RoundRectangle 20"
+                                        Stroke="Transparent"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Text="🎁" FontSize="18"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="المكافآت"
+                                       FontFamily="CairoBold" FontSize="15"
+                                       TextColor="#212121" VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Border>
+
+                        <!-- Coupons card -->
+                        <Border Grid.Column="1"
+                                BackgroundColor="White"
+                                StrokeShape="RoundRectangle 14"
+                                Stroke="#F0F0F0"
+                                StrokeThickness="1"
+                                Padding="16,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenCouponsCommand}"/>
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
+                                <Border BackgroundColor="#FFF3E0"
+                                        StrokeShape="RoundRectangle 20"
+                                        Stroke="Transparent"
+                                        WidthRequest="36" HeightRequest="36">
+                                    <Label Text="🎟️" FontSize="18"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="القسائم"
+                                       FontFamily="CairoBold" FontSize="15"
+                                       TextColor="#212121" VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- ── Restaurants Section ── -->
                     <Label Text="{Binding SectionTitle}"
-                           FontFamily="CairoBold" FontSize="18"
-                           TextColor="#212121" Margin="0,0,0,14"/>
+                           FontFamily="CairoBold" FontSize="16"
+                           TextColor="#212121"
+                           Margin="16,18,16,10"
+                           FlowDirection="RightToLeft"/>
 
                     <ActivityIndicator IsRunning="{Binding IsBusy}"
                                        IsVisible="{Binding IsBusy}"
                                        Color="#FF5722" Margin="0,20"/>
 
-                    <CollectionView ItemsSource="{Binding Restaurants}" SelectionMode="None">
-
+                    <CollectionView ItemsSource="{Binding Restaurants}"
+                                    SelectionMode="None"
+                                    Margin="16,0">
                         <CollectionView.ItemTemplate>
-
                             <DataTemplate x:DataType="m:Restaurant">
-
                                 <Border Style="{StaticResource Card}" Margin="0,0,0,14">
-
                                     <Border.GestureRecognizers>
-
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=OpenRestaurantCommand}"
                                             CommandParameter="{Binding .}"/>
-
                                     </Border.GestureRecognizers>
-
                                     <Grid ColumnDefinitions="95,*" ColumnSpacing="14">
-
                                         <Border Grid.Column="0" BackgroundColor="#F0F0F0"
                                                 StrokeShape="RoundRectangle 12" Stroke="Transparent"
                                                 HeightRequest="88" WidthRequest="95">
                                             <Grid>
-                                                <!-- Placeholder (shown when no image URL) -->
                                                 <Label Text="🍽️" FontSize="38"
-                                                               HorizontalOptions="Center" VerticalOptions="Center"
-                                                               IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}" />
-                                                <!-- Actual restaurant logo -->
+                                                       HorizontalOptions="Center" VerticalOptions="Center"
+                                                       IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
                                                 <ff:CachedImage Source="{Binding FullImageUrl}"
                                                                Aspect="AspectFill"
                                                                HeightRequest="88" WidthRequest="95"
                                                                CacheDuration="7"
-                                                               IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}" />
+                                                               IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
                                             </Grid>
                                         </Border>
 
                                         <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
-
                                             <Grid ColumnDefinitions="*,Auto">
-
                                                 <Label Grid.Column="0" Text="{Binding Name}"
                                                        FontFamily="CairoBold" FontSize="15"
                                                        TextColor="#212121" LineBreakMode="TailTruncation"/>
-
                                                 <Border Grid.Column="1" StrokeShape="RoundRectangle 8"
                                                         Stroke="Transparent" Padding="7,3"
                                                         BackgroundColor="{Binding StatusBg}">
-
                                                     <Label Text="{Binding StatusText}"
                                                            TextColor="{Binding StatusColor}"
                                                            FontFamily="CairoBold" FontSize="10"/>
-
                                                 </Border>
-
                                             </Grid>
-
                                             <Label Text="{Binding Description}"
                                                    FontFamily="CairoRegular" FontSize="12"
                                                    TextColor="#757575" MaxLines="1"
                                                    LineBreakMode="TailTruncation"/>
-
                                             <HorizontalStackLayout Spacing="12">
-
                                                 <HorizontalStackLayout Spacing="3">
-
                                                     <Label Text="⭐" FontSize="12" VerticalOptions="Center"/>
-
                                                     <Label Text="{Binding RatingText}"
                                                            FontFamily="CairoBold" FontSize="12"
                                                            TextColor="#212121" VerticalOptions="Center"/>
-
                                                 </HorizontalStackLayout>
-
                                                 <HorizontalStackLayout Spacing="3">
-
                                                     <Label Text="🕐" FontSize="12" VerticalOptions="Center"/>
-
                                                     <Label Text="{Binding EstimatedTimeText}"
                                                            FontFamily="CairoRegular" FontSize="12"
                                                            TextColor="#757575" VerticalOptions="Center"/>
-
                                                 </HorizontalStackLayout>
-
                                                 <Label Text="{Binding DeliveryFeeText}"
                                                        FontFamily="CairoBold" FontSize="12"
                                                        TextColor="#FF5722"/>
-
                                             </HorizontalStackLayout>
-
                                         </VerticalStackLayout>
-
                                     </Grid>
-
                                 </Border>
-
                             </DataTemplate>
-
                         </CollectionView.ItemTemplate>
-
                     </CollectionView>
 
                 </VerticalStackLayout>
-
             </ScrollView>
-
         </RefreshView>
+
+        <!-- ══════ BOTTOM BAR ══════ -->
         <controls:CurvedBottomBar Grid.Row="1" SelectedTab="home"
                          HorizontalOptions="Fill" Margin="0" Padding="0"/>
     </Grid>

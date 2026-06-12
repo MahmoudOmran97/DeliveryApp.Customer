@@ -86,6 +86,9 @@
 		<MauiXaml Update="Views\CheckoutPage.xaml">
 			<Generator></Generator>
 		</MauiXaml>
+		<MauiXaml Update="Views\CouponsPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="Views\DriverChatPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
@@ -118,6 +121,9 @@
 		</MauiXaml>
 		<MauiXaml Update="Views\RestaurantPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\RewardsPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
 		<MauiXaml Update="Views\SettingsPage.xaml">
 			<Generator>MSBuild:Compile</Generator>

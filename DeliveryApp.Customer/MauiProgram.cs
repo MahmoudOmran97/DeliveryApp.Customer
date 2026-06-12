@@ -55,6 +55,8 @@ public static class MauiProgram
         builder.Services.AddTransient<DriverChatViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<LocationPickerViewModel>();
+        builder.Services.AddTransient<CouponsViewModel>();
+        builder.Services.AddTransient<RewardsViewModel>();
         // ── Pages ─────────────────────────────────
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<SplashPage>();
@@ -73,6 +75,8 @@ public static class MauiProgram
         builder.Services.AddTransient<DriverChatPage>();
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<LocationPickerPage>();
+        builder.Services.AddTransient<CouponsPage>();
+        builder.Services.AddTransient<RewardsPage>();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

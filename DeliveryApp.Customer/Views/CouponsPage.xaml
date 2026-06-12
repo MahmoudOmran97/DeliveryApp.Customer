@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+             xmlns:controls="clr-namespace:DeliveryApp.Customer.Controls"
+             x:Class="DeliveryApp.Customer.Views.CouponsPage"
+             x:DataType="vm:CouponsViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA">
+
+        <!-- ══════ HEADER ══════ -->
+        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,20"
+              ColumnDefinitions="44,*">
+
+            <!-- Back button -->
+            <Border Grid.Column="0" BackgroundColor="#FFFFFF22"
+                    StrokeShape="RoundRectangle 20" Stroke="Transparent"
+                    WidthRequest="36" HeightRequest="36">
+                <Label Text="←" FontSize="20" TextColor="White"
+                       HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnBackTapped"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </Border>
+
+            <Label Grid.Column="1" Text="القسائم 🎟️"
+                   FontFamily="CairoBold" FontSize="20"
+                   TextColor="White" VerticalOptions="Center"
+                   HorizontalOptions="Center"/>
+        </Grid>
+
+        <!-- ══════ BODY ══════ -->
+        <RefreshView Grid.Row="1"
+                     Command="{Binding RefreshCommand}"
+                     IsRefreshing="{Binding IsRefreshing}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16,16,16,32" Spacing="16">
+
+                    <!-- Manual code entry -->
+                    <Border BackgroundColor="White"
+                            StrokeShape="RoundRectangle 14"
+                            Stroke="#F0F0F0" StrokeThickness="1"
+                            Padding="16">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="لديك كود خصم؟"
+                                   FontFamily="CairoBold" FontSize="15"
+                                   TextColor="#212121"
+                                   FlowDirection="RightToLeft"/>
+                            <Label Text="أضفه واستمتع بالتوفير"
+                                   FontFamily="CairoRegular" FontSize="13"
+                                   TextColor="#757575"
+                                   FlowDirection="RightToLeft"/>
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <Border Grid.Column="0"
+                                        BackgroundColor="#F8F9FA"
+                                        StrokeShape="RoundRectangle 10"
+                                        Stroke="#E0E0E0" StrokeThickness="1">
+                                    <Entry Placeholder="أدخل الكود هنا"
+                                           Text="{Binding ManualCode}"
+                                           FontFamily="CairoRegular"
+                                           FontSize="14"
+                                           TextColor="#212121"
+                                           PlaceholderColor="#BDBDBD"
+                                           BackgroundColor="Transparent"
+                                           HorizontalTextAlignment="Center"
+                                           Margin="10,0"/>
+                                </Border>
+                                <Border Grid.Column="1"
+                                        BackgroundColor="#FF5722"
+                                        StrokeShape="RoundRectangle 10"
+                                        Stroke="Transparent"
+                                        Padding="16,12">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding ValidateManualCodeCommand}"/>
+                                    </Border.GestureRecognizers>
+                                    <Label Text="تحقق"
+                                           FontFamily="CairoBold" FontSize="13"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"/>
+                                </Border>
+                            </Grid>
+
+                            <!-- Feedback message -->
+                            <Border BackgroundColor="{Binding FeedbackIsError, Converter={StaticResource BoolToColor}, ConverterParameter='#FFEBEE|#E8F5E9'}"
+                                    StrokeShape="RoundRectangle 8"
+                                    Stroke="Transparent"
+                                    Padding="12,8"
+                                    IsVisible="{Binding HasFeedback}">
+                                <Label Text="{Binding FeedbackMessage}"
+                                       FontFamily="CairoRegular" FontSize="13"
+                                       TextColor="{Binding FeedbackIsError, Converter={StaticResource BoolToColor}, ConverterParameter='#D32F2F|#2E7D32'}"
+                                       HorizontalOptions="Center"/>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Tabs: صالح / إستخدم / انتهت -->
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="0"
+                          BackgroundColor="White"
+                          HeightRequest="44">
+                        <Border Grid.Column="0" BackgroundColor="Transparent"
+                                StrokeShape="RoundRectangle 0" Stroke="Transparent">
+                            <VerticalStackLayout>
+                                <Label Text="صالح" FontFamily="CairoBold" FontSize="14"
+                                       TextColor="#FF5722" HorizontalOptions="Center"
+                                       VerticalOptions="Center" Margin="0,12,0,0"/>
+                                <BoxView BackgroundColor="#FF5722" HeightRequest="2" Margin="10,4,10,0"/>
+                            </VerticalStackLayout>
+                        </Border>
+                        <Label Grid.Column="1" Text="إستخدم"
+                               FontFamily="CairoRegular" FontSize="14"
+                               TextColor="#BDBDBD" HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                        <Label Grid.Column="2" Text="انتهت"
+                               FontFamily="CairoRegular" FontSize="14"
+                               TextColor="#BDBDBD" HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Grid>
+
+                    <!-- Loading -->
+                    <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                       IsVisible="{Binding IsBusy}"
+                                       Color="#FF5722"/>
+
+                    <!-- Empty state -->
+                    <VerticalStackLayout Spacing="12" HorizontalOptions="Center"
+                                         IsVisible="{Binding Coupons.Count, Converter={StaticResource InvertBool}}"
+                                         Margin="0,40,0,0">
+                        <Label Text="🎟️" FontSize="64" HorizontalOptions="Center"/>
+                        <Label Text="لا يوجد قسائم"
+                               FontFamily="CairoBold" FontSize="18"
+                               TextColor="#212121" HorizontalOptions="Center"/>
+                        <Label Text="يمكنك الحصول على قسائم عن طريق استخدام النقاط في برنامج المكافآت"
+                               FontFamily="CairoRegular" FontSize="13"
+                               TextColor="#757575" HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap"
+                               Margin="20,0"/>
+                    </VerticalStackLayout>
+
+                    <!-- Coupons list -->
+                    <CollectionView ItemsSource="{Binding Coupons}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="m:Coupon">
+                                <!-- Coupon card with dashed cut style -->
+                                <Grid Margin="0,0,0,14">
+                                    <Border BackgroundColor="White"
+                                            StrokeShape="RoundRectangle 14"
+                                            Stroke="#F0F0F0"
+                                            StrokeThickness="1">
+                                        <Grid ColumnDefinitions="110,Auto,*" ColumnSpacing="0">
+
+                                            <!-- Left orange strip -->
+                                            <Grid Grid.Column="0"
+                                                  BackgroundColor="#FF5722">
+                                                <!-- Round cuts for coupon effect -->
+                                                <VerticalStackLayout VerticalOptions="Center"
+                                                                     HorizontalOptions="Center"
+                                                                     Spacing="4"
+                                                                     Padding="10">
+                                                    <Label Text="{Binding DiscountText}"
+                                                           FontFamily="CairoBold"
+                                                           FontSize="26"
+                                                           TextColor="White"
+                                                           HorizontalOptions="Center"/>
+                                                    <Label Text="خصم"
+                                                           FontFamily="CairoRegular"
+                                                           FontSize="14"
+                                                           TextColor="#FFCCBC"
+                                                           HorizontalOptions="Center"/>
+                                                </VerticalStackLayout>
+                                            </Grid>
+
+                                            <!-- Dashed divider -->
+                                            <BoxView Grid.Column="1"
+                                                     WidthRequest="1"
+                                                     BackgroundColor="#E0E0E0"/>
+
+                                            <!-- Right info -->
+                                            <VerticalStackLayout Grid.Column="2"
+                                                                 Padding="14,12"
+                                                                 Spacing="6"
+                                                                 FlowDirection="RightToLeft">
+                                                <Label Text="{Binding Title}"
+                                                       FontFamily="CairoBold"
+                                                       FontSize="15"
+                                                       TextColor="#212121"
+                                                       LineBreakMode="TailTruncation"/>
+                                                <Label Text="{Binding Description}"
+                                                       FontFamily="CairoRegular"
+                                                       FontSize="12"
+                                                       TextColor="#757575"
+                                                       MaxLines="2"
+                                                       LineBreakMode="WordWrap"
+                                                       IsVisible="{Binding Description, Converter={StaticResource HasImage}}"/>
+                                                <Label Text="{Binding MinOrderText}"
+                                                       FontFamily="CairoRegular"
+                                                       FontSize="12"
+                                                       TextColor="#9E9E9E"/>
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <Label Grid.Column="0"
+                                                           Text="{Binding ExpiryText}"
+                                                           FontFamily="CairoRegular"
+                                                           FontSize="11"
+                                                           TextColor="{Binding ExpiryColor}"/>
+                                                    <!-- Copy code button -->
+                                                    <Border Grid.Column="1"
+                                                            BackgroundColor="#FFF3E0"
+                                                            StrokeShape="RoundRectangle 8"
+                                                            Stroke="Transparent"
+                                                            Padding="12,6">
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer
+                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CouponsViewModel}}, Path=CopyCodeCommand}"
+                                                                CommandParameter="{Binding Code}"/>
+                                                        </Border.GestureRecognizers>
+                                                        <HorizontalStackLayout Spacing="4">
+                                                            <Label Text="📋" FontSize="12"/>
+                                                            <Label Text="{Binding Code}"
+                                                                   FontFamily="CairoBold"
+                                                                   FontSize="12"
+                                                                   TextColor="#FF5722"/>
+                                                        </HorizontalStackLayout>
+                                                    </Border>
+                                                </Grid>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+    </Grid>
+
+</ContentPage>
