@@ -4,11 +4,12 @@
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:controls="clr-namespace:DeliveryApp.Customer.Controls"
              x:Class="DeliveryApp.Customer.Views.NotificationsPage"
              x:DataType="vm:NotificationsViewModel"
              Shell.NavBarIsVisible="False">
 
-	<Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
 
 		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,18" ColumnDefinitions="*,Auto">
 			<Label Grid.Column="0" Text="{loc:Loc Key=Notifications}" FontFamily="CairoBold" FontSize="24"
@@ -71,7 +72,9 @@
 				</CollectionView.ItemTemplate>
 			</CollectionView>
 		</RefreshView>
-
-	</Grid>
+        <controls:CurvedBottomBar Grid.Row="2" SelectedTab="notifications"
+                         HorizontalOptions="Fill" Margin="0" Padding="0"
+                         FlowDirection="LeftToRight"/>
+    </Grid>
 
 </ContentPage>

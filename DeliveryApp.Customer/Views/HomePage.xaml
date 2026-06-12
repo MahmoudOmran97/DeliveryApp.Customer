@@ -8,7 +8,7 @@
 
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
-
+             xmlns:controls="clr-namespace:DeliveryApp.Customer.Controls"
              x:Class="DeliveryApp.Customer.Views.HomePage"
 
              x:DataType="vm:HomeViewModel"
@@ -16,7 +16,7 @@
              Shell.NavBarIsVisible="False">
 
     <!-- Root: two rows — header (Auto) + body (*) — zero overlap -->
-    <Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA">
+    <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F8F9FA">
 
         <!-- ══════ HEADER ══════ -->
         <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,16" RowDefinitions="Auto,14,Auto" RowSpacing="0">
@@ -222,7 +222,8 @@
             </ScrollView>
 
         </RefreshView>
-
+        <controls:CurvedBottomBar Grid.Row="1" SelectedTab="home"
+                         HorizontalOptions="Fill" Margin="0" Padding="0"/>
     </Grid>
 
 </ContentPage>

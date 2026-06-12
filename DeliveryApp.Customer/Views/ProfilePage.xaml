@@ -2,12 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:controls="clr-namespace:DeliveryApp.Customer.Controls"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.ProfilePage"
              x:DataType="vm:ProfileViewModel"
              Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
 
         <!-- Header -->
         <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,30">
@@ -116,7 +117,9 @@
 
             </VerticalStackLayout>
         </ScrollView>
-
+        <controls:CurvedBottomBar Grid.Row="1" SelectedTab="profile"
+                         HorizontalOptions="Fill" Margin="0" Padding="0"/>
     </Grid>
+    
 
 </ContentPage>

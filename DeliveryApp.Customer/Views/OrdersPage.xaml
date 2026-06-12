@@ -4,11 +4,12 @@
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:controls="clr-namespace:DeliveryApp.Customer.Controls"
              x:Class="DeliveryApp.Customer.Views.OrdersPage"
              x:DataType="vm:OrdersViewModel"
              Shell.NavBarIsVisible="False">
 
-	<Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
 
 		<!-- Header -->
 		<Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,18">
@@ -91,5 +92,7 @@
 			</CollectionView>
 
 		</RefreshView>
-	</Grid>
+        <controls:CurvedBottomBar Grid.Row="2" SelectedTab="orders"
+                         HorizontalOptions="Fill" Margin="0" Padding="0"/>
+    </Grid>
 </ContentPage>

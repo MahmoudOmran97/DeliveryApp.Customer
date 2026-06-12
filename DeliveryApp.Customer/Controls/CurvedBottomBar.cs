@@ -25,7 +25,7 @@ namespace DeliveryApp.Customer.Controls
         // Home in center; profile before settings (matches app tab order on the right side).
         private readonly (string Key, string Route, string Icon, string LabelKey)[] _tabs =
         {
-        ("orders", "//AvailableOrdersPage", "tab_orders.svg", "Tab_Orders"),
+        ("orders", "//OrdersPage", "tab_orders.svg", "Tab_Orders"),
         ("notifications", "//NotificationsPage", "tab_notifications.svg", "Tab_Notifications"),
         ("home", "//HomePage", "tab_home.svg", "Tab_Home"),
         ("profile", "//ProfilePage", "tab_profile.svg", "Tab_Profile"),
