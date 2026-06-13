@@ -26,7 +26,7 @@ namespace DeliveryApp.Customer.Controls
         private readonly (string Key, string Route, string Icon, string LabelKey)[] _tabs =
         {
         ("orders", "//OrdersPage", "tab_orders.svg", "Tab_Orders"),
-        ("notifications", "//NotificationsPage", "tab_notifications.svg", "Tab_Notifications"),
+        ("notifications", "//NotificationsPage", "tab_notifications.svg", "Tab_Alerts"),
         ("home", "//HomePage", "tab_home.svg", "Tab_Home"),
         ("profile", "//ProfilePage", "tab_profile.svg", "Tab_Profile"),
         ("settings", "//SettingsPage", "tab_settings.svg", "Tab_Settings")

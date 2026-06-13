@@ -13,16 +13,12 @@
         <!-- ══════ HEADER ══════ -->
         <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,20"
               ColumnDefinitions="44,*">
-            <Border Grid.Column="0" BackgroundColor="#FFFFFF22"
-                    StrokeShape="RoundRectangle 20" Stroke="Transparent"
-                    WidthRequest="36" HeightRequest="36">
-                <Label Text="←" FontSize="20" TextColor="White"
-                       HorizontalOptions="Center" VerticalOptions="Center">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnBackTapped"/>
-                    </Label.GestureRecognizers>
-                </Label>
-            </Border>
+            <Image Grid.Column="0" Source="icon_back.png"
+                   WidthRequest="38" HeightRequest="38" VerticalOptions="Center">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnBackTapped"/>
+                </Image.GestureRecognizers>
+            </Image>
             <Label Grid.Column="1" Text="المكافآت 🎁"
                    FontFamily="CairoBold" FontSize="20"
                    TextColor="White" VerticalOptions="Center"

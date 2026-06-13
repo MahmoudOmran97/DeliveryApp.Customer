@@ -501,12 +501,47 @@
 
 	</data>
 
-	<!-- ── Tabs ── -->
-	<data name="Tab_Home"          xml:space="preserve"><value>Home</value></data>
-	<data name="Tab_Orders"        xml:space="preserve"><value>Orders</value></data>
-	<data name="Tab_Earnings"      xml:space="preserve"><value>Earnings</value></data>
-	<data name="Tab_Notifications" xml:space="preserve"><value>Alerts</value></data>
-	<data name="Tab_Profile"       xml:space="preserve"><value>Profile</value></data>
-	<data name="Tab_Settings"      xml:space="preserve"><value>Settings</value></data>
+	<!-- Support Chat -->
+	<data name="SupportChatTitle">
+		<value>Support Chat</value>
+	</data>
+	<data name="AiLabel">
+		<value>AI Assistant</value>
+	</data>
+	<data name="AiOnline">
+		<value>Always online</value>
+	</data>
+	<data name="AiTyping">
+		<value>Typing…</value>
+	</data>
+
+	<!-- Checkout extras -->
+	<data name="CashOnDelivery">
+		<value>Cash on Delivery</value>
+	</data>
+	<data name="UseCurrentLocation">
+		<value>Use My Location</value>
+	</data>
+	<data name="LocationConfirmed">
+		<value>✅ Location confirmed</value>
+	</data>
+	<data name="NotesForDriver">
+		<value>Notes for Driver</value>
+	</data>
+	<data name="ApplyCoupon">
+		<value>Apply Coupon</value>
+	</data>
+	<data name="CouponCode">
+		<value>Coupon Code</value>
+	</data>
+	<data name="CouponPlaceholder">
+		<value>Enter coupon code</value>
+	</data>
+	<data name="CouponApplied">
+		<value>Coupon applied!</value>
+	</data>
+	<data name="Discount">
+		<value>Discount</value>
+	</data>
 
 </root>

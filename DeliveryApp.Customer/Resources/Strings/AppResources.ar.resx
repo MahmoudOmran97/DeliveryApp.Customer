@@ -452,13 +452,48 @@
 		<value>مدعوم بالذكاء الاصطناعي · متاح دائمًا</value>
 	</data>
 
-	<!-- ── Tabs ── -->
-	<data name="Tab_Home"          xml:space="preserve"><value>الرئيسية</value></data>
-	<data name="Tab_Orders"        xml:space="preserve"><value>الطلبات</value></data>
-	<data name="Tab_Earnings"      xml:space="preserve"><value>الأرباح</value></data>
-	<data name="Tab_Notifications" xml:space="preserve"><value>التنبيهات</value></data>
-	<data name="Tab_Profile"       xml:space="preserve"><value>حسابي</value></data>
-	<data name="Tab_Settings"      xml:space="preserve"><value>الإعدادات</value></data>
+	<!-- Support Chat -->
+	<data name="SupportChatTitle">
+		<value>دردشة الدعم</value>
+	</data>
+	<data name="AiLabel">
+		<value>المساعد الذكي</value>
+	</data>
+	<data name="AiOnline">
+		<value>متاح دائماً</value>
+	</data>
+	<data name="AiTyping">
+		<value>يكتب…</value>
+	</data>
+
+	<!-- Checkout extras -->
+	<data name="CashOnDelivery">
+		<value>الدفع عند الاستلام</value>
+	</data>
+	<data name="UseCurrentLocation">
+		<value>استخدام موقعي</value>
+	</data>
+	<data name="LocationConfirmed">
+		<value>✅ تم تأكيد الموقع</value>
+	</data>
+	<data name="NotesForDriver">
+		<value>ملاحظات للمندوب</value>
+	</data>
+	<data name="ApplyCoupon">
+		<value>تطبيق الكوبون</value>
+	</data>
+	<data name="CouponCode">
+		<value>كود الخصم</value>
+	</data>
+	<data name="CouponPlaceholder">
+		<value>أدخل كود الخصم</value>
+	</data>
+	<data name="CouponApplied">
+		<value>تم تطبيق الكوبون!</value>
+	</data>
+	<data name="Discount">
+		<value>الخصم</value>
+	</data>
 
 
 </root>

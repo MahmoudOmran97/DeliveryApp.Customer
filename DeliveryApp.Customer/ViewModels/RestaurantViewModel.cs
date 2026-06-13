@@ -80,7 +80,7 @@ public partial class RestaurantViewModel : BaseViewModel
 
     {
 
-        var ok = _cart.AddItem(RestaurantId, p);
+        var ok = _cart.AddItem(RestaurantId, p, deliveryFee: Restaurant?.DeliveryFee ?? 15m);
 
         if (!ok)
 
@@ -94,7 +94,7 @@ public partial class RestaurantViewModel : BaseViewModel
 
                 "Yes, clear", "Cancel");
 
-            if (clear) { _cart.Clear(); _cart.AddItem(RestaurantId, p); }
+            if (clear) { _cart.Clear(); _cart.AddItem(RestaurantId, p, deliveryFee: Restaurant?.DeliveryFee ?? 15m); }
 
         }
 

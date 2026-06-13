@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.Views;
@@ -17,7 +17,7 @@ public partial class CheckoutViewModel : BaseViewModel
     [ObservableProperty] string _notes = string.Empty;
     [ObservableProperty] string _paymentMethod = "Cash";
     [ObservableProperty] decimal _subTotal;
-    [ObservableProperty] decimal _deliveryFee = 15;
+    [ObservableProperty] decimal _deliveryFee;
     [ObservableProperty] decimal _total;
     [ObservableProperty] double _deliveryLat = 0;
     [ObservableProperty] double _deliveryLng = 0;
@@ -25,13 +25,28 @@ public partial class CheckoutViewModel : BaseViewModel
     [ObservableProperty] string _lat = "";
     [ObservableProperty] string _lng = "";
 
+    // Coupon
+    [ObservableProperty] string _couponCode = string.Empty;
+    [ObservableProperty] string _couponFeedback = string.Empty;
+    [ObservableProperty] bool _hasCouponFeedback;
+    [ObservableProperty] bool _couponIsError;
+    [ObservableProperty] bool _couponApplied;
+    [ObservableProperty] decimal _discount;
+    private int? _appliedCouponId;
+
     public CheckoutViewModel(ApiService api, CartService cart)
     {
         _api = api;
         _cart = cart;
         SubTotal = cart.TotalPrice;
-        Total = SubTotal + DeliveryFee;
+        DeliveryFee = cart.RestaurantDeliveryFee;
+        RecalcTotal();
     }
+
+    void RecalcTotal() => Total = SubTotal + DeliveryFee - Discount;
+
+    partial void OnDiscountChanged(decimal v) => RecalcTotal();
+    partial void OnDeliveryFeeChanged(decimal v) => RecalcTotal();
 
     partial void OnLatChanged(string v)
     {
@@ -48,6 +63,37 @@ public partial class CheckoutViewModel : BaseViewModel
     }
 
     partial void OnDeliveryLatChanged(double v) => HasLocationSelected = v != 0;
+
+    // ── تطبيق كوبون الخصم ──
+    [RelayCommand]
+    async Task ApplyCouponAsync()
+    {
+        if (string.IsNullOrWhiteSpace(CouponCode)) return;
+        IsBusy = true;
+        try
+        {
+            var result = await _api.ValidateCouponAsync(CouponCode.Trim().ToUpper(), SubTotal);
+            _appliedCouponId = result?.Id;
+            Discount = result?.Discount ?? 0;
+            CouponApplied = true;
+            ShowCouponFeedback($"✅ {result?.Title} — {LocalizationService.Get("Discount")}: {Discount:F2} EGP", false);
+        }
+        catch (ApiService.ApiException ex)
+        {
+            Discount = 0;
+            CouponApplied = false;
+            _appliedCouponId = null;
+            ShowCouponFeedback(ex.Message, true);
+        }
+        finally { IsBusy = false; }
+    }
+
+    void ShowCouponFeedback(string msg, bool isError)
+    {
+        CouponFeedback = msg;
+        CouponIsError = isError;
+        HasCouponFeedback = true;
+    }
 
     // ── استخدام الموقع الحالي ──
     [RelayCommand]
@@ -95,7 +141,6 @@ public partial class CheckoutViewModel : BaseViewModel
     [RelayCommand]
     async Task PlaceOrder()
     {
-        // التحقق من العنوان
         if (string.IsNullOrWhiteSpace(Address))
         {
             await Shell.Current.DisplayAlert(
@@ -105,11 +150,9 @@ public partial class CheckoutViewModel : BaseViewModel
             return;
         }
 
-        // لو محددتش موقع، نجيبه من GPS
         if (DeliveryLat == 0)
             await UseCurrentLocation();
 
-        // لو لسه مفيش موقع، نوقف
         if (DeliveryLat == 0)
         {
             await Shell.Current.DisplayAlert(
@@ -143,18 +186,10 @@ public partial class CheckoutViewModel : BaseViewModel
 
             if (order != null)
             {
-                // مسح السلة بعد نجاح الطلب
                 _cart.Clear();
-
-                // الانتقال لصفحة التتبع
-                await Shell.Current.GoToAsync(
-                    $"//OrdersPage",
-                    animate: true);
-
-                // ثم نفتح التتبع
+                await Shell.Current.GoToAsync("//OrdersPage", animate: true);
                 await Task.Delay(300);
-                await Shell.Current.GoToAsync(
-                    $"OrderTrackingPage?orderId={order.Id}");
+                await Shell.Current.GoToAsync($"OrderTrackingPage?orderId={order.Id}");
             }
             else
             {

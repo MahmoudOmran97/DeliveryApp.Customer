@@ -2,36 +2,40 @@
 <Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:views="clr-namespace:DeliveryApp.Customer.Views"
-       xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+       xmlns:conv="clr-namespace:DeliveryApp.Customer.Converters"
        x:Class="DeliveryApp.Customer.AppShell"
        Shell.NavBarIsVisible="False"
        FlyoutBehavior="Disabled">
 
-   
+    <Shell.Resources>
+        <ResourceDictionary>
+            <!-- singleton injected via code-behind BindingContext -->
+        </ResourceDictionary>
+    </Shell.Resources>
 
     <TabBar>
 
-        <ShellContent Title="{loc:Loc Key=Tab_Home}"
+        <ShellContent Title="{Binding Tab_Home}"
                       Icon="icon_home.png"
                       ContentTemplate="{DataTemplate views:HomePage}"
                       Route="HomePage" />
 
-        <ShellContent Title="{loc:Loc Key=Tab_Orders}"
+        <ShellContent Title="{Binding Tab_Orders}"
                       Icon="icon_orders.png"
                       ContentTemplate="{DataTemplate views:OrdersPage}"
                       Route="OrdersPage" />
 
-        <ShellContent Title="{loc:Loc Key=Tab_Alerts}"
+        <ShellContent Title="{Binding Tab_Alerts}"
                       Icon="icon_bell.png"
                       ContentTemplate="{DataTemplate views:NotificationsPage}"
                       Route="NotificationsPage" />
 
-        <ShellContent Title="{loc:Loc Key=Tab_Settings}"
+        <ShellContent Title="{Binding Tab_Settings}"
                       Icon="icon_settings.png"
                       ContentTemplate="{DataTemplate views:SettingsPage}"
                       Route="SettingsPage" />
 
-        <ShellContent Title="{loc:Loc Key=Tab_Profile}"
+        <ShellContent Title="{Binding Tab_Profile}"
                       Icon="icon_profile.png"
                       ContentTemplate="{DataTemplate views:ProfilePage}"
                       Route="ProfilePage" />

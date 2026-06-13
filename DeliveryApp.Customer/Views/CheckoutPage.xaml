@@ -91,6 +91,53 @@
                     </VerticalStackLayout>
                 </Border>
 
+                <!-- كوبون الخصم -->
+                <Border BackgroundColor="White" Padding="16" StrokeShape="RoundRectangle 16">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{loc:Loc Key=CouponCode}"
+                               FontFamily="CairoBold" FontSize="15" TextColor="#212121"/>
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="#F8F9FA"
+                                    StrokeShape="RoundRectangle 10"
+                                    Stroke="#E0E0E0" StrokeThickness="1">
+                                <Entry Text="{Binding CouponCode}"
+                                       Placeholder="{loc:Loc Key=CouponPlaceholder}"
+                                       FontFamily="CairoRegular" FontSize="14"
+                                       TextColor="#212121"
+                                       PlaceholderColor="#BDBDBD"
+                                       BackgroundColor="Transparent"
+                                       HorizontalTextAlignment="Center"
+                                       Margin="10,0"/>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="#FF5722"
+                                    StrokeShape="RoundRectangle 10"
+                                    Stroke="Transparent"
+                                    Padding="16,12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ApplyCouponCommand}"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="{loc:Loc Key=ApplyCoupon}"
+                                       FontFamily="CairoBold" FontSize="13"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"/>
+                            </Border>
+                        </Grid>
+                        <!-- Feedback -->
+                        <Border IsVisible="{Binding HasCouponFeedback}"
+                                BackgroundColor="{Binding CouponIsError, Converter={StaticResource BoolToColor}, ConverterParameter='#FFEBEE|#E8F5E9'}"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="Transparent"
+                                Padding="12,8">
+                            <Label Text="{Binding CouponFeedback}"
+                                   FontFamily="CairoRegular" FontSize="13"
+                                   TextColor="{Binding CouponIsError, Converter={StaticResource BoolToColor}, ConverterParameter='#D32F2F|#2E7D32'}"
+                                   HorizontalOptions="Center"/>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
                 <!-- ملخص الطلب -->
                 <Border BackgroundColor="White" Padding="16" StrokeShape="RoundRectangle 16">
                     <VerticalStackLayout Spacing="10">
@@ -110,6 +157,16 @@
                                    FontFamily="CairoRegular" FontSize="14" TextColor="#424242"/>
                             <Label Grid.Column="1" Text="{Binding DeliveryFee, StringFormat='{0:F2} EGP'}"
                                    FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+                        </Grid>
+
+                        <BoxView Color="#E0E0E0" HeightRequest="1"/>
+
+                        <Grid ColumnDefinitions="*,Auto"
+                              IsVisible="{Binding CouponApplied}">
+                            <Label Grid.Column="0" Text="{loc:Loc Key=Discount}"
+                                   FontFamily="CairoRegular" FontSize="14" TextColor="#2E7D32"/>
+                            <Label Grid.Column="1" Text="{Binding Discount, StringFormat='-{0:F2} EGP'}"
+                                   FontFamily="CairoBold" FontSize="14" TextColor="#2E7D32"/>
                         </Grid>
 
                         <BoxView Color="#E0E0E0" HeightRequest="1"/>

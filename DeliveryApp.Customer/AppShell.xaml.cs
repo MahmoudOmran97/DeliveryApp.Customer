@@ -1,42 +1,42 @@
-﻿using DeliveryApp.Customer.Views;
+using DeliveryApp.Customer.Converters;
+using DeliveryApp.Customer.Views;
 
 namespace DeliveryApp.Customer;
 
 public partial class AppShell : Shell
-
 {
+    readonly LocaleStrings _locale;
 
-    public AppShell()
-
+    public AppShell(LocaleStrings locale)
     {
+        _locale = locale;
+        BindingContext = locale;          // ← tabs bind to LocaleStrings properties
 
         InitializeComponent();
         Shell.SetTabBarIsVisible(this, false);
         Navigated += OnShellNavigated;
 
-        Routing.RegisterRoute(nameof(RestaurantPage), typeof(RestaurantPage));
-
-        Routing.RegisterRoute(nameof(CartPage), typeof(CartPage));
-
-        Routing.RegisterRoute(nameof(CheckoutPage), typeof(CheckoutPage));
-
-        Routing.RegisterRoute(nameof(OrderTrackingPage), typeof(OrderTrackingPage));
-
-        Routing.RegisterRoute(nameof(OrderDetailPage), typeof(OrderDetailPage));
-
-        Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
-
-        Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
-        Routing.RegisterRoute(nameof(SupportChatPage), typeof(SupportChatPage));
-        Routing.RegisterRoute(nameof(DriverChatPage), typeof(DriverChatPage));
-        Routing.RegisterRoute(nameof(LocationPickerPage), typeof(LocationPickerPage));
-        Routing.RegisterRoute(nameof(CouponsPage), typeof(CouponsPage));
-        Routing.RegisterRoute(nameof(RewardsPage), typeof(RewardsPage));
+        Routing.RegisterRoute(nameof(RestaurantPage),       typeof(RestaurantPage));
+        Routing.RegisterRoute(nameof(CartPage),             typeof(CartPage));
+        Routing.RegisterRoute(nameof(CheckoutPage),         typeof(CheckoutPage));
+        Routing.RegisterRoute(nameof(OrderTrackingPage),    typeof(OrderTrackingPage));
+        Routing.RegisterRoute(nameof(OrderDetailPage),      typeof(OrderDetailPage));
+        Routing.RegisterRoute(nameof(LoginPage),            typeof(LoginPage));
+        Routing.RegisterRoute(nameof(RegisterPage),         typeof(RegisterPage));
+        Routing.RegisterRoute(nameof(SupportChatPage),      typeof(SupportChatPage));
+        Routing.RegisterRoute(nameof(DriverChatPage),       typeof(DriverChatPage));
+        Routing.RegisterRoute(nameof(LocationPickerPage),   typeof(LocationPickerPage));
+        Routing.RegisterRoute(nameof(CouponsPage),          typeof(CouponsPage));
+        Routing.RegisterRoute(nameof(RewardsPage),          typeof(RewardsPage));
     }
+
     void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
     {
         Shell.SetTabBarIsVisible(this, false);
         if (CurrentPage is Page page)
             Shell.SetTabBarIsVisible(page, false);
     }
+
+    // Call this after changing language so tab titles refresh
+    public void RefreshTabTitles() => _locale.Refresh();
 }

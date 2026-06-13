@@ -72,7 +72,8 @@
                 <VerticalStackLayout Padding="0,0,0,100" Spacing="0">
 
                     <!-- ── Banners Carousel ── -->
-                    <CarouselView ItemsSource="{Binding Banners}"
+                    <CarouselView x:Name="BannerCarousel"
+                                  ItemsSource="{Binding Banners}"
                                   HeightRequest="160"
                                   Loop="True"
                                   IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"

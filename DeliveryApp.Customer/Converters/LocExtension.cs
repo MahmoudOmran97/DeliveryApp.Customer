@@ -35,11 +35,12 @@ public class LocaleStrings : INotifyPropertyChanged
     public void Refresh() =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
 
-    // ── Shorthand properties (add as many as needed) ──────────
-    public string Tab_Home => LocalizationService.Get(nameof(Tab_Home));
-    public string Tab_Orders => LocalizationService.Get(nameof(Tab_Orders));
-    public string Tab_Alerts => LocalizationService.Get(nameof(Tab_Alerts));
-    public string Tab_Profile => LocalizationService.Get(nameof(Tab_Profile));
+    // ── Tab properties ────────────────────────────────────────
+    public string Tab_Home     => LocalizationService.Get(nameof(Tab_Home));
+    public string Tab_Orders   => LocalizationService.Get(nameof(Tab_Orders));
+    public string Tab_Alerts   => LocalizationService.Get(nameof(Tab_Alerts));
+    public string Tab_Profile  => LocalizationService.Get(nameof(Tab_Profile));
+    public string Tab_Settings => LocalizationService.Get(nameof(Tab_Settings));
     public string MyCart => LocalizationService.Get(nameof(MyCart));
     public string MyOrders => LocalizationService.Get(nameof(MyOrders));
     public string Notifications => LocalizationService.Get(nameof(Notifications));

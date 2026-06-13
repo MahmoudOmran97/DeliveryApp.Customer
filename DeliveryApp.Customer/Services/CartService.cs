@@ -10,11 +10,15 @@ public class CartService
 
     private int? _restaurantId;
 
+    private decimal _restaurantDeliveryFee = 15m;
+
     public event Action? CartChanged;
 
     public IReadOnlyList<CartItem> Items => _items.AsReadOnly();
 
     public int? RestaurantId => _restaurantId;
+
+    public decimal RestaurantDeliveryFee => _restaurantDeliveryFee;
 
     public int TotalCount => _items.Sum(i => i.Quantity);
 
@@ -24,7 +28,7 @@ public class CartService
 
     // returns false if cart belongs to a different restaurant
 
-    public bool AddItem(int restaurantId, Product product, int qty = 1, string? notes = null)
+    public bool AddItem(int restaurantId, Product product, int qty = 1, string? notes = null, decimal deliveryFee = 15m)
 
     {
 
@@ -33,6 +37,8 @@ public class CartService
             return false;
 
         _restaurantId = restaurantId;
+
+        _restaurantDeliveryFee = deliveryFee;
 
         var existing = _items.FirstOrDefault(i => i.Product.Id == product.Id && i.Notes == notes);
 
@@ -66,7 +72,7 @@ public class CartService
 
         _items.RemoveAll(i => i.Product.Id == productId);
 
-        if (_items.Count == 0) _restaurantId = null;
+        if (_items.Count == 0) { _restaurantId = null; _restaurantDeliveryFee = 15m; }
 
         CartChanged?.Invoke();
 
@@ -79,6 +85,8 @@ public class CartService
         _items.Clear();
 
         _restaurantId = null;
+
+        _restaurantDeliveryFee = 15m;
 
         CartChanged?.Invoke();
 

@@ -15,16 +15,12 @@
               ColumnDefinitions="44,*">
 
             <!-- Back button -->
-            <Border Grid.Column="0" BackgroundColor="#FFFFFF22"
-                    StrokeShape="RoundRectangle 20" Stroke="Transparent"
-                    WidthRequest="36" HeightRequest="36">
-                <Label Text="←" FontSize="20" TextColor="White"
-                       HorizontalOptions="Center" VerticalOptions="Center">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnBackTapped"/>
-                    </Label.GestureRecognizers>
-                </Label>
-            </Border>
+            <Image Grid.Column="0" Source="icon_back.png"
+                   WidthRequest="38" HeightRequest="38" VerticalOptions="Center">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnBackTapped"/>
+                </Image.GestureRecognizers>
+            </Image>
 
             <Label Grid.Column="1" Text="القسائم 🎟️"
                    FontFamily="CairoBold" FontSize="20"
