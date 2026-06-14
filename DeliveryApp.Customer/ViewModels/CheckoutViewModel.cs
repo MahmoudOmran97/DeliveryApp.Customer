@@ -181,7 +181,9 @@ public partial class CheckoutViewModel : BaseViewModel
                 lat: DeliveryLat,
                 lng: DeliveryLng,
                 notes: string.IsNullOrWhiteSpace(Notes) ? null : Notes,
-                paymentMethod: PaymentMethod
+                paymentMethod: PaymentMethod,
+                couponCode: CouponApplied ? CouponCode : null,
+                couponId: CouponApplied ? _appliedCouponId : null
             );
 
             if (order != null)

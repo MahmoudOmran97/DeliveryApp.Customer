@@ -165,7 +165,7 @@ public class ApiService
 
         string address, double lat, double lng,
 
-        string? notes, string paymentMethod)
+        string? notes, string paymentMethod, string? couponCode = null, int? couponId = null)
 
         => PostAsync<Order>("orders", new
 
@@ -183,7 +183,11 @@ public class ApiService
 
             DeliveryNotes = notes,
 
-            PaymentMethod = paymentMethod
+            PaymentMethod = paymentMethod,
+
+            CouponCode = couponCode,
+
+            CouponId = couponId
 
         });
 
