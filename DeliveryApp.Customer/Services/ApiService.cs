@@ -3,6 +3,7 @@
 using System.Text.Json;
 
 using DeliveryApp.Customer.Models;
+using DeliveryApp.Customer.ViewModels;
 
 namespace DeliveryApp.Customer.Services;
 
@@ -250,6 +251,9 @@ public class ApiService
     public Task<List<Coupon>?> GetCouponsAsync()
         => GetAsync<List<Coupon>>("coupons");
 
+    public Task<List<Coupon>?> GetMyCouponsAsync()
+        => GetAsync<List<Coupon>>("coupons/my");
+
     public async Task<CouponValidationResult?> ValidateCouponAsync(string code, decimal orderAmount)
     {
         try
@@ -278,6 +282,15 @@ public class ApiService
 
     public Task<List<Deal>?> GetDealsAsync()
         => GetAsync<List<Deal>>("deals");
+
+    public async Task<PointsResult> GetPointsAsync()
+    {
+        try 
+        {
+            return await GetAsync<PointsResult>("user/points") ?? new PointsResult();
+        }
+        catch { return new PointsResult(); }
+    }
 
     private static void Debug(Exception ex, string path)
 

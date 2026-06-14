@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.Services;
+using DeliveryApp.Customer.Views;
 
 namespace DeliveryApp.Customer.ViewModels;
 
@@ -13,6 +14,8 @@ public partial class RewardsViewModel : BaseViewModel
 
     [ObservableProperty] bool _isRefreshing;
     [ObservableProperty] string _userName = string.Empty;
+    [ObservableProperty] int _pointsBalance;
+    [ObservableProperty] int _couponsCount;
 
     public ObservableCollection<Deal> Deals { get; } = new();
 
@@ -39,6 +42,15 @@ public partial class RewardsViewModel : BaseViewModel
             var allDeals = list ?? new();
             foreach (var d in allDeals) Deals.Add(d);
 
+            // Load points
+            var pointsResult = await _api.GetPointsAsync();
+            PointsBalance = pointsResult.Balance;
+
+            // Load coupons count
+            var coupons = await _api.GetMyCouponsAsync();
+            if (coupons != null)
+                CouponsCount = coupons.Count(c => c.Status == "Available");
+
             // Group by restaurant
             var grouped = allDeals
                 .GroupBy(d => d.RestaurantName ?? "عروض عامة")
@@ -59,6 +71,12 @@ public partial class RewardsViewModel : BaseViewModel
             return Shell.Current.GoToAsync($"RestaurantPage?id={d.RestaurantId}");
         return Task.CompletedTask;
     }
+
+    [RelayCommand]
+    async Task OpenPoints() => await Shell.Current.GoToAsync(nameof(PointsPage));
+
+    [RelayCommand]
+    async Task OpenCoupons() => await Shell.Current.GoToAsync(nameof(CouponsPage));
 }
 
 public class DealGroup : List<Deal>

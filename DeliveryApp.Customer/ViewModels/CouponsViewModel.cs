@@ -27,7 +27,8 @@ public partial class CouponsViewModel : BaseViewModel
         IsBusy = true;
         try
         {
-            var list = await _api.GetCouponsAsync();
+            // Use the new "my" endpoint to get coupons with status (Used, Expired, Available)
+            var list = await _api.GetMyCouponsAsync();
             Coupons.Clear();
             foreach (var c in list ?? new()) Coupons.Add(c);
         }

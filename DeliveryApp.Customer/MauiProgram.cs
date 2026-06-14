@@ -57,6 +57,7 @@ public static class MauiProgram
         builder.Services.AddTransient<LocationPickerViewModel>();
         builder.Services.AddTransient<CouponsViewModel>();
         builder.Services.AddTransient<RewardsViewModel>();
+        builder.Services.AddTransient<PointsViewModel>();
         // ── Pages ─────────────────────────────────
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<SplashPage>();
@@ -77,6 +78,7 @@ public static class MauiProgram
         builder.Services.AddTransient<LocationPickerPage>();
         builder.Services.AddTransient<CouponsPage>();
         builder.Services.AddTransient<RewardsPage>();
+        builder.Services.AddTransient<PointsPage>();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

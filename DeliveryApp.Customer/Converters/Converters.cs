@@ -21,9 +21,14 @@ public class IntToBoolConverter : IValueConverter
 {
     public object Convert(object? v, Type t, object? p, CultureInfo c)
     {
-        if (v is int i) return i > 0;
-        if (v is bool b) return b;
-        return false;
+        bool result = false;
+        if (v is int i) result = i > 0;
+        else if (v is bool b) result = b;
+        
+        if (p is string s && s == "invert")
+            return !result;
+            
+        return result;
     }
 
     public object ConvertBack(object? v, Type t, object? p, CultureInfo c)

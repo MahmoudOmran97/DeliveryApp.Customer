@@ -198,17 +198,22 @@
                                                        FontSize="12"
                                                        TextColor="#9E9E9E"/>
                                                 <Grid ColumnDefinitions="*,Auto">
-                                                    <Label Grid.Column="0"
-                                                           Text="{Binding ExpiryText}"
-                                                           FontFamily="CairoRegular"
-                                                           FontSize="11"
-                                                           TextColor="{Binding ExpiryColor}"/>
+                                                    <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                                        <Label Text="{Binding ExpiryText}"
+                                                               FontFamily="CairoRegular"
+                                                               FontSize="11"
+                                                               TextColor="{Binding ExpiryColor}"/>
+                                                        <Border BackgroundColor="{Binding StatusColor}" Padding="6,2" StrokeShape="RoundRectangle 4" HorizontalOptions="Start">
+                                                            <Label Text="{Binding StatusText}" TextColor="White" FontSize="10" FontFamily="CairoBold"/>
+                                                        </Border>
+                                                    </VerticalStackLayout>
                                                     <!-- Copy code button -->
                                                     <Border Grid.Column="1"
                                                             BackgroundColor="#FFF3E0"
                                                             StrokeShape="RoundRectangle 8"
                                                             Stroke="Transparent"
-                                                            Padding="12,6">
+                                                            Padding="12,6"
+                                                            VerticalOptions="Center">
                                                         <Border.GestureRecognizers>
                                                             <TapGestureRecognizer
                                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CouponsViewModel}}, Path=CopyCodeCommand}"

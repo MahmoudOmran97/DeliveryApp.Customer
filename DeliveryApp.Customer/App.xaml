@@ -22,6 +22,8 @@
 
             <!-- String converters -->
             <converters:NullOrEmptyToBoolConverter x:Key="StringNotEmpty" />
+            <converters:AmountToColorConverter x:Key="AmountToColor" />
+            <converters:StringEqualsConverter x:Key="StringEquals" />
 
             <!-- Color converters -->
             <converters:IsOpenToColorConverter    x:Key="IsOpenColor" />

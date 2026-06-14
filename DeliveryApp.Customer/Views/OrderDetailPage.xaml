@@ -76,6 +76,20 @@
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                         <BoxView Color="#E0E0E0" HeightRequest="1"/>
+                        <!-- Price Breakdown -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,0">
+                            <Label Grid.Column="0" Text="المجموع الفرعي" FontFamily="CairoRegular" FontSize="14" TextColor="#757575"/>
+                            <Label Grid.Column="1" Text="{Binding Order.SubTotal, StringFormat='{0:F2} جنيه'}" FontFamily="CairoRegular" FontSize="14" TextColor="#212121"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,2,0,0">
+                            <Label Grid.Column="0" Text="رسوم التوصيل" FontFamily="CairoRegular" FontSize="14" TextColor="#757575"/>
+                            <Label Grid.Column="1" Text="{Binding Order.DeliveryFee, StringFormat='{0:F2} جنيه'}" FontFamily="CairoRegular" FontSize="14" TextColor="#212121"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,2,0,0" IsVisible="{Binding Order.Discount, Converter={StaticResource IntToBool}}">
+                            <Label Grid.Column="0" Text="الخصم" FontFamily="CairoRegular" FontSize="14" TextColor="#4CAF50"/>
+                            <Label Grid.Column="1" Text="{Binding Order.Discount, StringFormat='-{0:F2} جنيه'}" FontFamily="CairoRegular" FontSize="14" TextColor="#4CAF50"/>
+                        </Grid>
+                        <BoxView Color="#F0F0F0" HeightRequest="1" Margin="0,5"/>
                         <Grid ColumnDefinitions="*,Auto">
                             <Label Grid.Column="0" Text="{loc:Loc Key=Total}" FontFamily="CairoBold"
                                FontSize="16" TextColor="#212121"/>

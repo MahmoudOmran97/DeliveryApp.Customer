@@ -356,6 +356,22 @@ public class Coupon
 
     public bool IsExpiringSoon => ExpiresInDays.HasValue && ExpiresInDays <= 3 && ExpiresInDays > 0;
 
+    public string Status { get; set; } = "Available"; // Available, Used, Expired
+
+    public string StatusText => Status switch
+    {
+        "Used" => "تم استخدامه",
+        "Expired" => "منتهي الصلاحية",
+        _ => "متاح"
+    };
+
+    public string StatusColor => Status switch
+    {
+        "Used" => "#9E9E9E",
+        "Expired" => "#F44336",
+        _ => "#4CAF50"
+    };
+
     public Color ExpiryColor => IsExpiringSoon ? Colors.Red : Color.FromArgb("#757575");
 }
 

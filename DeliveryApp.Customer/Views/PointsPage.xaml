@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             x:Class="DeliveryApp.Customer.Views.PointsPage"
+             x:DataType="vm:PointsViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" FlowDirection="RightToLeft">
+        
+        <!-- Header -->
+        <Grid Grid.Row="0" Padding="20,52,20,20" ColumnDefinitions="Auto,*,Auto">
+            <ImageButton Grid.Column="0" Source="icon_back.png" 
+                         Command="{Binding BackCommand}"
+                         WidthRequest="40" HeightRequest="40"
+                         BackgroundColor="Transparent"/>
+            <Label Grid.Column="1" Text="التاريخ" 
+                   FontFamily="CairoBold" FontSize="20" 
+                   HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- Points Summary -->
+        <VerticalStackLayout Grid.Row="1" Padding="20,10" Spacing="10" HorizontalOptions="Center">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                    <Label Text="{Binding PointsBalance, StringFormat='{0} نقطة'}" 
+                           FontFamily="CairoBold" FontSize="32" TextColor="Black"/>
+                    <Label Text="كل ما طلبت أكثر، كل ما حصلت على نقاط أكثر" 
+                           FontFamily="CairoRegular" FontSize="14" TextColor="Gray"/>
+                </VerticalStackLayout>
+                <Image Grid.Column="1" Source="tab_home.svg" WidthRequest="80" HeightRequest="80"/>
+            </Grid>
+        </VerticalStackLayout>
+
+        <!-- Tabs -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,*" Margin="0,20,0,0">
+            <VerticalStackLayout Grid.Column="0">
+                <Button Text="الكل" BackgroundColor="Transparent" TextColor="Black" FontFamily="CairoBold"
+                        Command="{Binding FilterTransactionsCommand}" CommandParameter="All"/>
+                <BoxView HeightRequest="2" BackgroundColor="Black" IsVisible="{Binding SelectedTab, Converter={StaticResource StringEquals}, ConverterParameter='All'}"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1">
+                <Button Text="المكتسبة" BackgroundColor="Transparent" TextColor="Gray" FontFamily="CairoBold"
+                        Command="{Binding FilterTransactionsCommand}" CommandParameter="Earned"/>
+                <BoxView HeightRequest="2" BackgroundColor="Black" IsVisible="{Binding SelectedTab, Converter={StaticResource StringEquals}, ConverterParameter='Earned'}"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="2">
+                <Button Text="المنفقة" BackgroundColor="Transparent" TextColor="Gray" FontFamily="CairoBold"
+                        Command="{Binding FilterTransactionsCommand}" CommandParameter="Spent"/>
+                <BoxView HeightRequest="2" BackgroundColor="Black" IsVisible="{Binding SelectedTab, Converter={StaticResource StringEquals}, ConverterParameter='Spent'}"/>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Transactions List -->
+        <RefreshView Grid.Row="3" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding FilteredTransactions}" Margin="20,10">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20" Margin="0,50,0,0">
+                        <Label Text="لم نعثر على ما طلبت" 
+                               FontFamily="CairoBold" FontSize="20" 
+                               HorizontalOptions="Center" TextColor="Black"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PointTransaction">
+                        <Grid ColumnDefinitions="*,Auto" Padding="0,15">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                <Label Text="{Binding Title}" FontFamily="CairoBold" FontSize="16" TextColor="Black"/>
+                                <Label Text="{Binding DateText}" FontFamily="CairoRegular" FontSize="12" TextColor="Gray"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1" Text="{Binding AmountText}" 
+                                   FontFamily="CairoBold" FontSize="16" 
+                                   TextColor="{Binding Amount, Converter={StaticResource AmountToColor}}"
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

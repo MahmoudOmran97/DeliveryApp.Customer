@@ -113,6 +113,9 @@
 		<MauiXaml Update="Views\OrderTrackingPage.xaml">
 			<Generator></Generator>
 		</MauiXaml>
+		<MauiXaml Update="Views\PointsPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="Views\ProfilePage.xaml">
 			<Generator></Generator>
 		</MauiXaml>

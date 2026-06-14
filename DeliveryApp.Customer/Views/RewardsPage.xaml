@@ -64,8 +64,11 @@
                                 StrokeShape="RoundRectangle 14"
                                 Stroke="#F0F0F0" StrokeThickness="1"
                                 Padding="16,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenPointsCommand}"/>
+                            </Border.GestureRecognizers>
                             <VerticalStackLayout Spacing="4" FlowDirection="RightToLeft">
-                                <Label Text="0 نقطة"
+                                <Label Text="{Binding PointsBalance, StringFormat='{0} نقطة'}"
                                        FontFamily="CairoBold" FontSize="18"
                                        TextColor="#212121"/>
                                 <Label Text="عرض السجل"
@@ -79,8 +82,11 @@
                                 StrokeShape="RoundRectangle 14"
                                 Stroke="#F0F0F0" StrokeThickness="1"
                                 Padding="16,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenCouponsCommand}"/>
+                            </Border.GestureRecognizers>
                             <VerticalStackLayout Spacing="4" FlowDirection="RightToLeft">
-                                <Label Text="0 قسائم"
+                                <Label Text="{Binding CouponsCount, StringFormat='{0} قسائم'}"
                                        FontFamily="CairoBold" FontSize="18"
                                        TextColor="#212121"/>
                                 <Label Text="عرض القسائم"
@@ -112,7 +118,7 @@
 
                     <!-- Empty state -->
                     <VerticalStackLayout Spacing="12" HorizontalOptions="Center"
-                                         IsVisible="{Binding Deals.Count, Converter={StaticResource InvertBool}}"
+                                         IsVisible="{Binding Deals.Count, Converter={StaticResource IntToBool}, ConverterParameter='invert'}"
                                          Margin="0,20,0,0">
                         <Label Text="🍽️" FontSize="64" HorizontalOptions="Center"/>
                         <Label Text="لا توجد عروض حالياً"
