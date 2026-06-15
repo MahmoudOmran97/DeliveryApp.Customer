@@ -24,10 +24,10 @@ public partial class OrderTrackingPage : ContentPage
     double _lastDriverRouteFromLat = 0, _lastDriverRouteFromLng = 0;
     DateTime _lastDriverRouteTime = DateTime.MinValue;
 
-    // SVGs
-    static readonly string _customerSvg = BuildPinSvg("#2196F3", "#1565C0");
-    static readonly string _restaurantSvg = BuildPinSvg("#4CAF50", "#2E7D32");
-    static readonly string _driverSvg = BuildCircleSvg("#FF5722", "#BF360C");
+    // Images
+    static readonly string _customerMarker = "marker_user.svg";
+    static readonly string _restaurantMarker = "marker_shop.svg";
+    static readonly string _driverMarker = "marker_driver.svg";
 
     public OrderTrackingPage(OrderTrackingViewModel vm)
     {
@@ -93,10 +93,10 @@ public partial class OrderTrackingPage : ContentPage
                 _staticPinsDrawn = true;
 
                 DrawPin(ref _customerLayer, "CustomerLayer",
-                    _vm.CustomerLat, _vm.CustomerLng, _customerSvg, 1.0);
+                    _vm.CustomerLat, _vm.CustomerLng, _customerMarker, 0.8);
 
                 DrawPin(ref _restaurantLayer, "RestaurantLayer",
-                    _vm.RestaurantLat, _vm.RestaurantLng, _restaurantSvg, 1.0);
+                    _vm.RestaurantLat, _vm.RestaurantLng, _restaurantMarker, 0.8);
 
                 // رسم الـ Route بين المطعم والعميل
                 await DrawRouteAndUpdateEtaAsync(
@@ -115,13 +115,13 @@ public partial class OrderTrackingPage : ContentPage
             {
                 // لو في موقع عميل بس، اعرضه وانتظر المطعم
                 DrawPin(ref _customerLayer, "CustomerLayer",
-                    _vm.CustomerLat, _vm.CustomerLng, _customerSvg, 1.0);
+                    _vm.CustomerLat, _vm.CustomerLng, _customerMarker, 0.8);
                 CenterOn(_vm.CustomerLat, _vm.CustomerLng, 15);
             }
             else if (!_staticPinsDrawn && hasRestaurant)
             {
                 DrawPin(ref _restaurantLayer, "RestaurantLayer",
-                    _vm.RestaurantLat, _vm.RestaurantLng, _restaurantSvg, 1.0);
+                    _vm.RestaurantLat, _vm.RestaurantLng, _restaurantMarker, 0.8);
                 CenterOn(_vm.RestaurantLat, _vm.RestaurantLng, 15);
             }
 
@@ -130,7 +130,7 @@ public partial class OrderTrackingPage : ContentPage
             {
                 // تحديث pin الدرايفر دايما
                 DrawPin(ref _driverLayer, "DriverLayer",
-                    _vm.DriverLat, _vm.DriverLng, _driverSvg, 0.9);
+                    _vm.DriverLat, _vm.DriverLng, _driverMarker, 0.8);
 
                 // FIX: تحديث Route الدرايفر → العميل كل 15 ثانية أو لو تحرك أكتر من 50m
                 if (hasCustomer && ShouldUpdateDriverRoute())
@@ -170,7 +170,7 @@ public partial class OrderTrackingPage : ContentPage
 
     // ─── رسم Pin ──────────────────────────────────────────────────────────────
     void DrawPin(ref MemoryLayer? existing, string name,
-                 double lat, double lng, string svgSource, double scale)
+                 double lat, double lng, string imageSource, double scale)
     {
         // FIX: Remove safely - check layer is still in map before removing
         if (existing != null)
@@ -185,11 +185,9 @@ public partial class OrderTrackingPage : ContentPage
         {
             new ImageStyle
             {
-                Image = svgSource,
+                Image = imageSource,
                 SymbolScale = scale,
-                // FIX: RelativeOffset صح - تجيب الـ tip تحت على الإحداثي
-                // بالنسبة للـ SVG viewBox: center = (0.5, 0.5)، tip في الأسفل
-                // RelativeOffset(x=0, y=0.5) يحرك الـ image لفوق بنص الارتفاع
+                // لإرجاع الـ tip الخاص بالماركر على الإحداثي بالضبط
                 RelativeOffset = new RelativeOffset(0.0, 0.5)
             }
         };

@@ -16,8 +16,10 @@ public partial class CouponsViewModel : BaseViewModel
     [ObservableProperty] bool _hasFeedback;
     [ObservableProperty] bool _feedbackIsError;
     [ObservableProperty] bool _isCopied;
+    [ObservableProperty] string _currentTab = "Valid"; // Valid, Used, Expired
 
     public ObservableCollection<Coupon> Coupons { get; } = new();
+    public ObservableCollection<Coupon> FilteredCoupons { get; } = new();
 
     public CouponsViewModel(ApiService api) => _api = api;
 
@@ -27,12 +29,32 @@ public partial class CouponsViewModel : BaseViewModel
         IsBusy = true;
         try
         {
-            // Use the new "my" endpoint to get coupons with status (Used, Expired, Available)
             var list = await _api.GetMyCouponsAsync();
             Coupons.Clear();
             foreach (var c in list ?? new()) Coupons.Add(c);
+            ApplyFilter();
         }
         finally { IsBusy = false; IsRefreshing = false; }
+    }
+
+    [RelayCommand]
+    void ChangeTab(string tab)
+    {
+        CurrentTab = tab;
+        ApplyFilter();
+    }
+
+    void ApplyFilter()
+    {
+        FilteredCoupons.Clear();
+        var filtered = CurrentTab switch
+        {
+            "Valid" => Coupons.Where(c => c.Status == "Available"),
+            "Used" => Coupons.Where(c => c.Status == "Used"),
+            "Expired" => Coupons.Where(c => c.Status == "Expired"),
+            _ => Coupons
+        };
+        foreach (var c in filtered) FilteredCoupons.Add(c);
     }
 
     [RelayCommand]

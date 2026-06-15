@@ -496,4 +496,121 @@
 	</data>
 
 
-</root>
+
+			<!-- Points & Rewards -->
+			<data name="PointsTitle">
+				<value>سجل النقاط</value>
+			</data>
+			<data name="PointsBalanceLabel">
+				<value>نقطة</value>
+			</data>
+			<data name="PointsSubTitle">
+				<value>كل ما طلبت أكثر، كل ما حصلت على نقاط أكثر</value>
+			</data>
+			<data name="Tab_All">
+				<value>الكل</value>
+			</data>
+			<data name="Tab_Earned">
+				<value>المكتسبة</value>
+			</data>
+			<data name="Tab_Spent">
+				<value>المنفقة</value>
+			</data>
+			<data name="NoPointsFound">
+				<value>لم نعثر على ما طلبت</value>
+			</data>
+			<data name="Points">
+				<value>النقاط</value>
+			</data>
+			<data name="Coupons">
+				<value>القسائم</value>
+			</data>
+			<data name="Rewards">
+				<value>المكافآت</value>
+			</data>
+			<data name="OrderNow">
+				<value>اطلب الآن</value>
+			</data>
+			<data name="Categories">
+				<value>التصنيفات</value>
+			</data>
+			<data name="Cat_Restaurants">
+				<value>المطاعم</value>
+			</data>
+			<data name="Cat_Grocery">
+				<value>بقالة</value>
+			</data>
+			<data name="Cat_Pharmacy">
+				<value>صيدلية</value>
+			</data>
+			<data name="Cat_Drinks">
+				<value>مشروبات</value>
+			</data>
+			<data name="UseAndSave">
+				<value>استخدم ووفر</value>
+			</data>
+
+		<!-- Coupons Tabs -->
+		<data name="Tab_Valid">
+			<value>صالح</value>
+		</data>
+		<data name="Tab_Used">
+			<value>استخدم</value>
+		</data>
+		<data name="Tab_Expired">
+			<value>انتهت</value>
+		</data>
+		<data name="Status_Valid">
+			<value>متاح</value>
+		</data>
+		<data name="Status_Used">
+			<value>مستخدم</value>
+		</data>
+		<data name="Status_Expired">
+			<value>منتهي</value>
+		</data>
+		<data name="UseNow">
+			<value>استخدم الآن</value>
+		</data>
+
+		<!-- Order Details Extras -->
+		<data name="DiscountAmount">
+			<value>الخصم</value>
+		</data>
+		<data name="FinalTotal">
+			<value>الإجمالي النهائي</value>
+		</data>
+		<data name="FlowDirection">
+			<value>RightToLeft</value>
+		</data>
+		<data name="Location">
+			<value>أسوان، مصر</value>
+		</data>
+		<data name="CartIcon">
+			<value>🛒</value>
+		</data>
+		<data name="RewardsIcon">
+			<value>🎁</value>
+		</data>
+		<data name="CouponsIcon">
+			<value>🎟️</value>
+		</data>
+		<data name="WelcomeToRewards">
+			<value>أهلاً بك في مكافآتك</value>
+		</data>
+		<data name="ViewHistory">
+			<value>عرض السجل</value>
+		</data>
+		<data name="ViewCoupons">
+			<value>عرض القسائم</value>
+		</data>
+		<data name="NoDealsFound">
+			<value>لا توجد عروض حالياً</value>
+		</data>
+		<data name="FollowUsForDeals">
+			<value>تابعنا لمعرفة أحدث عروض وتخفيضات المطاعم</value>
+		</data>
+		<data name="RestaurantDeals">
+			<value>عروض المطاعم</value>
+		</data>
+	</root>

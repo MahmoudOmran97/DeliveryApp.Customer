@@ -4,11 +4,13 @@
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.RewardsPage"
              x:DataType="vm:RewardsViewModel"
              Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA">
+    <!-- FlowDirection="RightToLeft" hardcoded — fixes XC0009 -->
+    <Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA" FlowDirection="RightToLeft">
 
         <!-- ══════ HEADER ══════ -->
         <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,20"
@@ -19,7 +21,7 @@
                     <TapGestureRecognizer Tapped="OnBackTapped"/>
                 </Image.GestureRecognizers>
             </Image>
-            <Label Grid.Column="1" Text="المكافآت 🎁"
+            <Label Grid.Column="1" Text="المكافآت"
                    FontFamily="CairoBold" FontSize="20"
                    TextColor="White" VerticalOptions="Center"
                    HorizontalOptions="Center"/>
@@ -42,12 +44,12 @@
                                 <Label FontFamily="CairoBold" FontSize="18" TextColor="White">
                                     <Label.FormattedText>
                                         <FormattedString>
-                                            <Span Text="أهلاً "/>
+                                            <Span Text="{Binding GreetingPrefix}"/>
                                             <Span Text="{Binding UserName}"/>
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Label Text="بك في مكافآتك"
+                                <Label Text="مرحباً بك في برنامج المكافآت"
                                        FontFamily="CairoRegular" FontSize="14"
                                        TextColor="#FFCCBC"/>
                             </VerticalStackLayout>
@@ -86,7 +88,7 @@
                                 <TapGestureRecognizer Command="{Binding OpenCouponsCommand}"/>
                             </Border.GestureRecognizers>
                             <VerticalStackLayout Spacing="4" FlowDirection="RightToLeft">
-                                <Label Text="{Binding CouponsCount, StringFormat='{0} قسائم'}"
+                                <Label Text="{Binding CouponsCount, StringFormat='{0} قسيمة'}"
                                        FontFamily="CairoBold" FontSize="18"
                                        TextColor="#212121"/>
                                 <Label Text="عرض القسائم"
@@ -121,10 +123,10 @@
                                          IsVisible="{Binding Deals.Count, Converter={StaticResource IntToBool}, ConverterParameter='invert'}"
                                          Margin="0,20,0,0">
                         <Label Text="🍽️" FontSize="64" HorizontalOptions="Center"/>
-                        <Label Text="لا توجد عروض حالياً"
+                        <Label Text="لا توجد عروض"
                                FontFamily="CairoBold" FontSize="18"
                                TextColor="#212121" HorizontalOptions="Center"/>
-                        <Label Text="تابعنا لمعرفة أحدث عروض وتخفيضات المطاعم"
+                        <Label Text="تابعنا للحصول على أحدث العروض"
                                FontFamily="CairoRegular" FontSize="13"
                                TextColor="#757575" HorizontalOptions="Center"
                                HorizontalTextAlignment="Center"/>
@@ -136,19 +138,14 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="vm:DealGroup">
                                 <VerticalStackLayout Spacing="0" Margin="0,0,0,20">
-
-                                    <!-- Restaurant header -->
                                     <Label Text="{Binding RestaurantName}"
                                            FontFamily="CairoBold" FontSize="16"
                                            TextColor="#212121"
                                            Margin="0,0,0,10"
                                            FlowDirection="RightToLeft"/>
-
-                                    <!-- Deals horizontal scroll -->
                                     <ScrollView Orientation="Horizontal"
                                                 HorizontalScrollBarVisibility="Never">
                                         <HorizontalStackLayout Spacing="12"
-                                                               x:Name="dealsStack"
                                                                BindableLayout.ItemsSource="{Binding .}">
                                             <BindableLayout.ItemTemplate>
                                                 <DataTemplate x:DataType="m:Deal">
@@ -163,18 +160,14 @@
                                                         </Border.GestureRecognizers>
                                                         <VerticalStackLayout Spacing="4" FlowDirection="RightToLeft">
                                                             <Label Text="{Binding Title}"
-                                                                   FontFamily="CairoBold"
-                                                                   FontSize="12"
+                                                                   FontFamily="CairoBold" FontSize="12"
                                                                    TextColor="#212121"
-                                                                   MaxLines="2"
-                                                                   LineBreakMode="WordWrap"/>
+                                                                   MaxLines="2" LineBreakMode="WordWrap"/>
                                                             <Label Text="{Binding RestaurantName}"
-                                                                   FontFamily="CairoRegular"
-                                                                   FontSize="10"
+                                                                   FontFamily="CairoRegular" FontSize="10"
                                                                    TextColor="#9E9E9E"/>
                                                             <Label Text="{Binding PriceText}"
-                                                                   FontFamily="CairoBold"
-                                                                   FontSize="11"
+                                                                   FontFamily="CairoBold" FontSize="11"
                                                                    TextColor="#FF5722"/>
                                                         </VerticalStackLayout>
                                                     </Border>
@@ -182,17 +175,15 @@
                                             </BindableLayout.ItemTemplate>
                                         </HorizontalStackLayout>
                                     </ScrollView>
-
                                 </VerticalStackLayout>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
 
-                    <!-- Flat deals list (fallback / primary display) -->
+                    <!-- Flat deals list -->
                     <Label Text="عروض المطاعم"
                            FontFamily="CairoBold" FontSize="16"
                            TextColor="#212121"
-                           FlowDirection="RightToLeft"
                            IsVisible="{Binding Deals.Count, Converter={StaticResource IntToBool}}"/>
 
                     <CollectionView ItemsSource="{Binding Deals}"
@@ -214,7 +205,6 @@
                                             CommandParameter="{Binding .}"/>
                                     </Border.GestureRecognizers>
                                     <Grid RowDefinitions="130,Auto">
-                                        <!-- Image -->
                                         <Grid Grid.Row="0">
                                             <Border BackgroundColor="#F0F0F0"
                                                     StrokeShape="RoundRectangle 14,14,0,0"
@@ -228,7 +218,6 @@
                                                             Aspect="AspectFill"
                                                             HeightRequest="130"
                                                             IsVisible="{Binding ImageUrl, Converter={StaticResource HasImage}}"/>
-                                            <!-- Badge -->
                                             <Border BackgroundColor="{Binding BadgeColorValue}"
                                                     StrokeShape="RoundRectangle 6"
                                                     Stroke="Transparent"
@@ -240,40 +229,31 @@
                                                 <HorizontalStackLayout Spacing="3">
                                                     <Label Text="🎁" FontSize="10"/>
                                                     <Label Text="{Binding BadgeText}"
-                                                           FontFamily="CairoBold"
-                                                           FontSize="11"
+                                                           FontFamily="CairoBold" FontSize="11"
                                                            TextColor="White"/>
                                                 </HorizontalStackLayout>
                                             </Border>
                                         </Grid>
-
-                                        <!-- Info -->
                                         <VerticalStackLayout Grid.Row="1"
-                                                             Padding="10,8"
-                                                             Spacing="4"
+                                                             Padding="10,8" Spacing="4"
                                                              FlowDirection="RightToLeft">
                                             <Label Text="{Binding Title}"
-                                                   FontFamily="CairoBold"
-                                                   FontSize="13"
+                                                   FontFamily="CairoBold" FontSize="13"
                                                    TextColor="#212121"
-                                                   MaxLines="2"
-                                                   LineBreakMode="WordWrap"/>
+                                                   MaxLines="2" LineBreakMode="WordWrap"/>
                                             <Label Text="{Binding RestaurantName}"
-                                                   FontFamily="CairoRegular"
-                                                   FontSize="11"
+                                                   FontFamily="CairoRegular" FontSize="11"
                                                    TextColor="#9E9E9E"
                                                    IsVisible="{Binding RestaurantName, Converter={StaticResource HasImage}}"/>
                                             <Grid ColumnDefinitions="*,Auto"
                                                   IsVisible="{Binding HasDiscount}">
                                                 <Label Grid.Column="0"
                                                        Text="{Binding PriceText}"
-                                                       FontFamily="CairoBold"
-                                                       FontSize="14"
+                                                       FontFamily="CairoBold" FontSize="14"
                                                        TextColor="#FF5722"/>
                                                 <Label Grid.Column="1"
                                                        Text="{Binding OriginalPriceText}"
-                                                       FontFamily="CairoRegular"
-                                                       FontSize="11"
+                                                       FontFamily="CairoRegular" FontSize="11"
                                                        TextColor="#BDBDBD"
                                                        TextDecorations="Strikethrough"
                                                        VerticalOptions="Center"/>

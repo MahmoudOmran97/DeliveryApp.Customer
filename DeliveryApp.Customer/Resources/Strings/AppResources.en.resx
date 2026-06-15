@@ -544,4 +544,121 @@
 		<value>Discount</value>
 	</data>
 
-</root>
+
+		<!-- Points & Rewards -->
+		<data name="PointsTitle">
+			<value>Points History</value>
+		</data>
+		<data name="PointsBalanceLabel">
+			<value>points</value>
+		</data>
+		<data name="PointsSubTitle">
+			<value>The more you order, the more points you get</value>
+		</data>
+		<data name="Tab_All">
+			<value>All</value>
+		</data>
+		<data name="Tab_Earned">
+			<value>Earned</value>
+		</data>
+		<data name="Tab_Spent">
+			<value>Spent</value>
+		</data>
+		<data name="NoPointsFound">
+			<value>No points history found</value>
+		</data>
+		<data name="Points">
+			<value>Points</value>
+		</data>
+		<data name="Coupons">
+			<value>Coupons</value>
+		</data>
+		<data name="Rewards">
+			<value>Rewards</value>
+		</data>
+		<data name="OrderNow">
+			<value>Order Now</value>
+		</data>
+		<data name="Categories">
+			<value>Categories</value>
+		</data>
+		<data name="Cat_Restaurants">
+			<value>Restaurants</value>
+		</data>
+		<data name="Cat_Grocery">
+			<value>Grocery</value>
+		</data>
+		<data name="Cat_Pharmacy">
+			<value>Pharmacy</value>
+		</data>
+		<data name="Cat_Drinks">
+			<value>Drinks</value>
+		</data>
+		<data name="UseAndSave">
+			<value>Use &amp; Save</value>
+		</data>
+
+		<!-- Coupons Tabs -->
+		<data name="Tab_Valid">
+			<value>Valid</value>
+		</data>
+		<data name="Tab_Used">
+			<value>Used</value>
+		</data>
+		<data name="Tab_Expired">
+			<value>Expired</value>
+		</data>
+		<data name="Status_Valid">
+			<value>Available</value>
+		</data>
+		<data name="Status_Used">
+			<value>Used</value>
+		</data>
+		<data name="Status_Expired">
+			<value>Expired</value>
+		</data>
+		<data name="UseNow">
+			<value>Use Now</value>
+		</data>
+
+		<!-- Order Details Extras -->
+		<data name="DiscountAmount">
+			<value>Discount</value>
+		</data>
+		<data name="FinalTotal">
+			<value>Final Total</value>
+		</data>
+		<data name="FlowDirection">
+			<value>LeftToRight</value>
+		</data>
+		<data name="Location">
+			<value>Aswan, Egypt</value>
+		</data>
+		<data name="CartIcon">
+			<value>🛒</value>
+		</data>
+		<data name="RewardsIcon">
+			<value>🎁</value>
+		</data>
+		<data name="CouponsIcon">
+			<value>🎟️</value>
+		</data>
+		<data name="WelcomeToRewards">
+			<value>Welcome to your rewards</value>
+		</data>
+		<data name="ViewHistory">
+			<value>View History</value>
+		</data>
+		<data name="ViewCoupons">
+			<value>View Coupons</value>
+		</data>
+		<data name="NoDealsFound">
+			<value>No deals found</value>
+		</data>
+		<data name="FollowUsForDeals">
+			<value>Follow us for the latest deals and discounts</value>
+		</data>
+		<data name="RestaurantDeals">
+			<value>Restaurant Deals</value>
+		</data>
+	</root>
