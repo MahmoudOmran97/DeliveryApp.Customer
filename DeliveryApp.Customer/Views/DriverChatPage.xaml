@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              xmlns:cv="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              xmlns:models="clr-namespace:DeliveryApp.Customer.Models"
              x:Class="DeliveryApp.Customer.Views.DriverChatPage"
              x:DataType="vm:DriverChatViewModel"
@@ -42,7 +43,7 @@
                         <Ellipse WidthRequest="8" HeightRequest="8" Fill="#BDBDBD"
                                  VerticalOptions="Center"
                                  IsVisible="{Binding IsConnected, Converter={StaticResource InvertBool}}"/>
-                        <Label Text="🛵 مندوب التوصيل"
+                        <Label Text="{loc:Loc Key=DeliveryDriver}"
                                FontFamily="CairoRegular" FontSize="11" TextColor="#FFCCBC"
                                VerticalOptions="Center"/>
                     </HorizontalStackLayout>
@@ -61,10 +62,10 @@
                 <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center"
                                      Spacing="12" Margin="40,60">
                     <Label Text="💬" FontSize="52" HorizontalOptions="Center"/>
-                    <Label Text="ابدأ المحادثة مع مندوب التوصيل"
+                    <Label Text="{loc:Loc Key=ChatEmptyTitle}"
                            FontFamily="CairoBold" FontSize="15" TextColor="#9E9E9E"
                            HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
-                    <Label Text="يمكنك تنسيق التوصيل أو الاستفسار عن وقت الوصول"
+                    <Label Text="{loc:Loc Key=ChatEmptySub}"
                            FontFamily="CairoRegular" FontSize="13" TextColor="#BDBDBD"
                            HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
@@ -153,7 +154,7 @@
                         Padding="16,0">
                     <Entry x:Name="MessageEntry"
                            Text="{Binding InputText}"
-                           Placeholder="اكتب رسالة..."
+                           Placeholder="{loc:Loc Key=ChatPlaceholder}"
                            PlaceholderColor="#BDBDBD"
                            FontFamily="CairoRegular"
                            FontSize="14"

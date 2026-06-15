@@ -29,7 +29,7 @@
 		<!-- لوحة التأكيد السفلية -->
 		<Border Grid.Row="2" BackgroundColor="White" Padding="16,14,16,34">
 			<VerticalStackLayout Spacing="12">
-				<Label x:Name="CoordinatesLabel" Text="Tap to select location"
+				<Label x:Name="CoordinatesLabel" Text="{loc:Loc Key=TapToSelect}"
                        FontFamily="CairoRegular" FontSize="13" HorizontalOptions="Center"/>
 				<Button Text="{loc:Loc Key=ConfirmLocation}"
                         Command="{Binding ConfirmLocationCommand}"

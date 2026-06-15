@@ -1,11 +1,10 @@
-﻿// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // DeliveryApp.Customer / ViewModels / OrderTrackingViewModel.cs
 // ═══════════════════════════════════════════════════════════════
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.Services;
-using System;
 
 namespace DeliveryApp.Customer.ViewModels;
 
@@ -27,13 +26,11 @@ public partial class OrderTrackingViewModel : BaseViewModel
     [ObservableProperty] double _driverLng;
     [ObservableProperty] bool _hasDriver;
 
-    // موقع العميل (وجهة التوصيل)
     [ObservableProperty] double _customerLat;
     [ObservableProperty] double _customerLng;
     [ObservableProperty] string _travelTime = "0 min";
     [ObservableProperty] string _distance = "0 km";
 
-    // موقع المطعم
     [ObservableProperty] double _restaurantLat;
     [ObservableProperty] double _restaurantLng;
 
@@ -47,13 +44,11 @@ public partial class OrderTrackingViewModel : BaseViewModel
     {
         _api = api; _hub = hub; _auth = auth; _chatNotif = chatNotif;
 
-        // تحديث الحالة لما يتغير status الطلب
         _hub.OrderStatusChanged += (id, s) =>
         {
             if (id == OrderId) _ = LoadAsync();
         };
 
-        // تحديث موقع الدرايفر real-time
         _hub.DriverLocationUpdated += (lat, lng) =>
         {
             DriverLat = lat;
@@ -62,13 +57,11 @@ public partial class OrderTrackingViewModel : BaseViewModel
             MapUpdated?.Invoke();
         };
 
-        // ✅ FIX #1 & #3 — لما الدرايفر يقبل الطلب نظهر كارته فوراً
-        // حتى لو مبعتش location بعد، الكارت هيظهر مع اسمه وتقييمه
         _hub.DriverAssigned += (orderId, driverId, driverName) =>
         {
             if (orderId != OrderId) return;
             HasDriver = true;
-            _ = LoadAsync(); // نجيب بيانات الدرايفر الكاملة من API
+            _ = LoadAsync();
         };
     }
 
@@ -93,24 +86,20 @@ public partial class OrderTrackingViewModel : BaseViewModel
 
         RefreshStatus();
 
-        // موقع العميل (وجهة التوصيل)
         if (Order.DeliveryLatitude != 0 && Order.DeliveryLongitude != 0)
         {
             CustomerLat = Order.DeliveryLatitude;
             CustomerLng = Order.DeliveryLongitude;
         }
 
-        // موقع المطعم
         if (Order.Restaurant != null && Order.Restaurant.Latitude != 0)
         {
             RestaurantLat = Order.Restaurant.Latitude;
             RestaurantLng = Order.Restaurant.Longitude;
         }
 
-        // بعث MapUpdated عشان تتعمل الـ pins والـ route
         MapUpdated?.Invoke();
 
-        // لو الدرايفر عنده location محدث
         if (Order.Driver?.CurrentLatitude.HasValue == true)
         {
             DriverLat = Order.Driver.CurrentLatitude!.Value;
@@ -120,42 +109,38 @@ public partial class OrderTrackingViewModel : BaseViewModel
         }
         else if (Order.Driver != null)
         {
-            // ✅ FIX #1 — الدرايفر موجود حتى لو مفيش location لسه
             HasDriver = true;
         }
 
-        // سجّل الطلب مع ChatNotificationService لما يجي chat notification
         if (Order.Driver != null)
+            // ✅ اسم المندوب الافتراضي مترجم
             _chatNotif.RegisterOrder(Order.Id, Order.Driver.Name);
     }
 
     [RelayCommand]
     async Task OpenChatAsync()
     {
-        var driverName = Order?.Driver?.Name ?? "المندوب";
+        // ✅ اسم المندوب الافتراضي مترجم
+        var driverName = Order?.Driver?.Name ?? LocalizationService.Get("Driver");
         await Shell.Current.GoToAsync(
             $"DriverChatPage?orderId={OrderId}&driverName={Uri.EscapeDataString(driverName)}");
     }
 
     void RefreshStatus() => (StatusMsg, Progress) = Order?.Status switch
     {
-        "Pending" => (LocalizationService.Get("Status_Pending"), 0.10),
-        "Accepted" => (LocalizationService.Get("Status_Accepted"), 0.30),
-        "Preparing" => (LocalizationService.Get("Status_Preparing"), 0.55),
+        "Pending"        => (LocalizationService.Get("Status_Pending"), 0.10),
+        "Accepted"       => (LocalizationService.Get("Status_Accepted"), 0.30),
+        "Preparing"      => (LocalizationService.Get("Status_Preparing"), 0.55),
         "ReadyForPickup" => (LocalizationService.Get("Status_ReadyForPickup"), 0.70),
-        "OnTheWay" => (LocalizationService.Get("Status_OnTheWay"), 0.88),
-        "Delivered" => (LocalizationService.Get("Status_Delivered"), 1.00),
-        _ => (Order?.StatusText ?? "", 0.00)
+        "OnTheWay"       => (LocalizationService.Get("Status_OnTheWay"), 0.88),
+        "Delivered"      => (LocalizationService.Get("Status_Delivered"), 1.00),
+        _                => (Order?.StatusText ?? "", 0.00)
     };
 
     public void Cleanup()
     {
         _timer?.Stop();
         _timer?.Dispose();
-
-        // لا نخرج من الـ SignalR group لأن صفحة الشات تحتاج تفضل تستقبل رسايل
-        // _ = _hub.LeaveOrderAsync(OrderId);
-
         _chatNotif.UnregisterOrder(OrderId);
     }
 }

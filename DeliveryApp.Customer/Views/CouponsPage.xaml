@@ -22,7 +22,7 @@
                 </Image.GestureRecognizers>
             </Image>
 
-            <Label Grid.Column="1" Text="القسائم 🎟️"
+            <Label Grid.Column="1" Text="{loc:Loc Key=Coupons}"
                    FontFamily="CairoBold" FontSize="20"
                    TextColor="White" VerticalOptions="Center"
                    HorizontalOptions="Center"/>
@@ -41,11 +41,11 @@
                             Stroke="#F0F0F0" StrokeThickness="1"
                             Padding="16">
                         <VerticalStackLayout Spacing="10">
-                            <Label Text="لديك كود خصم؟"
+                            <Label Text="{loc:Loc Key=HaveCoupon}"
                                    FontFamily="CairoBold" FontSize="15"
                                    TextColor="#212121"
                                    FlowDirection="RightToLeft"/>
-                            <Label Text="أضفه واستمتع بالتوفير"
+                            <Label Text="{loc:Loc Key=HaveCouponSub}"
                                    FontFamily="CairoRegular" FontSize="13"
                                    TextColor="#757575"
                                    FlowDirection="RightToLeft"/>
@@ -54,7 +54,7 @@
                                         BackgroundColor="#F8F9FA"
                                         StrokeShape="RoundRectangle 10"
                                         Stroke="#E0E0E0" StrokeThickness="1">
-                                    <Entry Placeholder="أدخل الكود هنا"
+                                    <Entry Placeholder="{loc:Loc Key=CouponPlaceholder}"
                                            Text="{Binding ManualCode}"
                                            FontFamily="CairoRegular"
                                            FontSize="14"
@@ -72,7 +72,7 @@
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding ValidateManualCodeCommand}"/>
                                     </Border.GestureRecognizers>
-                                    <Label Text="تحقق"
+                                    <Label Text="{loc:Loc Key=Verify}"
                                            FontFamily="CairoBold" FontSize="13"
                                            TextColor="White"
                                            HorizontalOptions="Center"/>
@@ -100,7 +100,7 @@
 
                         <!-- Tab: صالح -->
                         <VerticalStackLayout Grid.Column="2">
-                            <Label Text="صالح" FontFamily="CairoBold" FontSize="14"
+                            <Label Text="{loc:Loc Key=Tab_Valid}" FontFamily="CairoBold" FontSize="14"
                                    HorizontalOptions="Center" VerticalOptions="Center"
                                    Margin="0,12,0,0"
                                    TextColor="#BDBDBD">
@@ -124,7 +124,7 @@
 
                         <!-- Tab: إستخدم -->
                         <VerticalStackLayout Grid.Column="1">
-                            <Label Text="إستخدم" FontFamily="CairoBold" FontSize="14"
+                            <Label Text="{loc:Loc Key=Tab_Used}" FontFamily="CairoBold" FontSize="14"
                                    HorizontalOptions="Center" VerticalOptions="Center"
                                    Margin="0,12,0,0"
                                    TextColor="#BDBDBD">
@@ -148,7 +148,7 @@
 
                         <!-- Tab: انتهت -->
                         <VerticalStackLayout Grid.Column="0">
-                            <Label Text="انتهت" FontFamily="CairoBold" FontSize="14"
+                            <Label Text="{loc:Loc Key=Tab_Expired}" FontFamily="CairoBold" FontSize="14"
                                    HorizontalOptions="Center" VerticalOptions="Center"
                                    Margin="0,12,0,0"
                                    TextColor="#BDBDBD">
@@ -182,10 +182,10 @@
                                              Converter={StaticResource InvertBool}}"
                                          Margin="0,40,0,0">
                         <Label Text="🎟️" FontSize="64" HorizontalOptions="Center"/>
-                        <Label Text="لا يوجد قسائم"
+                        <Label Text="{loc:Loc Key=NoCoupons}"
                                FontFamily="CairoBold" FontSize="18"
                                TextColor="#212121" HorizontalOptions="Center"/>
-                        <Label Text="يمكنك الحصول على قسائم عن طريق استخدام النقاط في برنامج المكافآت"
+                        <Label Text="{loc:Loc Key=NoCouponsSub}"
                                FontFamily="CairoRegular" FontSize="13"
                                TextColor="#757575" HorizontalOptions="Center"
                                HorizontalTextAlignment="Center"
@@ -216,7 +216,7 @@
                                                            FontSize="26"
                                                            TextColor="White"
                                                            HorizontalOptions="Center"/>
-                                                    <Label Text="خصم"
+                                                    <Label Text="{loc:Loc Key=Discount}"
                                                            FontFamily="CairoRegular"
                                                            FontSize="14"
                                                            TextColor="#FFCCBC"

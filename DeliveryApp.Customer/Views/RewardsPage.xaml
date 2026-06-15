@@ -21,7 +21,7 @@
                     <TapGestureRecognizer Tapped="OnBackTapped"/>
                 </Image.GestureRecognizers>
             </Image>
-            <Label Grid.Column="1" Text="المكافآت"
+            <Label Grid.Column="1" Text="{loc:Loc Key=Rewards}"
                    FontFamily="CairoBold" FontSize="20"
                    TextColor="White" VerticalOptions="Center"
                    HorizontalOptions="Center"/>
@@ -49,7 +49,7 @@
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
-                                <Label Text="مرحباً بك في برنامج المكافآت"
+                                <Label Text="{loc:Loc Key=WelcomeToRewards}"
                                        FontFamily="CairoRegular" FontSize="14"
                                        TextColor="#FFCCBC"/>
                             </VerticalStackLayout>
@@ -70,10 +70,10 @@
                                 <TapGestureRecognizer Command="{Binding OpenPointsCommand}"/>
                             </Border.GestureRecognizers>
                             <VerticalStackLayout Spacing="4" FlowDirection="RightToLeft">
-                                <Label Text="{Binding PointsBalance, StringFormat='{0} نقطة'}"
+                                <Label Text="{Binding PointsBalance, StringFormat='{0} '}{loc:Loc Key=PointsBalanceLabel}"
                                        FontFamily="CairoBold" FontSize="18"
                                        TextColor="#212121"/>
-                                <Label Text="عرض السجل"
+                                <Label Text="{loc:Loc Key=ViewHistory}"
                                        FontFamily="CairoRegular" FontSize="12"
                                        TextColor="#FF5722"/>
                             </VerticalStackLayout>
@@ -88,10 +88,10 @@
                                 <TapGestureRecognizer Command="{Binding OpenCouponsCommand}"/>
                             </Border.GestureRecognizers>
                             <VerticalStackLayout Spacing="4" FlowDirection="RightToLeft">
-                                <Label Text="{Binding CouponsCount, StringFormat='{0} قسيمة'}"
+                                <Label Text="{Binding CouponsCount, StringFormat='{0} '}{loc:Loc Key=Coupons}"
                                        FontFamily="CairoBold" FontSize="18"
                                        TextColor="#212121"/>
-                                <Label Text="عرض القسائم"
+                                <Label Text="{loc:Loc Key=ViewCoupons}"
                                        FontFamily="CairoRegular" FontSize="12"
                                        TextColor="#FF5722"/>
                             </VerticalStackLayout>
@@ -106,7 +106,7 @@
                             Padding="14,10">
                         <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
                             <Label Text="⚡" FontSize="16" VerticalOptions="Center"/>
-                            <Label Text="كل ما طلبت أكثر، كل ما حصلت على نقاط أكثر"
+                            <Label Text="{loc:Loc Key=PointsSubTitle}"
                                    FontFamily="CairoRegular" FontSize="13"
                                    TextColor="#F57F17" VerticalOptions="Center"
                                    LineBreakMode="WordWrap"/>
@@ -123,10 +123,10 @@
                                          IsVisible="{Binding Deals.Count, Converter={StaticResource IntToBool}, ConverterParameter='invert'}"
                                          Margin="0,20,0,0">
                         <Label Text="🍽️" FontSize="64" HorizontalOptions="Center"/>
-                        <Label Text="لا توجد عروض"
+                        <Label Text="{loc:Loc Key=NoDealsFound}"
                                FontFamily="CairoBold" FontSize="18"
                                TextColor="#212121" HorizontalOptions="Center"/>
-                        <Label Text="تابعنا للحصول على أحدث العروض"
+                        <Label Text="{loc:Loc Key=FollowUsForDeals}"
                                FontFamily="CairoRegular" FontSize="13"
                                TextColor="#757575" HorizontalOptions="Center"
                                HorizontalTextAlignment="Center"/>
@@ -181,7 +181,7 @@
                     </CollectionView>
 
                     <!-- Flat deals list -->
-                    <Label Text="عروض المطاعم"
+                    <Label Text="{loc:Loc Key=RestaurantDeals}"
                            FontFamily="CairoBold" FontSize="16"
                            TextColor="#212121"
                            IsVisible="{Binding Deals.Count, Converter={StaticResource IntToBool}}"/>

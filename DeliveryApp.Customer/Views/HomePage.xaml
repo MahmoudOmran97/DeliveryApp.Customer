@@ -19,7 +19,7 @@
 
             <Grid Grid.Row="0" ColumnDefinitions="*,44">
                 <VerticalStackLayout Grid.Column="0" Spacing="2">
-                    <Label Text="📍 موقعك" FontFamily="CairoRegular"
+                    <Label Text="{loc:Loc Key=YourLocation}" FontFamily="CairoRegular"
                            FontSize="12" TextColor="#FFCCBC"/>
                     <Label FontFamily="CairoBold" FontSize="20" TextColor="White">
                         <Label.FormattedText>
@@ -109,7 +109,7 @@
                                                         Stroke="Transparent"
                                                         Padding="14,6"
                                                         HorizontalOptions="Start">
-                                                    <Label Text="اطلب الآن"
+                                                    <Label Text="{loc:Loc Key=OrderNow}"
                                                            FontFamily="CairoBold"
                                                            FontSize="13"
                                                            TextColor="#FF5722"/>
@@ -144,7 +144,7 @@
                                    IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"/>
 
                     <!-- ── Categories Row ── -->
-                    <Label Text="الفئات"
+                    <Label Text="{loc:Loc Key=Categories}"
                            FontFamily="CairoBold" FontSize="16"
                            TextColor="#212121"
                            Margin="16,18,16,10"
@@ -155,25 +155,25 @@
                         <HorizontalStackLayout Spacing="10" Padding="16,0" FlowDirection="RightToLeft">
                             <Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 20"
                                     Stroke="Transparent" Padding="16,8">
-                                <Label Text="مطاعم" FontFamily="CairoBold" FontSize="13" TextColor="White"/>
+                                <Label Text="{loc:Loc Key=Cat_Restaurants}" FontFamily="CairoBold" FontSize="13" TextColor="White"/>
                             </Border>
                             <Border BackgroundColor="White" StrokeShape="RoundRectangle 20"
                                     Stroke="#E0E0E0" Padding="16,8">
-                                <Label Text="بقالة" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
+                                <Label Text="{loc:Loc Key=Cat_Grocery}" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
                             </Border>
                             <Border BackgroundColor="White" StrokeShape="RoundRectangle 20"
                                     Stroke="#E0E0E0" Padding="16,8">
-                                <Label Text="صيدلية" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
+                                <Label Text="{loc:Loc Key=Cat_Pharmacy}" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
                             </Border>
                             <Border BackgroundColor="White" StrokeShape="RoundRectangle 20"
                                     Stroke="#E0E0E0" Padding="16,8">
-                                <Label Text="مشروبات" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
+                                <Label Text="{loc:Loc Key=Cat_Drinks}" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
                             </Border>
                         </HorizontalStackLayout>
                     </ScrollView>
 
                     <!-- ── Save & Earn Row ── -->
-                    <Label Text="استخدم ووفّر"
+                    <Label Text="{loc:Loc Key=UseAndSave}"
                            FontFamily="CairoBold" FontSize="16"
                            TextColor="#212121"
                            Margin="16,18,16,10"
@@ -198,7 +198,7 @@
                                     <Label Text="🎁" FontSize="18"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
-                                <Label Text="المكافآت"
+                                <Label Text="{loc:Loc Key=Rewards}"
                                        FontFamily="CairoBold" FontSize="15"
                                        TextColor="#212121" VerticalOptions="Center"/>
                             </HorizontalStackLayout>
@@ -222,7 +222,7 @@
                                     <Label Text="🎟️" FontSize="18"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
-                                <Label Text="القسائم"
+                                <Label Text="{loc:Loc Key=Coupons}"
                                        FontFamily="CairoBold" FontSize="15"
                                        TextColor="#212121" VerticalOptions="Center"/>
                             </HorizontalStackLayout>

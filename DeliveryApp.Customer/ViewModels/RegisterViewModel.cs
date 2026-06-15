@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
+// ═══════════════════════════════════════════════════════════════
+// DeliveryApp.Customer / ViewModels / RegisterViewModel.cs
+// ═══════════════════════════════════════════════════════════════
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using DeliveryApp.Customer.Services;
-using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace DeliveryApp.Customer.ViewModels;
 
@@ -24,12 +24,13 @@ public partial class RegisterViewModel : BaseViewModel
     [RelayCommand]
     async Task RegisterAsync()
     {
+        // ✅ ترجمة رسائل التحقق
         if (string.IsNullOrWhiteSpace(FullName) || string.IsNullOrWhiteSpace(Email) ||
             string.IsNullOrWhiteSpace(Phone) || string.IsNullOrWhiteSpace(Password))
-        { await AlertAsync("Please fill in all fields"); return; }
+        { await AlertAsync(LocalizationService.Get("LoginFillFields")); return; }
 
         if (Password != ConfirmPassword)
-        { await AlertAsync("Passwords do not match"); return; }
+        { await AlertAsync(LocalizationService.Get("PasswordsNotMatch")); return; }
 
         IsBusy = true;
         try
@@ -38,11 +39,11 @@ public partial class RegisterViewModel : BaseViewModel
             if (r != null)
             {
                 _auth.SaveUser(r.Token, r.Id, r.FullName, r.Email, r.Role);
-                // ✅ من DI
                 var shell = IPlatformApplication.Current!.Services.GetService<AppShell>()!;
                 Application.Current!.MainPage = shell;
             }
-            else await AlertAsync("Registration failed. Email may already exist.");
+            // ✅ ترجمة رسالة فشل التسجيل
+            else await AlertAsync(LocalizationService.Get("RegisterFailed"));
         }
         finally { IsBusy = false; }
     }
@@ -50,7 +51,6 @@ public partial class RegisterViewModel : BaseViewModel
     [RelayCommand]
     async Task GoBack()
     {
-        // ✅ بدل Shell.Current
         await Application.Current!.MainPage!.Navigation.PopAsync();
     }
 }

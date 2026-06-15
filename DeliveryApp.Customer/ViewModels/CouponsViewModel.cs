@@ -1,4 +1,8 @@
+// ═══════════════════════════════════════════════════════════════
+// DeliveryApp.Customer / ViewModels / CouponsViewModel.cs
+// ═══════════════════════════════════════════════════════════════
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Models;
@@ -16,7 +20,7 @@ public partial class CouponsViewModel : BaseViewModel
     [ObservableProperty] bool _hasFeedback;
     [ObservableProperty] bool _feedbackIsError;
     [ObservableProperty] bool _isCopied;
-    [ObservableProperty] string _currentTab = "Valid"; // Valid, Used, Expired
+    [ObservableProperty] string _currentTab = "Valid";
 
     public ObservableCollection<Coupon> Coupons { get; } = new();
     public ObservableCollection<Coupon> FilteredCoupons { get; } = new();
@@ -49,10 +53,10 @@ public partial class CouponsViewModel : BaseViewModel
         FilteredCoupons.Clear();
         var filtered = CurrentTab switch
         {
-            "Valid" => Coupons.Where(c => c.Status == "Available"),
-            "Used" => Coupons.Where(c => c.Status == "Used"),
+            "Valid"   => Coupons.Where(c => c.Status == "Available"),
+            "Used"    => Coupons.Where(c => c.Status == "Used"),
             "Expired" => Coupons.Where(c => c.Status == "Expired"),
-            _ => Coupons
+            _         => Coupons
         };
         foreach (var c in filtered) FilteredCoupons.Add(c);
     }
@@ -66,7 +70,8 @@ public partial class CouponsViewModel : BaseViewModel
         if (string.IsNullOrWhiteSpace(code)) return;
         await Clipboard.Default.SetTextAsync(code);
         IsCopied = true;
-        ShowFeedback($"تم نسخ الكود: {code}", isError: false);
+        // ✅ ترجمة رسالة نسخ الكود
+        ShowFeedback($"{LocalizationService.Get("CodeCopied")}: {code}", isError: false);
         await Task.Delay(2000);
         IsCopied = false;
     }
@@ -79,7 +84,12 @@ public partial class CouponsViewModel : BaseViewModel
         try
         {
             var result = await _api.ValidateCouponAsync(ManualCode.Trim().ToUpper(), 200);
-            ShowFeedback($"✅ {result?.Title} — خصم {result?.Discount:F0} جنيه", isError: false);
+            // ✅ ترجمة رسالة الكوبون الصالح مع الخصم بـ InvariantCulture
+            bool isAr = LocalizationService.Current.TwoLetterISOLanguageName == "ar";
+            string discount = result?.Discount.ToString("F0", CultureInfo.InvariantCulture) ?? "0";
+            string currency = isAr ? "جنيه" : "EGP";
+            string discountLabel = LocalizationService.Get("Discount");
+            ShowFeedback($"✅ {result?.Title} — {discountLabel} {discount} {currency}", isError: false);
         }
         catch (ApiService.ApiException ex)
         {

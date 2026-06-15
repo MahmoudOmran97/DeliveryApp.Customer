@@ -613,4 +613,66 @@
 		<data name="RestaurantDeals">
 			<value>عروض المطاعم</value>
 		</data>
+
+		<!-- مفاتيح جديدة للترجمة الكاملة -->
+		<data name="Driver">
+			<value>المندوب</value>
+		</data>
+		<data name="DeliveryDriver">
+			<value>🛵 مندوب التوصيل</value>
+		</data>
+		<data name="MessageFrom">
+			<value>رسالة من</value>
+		</data>
+		<data name="OpenChat">
+			<value>فتح المحادثة</value>
+		</data>
+		<data name="Later">
+			<value>لاحقاً</value>
+		</data>
+		<data name="ChatEmptyTitle">
+			<value>ابدأ المحادثة مع مندوب التوصيل</value>
+		</data>
+		<data name="ChatEmptySub">
+			<value>يمكنك تنسيق التوصيل أو الاستفسار عن وقت الوصول</value>
+		</data>
+		<data name="DifferentRestaurant">
+			<value>مطعم مختلف</value>
+		</data>
+		<data name="DifferentRestaurantMsg">
+			<value>سلتك تحتوي على عناصر من مطعم آخر. هل تريد مسحها والإضافة؟</value>
+		</data>
+		<data name="YesClear">
+			<value>نعم، امسح</value>
+		</data>
+		<data name="PasswordsNotMatch">
+			<value>كلمتا المرور غير متطابقتين</value>
+		</data>
+		<data name="RegisterFailed">
+			<value>فشل التسجيل. قد يكون البريد الإلكتروني مستخدماً بالفعل.</value>
+		</data>
+		<data name="CodeCopied">
+			<value>تم نسخ الكود</value>
+		</data>
+		<data name="HaveCoupon">
+			<value>لديك كود خصم؟</value>
+		</data>
+		<data name="HaveCouponSub">
+			<value>أضفه واستمتع بالتوفير</value>
+		</data>
+		<data name="Verify">
+			<value>تحقق</value>
+		</data>
+		<data name="NoCoupons">
+			<value>لا يوجد قسائم</value>
+		</data>
+		<data name="NoCouponsSub">
+			<value>يمكنك الحصول على قسائم عن طريق استخدام النقاط في برنامج المكافآت</value>
+		</data>
+		<data name="YourLocation">
+			<value>📍 موقعك</value>
+		</data>
+		<data name="TapToSelect">
+			<value>اضغط لتحديد الموقع</value>
+		</data>
 	</root>

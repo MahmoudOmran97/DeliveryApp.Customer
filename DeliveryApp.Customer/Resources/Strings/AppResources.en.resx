@@ -661,4 +661,66 @@
 		<data name="RestaurantDeals">
 			<value>Restaurant Deals</value>
 		</data>
+
+		<!-- New keys added for full localization -->
+		<data name="Driver">
+			<value>Driver</value>
+		</data>
+		<data name="DeliveryDriver">
+			<value>🛵 Delivery Driver</value>
+		</data>
+		<data name="MessageFrom">
+			<value>Message from</value>
+		</data>
+		<data name="OpenChat">
+			<value>Open Chat</value>
+		</data>
+		<data name="Later">
+			<value>Later</value>
+		</data>
+		<data name="ChatEmptyTitle">
+			<value>Start chatting with the delivery driver</value>
+		</data>
+		<data name="ChatEmptySub">
+			<value>You can coordinate delivery or ask about arrival time</value>
+		</data>
+		<data name="DifferentRestaurant">
+			<value>Different Restaurant</value>
+		</data>
+		<data name="DifferentRestaurantMsg">
+			<value>Your cart has items from another restaurant. Clear and add?</value>
+		</data>
+		<data name="YesClear">
+			<value>Yes, clear</value>
+		</data>
+		<data name="PasswordsNotMatch">
+			<value>Passwords do not match</value>
+		</data>
+		<data name="RegisterFailed">
+			<value>Registration failed. Email may already exist.</value>
+		</data>
+		<data name="CodeCopied">
+			<value>Code copied</value>
+		</data>
+		<data name="HaveCoupon">
+			<value>Have a coupon code?</value>
+		</data>
+		<data name="HaveCouponSub">
+			<value>Add it and enjoy the savings</value>
+		</data>
+		<data name="Verify">
+			<value>Verify</value>
+		</data>
+		<data name="NoCoupons">
+			<value>No coupons found</value>
+		</data>
+		<data name="NoCouponsSub">
+			<value>You can get coupons by using points in the rewards program</value>
+		</data>
+		<data name="YourLocation">
+			<value>📍 Your location</value>
+		</data>
+		<data name="TapToSelect">
+			<value>Tap to select location</value>
+		</data>
 	</root>

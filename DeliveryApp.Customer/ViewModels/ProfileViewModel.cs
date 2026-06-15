@@ -1,4 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+// ═══════════════════════════════════════════════════════════════
+// DeliveryApp.Customer / ViewModels / ProfileViewModel.cs
+// ═══════════════════════════════════════════════════════════════
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.Services;
@@ -47,7 +50,8 @@ public partial class ProfileViewModel : BaseViewModel
         {
             if (await _api.UpdateProfileAsync(EditName, EditPhone, EditAddress))
             { IsEditing = false; await Load(); }
-            else await AlertAsync("Update failed");
+            // ✅ ترجمة رسالة فشل التحديث
+            else await AlertAsync(LocalizationService.Get("UpdateFailed"));
         }
         finally { IsBusy = false; }
     }

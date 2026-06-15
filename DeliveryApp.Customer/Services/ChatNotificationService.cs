@@ -1,20 +1,17 @@
-﻿using DeliveryApp.Customer.Models;
+// ═══════════════════════════════════════════════════════════════
+// DeliveryApp.Customer / Services / ChatNotificationService.cs
+// ═══════════════════════════════════════════════════════════════
+using DeliveryApp.Customer.Models;
 
 namespace DeliveryApp.Customer.Services;
 
-/// <summary>
-/// يستمع لرسائل الشات من SignalR ولو العميل مش على شاشة الشات،
-/// يوريله notification بانر داخل التطبيق ويروح لصفحة الشات.
-/// </summary>
 public class ChatNotificationService
 {
     private readonly SignalRService _signalR;
     private readonly AuthService _auth;
 
-    // orderId → driverName  (بيتبنى من بيانات الطلب النشط)
     private readonly Dictionary<int, string> _activeOrderDrivers = new();
 
-    // orderId → هل العميل على صفحة الشات دلوقتي؟
     public int? ActiveChatOrderId { get; set; }
 
     public event Action<ChatNotification>? NewMessageFromDriver;
@@ -23,14 +20,9 @@ public class ChatNotificationService
     {
         _signalR = signalR;
         _auth = auth;
-
         _signalR.ChatMessageReceived += OnChatMessageReceived;
     }
 
-    /// <summary>
-    /// سجّل orderId مع اسم الدرايفر عشان تعرف تكتب إيه في الـ notification.
-    /// استدعيه من OrderTrackingViewModel لما يجيب بيانات الطلب.
-    /// </summary>
     public void RegisterOrder(int orderId, string driverName)
     {
         _activeOrderDrivers[orderId] = driverName;
@@ -43,14 +35,14 @@ public class ChatNotificationService
 
     private void OnChatMessageReceived(int orderId, string senderId, string message)
     {
-        // لو العميل نفسه بعت الرسالة، متعملش notification
         var myId = _auth.GetUserId().ToString();
         if (senderId == myId) return;
-
-        // لو العميل فاتح صفحة الشات لنفس الطلب ده، متعملش notification
         if (ActiveChatOrderId == orderId) return;
 
-        var driverName = _activeOrderDrivers.TryGetValue(orderId, out var n) ? n : "المندوب";
+        // ✅ اسم المندوب الافتراضي مترجم
+        var driverName = _activeOrderDrivers.TryGetValue(orderId, out var n)
+            ? n
+            : LocalizationService.Get("Driver");
 
         var notification = new ChatNotification
         {
@@ -61,10 +53,7 @@ public class ChatNotificationService
 
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            // إطلاع الـ observers (ممكن تربطه بـ Toast أو InApp Banner)
             NewMessageFromDriver?.Invoke(notification);
-
-            // عرض notification بسيطة داخل التطبيق وتسأل العميل يفتح الشات
             await ShowInAppChatAlertAsync(notification);
         });
     }
@@ -76,11 +65,12 @@ public class ChatNotificationService
             var page = Shell.Current as Page ?? Application.Current?.MainPage;
             if (page == null) return;
 
-            var go = await page.DisplayAlert(
-                $"💬 رسالة من {n.DriverName}",
-                n.LastMessage,
-                "فتح المحادثة",
-                "لاحقاً");
+            // ✅ ترجمة كل نصوص الـ notification dialog
+            var title  = $"💬 {LocalizationService.Get("MessageFrom")} {n.DriverName}";
+            var open   = LocalizationService.Get("OpenChat");
+            var later  = LocalizationService.Get("Later");
+
+            var go = await page.DisplayAlert(title, n.LastMessage, open, later);
 
             if (go)
             {
