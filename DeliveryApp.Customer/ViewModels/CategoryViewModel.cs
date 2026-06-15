@@ -42,6 +42,9 @@ public partial class CategoryViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    static Task GoBack() => Shell.Current.GoToAsync("..");
+
+    [RelayCommand]
     async Task LoadAsync()
     {
         IsBusy = true;
