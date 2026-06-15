@@ -1,9 +1,13 @@
-﻿using DeliveryApp.Customer.ViewModels;
+﻿// ═══════════════════════════════════════════════════════════════
+// DeliveryApp.Customer / Views / OrderTrackingPage.xaml.cs
+// ═══════════════════════════════════════════════════════════════
+using DeliveryApp.Customer.ViewModels;
 using Mapsui;
 using Mapsui.Layers;
 using Mapsui.Projections;
 using Mapsui.Styles;
 using Mapsui.Tiling;
+using System.Globalization;
 using System.Text.Json;
 using System.Diagnostics;
 
@@ -87,7 +91,6 @@ public partial class OrderTrackingPage : ContentPage
             bool hasRestaurant = _vm.RestaurantLat != 0 && _vm.RestaurantLng != 0;
 
             // ── الـ Static Pins (مطعم + عميل) ─────────────────────────────
-            // FIX: نرسمهم لما يكون عندنا إحداثيات حتى لو مرة واحدة فقط
             if (!_staticPinsDrawn && hasCustomer && hasRestaurant)
             {
                 _staticPinsDrawn = true;
@@ -113,7 +116,6 @@ public partial class OrderTrackingPage : ContentPage
             }
             else if (!_staticPinsDrawn && hasCustomer)
             {
-                // لو في موقع عميل بس، اعرضه وانتظر المطعم
                 DrawPin(ref _customerLayer, "CustomerLayer",
                     _vm.CustomerLat, _vm.CustomerLng, _customerMarker, 0.8);
                 CenterOn(_vm.CustomerLat, _vm.CustomerLng, 15);
@@ -128,11 +130,9 @@ public partial class OrderTrackingPage : ContentPage
             // ── الدرايفر ─────────────────────────────────────────────────────
             if (_vm.HasDriver && _vm.DriverLat != 0)
             {
-                // تحديث pin الدرايفر دايما
                 DrawPin(ref _driverLayer, "DriverLayer",
                     _vm.DriverLat, _vm.DriverLng, _driverMarker, 0.8);
 
-                // FIX: تحديث Route الدرايفر → العميل كل 15 ثانية أو لو تحرك أكتر من 50m
                 if (hasCustomer && ShouldUpdateDriverRoute())
                 {
                     _lastDriverRouteFromLat = _vm.DriverLat;
@@ -143,7 +143,7 @@ public partial class OrderTrackingPage : ContentPage
                         _vm.DriverLat, _vm.DriverLng,
                         _vm.CustomerLat, _vm.CustomerLng,
                         "#FF9800", 4, "DriverRouteLayer",
-                        updateEta: true, // FIX: تحديث ETA من route الدرايفر مش المطعم
+                        updateEta: true,
                         onComplete: layer => _driverRouteLayer = layer);
                 }
             }
@@ -155,13 +155,9 @@ public partial class OrderTrackingPage : ContentPage
     // ─── هل لازم نحدث route الدرايفر؟ ────────────────────────────────────────
     bool ShouldUpdateDriverRoute()
     {
-        // أول مرة
         if (_lastDriverRouteFromLat == 0) return true;
-
-        // كل 15 ثانية على الأقل
         if ((DateTime.Now - _lastDriverRouteTime).TotalSeconds > 15) return true;
 
-        // لو تحرك أكتر من ~50 متر
         double dlat = _vm.DriverLat - _lastDriverRouteFromLat;
         double dlng = _vm.DriverLng - _lastDriverRouteFromLng;
         double distDeg = Math.Sqrt(dlat * dlat + dlng * dlng);
@@ -172,11 +168,10 @@ public partial class OrderTrackingPage : ContentPage
     void DrawPin(ref MemoryLayer? existing, string name,
                  double lat, double lng, string imageSource, double scale)
     {
-        // FIX: Remove safely - check layer is still in map before removing
         if (existing != null)
         {
             try { MapControl.Map.Layers.Remove(existing); }
-            catch { /* layer may already be gone */ }
+            catch { }
         }
 
         var (x, y) = SphericalMercator.FromLonLat(lng, lat);
@@ -187,7 +182,6 @@ public partial class OrderTrackingPage : ContentPage
             {
                 Image = imageSource,
                 SymbolScale = scale,
-                // لإرجاع الـ tip الخاص بالماركر على الإحداثي بالضبط
                 RelativeOffset = new RelativeOffset(0.0, 0.5)
             }
         };
@@ -217,9 +211,13 @@ public partial class OrderTrackingPage : ContentPage
 
             using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
             http.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36");
-            var url = $"https://router.project-osrm.org/route/v1/driving/" +
-                      $"{fromLng},{fromLat};{toLng},{toLat}" +
-                      $"?overview=full&geometries=geojson";
+
+            // ✅ FIX #1: استخدام InvariantCulture عشان الأرقام العشرية دايماً تبقى بنقطة (.)
+            // مش متأثرة بلغة التطبيق (عربي/إنجليزي)
+            var url = string.Format(
+                CultureInfo.InvariantCulture,
+                "https://router.project-osrm.org/route/v1/driving/{0},{1};{2},{3}?overview=full&geometries=geojson",
+                fromLng, fromLat, toLng, toLat);
 
             Debug.WriteLine($"[Route:{layerName}] 🌐 Calling OSRM: {url}");
             var json = await http.GetStringAsync(url);
@@ -232,7 +230,8 @@ public partial class OrderTrackingPage : ContentPage
 
             var route = routes[0];
 
-            // FIX: تحديث ETA والمسافة - سواء من الدرايفر أو من المطعم
+            // ✅ FIX #2: استخدام InvariantCulture في format الأرقام عشان دايماً تطلع
+            // أرقام غربية (1234) مش عربية (١٢٣٤) بغض النظر عن لغة التطبيق
             if (updateEta)
             {
                 double distanceM = route.GetProperty("distance").GetDouble();
@@ -240,12 +239,30 @@ public partial class OrderTrackingPage : ContentPage
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    _vm.Distance = distanceM < 1000
-                        ? $"{distanceM:F0} م"
-                        : $"{distanceM / 1000:F1} كم";
-                    _vm.TravelTime = durationS < 60
-                        ? "< 1 دقيقة"
-                        : $"{Math.Ceiling(durationS / 60):F0} دقيقة";
+                    bool isAr = Services.LocalizationService.Current.TwoLetterISOLanguageName == "ar";
+
+                    // ── المسافة ───────────────────────────────────────────────
+                    if (distanceM < 1000)
+                    {
+                        string meters = distanceM.ToString("F0", CultureInfo.InvariantCulture);
+                        _vm.Distance = isAr ? $"{meters} م" : $"{meters} m";
+                    }
+                    else
+                    {
+                        string km = (distanceM / 1000).ToString("F1", CultureInfo.InvariantCulture);
+                        _vm.Distance = isAr ? $"{km} كم" : $"{km} km";
+                    }
+
+                    // ── الوقت ─────────────────────────────────────────────────
+                    if (durationS < 60)
+                    {
+                        _vm.TravelTime = isAr ? "< 1 دقيقة" : "< 1 min";
+                    }
+                    else
+                    {
+                        string mins = Math.Ceiling(durationS / 60).ToString("F0", CultureInfo.InvariantCulture);
+                        _vm.TravelTime = isAr ? $"{mins} دقيقة" : $"{mins} min";
+                    }
                 });
             }
 
@@ -260,7 +277,7 @@ public partial class OrderTrackingPage : ContentPage
             Debug.WriteLine($"[Route:{layerName}] 📐 Points built: {points.Count}");
             if (points.Count < 2) return;
 
-            // FIX: حذف الـ layer القديم بالاسم بشكل آمن
+            // حذف الـ layer القديم بالاسم بشكل آمن
             var existingByName = MapControl.Map.Layers
                 .FirstOrDefault(l => l.Name == layerName);
             if (existingByName != null)
@@ -303,10 +320,8 @@ public partial class OrderTrackingPage : ContentPage
                 Style = null
             };
 
-            // FIX: أضف route layers تحت Pin layers (index 1)
-            // Tile layer is index 0, routes at 1, pins at top
-            int insertIdx = Math.Max(1, MapControl.Map.Layers.Count - 1);
-            // إذا في pin layers بالفعل، أضف الـ route قبلهم
+            // أضف route layers تحت Pin layers
+            int insertIdx;
             int pinLayerIdx = MapControl.Map.Layers
                 .ToList()
                 .FindIndex(l => l.Name is "CustomerLayer" or "RestaurantLayer" or "DriverLayer");
@@ -334,7 +349,6 @@ public partial class OrderTrackingPage : ContentPage
 
         double dist = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
 
-        // FIX: حساب zoom level أفضل بناءً على المسافة الفعلية
         int zoom = dist switch
         {
             < 2000 => 16,
@@ -345,10 +359,9 @@ public partial class OrderTrackingPage : ContentPage
             _ => 11
         };
 
-        // FIX: padding من الأطراف - نحرك المركز شوية لفوق عشان الـ info panel بيغطي الجزء السفلي
         double centerX = (x1 + x2) / 2;
         double centerY = (y1 + y2) / 2;
-        double verticalBias = (y2 - y1) * 0.15; // bias للأعلى
+        double verticalBias = (y2 - y1) * 0.15;
 
         MapControl.Map.Navigator.CenterOnAndZoomTo(
             new MPoint(centerX, centerY + verticalBias),
