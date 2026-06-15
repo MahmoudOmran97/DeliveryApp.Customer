@@ -24,10 +24,10 @@ public partial class OrderTrackingPage : ContentPage
     double _lastDriverRouteFromLat = 0, _lastDriverRouteFromLng = 0;
     DateTime _lastDriverRouteTime = DateTime.MinValue;
 
-    // Images
-    static readonly string _customerMarker = "marker_user.svg";
-    static readonly string _restaurantMarker = "marker_shop.svg";
-    static readonly string _driverMarker = "marker_driver.svg";
+    // Images - Mapsui requires svg-content:// URI scheme, not plain filenames
+    static readonly string _customerMarker = "svg-content://<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 2C20.4 2 11 11.4 11 23c0 14 18.2 35.8 20.1 38.1.5.6 1.4.6 1.9 0C34.8 58.8 53 37 53 23 53 11.4 43.6 2 32 2z' fill='#2196F3'/><circle cx='32' cy='23' r='10' fill='#FFFFFF'/><circle cx='32' cy='20' r='4.6' fill='#2196F3'/><path d='M24.5 30.5c1.8-3 4.2-4.5 7.5-4.5s5.7 1.5 7.5 4.5' fill='none' stroke='#2196F3' stroke-width='3' stroke-linecap='round'/></svg>";
+    static readonly string _restaurantMarker = "svg-content://<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 2C20.4 2 11 11.4 11 23c0 14 18.2 35.8 20.1 38.1.5.6 1.4.6 1.9 0C34.8 58.8 53 37 53 23 53 11.4 43.6 2 32 2z' fill='#4CAF50'/><rect x='20' y='16' width='24' height='18' rx='2' fill='#FFFFFF'/><path d='M20 22h24' stroke='#4CAF50' stroke-width='3'/><rect x='24' y='25' width='7' height='9' fill='#4CAF50'/><rect x='34' y='25' width='8' height='6' fill='#4CAF50'/></svg>";
+    static readonly string _driverMarker = "svg-content://<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='#FF5722'/><circle cx='22' cy='43' r='8' fill='#FFFFFF'/><circle cx='22' cy='43' r='3.5' fill='#263238'/><circle cx='44' cy='43' r='8' fill='#FFFFFF'/><circle cx='44' cy='43' r='3.5' fill='#263238'/><path d='M18 36h18l8-8h-9l-4-8h-7l3 8h-9z' fill='#263238'/><circle cx='41' cy='24' r='4' fill='#FFFFFF'/></svg>";
 
     public OrderTrackingPage(OrderTrackingViewModel vm)
     {
@@ -213,14 +213,21 @@ public partial class OrderTrackingPage : ContentPage
     {
         try
         {
+            Debug.WriteLine($"[Route:{layerName}] ▶ START from ({fromLat},{fromLng}) to ({toLat},{toLng})");
+
             using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+            http.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36");
             var url = $"https://router.project-osrm.org/route/v1/driving/" +
                       $"{fromLng},{fromLat};{toLng},{toLat}" +
                       $"?overview=full&geometries=geojson";
 
+            Debug.WriteLine($"[Route:{layerName}] 🌐 Calling OSRM: {url}");
             var json = await http.GetStringAsync(url);
+            Debug.WriteLine($"[Route:{layerName}] ✅ OSRM response length: {json.Length}");
+
             var doc = JsonDocument.Parse(json);
             var routes = doc.RootElement.GetProperty("routes");
+            Debug.WriteLine($"[Route:{layerName}] 📍 Routes count: {routes.GetArrayLength()}");
             if (routes.GetArrayLength() == 0) return;
 
             var route = routes[0];
@@ -250,6 +257,7 @@ public partial class OrderTrackingPage : ContentPage
                 var (mx, my) = SphericalMercator.FromLonLat(c[0].GetDouble(), c[1].GetDouble());
                 points.Add(new MPoint(mx, my));
             }
+            Debug.WriteLine($"[Route:{layerName}] 📐 Points built: {points.Count}");
             if (points.Count < 2) return;
 
             // FIX: حذف الـ layer القديم بالاسم بشكل آمن
@@ -309,10 +317,12 @@ public partial class OrderTrackingPage : ContentPage
 
             MapControl.Map.Layers.Insert(insertIdx, newLayer);
             onComplete(newLayer);
+            Debug.WriteLine($"[Route:{layerName}] ✅ DONE - layer inserted at index {insertIdx}");
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[Route:{layerName}] {ex.Message}");
+            Debug.WriteLine($"[Route:{layerName}] ERROR: {ex.GetType().Name}: {ex.Message}");
+            Debug.WriteLine($"[Route:{layerName}] StackTrace: {ex.StackTrace}");
         }
     }
 

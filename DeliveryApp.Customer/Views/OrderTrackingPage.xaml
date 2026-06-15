@@ -52,17 +52,17 @@
                 HorizontalOptions="End" VerticalOptions="End">
             <VerticalStackLayout Spacing="8">
                 <HorizontalStackLayout Spacing="8">
-                    <Image Source="marker_user.svg" WidthRequest="20" HeightRequest="20"/>
+                    <Image Source="marker_user" WidthRequest="20" HeightRequest="20"/>
                     <Label Text="{loc:Loc Key=LegendYou}"
                            FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
                 <HorizontalStackLayout Spacing="8">
-                    <Image Source="marker_shop.svg" WidthRequest="20" HeightRequest="20"/>
+                    <Image Source="marker_shop" WidthRequest="20" HeightRequest="20"/>
                     <Label Text="{loc:Loc Key=LegendRestaurant}"
                            FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
                 <HorizontalStackLayout Spacing="8">
-                    <Image Source="marker_driver.svg" WidthRequest="20" HeightRequest="20"/>
+                    <Image Source="marker_driver" WidthRequest="20" HeightRequest="20"/>
                     <Label Text="{loc:Loc Key=LegendDelivery}"
                            FontSize="11" FontFamily="CairoRegular" TextColor="#212121" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
