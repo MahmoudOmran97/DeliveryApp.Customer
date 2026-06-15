@@ -1,4 +1,4 @@
-﻿<root>
+<root>
 	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
 		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
 		<xsd:element name="root" msdata:IsDataSet="true">
@@ -675,4 +675,55 @@
 		<data name="TapToSelect">
 			<value>اضغط لتحديد الموقع</value>
 		</data>
+	<data name="ChooseLocation">
+		<value>اختر موقعك</value>
+	</data>
+	<data name="TapToSetLocation">
+		<value>اضغط لتحديد موقعك</value>
+	</data>
+	<data name="Cat_All">
+		<value>الكل</value>
+	</data>
+	<data name="Cat_Supermarket">
+		<value>سوبر ماركت</value>
+	</data>
+	<data name="Cat_Vegetables">
+		<value>خضار وفاكهة</value>
+	</data>
+	<data name="Cat_Accessories">
+		<value>اكسسوارات</value>
+	</data>
+	<data name="TopRatedNearYou">
+		<value>الأعلى تقييماً بالقرب منك</value>
+	</data>
+	<data name="TopRatedRestaurants">
+		<value>أفضل المطاعم</value>
+	</data>
+	<data name="TopRatedPharmacy">
+		<value>أفضل الصيدليات</value>
+	</data>
+	<data name="TopRatedGrocery">
+		<value>أفضل السوبر ماركت</value>
+	</data>
+	<data name="TopRatedVegetables">
+		<value>أفضل محلات الخضار</value>
+	</data>
+	<data name="TopRatedDrinks">
+		<value>أفضل المشروبات</value>
+	</data>
+	<data name="TopRatedAccessories">
+		<value>أفضل الاكسسوارات</value>
+	</data>
+	<data name="ZoneExceededTitle">
+		<value>خارج نطاق التوصيل</value>
+	</data>
+	<data name="ZoneExceededMsg">
+		<value>للأسف الموقع ده خارج نطاق التوصيل (10 كيلومتر). اختار موقع تاني.</value>
+	</data>
+	<data name="LocationRequired">
+		<value>لازم تحدد موقعك الأول</value>
+	</data>
+	<data name="NoShopsNearby">
+		<value>مفيش محلات قريبة في المنطقة دي</value>
+	</data>
 	</root>

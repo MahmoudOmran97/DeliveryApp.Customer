@@ -92,6 +92,9 @@
 		<MauiXaml Update="Views\DriverChatPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
+		<MauiXaml Update="Views\HomeLocationPickerPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="Views\HomePage.xaml">
 			<Generator></Generator>
 		</MauiXaml>

@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Json;
+using System.Net.Http.Json;
 
 using System.Text.Json;
 
@@ -138,16 +138,37 @@ public class ApiService
 
     // ─── Restaurants ─────────────────────────────────────────────────────────
 
-    public Task<PagedResult<Restaurant>?> GetRestaurantsAsync(string? search = null, string sortBy = "rating", int page = 1)
-
+    /// <summary>
+    /// Gets restaurants filtered by location, category, min-rating, and search term.
+    /// lat/lng/radiusKm → backend يرجع فقط المحلات اللي جوه النطاق.
+    /// category → "Restaurants" | "Pharmacy" | "Grocery" | "Supermarket" | "Vegetables" | "Drinks" | "Accessories"
+    /// minRating → فقط المحلات >= هذا التقييم (4.0 للصفحة الرئيسية)
+    /// </summary>
+    public Task<PagedResult<Restaurant>?> GetRestaurantsAsync(
+        string? search    = null,
+        string  sortBy    = "rating",
+        int     page      = 1,
+        double? lat       = null,
+        double? lng       = null,
+        double  radiusKm  = 10.0,
+        string? category  = null,
+        double  minRating = 0.0,
+        int     pageSize  = 20)
     {
-
-        var q = $"restaurants?page={page}&sortBy={sortBy}";
-
-        if (!string.IsNullOrEmpty(search)) q += $"&search={Uri.EscapeDataString(search)}";
-
+        var q = $"restaurants?page={page}&pageSize={pageSize}&sortBy={sortBy}";
+        if (!string.IsNullOrEmpty(search))
+            q += $"&search={Uri.EscapeDataString(search)}";
+        if (lat.HasValue && lng.HasValue)
+        {
+            q += $"&lat={lat.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+            q += $"&lng={lng.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+            q += $"&radiusKm={radiusKm.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+        }
+        if (!string.IsNullOrEmpty(category))
+            q += $"&category={Uri.EscapeDataString(category)}";
+        if (minRating > 0)
+            q += $"&minRating={minRating.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
         return GetAsync<PagedResult<Restaurant>>(q);
-
     }
 
     public Task<Restaurant?> GetRestaurantAsync(int id)

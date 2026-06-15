@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
 	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
 		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -723,4 +723,55 @@
 		<data name="TapToSelect">
 			<value>Tap to select location</value>
 		</data>
+	<data name="ChooseLocation">
+		<value>Choose Location</value>
+	</data>
+	<data name="TapToSetLocation">
+		<value>Tap to set your location</value>
+	</data>
+	<data name="Cat_All">
+		<value>All</value>
+	</data>
+	<data name="Cat_Supermarket">
+		<value>Supermarket</value>
+	</data>
+	<data name="Cat_Vegetables">
+		<value>Vegetables</value>
+	</data>
+	<data name="Cat_Accessories">
+		<value>Accessories</value>
+	</data>
+	<data name="TopRatedNearYou">
+		<value>Top Rated Near You</value>
+	</data>
+	<data name="TopRatedRestaurants">
+		<value>Top Restaurants</value>
+	</data>
+	<data name="TopRatedPharmacy">
+		<value>Top Pharmacies</value>
+	</data>
+	<data name="TopRatedGrocery">
+		<value>Top Supermarkets</value>
+	</data>
+	<data name="TopRatedVegetables">
+		<value>Top Vegetable Shops</value>
+	</data>
+	<data name="TopRatedDrinks">
+		<value>Top Drink Shops</value>
+	</data>
+	<data name="TopRatedAccessories">
+		<value>Top Accessories Shops</value>
+	</data>
+	<data name="ZoneExceededTitle">
+		<value>Outside Delivery Zone</value>
+	</data>
+	<data name="ZoneExceededMsg">
+		<value>Sorry, this location is outside our delivery zone (10 km). Please choose another location.</value>
+	</data>
+	<data name="LocationRequired">
+		<value>Please set your location first</value>
+	</data>
+	<data name="NoShopsNearby">
+		<value>No shops found near this location</value>
+	</data>
 	</root>

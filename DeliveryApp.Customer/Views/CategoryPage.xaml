@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="DeliveryApp.Customer.Views.CategoryPage"
+             x:DataType="vm:CategoryViewModel"
+             Title="{Binding DisplayTitle}">
+
+    <Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA" FlowDirection="RightToLeft">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,40,20,16" ColumnDefinitions="Auto,*">
+            <ImageButton Grid.Column="0" Source="icon_back.png" WidthRequest="24" HeightRequest="24" 
+                         Command="{Binding BackCommand}" HorizontalOptions="Start">
+                <ImageButton.Behaviors>
+                    <toolkit:IconTintColorBehavior TintColor="White" />
+                </ImageButton.Behaviors>
+            </ImageButton>
+            <Label Grid.Column="1" Text="{Binding DisplayTitle}" FontFamily="CairoBold" FontSize="20" 
+                   TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,24,0"/>
+        </Grid>
+
+        <RefreshView Grid.Row="1" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Items}" SelectionMode="None" Margin="16,10">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:Restaurant">
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CategoryViewModel}}, Path=OpenRestaurantCommand}" 
+                                                      CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="100,*" Padding="12" ColumnSpacing="12">
+                                <ff:CachedImage Grid.Column="0" Source="{Binding FullImageUrl}" Aspect="AspectFill" HeightRequest="80" WidthRequest="80"/>
+                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+                                    <HorizontalStackLayout Spacing="12">
+                                        <Label Text="{Binding RatingText}" FontFamily="CairoRegular" FontSize="12" TextColor="#FF9800"/>
+                                        <Label Text="{Binding EstimatedTimeText}" FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
+                                        <Label Text="{Binding DistanceKm, StringFormat='{0:F1} كم'}" FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
+                                    </HorizontalStackLayout>
+                                    <Label Text="{Binding Address}" FontFamily="CairoRegular" FontSize="12" TextColor="#9E9E9E" MaxLines="1" LineBreakMode="TailTruncation"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Margin="0,50">
+                        <Label Text="لا توجد نتائج في هذا المحيط" FontFamily="CairoRegular" FontSize="16" TextColor="#757575" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+
+        <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" 
+                           Color="#FF5722" VerticalOptions="Center" HorizontalOptions="Center"/>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             x:Class="DeliveryApp.Customer.Views.HomeLocationPickerPage"
+             x:DataType="vm:HomeLocationPickerViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ══ Header ══ -->
+        <Grid Grid.Row="0" Padding="16,52,16,12"
+              ColumnDefinitions="44,*,44" BackgroundColor="White">
+            <Image Grid.Column="0" Source="icon_back.png"
+                   WidthRequest="38" HeightRequest="38">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                </Image.GestureRecognizers>
+            </Image>
+            <Label Grid.Column="1"
+                   Text="{loc:Loc Key=ChooseLocation}"
+                   FontFamily="CairoBold" FontSize="20"
+                   TextColor="#212121"
+                   HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- ══ Map ══ -->
+        <mapsui:MapControl x:Name="MapControl" Grid.Row="1"/>
+
+        <!-- دبوس ثابت في المركز -->
+        <Label Grid.Row="1" Text="📍" FontSize="48"
+               HorizontalOptions="Center" VerticalOptions="Center" ZIndex="10"/>
+
+        <!-- ══ Bottom Panel ══ -->
+        <Border Grid.Row="2" BackgroundColor="White" Padding="16,14,16,34"
+                StrokeShape="RoundRectangle 0" Stroke="Transparent">
+            <VerticalStackLayout Spacing="10">
+
+                <!-- إحداثيات المختارة -->
+                <Label x:Name="CoordinatesLabel"
+                       FontFamily="CairoRegular" FontSize="13"
+                       TextColor="#616161"
+                       HorizontalOptions="Center"/>
+
+                <!-- تحذير Zone -->
+                <Border BackgroundColor="#FFEBEE"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="Transparent" Padding="12,8"
+                        IsVisible="{Binding IsOutsideZone}">
+                    <Label Text="{Binding ZoneWarning}"
+                           FontFamily="CairoRegular" FontSize="12"
+                           TextColor="#C62828"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"/>
+                </Border>
+
+                <!-- زر التأكيد -->
+                <Button Text="{loc:Loc Key=ConfirmLocation}"
+                        Command="{Binding ConfirmLocationCommand}"
+                        IsEnabled="{Binding IsLocationSelected}"
+                        Style="{StaticResource PrimaryBtn}"/>
+
+            </VerticalStackLayout>
+        </Border>
+
+    </Grid>
+</ContentPage>

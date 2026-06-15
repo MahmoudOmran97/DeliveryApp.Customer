@@ -25,7 +25,8 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(RegisterPage),         typeof(RegisterPage));
         Routing.RegisterRoute(nameof(SupportChatPage),      typeof(SupportChatPage));
         Routing.RegisterRoute(nameof(DriverChatPage),       typeof(DriverChatPage));
-        Routing.RegisterRoute(nameof(LocationPickerPage),   typeof(LocationPickerPage));
+        Routing.RegisterRoute(nameof(LocationPickerPage),         typeof(LocationPickerPage));
+        Routing.RegisterRoute("HomeLocationPickerPage",             typeof(HomeLocationPickerPage));
         Routing.RegisterRoute(nameof(CouponsPage),          typeof(CouponsPage));
         Routing.RegisterRoute(nameof(RewardsPage),          typeof(RewardsPage));
         Routing.RegisterRoute(nameof(PointsPage),           typeof(PointsPage));

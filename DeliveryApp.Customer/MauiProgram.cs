@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui;
 using FFImageLoading.Maui;
 
 using DeliveryApp.Customer.Services;
@@ -33,6 +33,7 @@ public static class MauiProgram
 
         // ── Services ─────────────────────────────
         builder.Services.AddSingleton<AuthService>();
+        builder.Services.AddSingleton<LocationService>();
         builder.Services.AddSingleton<CartService>();
         builder.Services.AddSingleton<ApiService>();
         builder.Services.AddSingleton<SignalRService>();
@@ -55,6 +56,7 @@ public static class MauiProgram
         builder.Services.AddTransient<DriverChatViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<LocationPickerViewModel>();
+        builder.Services.AddTransient<HomeLocationPickerViewModel>();
         builder.Services.AddTransient<CouponsViewModel>();
         builder.Services.AddTransient<RewardsViewModel>();
         builder.Services.AddTransient<PointsViewModel>();
@@ -76,6 +78,7 @@ public static class MauiProgram
         builder.Services.AddTransient<DriverChatPage>();
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<LocationPickerPage>();
+        builder.Services.AddTransient<HomeLocationPickerPage>();
         builder.Services.AddTransient<CouponsPage>();
         builder.Services.AddTransient<RewardsPage>();
         builder.Services.AddTransient<PointsPage>();

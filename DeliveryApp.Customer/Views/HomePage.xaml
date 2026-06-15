@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
@@ -10,17 +10,36 @@
              x:DataType="vm:HomeViewModel"
              Shell.NavBarIsVisible="False">
 
-    <!-- FlowDirection="RightToLeft" hardcoded — fixes XC0009 (loc:Loc returns string, not FlowDirection enum) -->
     <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F8F9FA" FlowDirection="RightToLeft">
 
-        <!-- ══════ HEADER ══════ -->
+        <!-- ══════════════════════════════════════════════
+             HEADER
+        ══════════════════════════════════════════════ -->
         <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,16"
-              RowDefinitions="Auto,14,Auto" RowSpacing="0">
+              RowDefinitions="Auto,10,Auto,12,Auto" RowSpacing="0">
 
+            <!-- Row 0: Greeting + Cart -->
             <Grid Grid.Row="0" ColumnDefinitions="*,44">
-                <VerticalStackLayout Grid.Column="0" Spacing="2">
-                    <Label Text="{loc:Loc Key=YourLocation}" FontFamily="CairoRegular"
-                           FontSize="12" TextColor="#FFCCBC"/>
+                <VerticalStackLayout Grid.Column="0" Spacing="3">
+
+                    <!-- Location Bar (Tappable) -->
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenLocationPickerCommand}"/>
+                        </Grid.GestureRecognizers>
+                        <Label Grid.Column="0" Text="📍" FontSize="12"
+                               TextColor="#FFCCBC" VerticalOptions="Center"/>
+                        <Label Grid.Column="1"
+                               Text="{Binding LocationLabel}"
+                               FontFamily="CairoRegular" FontSize="12"
+                               TextColor="#FFCCBC" VerticalOptions="Center"
+                               LineBreakMode="TailTruncation" MaxLines="1"
+                               Margin="4,0,4,0"/>
+                        <Label Grid.Column="2" Text="▾" FontSize="12"
+                               TextColor="#FFCCBC" VerticalOptions="Center"/>
+                    </Grid>
+
+                    <!-- Greeting -->
                     <Label FontFamily="CairoBold" FontSize="20" TextColor="White">
                         <Label.FormattedText>
                             <FormattedString>
@@ -32,6 +51,7 @@
                     </Label>
                 </VerticalStackLayout>
 
+                <!-- Cart -->
                 <Grid Grid.Column="1" WidthRequest="44" HeightRequest="44">
                     <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
                             Stroke="Transparent" WidthRequest="44" HeightRequest="44">
@@ -54,8 +74,7 @@
                 </Grid>
             </Grid>
 
-            <BoxView Grid.Row="1" Color="Transparent"/>
-
+            <!-- Search -->
             <Border Grid.Row="2" BackgroundColor="White"
                     StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="4,0">
                 <SearchBar Placeholder="{Binding SearchHint}"
@@ -64,9 +83,164 @@
                            BackgroundColor="Transparent"
                            FontFamily="CairoRegular" FontSize="14" TextColor="#212121"/>
             </Border>
+
+            <!-- Category Chips -->
+            <ScrollView Grid.Row="4" Orientation="Horizontal"
+                        HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="8" FlowDirection="RightToLeft">
+
+                    <!-- الكل -->
+                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
+                            BackgroundColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                  CommandParameter="{x:Null}"/>
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="CairoBold" FontSize="12"
+                               TextColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="🏠 "/>
+                                    <Span Text="{loc:Loc Key=Cat_All}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Border>
+
+                    <!-- مطاعم -->
+                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
+                            BackgroundColor="{Binding IsCatRestaurants, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                  CommandParameter="Restaurants"/>
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="CairoBold" FontSize="12"
+                               TextColor="{Binding IsCatRestaurants, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="🍽️ "/>
+                                    <Span Text="{loc:Loc Key=Cat_Restaurants}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Border>
+
+                    <!-- صيدلية -->
+                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
+                            BackgroundColor="{Binding IsCatPharmacy, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                  CommandParameter="Pharmacy"/>
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="CairoBold" FontSize="12"
+                               TextColor="{Binding IsCatPharmacy, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="💊 "/>
+                                    <Span Text="{loc:Loc Key=Cat_Pharmacy}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Border>
+
+                    <!-- بقالة -->
+                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
+                            BackgroundColor="{Binding IsCatGrocery, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                  CommandParameter="Grocery"/>
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="CairoBold" FontSize="12"
+                               TextColor="{Binding IsCatGrocery, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="🛒 "/>
+                                    <Span Text="{loc:Loc Key=Cat_Grocery}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Border>
+
+                    <!-- سوبر ماركت -->
+                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
+                            BackgroundColor="{Binding IsCatSupermarket, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                  CommandParameter="Supermarket"/>
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="CairoBold" FontSize="12"
+                               TextColor="{Binding IsCatSupermarket, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="🏪 "/>
+                                    <Span Text="{loc:Loc Key=Cat_Supermarket}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Border>
+
+                    <!-- خضار -->
+                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
+                            BackgroundColor="{Binding IsCatVegetables, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                  CommandParameter="Vegetables"/>
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="CairoBold" FontSize="12"
+                               TextColor="{Binding IsCatVegetables, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="🥦 "/>
+                                    <Span Text="{loc:Loc Key=Cat_Vegetables}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Border>
+
+                    <!-- مشروبات -->
+                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
+                            BackgroundColor="{Binding IsCatDrinks, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                  CommandParameter="Drinks"/>
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="CairoBold" FontSize="12"
+                               TextColor="{Binding IsCatDrinks, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="🧃 "/>
+                                    <Span Text="{loc:Loc Key=Cat_Drinks}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Border>
+
+                    <!-- اكسسوارات -->
+                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
+                            BackgroundColor="{Binding IsCatAccessories, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                  CommandParameter="Accessories"/>
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="CairoBold" FontSize="12"
+                               TextColor="{Binding IsCatAccessories, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="👜 "/>
+                                    <Span Text="{loc:Loc Key=Cat_Accessories}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Border>
+
+                </HorizontalStackLayout>
+            </ScrollView>
+
         </Grid>
 
-        <!-- ══════ BODY ══════ -->
+        <!-- ══════════════════════════════════════════════
+             BODY
+        ══════════════════════════════════════════════ -->
         <RefreshView Grid.Row="1"
                      Command="{Binding RefreshCommand}"
                      IsRefreshing="{Binding IsRefreshing}">
@@ -76,57 +250,42 @@
                     <!-- ── Banners Carousel ── -->
                     <CarouselView x:Name="BannerCarousel"
                                   ItemsSource="{Binding Banners}"
-                                  HeightRequest="160"
-                                  Loop="True"
+                                  HeightRequest="160" Loop="True"
                                   IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"
                                   Margin="0,12,0,0">
                         <CarouselView.ItemTemplate>
                             <DataTemplate x:DataType="m:Banner">
                                 <Grid Margin="12,0">
-                                    <Border StrokeShape="RoundRectangle 16"
-                                            Stroke="Transparent"
-                                            BackgroundColor="{Binding BgColor}"
-                                            HeightRequest="150">
+                                    <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+                                            BackgroundColor="{Binding BgColor}" HeightRequest="150">
                                         <Grid ColumnDefinitions="*,Auto" Padding="20,16">
-                                            <VerticalStackLayout Grid.Column="0"
-                                                                 VerticalOptions="Center"
-                                                                 Spacing="6">
+                                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="6">
                                                 <Label Text="{Binding Title}"
-                                                       FontFamily="CairoBold"
-                                                       FontSize="18"
-                                                       TextColor="White"
-                                                       MaxLines="2"
+                                                       FontFamily="CairoBold" FontSize="18"
+                                                       TextColor="White" MaxLines="2"
                                                        LineBreakMode="WordWrap"/>
                                                 <Label Text="{Binding SubTitle}"
-                                                       FontFamily="CairoRegular"
-                                                       FontSize="13"
+                                                       FontFamily="CairoRegular" FontSize="13"
                                                        TextColor="#FFECB3"
                                                        IsVisible="{Binding SubTitle, Converter={StaticResource HasImage}}"
-                                                       MaxLines="2"
-                                                       LineBreakMode="WordWrap"/>
+                                                       MaxLines="2" LineBreakMode="WordWrap"/>
                                                 <Border BackgroundColor="White"
                                                         StrokeShape="RoundRectangle 8"
-                                                        Stroke="Transparent"
-                                                        Padding="14,6"
+                                                        Stroke="Transparent" Padding="14,6"
                                                         HorizontalOptions="Start">
                                                     <Label Text="{loc:Loc Key=OrderNow}"
-                                                           FontFamily="CairoBold"
-                                                           FontSize="13"
+                                                           FontFamily="CairoBold" FontSize="13"
                                                            TextColor="#FF5722"/>
                                                 </Border>
                                             </VerticalStackLayout>
                                             <ff:CachedImage Grid.Column="1"
                                                             Source="{Binding FullImageUrl}"
-                                                            WidthRequest="100"
-                                                            HeightRequest="110"
+                                                            WidthRequest="100" HeightRequest="110"
                                                             Aspect="AspectFit"
                                                             IsVisible="{Binding HasImage}"
                                                             VerticalOptions="Center"/>
-                                            <Label Grid.Column="1"
-                                                   Text="🍔"
-                                                   FontSize="60"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center"
+                                            <Label Grid.Column="1" Text="🍔" FontSize="60"
+                                                   HorizontalOptions="Center" VerticalOptions="Center"
                                                    IsVisible="{Binding HasImage, Converter={StaticResource InvertBool}}"/>
                                         </Grid>
                                     </Border>
@@ -135,7 +294,7 @@
                         </CarouselView.ItemTemplate>
                     </CarouselView>
 
-                    <!-- ── Banner Dots Indicator ── -->
+                    <!-- Banner dots -->
                     <IndicatorView x:Name="bannerIndicator"
                                    HorizontalOptions="Center"
                                    IndicatorColor="#D1D8DB"
@@ -143,58 +302,21 @@
                                    Margin="0,6,0,0"
                                    IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"/>
 
-                    <!-- ── Categories Row ── -->
-                    <Label Text="{loc:Loc Key=Categories}"
-                           FontFamily="CairoBold" FontSize="16"
-                           TextColor="#212121"
-                           Margin="16,18,16,10"
-                           FlowDirection="RightToLeft"/>
-
-                    <ScrollView Orientation="Horizontal"
-                                HorizontalScrollBarVisibility="Never">
-                        <HorizontalStackLayout Spacing="10" Padding="16,0" FlowDirection="RightToLeft">
-                            <Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 20"
-                                    Stroke="Transparent" Padding="16,8">
-                                <Label Text="{loc:Loc Key=Cat_Restaurants}" FontFamily="CairoBold" FontSize="13" TextColor="White"/>
-                            </Border>
-                            <Border BackgroundColor="White" StrokeShape="RoundRectangle 20"
-                                    Stroke="#E0E0E0" Padding="16,8">
-                                <Label Text="{loc:Loc Key=Cat_Grocery}" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
-                            </Border>
-                            <Border BackgroundColor="White" StrokeShape="RoundRectangle 20"
-                                    Stroke="#E0E0E0" Padding="16,8">
-                                <Label Text="{loc:Loc Key=Cat_Pharmacy}" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
-                            </Border>
-                            <Border BackgroundColor="White" StrokeShape="RoundRectangle 20"
-                                    Stroke="#E0E0E0" Padding="16,8">
-                                <Label Text="{loc:Loc Key=Cat_Drinks}" FontFamily="CairoRegular" FontSize="13" TextColor="#424242"/>
-                            </Border>
-                        </HorizontalStackLayout>
-                    </ScrollView>
-
-                    <!-- ── Save & Earn Row ── -->
+                    <!-- ── Rewards / Coupons Row ── -->
                     <Label Text="{loc:Loc Key=UseAndSave}"
-                           FontFamily="CairoBold" FontSize="16"
-                           TextColor="#212121"
-                           Margin="16,18,16,10"
-                           FlowDirection="RightToLeft"/>
+                           FontFamily="CairoBold" FontSize="16" TextColor="#212121"
+                           Margin="16,18,16,10" FlowDirection="RightToLeft"/>
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="16,0">
-                        <!-- Rewards card -->
-                        <Border Grid.Column="0"
-                                BackgroundColor="White"
-                                StrokeShape="RoundRectangle 14"
-                                Stroke="#F0F0F0"
-                                StrokeThickness="1"
-                                Padding="16,14">
+                        <Border Grid.Column="0" BackgroundColor="White"
+                                StrokeShape="RoundRectangle 14" Stroke="#F0F0F0"
+                                StrokeThickness="1" Padding="16,14">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenRewardsCommand}"/>
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
-                                <Border BackgroundColor="#FFF3E0"
-                                        StrokeShape="RoundRectangle 20"
-                                        Stroke="Transparent"
-                                        WidthRequest="36" HeightRequest="36">
+                                <Border BackgroundColor="#FFF3E0" StrokeShape="RoundRectangle 20"
+                                        Stroke="Transparent" WidthRequest="36" HeightRequest="36">
                                     <Label Text="🎁" FontSize="18"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
@@ -203,22 +325,15 @@
                                        TextColor="#212121" VerticalOptions="Center"/>
                             </HorizontalStackLayout>
                         </Border>
-
-                        <!-- Coupons card -->
-                        <Border Grid.Column="1"
-                                BackgroundColor="White"
-                                StrokeShape="RoundRectangle 14"
-                                Stroke="#F0F0F0"
-                                StrokeThickness="1"
-                                Padding="16,14">
+                        <Border Grid.Column="1" BackgroundColor="White"
+                                StrokeShape="RoundRectangle 14" Stroke="#F0F0F0"
+                                StrokeThickness="1" Padding="16,14">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenCouponsCommand}"/>
                             </Border.GestureRecognizers>
                             <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
-                                <Border BackgroundColor="#FFF3E0"
-                                        StrokeShape="RoundRectangle 20"
-                                        Stroke="Transparent"
-                                        WidthRequest="36" HeightRequest="36">
+                                <Border BackgroundColor="#FFF3E0" StrokeShape="RoundRectangle 20"
+                                        Stroke="Transparent" WidthRequest="36" HeightRequest="36">
                                     <Label Text="🎟️" FontSize="18"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
@@ -229,20 +344,45 @@
                         </Border>
                     </Grid>
 
-                    <!-- ── Restaurants Section ── -->
-                    <Label Text="{Binding SectionTitle}"
-                           FontFamily="CairoBold" FontSize="16"
-                           TextColor="#212121"
-                           Margin="16,18,16,10"
-                           FlowDirection="RightToLeft"/>
+                    <!-- ── No Location Banner ── -->
+                    <Border BackgroundColor="#FFF8E1"
+                            StrokeShape="RoundRectangle 14"
+                            Stroke="#FFE082" StrokeThickness="1"
+                            Padding="20,16" Margin="16,18,16,0"
+                            IsVisible="{Binding HasLocation, Converter={StaticResource InvertBool}}">
+                        <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                            <Label Text="📍" FontSize="36" HorizontalOptions="Center"/>
+                            <Label Text="{loc:Loc Key=TapToSetLocation}"
+                                   FontFamily="CairoBold" FontSize="14"
+                                   TextColor="#E65100"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center"/>
+                            <Button Text="{loc:Loc Key=ChooseLocation}"
+                                    Command="{Binding OpenLocationPickerCommand}"
+                                    BackgroundColor="#FF5722"
+                                    TextColor="White"
+                                    FontFamily="CairoBold" FontSize="13"
+                                    CornerRadius="10"
+                                    HeightRequest="44"
+                                    HorizontalOptions="Fill"/>
+                        </VerticalStackLayout>
+                    </Border>
 
+                    <!-- ── Section Title ── -->
+                    <Label Text="{Binding SectionTitle}"
+                           FontFamily="CairoBold" FontSize="16" TextColor="#212121"
+                           Margin="16,18,16,10" FlowDirection="RightToLeft"/>
+
+                    <!-- ── Loading ── -->
                     <ActivityIndicator IsRunning="{Binding IsBusy}"
                                        IsVisible="{Binding IsBusy}"
                                        Color="#FF5722" Margin="0,20"/>
 
+                    <!-- ── Shops List (only when location set) ── -->
                     <CollectionView ItemsSource="{Binding Restaurants}"
                                     SelectionMode="None"
-                                    Margin="16,0">
+                                    Margin="16,0"
+                                    IsVisible="{Binding HasLocation}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="m:Restaurant">
                                 <Border Style="{StaticResource Card}" Margin="0,0,0,14">
@@ -252,6 +392,8 @@
                                             CommandParameter="{Binding .}"/>
                                     </Border.GestureRecognizers>
                                     <Grid ColumnDefinitions="95,*" ColumnSpacing="14">
+
+                                        <!-- Image -->
                                         <Border Grid.Column="0" BackgroundColor="#F0F0F0"
                                                 StrokeShape="RoundRectangle 12" Stroke="Transparent"
                                                 HeightRequest="88" WidthRequest="95">
@@ -266,12 +408,15 @@
                                                                IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
                                             </Grid>
                                         </Border>
+
+                                        <!-- Info -->
                                         <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
                                             <Grid ColumnDefinitions="*,Auto">
                                                 <Label Grid.Column="0" Text="{Binding Name}"
                                                        FontFamily="CairoBold" FontSize="15"
                                                        TextColor="#212121" LineBreakMode="TailTruncation"/>
-                                                <Border Grid.Column="1" StrokeShape="RoundRectangle 8"
+                                                <Border Grid.Column="1"
+                                                        StrokeShape="RoundRectangle 8"
                                                         Stroke="Transparent" Padding="7,3"
                                                         BackgroundColor="{Binding StatusBg}">
                                                     <Label Text="{Binding StatusText}"
@@ -283,7 +428,7 @@
                                                    FontFamily="CairoRegular" FontSize="12"
                                                    TextColor="#757575" MaxLines="1"
                                                    LineBreakMode="TailTruncation"/>
-                                            <HorizontalStackLayout Spacing="12">
+                                            <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
                                                 <HorizontalStackLayout Spacing="3">
                                                     <Label Text="⭐" FontSize="12" VerticalOptions="Center"/>
                                                     <Label Text="{Binding RatingText}"
@@ -299,6 +444,21 @@
                                                 <Label Text="{Binding DeliveryFeeText}"
                                                        FontFamily="CairoBold" FontSize="12"
                                                        TextColor="#FF5722"/>
+                                                <!-- Distance badge -->
+                                                <Border BackgroundColor="#F5F5F5"
+                                                        StrokeShape="RoundRectangle 6"
+                                                        Stroke="Transparent" Padding="6,2"
+                                                        IsVisible="{Binding DistanceKm, Converter={StaticResource IntToBool}}">
+                                                    <Label FontFamily="CairoRegular" FontSize="11"
+                                                           TextColor="#757575">
+                                                        <Label.FormattedText>
+                                                            <FormattedString>
+                                                                <Span Text="📍 "/>
+                                                                <Span Text="{Binding DistanceKm, StringFormat='{0:F1} km'}"/>
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </Label>
+                                                </Border>
                                             </HorizontalStackLayout>
                                         </VerticalStackLayout>
                                     </Grid>
@@ -307,13 +467,22 @@
                         </CollectionView.ItemTemplate>
                     </CollectionView>
 
+                    <!-- ── Empty state (has location but no results) ── -->
+                    <VerticalStackLayout Spacing="8" Margin="16,30"
+                                         HorizontalOptions="Center"
+                                         IsVisible="{Binding HasNoResults}">
+                        <Label Text="🔍" FontSize="44" HorizontalOptions="Center"/>
+                        <Label Text="{loc:Loc Key=NoShopsNearby}"
+                               FontFamily="CairoRegular" FontSize="14" TextColor="#9E9E9E"
+                               HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+
                 </VerticalStackLayout>
             </ScrollView>
         </RefreshView>
 
-        <!-- ══════ BOTTOM BAR ══════ -->
+        <!-- ══ BOTTOM BAR ══ -->
         <controls:CurvedBottomBar Grid.Row="1" SelectedTab="home"
-                         HorizontalOptions="Fill" Margin="0" Padding="0"/>
+                                   HorizontalOptions="Fill" Margin="0" Padding="0"/>
     </Grid>
-
 </ContentPage>
