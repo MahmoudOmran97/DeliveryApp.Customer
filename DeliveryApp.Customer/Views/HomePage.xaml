@@ -13,10 +13,10 @@
     <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F8F9FA" FlowDirection="RightToLeft">
 
         <!-- ══════════════════════════════════════════════
-             HEADER
+             HEADER  (بسيط — موقع + سيرش فقط، مفيش chips)
         ══════════════════════════════════════════════ -->
         <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,16"
-              RowDefinitions="Auto,10,Auto,12,Auto" RowSpacing="0">
+              RowDefinitions="Auto,10,Auto" RowSpacing="0">
 
             <!-- Row 0: Greeting + Cart -->
             <Grid Grid.Row="0" ColumnDefinitions="*,44">
@@ -29,6 +29,7 @@
                         </Grid.GestureRecognizers>
                         <Label Grid.Column="0" Text="📍" FontSize="12"
                                TextColor="#FFCCBC" VerticalOptions="Center"/>
+                        <!-- اسم المدينة / الحي مش الإحداثيات -->
                         <Label Grid.Column="1"
                                Text="{Binding LocationLabel}"
                                FontFamily="CairoRegular" FontSize="12"
@@ -84,158 +85,6 @@
                            FontFamily="CairoRegular" FontSize="14" TextColor="#212121"/>
             </Border>
 
-            <!-- Category Chips -->
-            <ScrollView Grid.Row="4" Orientation="Horizontal"
-                        HorizontalScrollBarVisibility="Never">
-                <HorizontalStackLayout Spacing="8" FlowDirection="RightToLeft">
-
-                    <!-- الكل -->
-                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
-                            BackgroundColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                                                  CommandParameter="{x:Null}"/>
-                        </Border.GestureRecognizers>
-                        <Label FontFamily="CairoBold" FontSize="12"
-                               TextColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="🏠 "/>
-                                    <Span Text="{loc:Loc Key=Cat_All}"/>
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                    </Border>
-
-                    <!-- مطاعم -->
-                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
-                            BackgroundColor="{Binding IsCatRestaurants, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                                                  CommandParameter="Restaurants"/>
-                        </Border.GestureRecognizers>
-                        <Label FontFamily="CairoBold" FontSize="12"
-                               TextColor="{Binding IsCatRestaurants, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="🍽️ "/>
-                                    <Span Text="{loc:Loc Key=Cat_Restaurants}"/>
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                    </Border>
-
-                    <!-- صيدلية -->
-                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
-                            BackgroundColor="{Binding IsCatPharmacy, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                                                  CommandParameter="Pharmacy"/>
-                        </Border.GestureRecognizers>
-                        <Label FontFamily="CairoBold" FontSize="12"
-                               TextColor="{Binding IsCatPharmacy, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="💊 "/>
-                                    <Span Text="{loc:Loc Key=Cat_Pharmacy}"/>
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                    </Border>
-
-                    <!-- بقالة -->
-                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
-                            BackgroundColor="{Binding IsCatGrocery, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                                                  CommandParameter="Grocery"/>
-                        </Border.GestureRecognizers>
-                        <Label FontFamily="CairoBold" FontSize="12"
-                               TextColor="{Binding IsCatGrocery, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="🛒 "/>
-                                    <Span Text="{loc:Loc Key=Cat_Grocery}"/>
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                    </Border>
-
-                    <!-- سوبر ماركت -->
-                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
-                            BackgroundColor="{Binding IsCatSupermarket, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                                                  CommandParameter="Supermarket"/>
-                        </Border.GestureRecognizers>
-                        <Label FontFamily="CairoBold" FontSize="12"
-                               TextColor="{Binding IsCatSupermarket, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="🏪 "/>
-                                    <Span Text="{loc:Loc Key=Cat_Supermarket}"/>
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                    </Border>
-
-                    <!-- خضار -->
-                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
-                            BackgroundColor="{Binding IsCatVegetables, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                                                  CommandParameter="Vegetables"/>
-                        </Border.GestureRecognizers>
-                        <Label FontFamily="CairoBold" FontSize="12"
-                               TextColor="{Binding IsCatVegetables, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="🥦 "/>
-                                    <Span Text="{loc:Loc Key=Cat_Vegetables}"/>
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                    </Border>
-
-                    <!-- مشروبات -->
-                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
-                            BackgroundColor="{Binding IsCatDrinks, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                                                  CommandParameter="Drinks"/>
-                        </Border.GestureRecognizers>
-                        <Label FontFamily="CairoBold" FontSize="12"
-                               TextColor="{Binding IsCatDrinks, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="🧃 "/>
-                                    <Span Text="{loc:Loc Key=Cat_Drinks}"/>
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                    </Border>
-
-                    <!-- اكسسوارات -->
-                    <Border StrokeShape="RoundRectangle 20" Stroke="Transparent" Padding="14,7"
-                            BackgroundColor="{Binding IsCatAccessories, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#44FFFFFF'}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                                                  CommandParameter="Accessories"/>
-                        </Border.GestureRecognizers>
-                        <Label FontFamily="CairoBold" FontSize="12"
-                               TextColor="{Binding IsCatAccessories, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#FFFFFF'}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="👜 "/>
-                                    <Span Text="{loc:Loc Key=Cat_Accessories}"/>
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                    </Border>
-
-                </HorizontalStackLayout>
-            </ScrollView>
-
         </Grid>
 
         <!-- ══════════════════════════════════════════════
@@ -246,6 +95,185 @@
                      IsRefreshing="{Binding IsRefreshing}">
             <ScrollView>
                 <VerticalStackLayout Padding="0,0,0,100" Spacing="0">
+
+                    <!-- ── Category Icons Row (زي talabat) ── -->
+                    <ScrollView Orientation="Horizontal"
+                                HorizontalScrollBarVisibility="Never"
+                                Margin="0,14,0,4"
+                                BackgroundColor="White"
+                                Padding="8,10">
+                        <HorizontalStackLayout Spacing="4" FlowDirection="RightToLeft">
+
+                            <!-- مطاعم -->
+                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                          CommandParameter="Restaurants"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+                                        BackgroundColor="{Binding IsCatRestaurants, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+                                        WidthRequest="58" HeightRequest="58"
+                                        HorizontalOptions="Center">
+                                    <Label Text="🍽️" FontSize="28"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="{loc:Loc Key=Cat_Restaurants}"
+                                       FontFamily="CairoRegular" FontSize="11"
+                                       TextColor="{Binding IsCatRestaurants, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+
+                            <!-- طلبات مارت / بقالة -->
+                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                          CommandParameter="Grocery"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+                                        BackgroundColor="{Binding IsCatGrocery, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+                                        WidthRequest="58" HeightRequest="58"
+                                        HorizontalOptions="Center">
+                                    <Label Text="🛍️" FontSize="28"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="{loc:Loc Key=Cat_Grocery}"
+                                       FontFamily="CairoRegular" FontSize="11"
+                                       TextColor="{Binding IsCatGrocery, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+
+                            <!-- صيدلية -->
+                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                          CommandParameter="Pharmacy"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+                                        BackgroundColor="{Binding IsCatPharmacy, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+                                        WidthRequest="58" HeightRequest="58"
+                                        HorizontalOptions="Center">
+                                    <Label Text="💊" FontSize="28"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="{loc:Loc Key=Cat_Pharmacy}"
+                                       FontFamily="CairoRegular" FontSize="11"
+                                       TextColor="{Binding IsCatPharmacy, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+
+                            <!-- سوبر ماركت -->
+                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                          CommandParameter="Supermarket"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+                                        BackgroundColor="{Binding IsCatSupermarket, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+                                        WidthRequest="58" HeightRequest="58"
+                                        HorizontalOptions="Center">
+                                    <Label Text="🏪" FontSize="28"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="{loc:Loc Key=Cat_Supermarket}"
+                                       FontFamily="CairoRegular" FontSize="11"
+                                       TextColor="{Binding IsCatSupermarket, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+
+                            <!-- خضار -->
+                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                          CommandParameter="Vegetables"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+                                        BackgroundColor="{Binding IsCatVegetables, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+                                        WidthRequest="58" HeightRequest="58"
+                                        HorizontalOptions="Center">
+                                    <Label Text="🥦" FontSize="28"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="{loc:Loc Key=Cat_Vegetables}"
+                                       FontFamily="CairoRegular" FontSize="11"
+                                       TextColor="{Binding IsCatVegetables, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+
+                            <!-- مشروبات -->
+                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                          CommandParameter="Drinks"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+                                        BackgroundColor="{Binding IsCatDrinks, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+                                        WidthRequest="58" HeightRequest="58"
+                                        HorizontalOptions="Center">
+                                    <Label Text="🧃" FontSize="28"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="{loc:Loc Key=Cat_Drinks}"
+                                       FontFamily="CairoRegular" FontSize="11"
+                                       TextColor="{Binding IsCatDrinks, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+
+                            <!-- اكسسوارات -->
+                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                          CommandParameter="Accessories"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+                                        BackgroundColor="{Binding IsCatAccessories, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+                                        WidthRequest="58" HeightRequest="58"
+                                        HorizontalOptions="Center">
+                                    <Label Text="👜" FontSize="28"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="{loc:Loc Key=Cat_Accessories}"
+                                       FontFamily="CairoRegular" FontSize="11"
+                                       TextColor="{Binding IsCatAccessories, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+
+                            <!-- الكل -->
+                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                                                          CommandParameter="{x:Null}"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+                                        BackgroundColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+                                        WidthRequest="58" HeightRequest="58"
+                                        HorizontalOptions="Center">
+                                    <Label Text="🏠" FontSize="28"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="{loc:Loc Key=Cat_All}"
+                                       FontFamily="CairoRegular" FontSize="11"
+                                       TextColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+
+                        </HorizontalStackLayout>
+                    </ScrollView>
 
                     <!-- ── Banners Carousel ── -->
                     <CarouselView x:Name="BannerCarousel"
@@ -444,7 +472,6 @@
                                                 <Label Text="{Binding DeliveryFeeText}"
                                                        FontFamily="CairoBold" FontSize="12"
                                                        TextColor="#FF5722"/>
-                                                <!-- Distance badge -->
                                                 <Border BackgroundColor="#F5F5F5"
                                                         StrokeShape="RoundRectangle 6"
                                                         Stroke="Transparent" Padding="6,2"
@@ -467,7 +494,7 @@
                         </CollectionView.ItemTemplate>
                     </CollectionView>
 
-                    <!-- ── Empty state (has location but no results) ── -->
+                    <!-- ── Empty state ── -->
                     <VerticalStackLayout Spacing="8" Margin="16,30"
                                          HorizontalOptions="Center"
                                          IsVisible="{Binding HasNoResults}">
