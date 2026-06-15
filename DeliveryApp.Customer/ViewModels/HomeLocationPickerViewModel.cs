@@ -14,28 +14,28 @@ namespace DeliveryApp.Customer.ViewModels;
 public partial class HomeLocationPickerViewModel : BaseViewModel
 {
     readonly LocationService _location;
+    readonly ApiService _api;
     readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(10) };
 
     [ObservableProperty] double _selectedLat = LocationService.ZoneCenterLat;
     [ObservableProperty] double _selectedLng = LocationService.ZoneCenterLng;
     [ObservableProperty] bool _isLocationSelected;
-    [ObservableProperty] bool _isOutsideZone;
-    [ObservableProperty] string _zoneWarning = string.Empty;
 
     // اسم المكان اللي هيتظهر في الـ label بعد الاختيار
     [ObservableProperty] string _resolvedAddress = string.Empty;
     [ObservableProperty] bool _isResolvingAddress;
 
-    public HomeLocationPickerViewModel(LocationService location)
+    public HomeLocationPickerViewModel(LocationService location, ApiService api)
     {
         _location = location;
+        _api = api;
 
         // لو في موقع محفوظ، ابدأ بيه
         if (_location.HasLocation)
         {
             _selectedLat = _location.Latitude;
             _selectedLng = _location.Longitude;
-            _resolvedAddress = _location.AddressLabel; // اللي اتحفظ قبل كده
+            _resolvedAddress = _location.AddressLabel;
             _isLocationSelected = true;
         }
     }
@@ -47,12 +47,7 @@ public partial class HomeLocationPickerViewModel : BaseViewModel
     async Task OnPinChanged()
     {
         IsLocationSelected = true;
-        IsOutsideZone = !_location.IsWithinZone(SelectedLat, SelectedLng);
-        ZoneWarning = IsOutsideZone
-            ? LocalizationService.Get("ZoneExceededMsg")
-            : string.Empty;
-
-        // نعمل Reverse Geocoding عشان نجيب اسم المكان
+        // بنشيل الـ Zone restriction — الـ API هو اللي بيرجع المحلات القريبة أو لا
         await ResolveAddressAsync(SelectedLat, SelectedLng);
     }
 
@@ -123,18 +118,15 @@ public partial class HomeLocationPickerViewModel : BaseViewModel
     [RelayCommand]
     async Task ConfirmLocation()
     {
-        if (IsOutsideZone)
-        {
-            await AlertAsync(LocalizationService.Get("ZoneExceededMsg"));
-            return;
-        }
-
-        // نحفظ اسم المكان (مش الإحداثيات) كـ AddressLabel
         var label = !string.IsNullOrEmpty(ResolvedAddress)
             ? ResolvedAddress
             : $"{SelectedLat:F4}, {SelectedLng:F4}";
 
+        // 1. حفظ محلي (Preferences)
         _location.SaveLocation(SelectedLat, SelectedLng, label);
+
+        // 2. تحديث العنوان في الداتا بيز (fire-and-forget لو مش logged in)
+        _ = _api.UpdateProfileAsync(null, null, label);
 
         // رجوع للـ Home
         await Shell.Current.GoToAsync("..");

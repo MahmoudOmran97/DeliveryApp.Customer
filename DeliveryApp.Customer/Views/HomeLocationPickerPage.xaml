@@ -59,18 +59,6 @@
                            HorizontalTextAlignment="Start"/>
                 </Grid>
 
-                <!-- تحذير Zone -->
-                <Border BackgroundColor="#FFEBEE"
-                        StrokeShape="RoundRectangle 10"
-                        Stroke="Transparent" Padding="12,8"
-                        IsVisible="{Binding IsOutsideZone}">
-                    <Label Text="{Binding ZoneWarning}"
-                           FontFamily="CairoRegular" FontSize="12"
-                           TextColor="#C62828"
-                           HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"/>
-                </Border>
-
                 <!-- زر التأكيد -->
                 <Button Text="{loc:Loc Key=ConfirmLocation}"
                         Command="{Binding ConfirmLocationCommand}"

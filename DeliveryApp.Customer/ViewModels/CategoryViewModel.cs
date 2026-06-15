@@ -25,17 +25,19 @@ public partial class CategoryViewModel : BaseViewModel
 
     partial void OnCategoryNameChanged(string value)
     {
-        DisplayTitle = value switch
+        // نستخدم LocalizationService عشان يدعم Arabic/English
+        var locKey = value switch
         {
-            "Restaurants" => "المطاعم",
-            "Grocery" => "السوبر ماركت",
-            "Pharmacy" => "الصيدليات",
-            "Vegetables" => "محلات الخضار",
-            "Accessories" => "محلات الاكسسوارات",
-            "Supermarket" => "السوبر ماركت",
-            "Drinks" => "المشروبات",
-            _ => value
+            "Restaurants" => "Cat_Restaurants",
+            "Grocery" => "Cat_Grocery",
+            "Pharmacy" => "Cat_Pharmacy",
+            "Vegetables" => "Cat_Vegetables",
+            "Accessories" => "Cat_Accessories",
+            "Supermarket" => "Cat_Supermarket",
+            "Drinks" => "Cat_Drinks",
+            _ => null
         };
+        DisplayTitle = locKey != null ? LocalizationService.Get(locKey) : value;
         _ = LoadAsync();
     }
 
