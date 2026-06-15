@@ -60,6 +60,7 @@ public static class MauiProgram
         builder.Services.AddTransient<CouponsViewModel>();
         builder.Services.AddTransient<RewardsViewModel>();
         builder.Services.AddTransient<PointsViewModel>();
+        builder.Services.AddTransient<CategoryViewModel>();
         // ── Pages ─────────────────────────────────
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<SplashPage>();
@@ -82,6 +83,7 @@ public static class MauiProgram
         builder.Services.AddTransient<CouponsPage>();
         builder.Services.AddTransient<RewardsPage>();
         builder.Services.AddTransient<PointsPage>();
+        builder.Services.AddTransient<CategoryPage>();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

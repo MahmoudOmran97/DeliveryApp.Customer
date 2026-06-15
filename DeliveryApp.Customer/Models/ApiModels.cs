@@ -50,6 +50,7 @@ public class Restaurant
     public int EstimatedTime { get; set; }
     public bool IsOpen { get; set; }
     public double? DistanceKm { get; set; }
+    public string StoreType { get; set; } = "Restaurant";
 
     private const string _imgBase = "https://deliveryappapi.runasp.net";
     private static string? BuildUrl(string? url)

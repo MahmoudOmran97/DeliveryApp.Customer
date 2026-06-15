@@ -16,20 +16,21 @@ public partial class AppShell : Shell
         Shell.SetTabBarIsVisible(this, false);
         Navigated += OnShellNavigated;
 
-        Routing.RegisterRoute(nameof(RestaurantPage),       typeof(RestaurantPage));
-        Routing.RegisterRoute(nameof(CartPage),             typeof(CartPage));
-        Routing.RegisterRoute(nameof(CheckoutPage),         typeof(CheckoutPage));
-        Routing.RegisterRoute(nameof(OrderTrackingPage),    typeof(OrderTrackingPage));
-        Routing.RegisterRoute(nameof(OrderDetailPage),      typeof(OrderDetailPage));
-        Routing.RegisterRoute(nameof(LoginPage),            typeof(LoginPage));
-        Routing.RegisterRoute(nameof(RegisterPage),         typeof(RegisterPage));
-        Routing.RegisterRoute(nameof(SupportChatPage),      typeof(SupportChatPage));
-        Routing.RegisterRoute(nameof(DriverChatPage),       typeof(DriverChatPage));
-        Routing.RegisterRoute(nameof(LocationPickerPage),         typeof(LocationPickerPage));
-        Routing.RegisterRoute("HomeLocationPickerPage",             typeof(HomeLocationPickerPage));
-        Routing.RegisterRoute(nameof(CouponsPage),          typeof(CouponsPage));
-        Routing.RegisterRoute(nameof(RewardsPage),          typeof(RewardsPage));
-        Routing.RegisterRoute(nameof(PointsPage),           typeof(PointsPage));
+        Routing.RegisterRoute(nameof(RestaurantPage), typeof(RestaurantPage));
+        Routing.RegisterRoute(nameof(CartPage), typeof(CartPage));
+        Routing.RegisterRoute(nameof(CheckoutPage), typeof(CheckoutPage));
+        Routing.RegisterRoute(nameof(OrderTrackingPage), typeof(OrderTrackingPage));
+        Routing.RegisterRoute(nameof(OrderDetailPage), typeof(OrderDetailPage));
+        Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+        Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
+        Routing.RegisterRoute(nameof(SupportChatPage), typeof(SupportChatPage));
+        Routing.RegisterRoute(nameof(DriverChatPage), typeof(DriverChatPage));
+        Routing.RegisterRoute(nameof(LocationPickerPage), typeof(LocationPickerPage));
+        Routing.RegisterRoute("HomeLocationPickerPage", typeof(HomeLocationPickerPage));
+        Routing.RegisterRoute(nameof(CouponsPage), typeof(CouponsPage));
+        Routing.RegisterRoute(nameof(RewardsPage), typeof(RewardsPage));
+        Routing.RegisterRoute(nameof(PointsPage), typeof(PointsPage));
+        Routing.RegisterRoute(nameof(CategoryPage), typeof(CategoryPage));
     }
 
     void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)

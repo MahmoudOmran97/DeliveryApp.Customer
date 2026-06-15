@@ -154,8 +154,17 @@ public partial class HomeViewModel : BaseViewModel
     [RelayCommand]
     async Task SelectCategory(string? key)
     {
-        SelectedCategory = key;
-        await LoadAsync();
+        if (key == null)
+        {
+            // "الكل" → نرجع للحالة العادية في نفس الصفحة
+            SelectedCategory = null;
+            await LoadAsync();
+        }
+        else
+        {
+            // category محددة → ننتقل لصفحة منفصلة بتعرض كل المحلات من النوع ده
+            await Shell.Current.GoToAsync($"{nameof(Views.CategoryPage)}?category={key}");
+        }
     }
 
     [RelayCommand]
