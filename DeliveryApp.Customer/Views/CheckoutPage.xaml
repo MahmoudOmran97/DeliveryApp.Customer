@@ -34,12 +34,23 @@
                         <Label Text="{loc:Loc Key=DeliveryAddress}"
                                FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
 
+                        <!-- خيارات العنوان -->
+                        <VerticalStackLayout Spacing="10" Margin="0,5">
+                            <HorizontalStackLayout Spacing="10">
+                                <RadioButton IsChecked="{Binding UseMySavedAddress}" Content="توصيل إلى عنواني المسجل" FontFamily="CairoRegular" FontSize="14"/>
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="10">
+                                <RadioButton IsChecked="{Binding UseMySavedAddress, Converter={StaticResource InvertBool}}" Content="توصيل إلى عنوان آخر" FontFamily="CairoRegular" FontSize="14"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+
                         <Entry Text="{Binding Address}"
                                Placeholder="{loc:Loc Key=AddressPlaceholder}"
-                               HeightRequest="50"/>
+                               HeightRequest="50"
+                               IsReadOnly="{Binding UseMySavedAddress}"/>
 
-                        <!-- أزرار اختيار الموقع -->
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <!-- أزرار اختيار الموقع (تظهر فقط عند اختيار عنوان آخر) -->
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding UseMySavedAddress, Converter={StaticResource InvertBool}}">
                             <Border Grid.Column="0" StrokeShape="RoundRectangle 12"
                                     Stroke="#E0E0E0" Padding="10">
                                 <Border.GestureRecognizers>

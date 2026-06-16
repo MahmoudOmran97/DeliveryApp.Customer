@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.CartPage"
              x:DataType="vm:CartViewModel"
@@ -50,11 +51,19 @@
                     <Border Style="{StaticResource Card}" Margin="0,0,0,12">
                         <Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
 
-                            <!-- Product image placeholder -->
+                            <!-- Product image -->
                             <Border Grid.Column="0" BackgroundColor="#F0F0F0"
-                                    StrokeShape="RoundRectangle 10" Stroke="Transparent" HeightRequest="64">
-                                <Label Text="🍛" FontSize="30"
-                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    StrokeShape="RoundRectangle 10" Stroke="Transparent" HeightRequest="64" WidthRequest="64">
+                                <Grid>
+                                    <Label Text="🍛" FontSize="30"
+                                           HorizontalOptions="Center" VerticalOptions="Center"
+                                           IsVisible="{Binding Product.FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                                    <ff:CachedImage Source="{Binding Product.FullImageUrl}"
+                                                   Aspect="AspectFill"
+                                                   HeightRequest="64" WidthRequest="64"
+                                                   CacheDuration="7"
+                                                   IsVisible="{Binding Product.FullImageUrl, Converter={StaticResource HasImage}}"/>
+                                </Grid>
                             </Border>
 
                             <!-- Name + price -->

@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.Views;
 using Microsoft.Maui.ApplicationModel;
@@ -12,8 +13,11 @@ public partial class CheckoutViewModel : BaseViewModel
 {
     readonly ApiService _api;
     readonly CartService _cart;
+    readonly LocationService _location;
 
     [ObservableProperty] string _address = string.Empty;
+    [ObservableProperty] bool _useMySavedAddress = true;
+    [ObservableProperty] Restaurant? _restaurant;
     [ObservableProperty] string _notes = string.Empty;
     [ObservableProperty] string _paymentMethod = "Cash";
     [ObservableProperty] decimal _subTotal;
@@ -34,13 +38,46 @@ public partial class CheckoutViewModel : BaseViewModel
     [ObservableProperty] decimal _discount;
     private int? _appliedCouponId;
 
-    public CheckoutViewModel(ApiService api, CartService cart)
+    public CheckoutViewModel(ApiService api, CartService cart, LocationService location)
     {
         _api = api;
         _cart = cart;
+        _location = location;
         SubTotal = cart.TotalPrice;
         DeliveryFee = cart.RestaurantDeliveryFee;
         RecalcTotal();
+        
+        if (_location.HasLocation)
+        {
+            Address = _location.AddressLabel;
+            DeliveryLat = _location.Latitude;
+            DeliveryLng = _location.Longitude;
+        }
+        
+        _ = LoadRestaurantAsync();
+    }
+
+    async Task LoadRestaurantAsync()
+    {
+        if (!_cart.RestaurantId.HasValue) return;
+        Restaurant = await _api.GetRestaurantAsync(_cart.RestaurantId.Value);
+    }
+
+    partial void OnUseMySavedAddressChanged(bool value)
+    {
+        if (value && _location.HasLocation)
+        {
+            Address = _location.AddressLabel;
+            DeliveryLat = _location.Latitude;
+            DeliveryLng = _location.Longitude;
+        }
+        else if (!value)
+        {
+            Address = string.Empty;
+            DeliveryLat = 0;
+            DeliveryLng = 0;
+            HasLocationSelected = false;
+        }
     }
 
     void RecalcTotal() => Total = SubTotal + DeliveryFee - Discount;
@@ -169,6 +206,22 @@ public partial class CheckoutViewModel : BaseViewModel
                 LocalizationService.Get("CartEmpty"),
                 LocalizationService.Get("Ok"));
             return;
+        }
+
+        // ✅ Check distance (10km restriction from store)
+        if (Restaurant != null)
+        {
+            double dist = LocationService.DistanceKm(DeliveryLat, DeliveryLng, Restaurant.Latitude, Restaurant.Longitude);
+            if (dist > 10.0)
+            {
+                await Shell.Current.DisplayAlert(
+                    LocalizationService.Get("Notice"),
+                    LocalizationService.Current.TwoLetterISOLanguageName == "ar" 
+                        ? "عذراً، الموقع المختار بعيد جداً عن المحل (أكثر من 10 كم)" 
+                        : "Sorry, the selected location is too far from the store (more than 10km)",
+                    LocalizationService.Get("Ok"));
+                return;
+            }
         }
 
         IsBusy = true;
