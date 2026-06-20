@@ -79,9 +79,9 @@ public partial class HomePage : ContentPage
         {
             while (!token.IsCancellationRequested)
             {
-                await LogoPin.TranslateTo(0, -4, 900, Easing.SinInOut);
+                await LogoPin.TranslateTo(0, -10, 1100, Easing.SinInOut);
                 if (token.IsCancellationRequested) break;
-                await LogoPin.TranslateTo(0, 0, 900, Easing.SinInOut);
+                await LogoPin.TranslateTo(0, 0, 1100, Easing.SinInOut);
             }
         }
         catch (ObjectDisposedException) { /* الصفحة راحت قبل ما اللووب يخلص */ }
@@ -94,11 +94,11 @@ public partial class HomePage : ContentPage
         {
             while (!token.IsCancellationRequested)
             {
-                await LogoSpeedWave.TranslateTo(-4, 0, 500, Easing.SinInOut);
+                await LogoSpeedWave.TranslateTo(-14, 0, 550, Easing.SinInOut);
                 if (token.IsCancellationRequested) break;
-                await LogoSpeedWave.TranslateTo(2, 0, 500, Easing.SinInOut);
+                await LogoSpeedWave.TranslateTo(8, 0, 550, Easing.SinInOut);
                 if (token.IsCancellationRequested) break;
-                await LogoSpeedWave.TranslateTo(0, 0, 400, Easing.SinInOut);
+                await LogoSpeedWave.TranslateTo(0, 0, 450, Easing.SinInOut);
                 if (token.IsCancellationRequested) break;
                 await Task.Delay(300, token);
             }
@@ -115,11 +115,11 @@ public partial class HomePage : ContentPage
             await Task.Delay(150, token);
             while (!token.IsCancellationRequested)
             {
-                await LogoSpeedLine.TranslateTo(-6, 0, 450, Easing.SinInOut);
+                await LogoSpeedLine.TranslateTo(-20, 0, 500, Easing.SinInOut);
                 if (token.IsCancellationRequested) break;
-                await LogoSpeedLine.TranslateTo(2, 0, 450, Easing.SinInOut);
+                await LogoSpeedLine.TranslateTo(8, 0, 500, Easing.SinInOut);
                 if (token.IsCancellationRequested) break;
-                await LogoSpeedLine.TranslateTo(0, 0, 350, Easing.SinInOut);
+                await LogoSpeedLine.TranslateTo(0, 0, 400, Easing.SinInOut);
                 if (token.IsCancellationRequested) break;
                 await Task.Delay(300, token);
             }

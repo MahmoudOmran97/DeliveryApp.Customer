@@ -15,26 +15,30 @@
         <!-- ══════════════════════════════════════════════
              HEADER  (بسيط — موقع + سيرش فقط، مفيش chips)
         ══════════════════════════════════════════════ -->
-        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,16"
+        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,15,20,16"
               RowDefinitions="Auto,10,Auto" RowSpacing="0">
 
-            <!-- Row 0: Logo (animated) + Greeting + Cart -->
-            <Grid Grid.Row="0" ColumnDefinitions="64,*,44">
+            <!-- Animated Logo Background (تحت كل المحتوى، بياخد مساحة الهيدر كلها)
+                 ملحوظة: لازم HeightRequest ثابت هنا عشان مايبوظش قياس الـ Auto Row بحجم الصورة الأصلي (512px)
+                 ملحوظة 2: AspectFit مش AspectFill عشان اللوجو يبان كامل من غير قص -->
+            <Grid Grid.Row="0" Grid.RowSpan="3"
+                  HorizontalOptions="Fill" VerticalOptions="Fill"
+                  HeightRequest="120"
+                 
+                  Opacity="0.2" InputTransparent="True">
+                <Image x:Name="LogoBase" Source="logo_anim_base.png"
+                       Aspect="AspectFit" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                <Image x:Name="LogoSpeedWave" Source="logo_anim_speedwave.png"
+                       Aspect="AspectFit" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                <Image x:Name="LogoSpeedLine" Source="logo_anim_speedline.png"
+                       Aspect="AspectFit" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                <Image x:Name="LogoPin" Source="logo_anim_pin.png"
+                       Aspect="AspectFit" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+            </Grid>
 
-                <!-- Animated Logo (Pin يطفو + خطوط السرعة بتتحرك يمين/شمال، الباقي ثابت) -->
-                <Grid Grid.Column="0" WidthRequest="56" HeightRequest="56"
-                      VerticalOptions="Center" HorizontalOptions="Center">
-                    <Image x:Name="LogoBase" Source="logo_anim_base.png"
-                           WidthRequest="56" HeightRequest="56" Aspect="AspectFit"/>
-                    <Image x:Name="LogoSpeedWave" Source="logo_anim_speedwave.png"
-                           WidthRequest="56" HeightRequest="56" Aspect="AspectFit"/>
-                    <Image x:Name="LogoSpeedLine" Source="logo_anim_speedline.png"
-                           WidthRequest="56" HeightRequest="56" Aspect="AspectFit"/>
-                    <Image x:Name="LogoPin" Source="logo_anim_pin.png"
-                           WidthRequest="56" HeightRequest="56" Aspect="AspectFit"/>
-                </Grid>
-
-                <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+            <!-- Row 0: Greeting + Cart -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,44">
+                <VerticalStackLayout Grid.Column="0" Spacing="3">
 
                     <!-- Location Bar (Tappable) -->
                     <Grid ColumnDefinitions="Auto,*">
@@ -66,7 +70,7 @@
                 </VerticalStackLayout>
 
                 <!-- Cart -->
-                <Grid Grid.Column="2" WidthRequest="44" HeightRequest="44">
+                <Grid Grid.Column="1" WidthRequest="44" HeightRequest="44">
                     <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
                             Stroke="Transparent" WidthRequest="44" HeightRequest="44">
                         <Label Text="🛒" FontSize="22"
