@@ -1,4 +1,5 @@
-﻿using DeliveryApp.Customer.Services;
+﻿using System.Globalization;
+using DeliveryApp.Customer.Services;
 
 namespace DeliveryApp.Customer.Views;
 
@@ -9,17 +10,24 @@ public partial class SplashPage : ContentPage
     public SplashPage(AuthService auth)
     {
         InitializeComponent();
+
         _auth = auth;
+
+        string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+        imgLogo.Source = lang == "ar"
+            ? "logo_ar.png"
+            : "logo_en.png";
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
         await Task.Delay(2000);
 
         if (_auth.IsLoggedIn)
         {
-            // ✅ بنيها هنا بعد ما Resources اتحملت
             var shell = IPlatformApplication.Current!.Services.GetService<AppShell>()!;
             Application.Current!.MainPage = shell;
         }

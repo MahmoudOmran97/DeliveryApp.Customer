@@ -23,21 +23,20 @@
                 <VerticalStackLayout Grid.Column="0" Spacing="3">
 
                     <!-- Location Bar (Tappable) -->
-                    <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Grid ColumnDefinitions="Auto,*">
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding OpenLocationPickerCommand}"/>
                         </Grid.GestureRecognizers>
-                        <Label Grid.Column="0" Text="📍" FontSize="12"
+                        <Label Grid.Column="0" Text="📍" FontSize="15"
                                TextColor="#FFCCBC" VerticalOptions="Center"/>
                         <!-- اسم المدينة / الحي مش الإحداثيات -->
                         <Label Grid.Column="1"
                                Text="{Binding LocationLabel}"
-                               FontFamily="CairoRegular" FontSize="12"
+                               FontFamily="CairoRegular" FontSize="15"
                                TextColor="#FFCCBC" VerticalOptions="Center"
                                LineBreakMode="TailTruncation" MaxLines="1"
                                Margin="4,0,4,0"/>
-                        <Label Grid.Column="2" Text="▾" FontSize="12"
-                               TextColor="#FFCCBC" VerticalOptions="Center"/>
+                       
                     </Grid>
 
                     <!-- Greeting -->
@@ -103,7 +102,25 @@
                                 BackgroundColor="White"
                                 Padding="8,10">
                         <HorizontalStackLayout Spacing="4" FlowDirection="RightToLeft">
-
+                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
+                               CommandParameter="{x:Null}"/>
+                                </VerticalStackLayout.GestureRecognizers>
+                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
+             BackgroundColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+             WidthRequest="58" HeightRequest="58"
+             HorizontalOptions="Center">
+                                    <Label Text="🏠" FontSize="28"
+                HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="{loc:Loc Key=Cat_All}"
+            FontFamily="CairoRegular" FontSize="11"
+            TextColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
                             <!-- مطاعم -->
                             <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
                                 <VerticalStackLayout.GestureRecognizers>
@@ -252,25 +269,7 @@
                             </VerticalStackLayout>
 
                             <!-- الكل -->
-                            <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
-                                <VerticalStackLayout.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                                                          CommandParameter="{x:Null}"/>
-                                </VerticalStackLayout.GestureRecognizers>
-                                <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
-                                        BackgroundColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
-                                        WidthRequest="58" HeightRequest="58"
-                                        HorizontalOptions="Center">
-                                    <Label Text="🏠" FontSize="28"
-                                           HorizontalOptions="Center" VerticalOptions="Center"/>
-                                </Border>
-                                <Label Text="{loc:Loc Key=Cat_All}"
-                                       FontFamily="CairoRegular" FontSize="11"
-                                       TextColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
-                                       HorizontalOptions="Center"
-                                       HorizontalTextAlignment="Center"
-                                       MaxLines="1" LineBreakMode="TailTruncation"/>
-                            </VerticalStackLayout>
+                           
 
                         </HorizontalStackLayout>
                     </ScrollView>

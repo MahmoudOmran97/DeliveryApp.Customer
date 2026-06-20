@@ -14,12 +14,12 @@
 
         <!-- Header -->
         <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,16" ColumnDefinitions="Auto,*">
-            <ImageButton Grid.Column="0" Source="icon_back.png" WidthRequest="44" HeightRequest="44" 
-                         Command="{Binding GoBackCommand}" HorizontalOptions="Start">
-                <ImageButton.Behaviors>
-                    <toolkit:IconTintColorBehavior TintColor="White" />
-                </ImageButton.Behaviors>
-            </ImageButton>
+            <ImageButton Grid.Column="0"
+             Source="icon_back.png"
+             WidthRequest="38" HeightRequest="38"
+             BackgroundColor="Transparent"
+             VerticalOptions="Center"
+             Command="{Binding GoBackCommand}"/>
             <Label Grid.Column="1" Text="{Binding DisplayTitle}" FontFamily="CairoBold" FontSize="20" 
                    TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,44,0"/>
         </Grid>

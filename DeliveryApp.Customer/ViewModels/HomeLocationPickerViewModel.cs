@@ -6,6 +6,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Services;
+using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
@@ -62,7 +63,9 @@ public partial class HomeLocationPickerViewModel : BaseViewModel
 
         try
         {
-            var url = $"https://nominatim.openstreetmap.org/reverse?lat={lat:F6}&lon={lng:F6}&format=json&accept-language=ar";
+            var url = string.Format(CultureInfo.InvariantCulture,
+     "https://nominatim.openstreetmap.org/reverse?lat={0:F6}&lon={1:F6}&format=json&accept-language=ar",
+     lat, lng);
 
             _httpClient.DefaultRequestHeaders.Remove("User-Agent");
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "DeliveryApp/1.0");

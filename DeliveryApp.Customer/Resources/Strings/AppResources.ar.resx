@@ -20,7 +20,7 @@
 
 	<!-- General -->
 	<data name="AppName">
-		<value>ديليفر</value>
+		<value>توصيلة</value>
 	</data>
 	<data name="Ok">
 		<value>موافق</value>
@@ -52,7 +52,7 @@
 
 	<!-- Splash -->
 	<data name="SplashSubtitle">
-		<value>أسرع توصيل طعام</value>
+		<value>أسرع توصيل</value>
 	</data>
 
 	<!-- Auth -->

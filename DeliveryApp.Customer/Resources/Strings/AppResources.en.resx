@@ -21,7 +21,7 @@
 
 	<!-- General -->
 	<data name="AppName">
-		<value>Deliver</value>
+		<value>Tawseela</value>
 	</data>
 	<data name="Ok">
 		<value>OK</value>
@@ -53,7 +53,7 @@
 
 	<!-- Splash -->
 	<data name="SplashSubtitle">
-		<value>Fastest food delivery</value>
+		<value>Fastest delivery</value>
 	</data>
 
 	<!-- Auth -->

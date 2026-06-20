@@ -7,10 +7,14 @@
              BackgroundColor="#FF5722">
     <Grid>
         <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20">
-            <Border BackgroundColor="White" StrokeShape="RoundRectangle 28"
-                    Stroke="Transparent" WidthRequest="110" HeightRequest="110">
-                <Label Text="🛵" FontSize="58" HorizontalOptions="Center" VerticalOptions="Center"/>
-            </Border>
+            <!-- ✅ تم تغيير الاسم من logo-en.png إلى logo_en.png لتجنب خطأ أندرويد -->
+            <Image x:Name="imgLogo"
+       Aspect="AspectFill"
+       HeightRequest="110"
+       WidthRequest="110"
+       HorizontalOptions="Center"
+       VerticalOptions="Center"/>
+
             <Label Text="{loc:Loc Key=AppName}"
                    FontFamily="CairoBold" FontSize="42" TextColor="White" HorizontalOptions="Center"/>
             <Label Text="{loc:Loc Key=SplashSubtitle}"
