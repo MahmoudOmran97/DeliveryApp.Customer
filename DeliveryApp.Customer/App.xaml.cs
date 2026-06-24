@@ -9,9 +9,15 @@ public partial class App : Application
     public App(SplashPage splash, ChatNotificationService chatNotif, FcmTokenService fcmToken)
     {
         InitializeComponent();
-        _ = chatNotif; // Singleton — start listening for chat messages
+        _ = chatNotif;
 
-        // استمع لتحديثات الـ token والرسائل الجاية
+        // ✅ استدعي RegisterAsync عشان تجيب التوكن
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(3000); // استنى 3 ثواني لحد ما Firebase يinitialize
+            await fcmToken.RegisterAsync();
+        });
+
         fcmToken.ListenForTokenRefresh();
         fcmToken.ListenForMessages();
 
