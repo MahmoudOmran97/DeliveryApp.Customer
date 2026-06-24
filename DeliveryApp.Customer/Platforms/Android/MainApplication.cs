@@ -1,16 +1,21 @@
 ﻿using Android.App;
 using Android.Runtime;
+using Plugin.Firebase.CloudMessaging;
 
-namespace DeliveryApp.Customer
+namespace DeliveryApp.Customer;
+
+[Application]
+public class MainApplication : MauiApplication
 {
-    [Application]
-    public class MainApplication : MauiApplication
-    {
-        public MainApplication(IntPtr handle, JniHandleOwnership ownership)
-            : base(handle, ownership)
-        {
-        }
+    public MainApplication(IntPtr handle, JniHandleOwnership ownership)
+        : base(handle, ownership) { }
 
-        protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+
+    public override void OnCreate()
+    {
+        base.OnCreate();
+        // Firebase Cloud Messaging init
+        _ = CrossFirebaseCloudMessaging.Current;
     }
 }

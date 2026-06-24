@@ -313,6 +313,21 @@ public class ApiService
         catch { return new PointsResult(); }
     }
 
+    // ─── FCM Token ────────────────────────────────────────────────────────────
+
+    public async Task UpdateFcmTokenAsync(string token)
+    {
+        try
+        {
+            SetAuth();
+            var body = new StringContent(
+                JsonSerializer.Serialize(new { token }),
+                System.Text.Encoding.UTF8, "application/json");
+            await _http.PutAsync($"{Base}/user/fcm-token", body);
+        }
+        catch (Exception ex) { Debug(ex, "user/fcm-token"); }
+    }
+
     private static void Debug(Exception ex, string path)
 
         => System.Diagnostics.Debug.WriteLine($"[API] {path}: {ex.Message}");

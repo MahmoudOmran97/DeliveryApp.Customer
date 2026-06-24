@@ -1,5 +1,7 @@
 using CommunityToolkit.Maui;
 using FFImageLoading.Maui;
+using Plugin.Firebase.CloudMessaging;
+using Plugin.Firebase.Core;
 
 using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.ViewModels;
@@ -23,8 +25,10 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
-            .UseSkiaSharp()              // ← كده صح بدون arguments
+            .UseSkiaSharp()
             .UseFFImageLoading()
+            // ← Firebase
+            .UseFirebase()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("Cairo-Regular.ttf", "CairoRegular");
@@ -38,6 +42,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ApiService>();
         builder.Services.AddSingleton<SignalRService>();
         builder.Services.AddSingleton<ChatNotificationService>();
+        builder.Services.AddSingleton<FcmTokenService>();           // ← جديد
         builder.Services.AddSingleton<Converters.LocaleStrings>();
 
         // ── ViewModels ────────────────────────────
@@ -61,6 +66,7 @@ public static class MauiProgram
         builder.Services.AddTransient<RewardsViewModel>();
         builder.Services.AddTransient<PointsViewModel>();
         builder.Services.AddTransient<CategoryViewModel>();
+
         // ── Pages ─────────────────────────────────
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<SplashPage>();
@@ -84,6 +90,7 @@ public static class MauiProgram
         builder.Services.AddTransient<RewardsPage>();
         builder.Services.AddTransient<PointsPage>();
         builder.Services.AddTransient<CategoryPage>();
+
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

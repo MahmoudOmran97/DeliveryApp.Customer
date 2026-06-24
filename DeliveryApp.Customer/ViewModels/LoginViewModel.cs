@@ -15,13 +15,15 @@ public partial class LoginViewModel : BaseViewModel
 
     readonly AuthService _auth;
 
+    readonly FcmTokenService _fcm;
+
     [ObservableProperty] string _email = string.Empty;
 
     [ObservableProperty] string _password = string.Empty;
 
-    public LoginViewModel(ApiService api, AuthService auth)
+    public LoginViewModel(ApiService api, AuthService auth, FcmTokenService fcm)
 
-    { _api = api; _auth = auth; }
+    { _api = api; _auth = auth; _fcm = fcm; }
 
     [RelayCommand]
 
@@ -46,6 +48,9 @@ public partial class LoginViewModel : BaseViewModel
             {
 
                 _auth.SaveUser(r.Token, r.Id, r.FullName, r.Email, r.Role);
+
+                // ← بعت الـ FCM token للـ API بعد اللوجين
+                _ = Task.Run(() => _fcm.RegisterAsync());
 
                 var shell = IPlatformApplication.Current!.Services.GetService<AppShell>()!;
                 Application.Current!.MainPage = shell;
