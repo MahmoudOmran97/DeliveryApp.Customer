@@ -14,12 +14,39 @@ namespace DeliveryApp.Customer
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            // ✅ Notification Channel لازم يتعمل الأول
+            CreateNotificationChannel();
+
+            // ✅ بعدين اطلب الـ Permission
             RequestNotificationPermissionIfNeeded();
+        }
+
+        private void CreateNotificationChannel()
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                var channel = new NotificationChannel(
+                    "default",
+                    "General Notifications",
+                    NotificationImportance.High)
+                {
+                    Description = "Default notification channel",
+                    LockscreenVisibility = NotificationVisibility.Public
+                };
+
+                channel.EnableLights(true);
+                channel.EnableVibration(true);
+
+                var manager = (NotificationManager)GetSystemService(NotificationService);
+                manager?.CreateNotificationChannel(channel);
+
+                Android.Util.Log.Debug("FCM", "Notification channel created!");
+            }
         }
 
         private void RequestNotificationPermissionIfNeeded()
         {
-            // POST_NOTIFICATIONS مطلوب صراحة بداية من Android 13 (API 33)
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
                 const string permission = "android.permission.POST_NOTIFICATIONS";

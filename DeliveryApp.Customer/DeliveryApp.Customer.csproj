@@ -70,7 +70,6 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />
 		<PackageReference Include="Plugin.Firebase.CloudMessaging" Version="4.0.1" />
-		<PackageReference Include="Plugin.Firebase.Core" Version="4.2.0" />
 
 	</ItemGroup>
 
@@ -144,6 +143,12 @@
 		<MauiXaml Update="Views\SupportChatPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+	  <PackageReference Include="Xamarin.Firebase.Messaging">
+	    <Version>124.0.0.2</Version>
+	  </PackageReference>
 	</ItemGroup>
 
 </Project>

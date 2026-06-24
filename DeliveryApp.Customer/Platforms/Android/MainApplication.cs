@@ -1,6 +1,5 @@
 ﻿using Android.App;
 using Android.Runtime;
-using Plugin.Firebase.CloudMessaging;
 
 namespace DeliveryApp.Customer;
 
@@ -11,11 +10,4 @@ public class MainApplication : MauiApplication
         : base(handle, ownership) { }
 
     protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
-
-    public override void OnCreate()
-    {
-        base.OnCreate();
-        // Firebase Cloud Messaging init
-        _ = CrossFirebaseCloudMessaging.Current;
-    }
 }
