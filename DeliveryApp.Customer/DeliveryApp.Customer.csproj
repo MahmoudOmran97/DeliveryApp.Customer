@@ -58,7 +58,9 @@
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
-
+	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
+		<GoogleServicesJson Include="Platforms\Android\google-services.json" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -67,8 +69,8 @@
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />
-		<PackageReference Include="Plugin.CloudFirestore" Version="4.0.0" />
-		<PackageReference Include="Plugin.Firebase" Version="4.2.1" />
+		<PackageReference Include="Plugin.Firebase.CloudMessaging" Version="4.0.1" />
+		<PackageReference Include="Plugin.Firebase.Core" Version="4.2.0" />
 
 	</ItemGroup>
 
