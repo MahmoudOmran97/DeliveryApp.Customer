@@ -11,21 +11,24 @@ public partial class RewardsViewModel : BaseViewModel
 {
     readonly ApiService _api;
     readonly AuthService _auth;
+    readonly CartService _cart;
 
     [ObservableProperty] bool _isRefreshing;
     [ObservableProperty] string _userName = string.Empty;
     [ObservableProperty] int _pointsBalance;
     [ObservableProperty] int _couponsCount;
 
-    public ObservableCollection<Deal> Deals { get; } = new();
+    public string GreetingPrefix => LocalizationService.Current.TwoLetterISOLanguageName == "ar"
+        ? "أهلاً، " : "Hi, ";
 
-    // Group deals by restaurant
+    public ObservableCollection<Deal> Deals { get; } = new();
     public ObservableCollection<DealGroup> DealGroups { get; } = new();
 
-    public RewardsViewModel(ApiService api, AuthService auth)
+    public RewardsViewModel(ApiService api, AuthService auth, CartService cart)
     {
         _api = api;
         _auth = auth;
+        _cart = cart;
         UserName = auth.GetUserName().Split(' ')[0];
     }
 
@@ -42,21 +45,16 @@ public partial class RewardsViewModel : BaseViewModel
             var allDeals = list ?? new();
             foreach (var d in allDeals) Deals.Add(d);
 
-            // Load points
             var pointsResult = await _api.GetPointsAsync();
             PointsBalance = pointsResult.Balance;
 
-            // Load coupons count
             var coupons = await _api.GetMyCouponsAsync();
             if (coupons != null)
                 CouponsCount = coupons.Count(c => c.Status == "Available");
 
-            // Group by restaurant
-            var grouped = allDeals
-                .GroupBy(d => d.RestaurantName ?? "عروض عامة")
-                .Select(g => new DealGroup(g.Key, g.ToList()));
-
-            foreach (var g in grouped) DealGroups.Add(g);
+            foreach (var g in allDeals.GroupBy(d => d.RestaurantName ?? "عروض عامة")
+                         .Select(x => new DealGroup(x.Key, x.ToList())))
+                DealGroups.Add(g);
         }
         finally { IsBusy = false; IsRefreshing = false; }
     }
@@ -65,11 +63,55 @@ public partial class RewardsViewModel : BaseViewModel
     async Task RefreshAsync() { IsRefreshing = true; await LoadAsync(); }
 
     [RelayCommand]
-    static Task OpenRestaurant(Deal d)
+    async Task AddDealToCart(Deal deal)
     {
-        if (d.RestaurantId.HasValue)
-            return Shell.Current.GoToAsync($"RestaurantPage?id={d.RestaurantId}");
-        return Task.CompletedTask;
+        if (!deal.ProductId.HasValue || !deal.RestaurantId.HasValue || !deal.DiscountedPrice.HasValue)
+        {
+            if (deal.RestaurantId.HasValue)
+                await Shell.Current.GoToAsync($"RestaurantPage?id={deal.RestaurantId}");
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var product = await _api.GetProductAsync(deal.ProductId.Value);
+            if (product == null)
+            {
+                await AlertAsync(LocalizationService.Get("ProductNotFound"));
+                return;
+            }
+
+            if (product.HasVariants)
+            {
+                await Shell.Current.GoToAsync($"RestaurantPage?id={deal.RestaurantId}");
+                return;
+            }
+
+            var ok = _cart.AddItem(
+                deal.RestaurantId.Value,
+                product,
+                deliveryFee: 15m,
+                unitPrice: deal.DiscountedPrice.Value,
+                dealId: deal.Id,
+                notes: deal.Title);
+
+            if (!ok)
+            {
+                var clear = await Shell.Current.DisplayAlert(
+                    LocalizationService.Get("DifferentRestaurant"),
+                    LocalizationService.Get("DifferentRestaurantMsg"),
+                    LocalizationService.Get("YesClear"),
+                    LocalizationService.Get("Cancel"));
+                if (!clear) return;
+                _cart.Clear();
+                _cart.AddItem(deal.RestaurantId.Value, product, deliveryFee: 15m,
+                    unitPrice: deal.DiscountedPrice.Value, dealId: deal.Id, notes: deal.Title);
+            }
+
+            await Shell.Current.GoToAsync("CartPage");
+        }
+        finally { IsBusy = false; }
     }
 
     [RelayCommand]
@@ -82,7 +124,5 @@ public partial class RewardsViewModel : BaseViewModel
 public class DealGroup : List<Deal>
 {
     public string RestaurantName { get; }
-
-    public DealGroup(string name, List<Deal> deals) : base(deals)
-        => RestaurantName = name;
+    public DealGroup(string name, List<Deal> deals) : base(deals) => RestaurantName = name;
 }

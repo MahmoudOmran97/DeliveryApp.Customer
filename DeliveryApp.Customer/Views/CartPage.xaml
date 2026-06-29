@@ -68,7 +68,7 @@
 
                             <!-- Name + price -->
                             <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
-                                <Label Text="{Binding Product.Name}"
+                                <Label Text="{Binding DisplayName}"
                                        FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
                                 <Label Text="{Binding TotalPriceText}"
                                        FontFamily="CairoBold" FontSize="14" TextColor="#FF5722"/>

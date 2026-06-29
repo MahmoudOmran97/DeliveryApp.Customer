@@ -155,7 +155,7 @@
                                                             WidthRequest="140" Padding="8">
                                                         <Border.GestureRecognizers>
                                                             <TapGestureRecognizer
-                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RewardsViewModel}}, Path=OpenRestaurantCommand}"
+                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RewardsViewModel}}, Path=AddDealToCartCommand}"
                                                                 CommandParameter="{Binding .}"/>
                                                         </Border.GestureRecognizers>
                                                         <VerticalStackLayout Spacing="4" FlowDirection="RightToLeft">
@@ -201,7 +201,7 @@
                                         Stroke="#F0F0F0" StrokeThickness="1">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RewardsViewModel}}, Path=OpenRestaurantCommand}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RewardsViewModel}}, Path=AddDealToCartCommand}"
                                             CommandParameter="{Binding .}"/>
                                     </Border.GestureRecognizers>
                                     <Grid RowDefinitions="130,Auto">

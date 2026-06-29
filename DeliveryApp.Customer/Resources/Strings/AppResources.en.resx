@@ -553,7 +553,7 @@
 			<value>points</value>
 		</data>
 		<data name="PointsSubTitle">
-			<value>The more you order, the more points you get</value>
+			<value>Orders over 200 EGP earn 20 points + 10 for each extra 100 EGP</value>
 		</data>
 		<data name="Tab_All">
 			<value>All</value>
@@ -773,5 +773,56 @@
 	</data>
 	<data name="NoShopsNearby">
 		<value>No shops found near this location</value>
+	</data>
+	<data name="ChooseSize">
+		<value>Choose size:</value>
+	</data>
+	<data name="Required">
+		<value>Required</value>
+	</data>
+	<data name="ChooseOne">
+		<value>Choose 1</value>
+	</data>
+	<data name="AddToCart">
+		<value>Add to cart</value>
+	</data>
+	<data name="CompleteSelections">
+		<value>Complete selections to add</value>
+	</data>
+	<data name="UploadPrescription">
+		<value>Upload prescription</value>
+	</data>
+	<data name="PrescriptionHint">
+		<value>Upload your doctor's prescription and we'll prepare your order</value>
+	</data>
+	<data name="ChoosePrescriptionImage">
+		<value>Choose prescription image</value>
+	</data>
+	<data name="OrderWithPrescription">
+		<value>Order with prescription</value>
+	</data>
+	<data name="PrescriptionAdded">
+		<value>Prescription uploaded successfully</value>
+	</data>
+	<data name="UploadPrescriptionFirst">
+		<value>Please upload a prescription first</value>
+	</data>
+	<data name="UploadFailed">
+		<value>Upload failed</value>
+	</data>
+	<data name="ProductNotFound">
+		<value>Product not found</value>
+	</data>
+	<data name="RedeemFailed">
+		<value>Could not redeem points</value>
+	</data>
+	<data name="CouponCreated">
+		<value>Coupon created</value>
+	</data>
+	<data name="Redeem100Points">
+		<value>Redeem 100 points (10 EGP coupon)</value>
+	</data>
+	<data name="Success">
+		<value>Success</value>
 	</data>
 	</root>

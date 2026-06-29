@@ -505,7 +505,7 @@
 				<value>نقطة</value>
 			</data>
 			<data name="PointsSubTitle">
-				<value>كل ما طلبت أكثر، كل ما حصلت على نقاط أكثر</value>
+				<value>كل فاتورة فوق 200 جنيه = 20 نقطة + 10 نقاط لكل 100 جنيه زيادة</value>
 			</data>
 			<data name="Tab_All">
 				<value>الكل</value>
@@ -725,5 +725,56 @@
 	</data>
 	<data name="NoShopsNearby">
 		<value>مفيش محلات قريبة في المنطقة دي</value>
+	</data>
+	<data name="ChooseSize">
+		<value>اختر الحجم:</value>
+	</data>
+	<data name="Required">
+		<value>مطلوب</value>
+	</data>
+	<data name="ChooseOne">
+		<value>اختر 1</value>
+	</data>
+	<data name="AddToCart">
+		<value>أضف للسلة</value>
+	</data>
+	<data name="CompleteSelections">
+		<value>أكمل الاختيارات للإضافة للسلة</value>
+	</data>
+	<data name="UploadPrescription">
+		<value>ارفع الروشتة</value>
+	</data>
+	<data name="PrescriptionHint">
+		<value>ارفع روشتة الدكتور وهنجهزلك الطلب بدون ما تدور على الأدوية</value>
+	</data>
+	<data name="ChoosePrescriptionImage">
+		<value>اختر صورة الروشتة</value>
+	</data>
+	<data name="OrderWithPrescription">
+		<value>اطلب بالروشتة</value>
+	</data>
+	<data name="PrescriptionAdded">
+		<value>تم رفع الروشتة بنجاح</value>
+	</data>
+	<data name="UploadPrescriptionFirst">
+		<value>ارفع الروشتة الأول</value>
+	</data>
+	<data name="UploadFailed">
+		<value>فشل الرفع</value>
+	</data>
+	<data name="ProductNotFound">
+		<value>المنتج مش موجود</value>
+	</data>
+	<data name="RedeemFailed">
+		<value>تعذر استبدال النقاط</value>
+	</data>
+	<data name="CouponCreated">
+		<value>تم إنشاء الكوبون</value>
+	</data>
+	<data name="Redeem100Points">
+		<value>استبدل 100 نقطة (كوبون 10 جنيه)</value>
+	</data>
+	<data name="Success">
+		<value>تم بنجاح</value>
 	</data>
 	</root>

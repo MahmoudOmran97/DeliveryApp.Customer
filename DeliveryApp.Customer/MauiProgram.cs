@@ -1,7 +1,11 @@
 using CommunityToolkit.Maui;
 using FFImageLoading.Maui;
+using Microsoft.Maui.LifecycleEvents;
 using Plugin.Firebase.CloudMessaging;
-using Plugin.Firebase.Core;
+
+#if ANDROID
+using Plugin.Firebase.Core.Platforms.Android;
+#endif
 
 using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.ViewModels;
@@ -26,7 +30,7 @@ public static class MauiProgram
             .UseMauiCommunityToolkit()
             .UseSkiaSharp()
             .UseFFImageLoading()
-            .UseFirebase()
+            .RegisterFirebaseServices()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("Cairo-Regular.ttf", "CairoRegular");
@@ -48,6 +52,7 @@ public static class MauiProgram
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<HomeViewModel>();
         builder.Services.AddTransient<RestaurantViewModel>();
+        builder.Services.AddTransient<ProductOptionsViewModel>();
         builder.Services.AddTransient<CartViewModel>();
         builder.Services.AddTransient<CheckoutViewModel>();
         builder.Services.AddTransient<OrderTrackingViewModel>();
@@ -72,6 +77,7 @@ public static class MauiProgram
         builder.Services.AddTransient<RegisterPage>();
         builder.Services.AddTransient<HomePage>();
         builder.Services.AddTransient<RestaurantPage>();
+        builder.Services.AddTransient<ProductOptionsPage>();
         builder.Services.AddTransient<CartPage>();
         builder.Services.AddTransient<CheckoutPage>();
         builder.Services.AddTransient<OrderTrackingPage>();
@@ -94,5 +100,22 @@ public static class MauiProgram
 #endif
 
         return builder.Build();
+    }
+
+    private static MauiAppBuilder RegisterFirebaseServices(this MauiAppBuilder builder)
+    {
+        builder.ConfigureLifecycleEvents(events =>
+        {
+#if ANDROID
+            events.AddAndroid(android =>
+                android.OnCreate((activity, _) =>
+                    CrossFirebase.Initialize(activity, () => Platform.CurrentActivity)));
+#endif
+        });
+
+        // تسجيل FCM service في DI
+        builder.Services.AddSingleton(CrossFirebaseCloudMessaging.Current);
+
+        return builder;
     }
 }

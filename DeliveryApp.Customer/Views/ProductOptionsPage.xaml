@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             x:Class="DeliveryApp.Customer.Views.ProductOptionsPage"
+             x:DataType="vm:ProductOptionsViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#80000000">
+
+    <Grid Padding="0" RowDefinitions="*,Auto">
+        <BoxView Grid.RowSpan="2" Color="Transparent">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseCommand}"/>
+            </BoxView.GestureRecognizers>
+        </BoxView>
+
+        <Border Grid.Row="1" BackgroundColor="White"
+                StrokeShape="RoundRectangle 24,24,0,0"
+                Stroke="Transparent" Padding="20,16,20,28">
+            <VerticalStackLayout Spacing="16">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Grid.Column="0" Spacing="4">
+                        <Label Text="{Binding Product.Name}" FontFamily="CairoBold" FontSize="20" TextColor="#212121"/>
+                        <Label Text="{Binding Product.Description}" FontFamily="CairoRegular"
+                               FontSize="13" TextColor="#757575" MaxLines="2"/>
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="✕" FontSize="22" TextColor="#757575" Padding="8">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CloseCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="{loc:Loc Key=ChooseSize}" FontFamily="CairoBold" FontSize="16"/>
+                        <Border BackgroundColor="#212121" StrokeShape="RoundRectangle 6" Padding="8,4">
+                            <Label Text="{loc:Loc Key=Required}" FontFamily="CairoBold" FontSize="11" TextColor="White"/>
+                        </Border>
+                    </Grid>
+                    <Label Text="{loc:Loc Key=ChooseOne}" FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
+
+                    <CollectionView ItemsSource="{Binding Variants}" SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="m:ProductVariant">
+                                <Border Stroke="#E0E0E0" StrokeThickness="1"
+                                        BackgroundColor="White" StrokeShape="RoundRectangle 12"
+                                        WidthRequest="110" Padding="12,10">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ProductOptionsViewModel}}, Path=SelectVariantCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="13"/>
+                                        <Label Text="{Binding PriceText}" FontFamily="CairoBold"
+                                               FontSize="12" TextColor="#FF5722"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <HorizontalStackLayout Grid.Column="0" Spacing="12" VerticalOptions="Center">
+                        <Border BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 8" Padding="12,6">
+                            <Label Text="−" FontSize="18">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding DecreaseQtyCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Border>
+                        <Label Text="{Binding Quantity}" FontFamily="CairoBold" FontSize="18" VerticalOptions="Center"/>
+                        <Border BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 8" Padding="12,6">
+                            <Label Text="+" FontSize="18">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding IncreaseQtyCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <Border Grid.Column="2" BackgroundColor="#FF5722"
+                            StrokeShape="RoundRectangle 14" Padding="20,12">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding AddToCartCommand}"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="{Binding AddButtonText}" FontFamily="CairoBold"
+                               FontSize="14" TextColor="White"/>
+                    </Border>
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>

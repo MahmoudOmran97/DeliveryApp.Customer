@@ -37,8 +37,8 @@ public partial class PointsViewModel : BaseViewModel
             Transactions.Clear();
             foreach (var t in result.Transactions)
                 Transactions.Add(t);
-            
-            FilterTransactions();
+
+            FilterTransactions(null);
         }
         catch (Exception)
         {
@@ -48,8 +48,10 @@ public partial class PointsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    void FilterTransactions()
+    void FilterTransactions(string? tab)
     {
+        if (!string.IsNullOrEmpty(tab))
+            SelectedTab = tab;
         FilteredTransactions.Clear();
         var query = SelectedTab switch
         {
@@ -57,9 +59,29 @@ public partial class PointsViewModel : BaseViewModel
             "Spent" => Transactions.Where(t => t.Amount < 0),
             _ => Transactions
         };
-
         foreach (var t in query)
             FilteredTransactions.Add(t);
+    }
+
+    [RelayCommand]
+    async Task RedeemPointsAsync()
+    {
+        IsBusy = true;
+        try
+        {
+            var result = await _api.RedeemPointsAsync(100);
+            if (result == null)
+            {
+                await AlertAsync(LocalizationService.Get("RedeemFailed"));
+                return;
+            }
+            await Shell.Current.DisplayAlert(
+                LocalizationService.Get("Success"),
+                $"{LocalizationService.Get("CouponCreated")}: {result.CouponCode}",
+                LocalizationService.Get("Ok"));
+            await LoadAsync();
+        }
+        finally { IsBusy = false; }
     }
 
     [RelayCommand]
@@ -74,10 +96,10 @@ public class PointTransaction
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public decimal Amount { get; set; }
+    public int Amount { get; set; }
     public DateTime Date { get; set; }
     public string AmountText => (Amount > 0 ? "+" : "") + Amount.ToString();
-    public string DateText => Date.ToString("yyyy/MM/dd");
+    public string DateText => Date.ToLocalTime().ToString("yyyy/MM/dd");
 }
 
 public class PointsResult

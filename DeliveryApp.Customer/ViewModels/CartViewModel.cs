@@ -27,25 +27,17 @@ public partial class CartViewModel : BaseViewModel
 
     void Sync()
     {
-        var toRemove = Items.Where(i => !_cart.Items.Any(c => c.Product.Id == i.Product.Id)).ToList();
-        foreach (var r in toRemove) Items.Remove(r);
-
+        Items.Clear();
         foreach (var cartItem in _cart.Items)
-        {
-            var existing = Items.FirstOrDefault(i => i.Product.Id == cartItem.Product.Id);
-            if (existing != null)
-                existing.Quantity = cartItem.Quantity;
-            else
-                Items.Add(cartItem);
-        }
+            Items.Add(cartItem);
 
         Total = _cart.TotalPrice;
-        IsEmpty = !Items.Any();
+        IsEmpty = _cart.IsEmpty;
     }
 
-    [RelayCommand] void Inc(CartItem i) => _cart.UpdateQuantity(i.Product.Id, i.Quantity + 1);
-    [RelayCommand] void Dec(CartItem i) => _cart.UpdateQuantity(i.Product.Id, i.Quantity - 1);
-    [RelayCommand] void Remove(CartItem i) => _cart.RemoveItem(i.Product.Id);
+    [RelayCommand] void Inc(CartItem i) => _cart.UpdateQuantity(i.LineKey, i.Quantity + 1);
+    [RelayCommand] void Dec(CartItem i) => _cart.UpdateQuantity(i.LineKey, i.Quantity - 1);
+    [RelayCommand] void Remove(CartItem i) => _cart.RemoveItem(i.LineKey);
 
     [RelayCommand]
     async Task Clear()

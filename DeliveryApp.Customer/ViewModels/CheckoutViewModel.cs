@@ -236,7 +236,9 @@ public partial class CheckoutViewModel : BaseViewModel
                 notes: string.IsNullOrWhiteSpace(Notes) ? null : Notes,
                 paymentMethod: PaymentMethod,
                 couponCode: CouponApplied ? CouponCode : null,
-                couponId: CouponApplied ? _appliedCouponId : null
+                couponId: CouponApplied ? _appliedCouponId : null,
+                prescriptionImageUrl: _cart.PrescriptionImageUrl,
+                prescriptionNotes: _cart.PrescriptionNotes
             );
 
             if (order != null)

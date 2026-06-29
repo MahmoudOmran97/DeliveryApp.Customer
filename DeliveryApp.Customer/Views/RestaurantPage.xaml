@@ -145,8 +145,28 @@
                 </Border>
 
                 <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
-
                                    Color="#FF5722" Margin="0,16"/>
+
+                <!-- Pharmacy: upload prescription -->
+                <Border IsVisible="{Binding IsPharmacy}" BackgroundColor="#E3F2FD"
+                        StrokeShape="RoundRectangle 14" Stroke="#90CAF9" Margin="16,8"
+                        Padding="16,14">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{loc:Loc Key=UploadPrescription}" FontFamily="CairoBold"
+                               FontSize="16" TextColor="#1565C0"/>
+                        <Label Text="{loc:Loc Key=PrescriptionHint}" FontFamily="CairoRegular"
+                               FontSize="13" TextColor="#424242"/>
+                        <Button Text="{loc:Loc Key=ChoosePrescriptionImage}"
+                                Command="{Binding UploadPrescriptionCommand}"
+                                BackgroundColor="#1976D2" TextColor="White"
+                                FontFamily="CairoBold" CornerRadius="10"/>
+                        <Button Text="{loc:Loc Key=OrderWithPrescription}"
+                                Command="{Binding OrderPrescriptionCommand}"
+                                BackgroundColor="#FF5722" TextColor="White"
+                                FontFamily="CairoBold" CornerRadius="10"
+                                IsVisible="{Binding PrescriptionPreview, Converter={StaticResource HasImage}}"/>
+                    </VerticalStackLayout>
+                </Border>
 
                 <!-- Menu Categories -->
 
@@ -171,7 +191,11 @@
                                         <DataTemplate x:DataType="m:Product">
 
                                             <Border Style="{StaticResource Card}" Margin="0,0,0,10">
-
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RestaurantViewModel}}, Path=ProductTappedCommand}"
+                                                        CommandParameter="{Binding .}"/>
+                                                </Border.GestureRecognizers>
                                                 <Grid ColumnDefinitions="*,84" ColumnSpacing="12">
 
                                                     <VerticalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
@@ -218,16 +242,19 @@
                                                             </Grid>
                                                         </Border>
 
-                                                        <!-- Add Button -->
-
+                                                        <!-- Add / customize -->
                                                         <Image Source="icon_plus.png" WidthRequest="34" HeightRequest="34"
-                                       HorizontalOptions="End" VerticalOptions="End">
+                                                               HorizontalOptions="End" VerticalOptions="End"
+                                                               IsVisible="{Binding HasVariants, Converter={StaticResource InvertBool}}">
                                                             <Image.GestureRecognizers>
                                                                 <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RestaurantViewModel}}, Path=AddToCartCommand}"
-                                            CommandParameter="{Binding .}"/>
+                                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RestaurantViewModel}}, Path=AddToCartCommand}"
+                                                                    CommandParameter="{Binding .}"/>
                                                             </Image.GestureRecognizers>
                                                         </Image>
+                                                        <Label Text="›" FontSize="28" TextColor="#FF5722"
+                                                               HorizontalOptions="End" VerticalOptions="End"
+                                                               IsVisible="{Binding HasVariants}"/>
 
                                                     </Grid>
 

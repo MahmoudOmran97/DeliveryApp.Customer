@@ -8,10 +8,12 @@ namespace DeliveryApp.Customer.ViewModels;
 public partial class SettingsViewModel : BaseViewModel
 {
     private readonly IServiceProvider _services;
+    private readonly ApiService _api;
 
-    public SettingsViewModel(IServiceProvider services)
+    public SettingsViewModel(IServiceProvider services, ApiService api)
     {
         _services = services;
+        _api = api;
     }
 
     // ── Language button colors ────────────────────────────────────
@@ -35,6 +37,7 @@ public partial class SettingsViewModel : BaseViewModel
 
         LocalizationService.SetLanguage(lang);
         RefreshButtons();
+        _ = _api.UpdateLanguagePreferenceAsync();
 
         await Task.Delay(150);
         RestartApp();

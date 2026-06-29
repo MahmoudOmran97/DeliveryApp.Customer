@@ -2,6 +2,7 @@
 // DeliveryApp.Customer / Models / ApiModels.cs
 // ═══════════════════════════════════════════════════════════════
 using CommunityToolkit.Mvvm.ComponentModel;
+using DeliveryApp.Customer.Services;
 
 namespace DeliveryApp.Customer.Models;
 
@@ -91,6 +92,7 @@ public class Product
     public int PreparationTime { get; set; }
     public int? Calories { get; set; }
     public bool IsAvailable { get; set; }
+    public List<ProductVariant> Variants { get; set; } = new();
 
     private const string _pImgBase = "https://deliveryappapi.runasp.net";
     public string? FullImageUrl
@@ -105,8 +107,22 @@ public class Product
 
     public decimal EffectivePrice => DiscountedPrice ?? Price;
     public bool HasDiscount => DiscountedPrice.HasValue && DiscountedPrice < Price;
-    public string PriceText => $"{EffectivePrice:F0} EGP";
+    public bool HasVariants => Variants.Count > 0;
+    public bool IsCustomizable => HasVariants;
+    public string PriceText => HasVariants
+        ? (LocalizationService.Current.TwoLetterISOLanguageName == "ar" ? "يمكن تخصيصه" : "Customizable")
+        : $"{EffectivePrice:F0} EGP";
     public string OriginalPriceText => $"{Price:F0} EGP";
+    public decimal MinVariantPrice => HasVariants ? Variants.Min(v => v.Price) : EffectivePrice;
+}
+
+public class ProductVariant
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public decimal Price { get; set; }
+    public int SortOrder { get; set; }
+    public string PriceText => $"+{Price:F0} EGP";
 }
 
 // ─── Cart ────────────────────────────────────────────────────────────────────
@@ -115,6 +131,10 @@ public partial class CartItem : ObservableObject
 {
     public int RestaurantId { get; set; }
     public Product Product { get; set; } = null!;
+    public int? VariantId { get; set; }
+    public string? VariantName { get; set; }
+    public int? DealId { get; set; }
+    public decimal UnitPrice { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalPrice))]
@@ -122,7 +142,9 @@ public partial class CartItem : ObservableObject
     private int _Quantity;
 
     public string? Notes { get; set; }
-    public decimal TotalPrice => Product.EffectivePrice * _Quantity;
+    public string LineKey => $"{Product.Id}:{VariantId ?? 0}:{DealId ?? 0}:{Notes}";
+    public string DisplayName => string.IsNullOrEmpty(VariantName) ? Product.Name : $"{Product.Name} ({VariantName})";
+    public decimal TotalPrice => UnitPrice * _Quantity;
     public string TotalPriceText => $"{TotalPrice:F0} EGP";
 }
 

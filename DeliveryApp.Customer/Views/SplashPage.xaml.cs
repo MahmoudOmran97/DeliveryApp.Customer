@@ -6,12 +6,14 @@ namespace DeliveryApp.Customer.Views;
 public partial class SplashPage : ContentPage
 {
     readonly AuthService _auth;
+    readonly FcmTokenService _fcm;
 
-    public SplashPage(AuthService auth)
+    public SplashPage(AuthService auth, FcmTokenService fcm)
     {
         InitializeComponent();
 
         _auth = auth;
+        _fcm = fcm;
 
         string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
 
@@ -28,6 +30,7 @@ public partial class SplashPage : ContentPage
 
         if (_auth.IsLoggedIn)
         {
+            await _fcm.RegisterAsync();
             var shell = IPlatformApplication.Current!.Services.GetService<AppShell>()!;
             Application.Current!.MainPage = shell;
         }

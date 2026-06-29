@@ -17,6 +17,7 @@ public partial class AppShell : Shell
         Navigated += OnShellNavigated;
 
         Routing.RegisterRoute(nameof(RestaurantPage), typeof(RestaurantPage));
+        Routing.RegisterRoute(nameof(ProductOptionsPage), typeof(ProductOptionsPage));
         Routing.RegisterRoute(nameof(CartPage), typeof(CartPage));
         Routing.RegisterRoute(nameof(CheckoutPage), typeof(CheckoutPage));
         Routing.RegisterRoute(nameof(OrderTrackingPage), typeof(OrderTrackingPage));

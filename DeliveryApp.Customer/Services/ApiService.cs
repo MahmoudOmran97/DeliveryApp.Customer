@@ -8,7 +8,6 @@ using DeliveryApp.Customer.ViewModels;
 namespace DeliveryApp.Customer.Services;
 
 public class ApiService
-
 {
 
     private readonly HttpClient _http;
@@ -182,36 +181,77 @@ public class ApiService
     // ─── Orders ──────────────────────────────────────────────────────────────
 
     public Task<Order?> PlaceOrderAsync(
-
         int restaurantId, List<CartItem> items,
-
         string address, double lat, double lng,
-
-        string? notes, string paymentMethod, string? couponCode = null, int? couponId = null)
-
+        string? notes, string paymentMethod,
+        string? couponCode = null, int? couponId = null,
+        string? prescriptionImageUrl = null, string? prescriptionNotes = null)
         => PostAsync<Order>("orders", new
-
         {
-
             RestaurantId = restaurantId,
-
-            Items = items.Select(i => new { ProductId = i.Product.Id, i.Quantity, i.Notes }),
-
+            Items = items.Select(i => new
+            {
+                ProductId = i.Product.Id,
+                i.Quantity,
+                i.Notes,
+                VariantId = i.VariantId,
+                UnitPriceOverride = i.DealId.HasValue ? i.UnitPrice : (decimal?)null
+            }),
             DeliveryAddress = address,
-
             DeliveryLatitude = lat,
-
             DeliveryLongitude = lng,
-
             DeliveryNotes = notes,
-
+            PrescriptionImageUrl = prescriptionImageUrl,
+            PrescriptionNotes = prescriptionNotes,
             PaymentMethod = paymentMethod,
-
             CouponCode = couponCode,
-
             CouponId = couponId
-
         });
+
+    public async Task<string?> UploadPrescriptionAsync(FileResult file)
+    {
+        try
+        {
+            SetAuth();
+            using var content = new MultipartFormDataContent();
+            await using var stream = await file.OpenReadAsync();
+            content.Add(new StreamContent(stream), "file", file.FileName);
+            var response = await _http.PostAsync($"{Base}/upload/prescription", content);
+            if (!response.IsSuccessStatusCode) return null;
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = System.Text.Json.JsonDocument.Parse(json);
+            return doc.RootElement.GetProperty("url").GetString();
+        }
+        catch (Exception ex)
+        {
+            Debug(ex, "upload/prescription");
+            return null;
+        }
+    }
+
+    public Task<Product?> GetProductAsync(int id)
+        => GetAsync<Product>($"products/{id}");
+
+    public async Task<RedeemPointsResult?> RedeemPointsAsync(int points)
+    {
+        try
+        {
+            SetAuth();
+            var body = new StringContent(
+                System.Text.Json.JsonSerializer.Serialize(new { points }),
+                System.Text.Encoding.UTF8, "application/json");
+            var response = await _http.PostAsync($"{Base}/user/points/redeem", body);
+            var json = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode) return null;
+            return System.Text.Json.JsonSerializer.Deserialize<RedeemPointsResult>(json,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        catch (Exception ex)
+        {
+            Debug(ex, "user/points/redeem");
+            return null;
+        }
+    }
 
     public Task<PagedResult<Order>?> GetMyOrdersAsync(int page = 1)
 
@@ -320,12 +360,45 @@ public class ApiService
         try
         {
             SetAuth();
+            if (string.IsNullOrEmpty(_auth.GetToken()))
+            {
+                System.Diagnostics.Debug.WriteLine("[API] user/fcm-token skipped — not logged in");
+                return;
+            }
+
             var body = new StringContent(
-                JsonSerializer.Serialize(new { token }),
+                JsonSerializer.Serialize(new
+                {
+                    token,
+                    language = LocalizationService.Current.TwoLetterISOLanguageName
+                }),
                 System.Text.Encoding.UTF8, "application/json");
-            await _http.PutAsync($"{Base}/user/fcm-token", body);
+            var response = await _http.PutAsync($"{Base}/user/fcm-token", body);
+
+            if (response.IsSuccessStatusCode)
+                System.Diagnostics.Debug.WriteLine("[API] FCM token saved to backend");
+            else
+                System.Diagnostics.Debug.WriteLine($"[API] user/fcm-token failed: {(int)response.StatusCode} {response.ReasonPhrase}");
         }
         catch (Exception ex) { Debug(ex, "user/fcm-token"); }
+    }
+
+    public async Task UpdateLanguagePreferenceAsync()
+    {
+        try
+        {
+            SetAuth();
+            if (string.IsNullOrEmpty(_auth.GetToken())) return;
+
+            var body = new StringContent(
+                JsonSerializer.Serialize(new
+                {
+                    language = LocalizationService.Current.TwoLetterISOLanguageName
+                }),
+                System.Text.Encoding.UTF8, "application/json");
+            await _http.PutAsync($"{Base}/user/language", body);
+        }
+        catch (Exception ex) { Debug(ex, "user/language"); }
     }
 
     private static void Debug(Exception ex, string path)
@@ -341,5 +414,12 @@ public class CouponValidationResult
     public string Title { get; set; } = string.Empty;
     public decimal Discount { get; set; }
     public decimal FinalAmount { get; set; }
+}
+
+public class RedeemPointsResult
+{
+    public string Message { get; set; } = string.Empty;
+    public string CouponCode { get; set; } = string.Empty;
+    public decimal Discount { get; set; }
 }
 
