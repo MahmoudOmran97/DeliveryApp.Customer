@@ -144,15 +144,15 @@ public class ApiService
     /// minRating → فقط المحلات >= هذا التقييم (4.0 للصفحة الرئيسية)
     /// </summary>
     public Task<PagedResult<Restaurant>?> GetRestaurantsAsync(
-        string? search    = null,
-        string  sortBy    = "rating",
-        int     page      = 1,
-        double? lat       = null,
-        double? lng       = null,
-        double  radiusKm  = 10.0,
-        string? category  = null,
-        double  minRating = 0.0,
-        int     pageSize  = 20)
+        string? search = null,
+        string sortBy = "rating",
+        int page = 1,
+        double? lat = null,
+        double? lng = null,
+        double radiusKm = 10.0,
+        string? category = null,
+        double minRating = 0.0,
+        int pageSize = 20)
     {
         var q = $"restaurants?page={page}&pageSize={pageSize}&sortBy={sortBy}";
         if (!string.IsNullOrEmpty(search))
@@ -346,7 +346,7 @@ public class ApiService
 
     public async Task<PointsResult> GetPointsAsync()
     {
-        try 
+        try
         {
             return await GetAsync<PointsResult>("user/points") ?? new PointsResult();
         }
@@ -404,7 +404,8 @@ public class ApiService
     private static void Debug(Exception ex, string path)
 
         => System.Diagnostics.Debug.WriteLine($"[API] {path}: {ex.Message}");
-
+    public Task<List<object>?> GetIceServersAsync()
+       => GetAsync<List<object>>("webrtc/ice-servers");
 }
 
 public class CouponValidationResult
@@ -423,3 +424,5 @@ public class RedeemPointsResult
     public decimal Discount { get; set; }
 }
 
+
+   
