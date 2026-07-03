@@ -126,6 +126,24 @@ public partial class OrderTrackingViewModel : BaseViewModel
             $"DriverChatPage?orderId={OrderId}&driverName={Uri.EscapeDataString(driverName)}");
     }
 
+    // ✅ FIX — زرار الاتصال كان مش متربط بأي Command خالص في الـ XAML
+    [RelayCommand]
+    async Task CallDriverAsync()
+    {
+        if (Order?.Driver == null) return;
+
+        if (!_hub.IsConnected)
+        {
+            await AlertAsync("لا يوجد اتصال بالسيرفر، تأكد من الإنترنت وحاول تاني.");
+            return;
+        }
+
+        var driverName = Order.Driver.Name ?? LocalizationService.Get("Driver");
+        await _hub.StartVoiceCallAsync(OrderId);
+        await Shell.Current.GoToAsync(
+            $"CallPage?orderId={OrderId}&otherPartyName={Uri.EscapeDataString(driverName)}&isIncoming=false");
+    }
+
     void RefreshStatus() => (StatusMsg, Progress) = Order?.Status switch
     {
         "Pending"        => (LocalizationService.Get("Status_Pending"), 0.10),

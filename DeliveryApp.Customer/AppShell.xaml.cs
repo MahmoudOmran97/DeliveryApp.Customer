@@ -32,6 +32,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(RewardsPage), typeof(RewardsPage));
         Routing.RegisterRoute(nameof(PointsPage), typeof(PointsPage));
         Routing.RegisterRoute(nameof(CategoryPage), typeof(CategoryPage));
+        Routing.RegisterRoute(nameof(CallPage), typeof(CallPage));
     }
 
     void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)

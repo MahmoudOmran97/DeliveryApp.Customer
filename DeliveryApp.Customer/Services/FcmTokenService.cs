@@ -67,8 +67,31 @@ public class FcmTokenService
         {
             var title = args.Notification?.Title ?? "New Notification";
             var body  = args.Notification?.Body  ?? "";
+            var data  = args.Notification?.Data;
 
             System.Diagnostics.Debug.WriteLine($"[FCM] NotificationReceived: {title} - {body}");
+
+            // ✅ CALL FIX — لو الـ push ده تنبيه مكالمة واردة (type=IncomingCall)، افتح شاشة
+            // المكالمة مباشرة بدل ما نعرضه كإشعار عادي بس. ده بيغطي حالة الأبليكيشن في
+            // الخلفية (مش مقفول تماماً) حتى لو الـ SignalR كان لسه مش متوصل.
+            if (data != null && data.TryGetValue("type", out var type) && type == "IncomingCall"
+                && data.TryGetValue("orderId", out var orderIdStr)
+                && int.TryParse(orderIdStr, out var orderId))
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    try
+                    {
+                        await Shell.Current.GoToAsync(
+                            $"CallPage?orderId={orderId}&otherPartyName={Uri.EscapeDataString("المندوب")}&isIncoming=true");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[FCM] Navigate to CallPage failed: {ex.Message}");
+                    }
+                });
+                return;
+            }
 
             MainThread.BeginInvokeOnMainThread(() =>
             {

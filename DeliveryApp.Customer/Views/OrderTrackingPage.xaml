@@ -140,6 +140,9 @@
                             <!-- Call Button -->
                             <Border Grid.Column="3" BackgroundColor="#E8F5E9" StrokeShape="RoundRectangle 22"
                                     Stroke="Transparent" WidthRequest="44" HeightRequest="44">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding CallDriverCommand}"/>
+                                </Border.GestureRecognizers>
                                 <Label Text="📞" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
                             </Border>
                         </Grid>

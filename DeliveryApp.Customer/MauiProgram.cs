@@ -69,6 +69,13 @@ public static class MauiProgram
         builder.Services.AddTransient<RewardsViewModel>();
         builder.Services.AddTransient<PointsViewModel>();
         builder.Services.AddTransient<CategoryViewModel>();
+        builder.Services.AddTransient<CallViewModel>();
+        builder.Services.AddTransient<CallAudioService>();
+#if ANDROID
+        builder.Services.AddSingleton<DeliveryApp.Customer.Services.Call.IPlatformAudioIO, DeliveryApp.Customer.Platforms.Android.AndroidAudioIO>();
+#elif IOS
+        builder.Services.AddSingleton<DeliveryApp.Customer.Services.Call.IPlatformAudioIO, DeliveryApp.Customer.Platforms.iOS.IosAudioIO>();
+#endif
 
         // ── Pages ─────────────────────────────────
         builder.Services.AddSingleton<AppShell>();
@@ -94,6 +101,7 @@ public static class MauiProgram
         builder.Services.AddTransient<RewardsPage>();
         builder.Services.AddTransient<PointsPage>();
         builder.Services.AddTransient<CategoryPage>();
+        builder.Services.AddTransient<CallPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

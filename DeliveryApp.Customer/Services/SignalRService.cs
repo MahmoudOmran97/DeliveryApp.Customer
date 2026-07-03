@@ -15,6 +15,12 @@ public class SignalRService
     public event Action<double, double>? DriverLocationUpdated;
     public event Action<int, string, string>? ChatMessageReceived;   // orderId, senderId, message
     public event Action<int, int>? IncomingVoiceCall;
+    public event Action<int, int>? VoiceCallAccepted; // orderId, byUserId
+    public event Action<int, int, string>? CallOfferReceived;      // orderId, fromUserId, sdp
+    public event Action<int, int, string>? CallAnswerReceived;     // orderId, fromUserId, sdp
+    public event Action<int, int, string>? IceCandidateReceived;   // orderId, fromUserId, candidateJson
+    public event Action<int, int>? VoiceCallRejected; // orderId, byUserId
+    public event Action<int, int>? VoiceCallEnded;    // orderId, byUserId
     // ✅ FIX #1 & #3 — استقبال إشعار قبول الدرايفر للطلب
     public event Action<int, int, string>? DriverAssigned;          // orderId, driverId, driverName
 
@@ -59,6 +65,51 @@ public class SignalRService
             MainThread.BeginInvokeOnMainThread(() => IncomingVoiceCall?.Invoke(orderId, callerId));
         });
 
+        _hub.On<JsonElement>("CallOfferReceived", el =>
+        {
+            var orderId = el.GetProperty("orderId").GetInt32();
+            var fromUserId = el.GetProperty("fromUserId").GetInt32();
+            var sdp = el.GetProperty("sdp").GetString() ?? "";
+            MainThread.BeginInvokeOnMainThread(() => CallOfferReceived?.Invoke(orderId, fromUserId, sdp));
+        });
+
+        _hub.On<JsonElement>("CallAnswerReceived", el =>
+        {
+            var orderId = el.GetProperty("orderId").GetInt32();
+            var fromUserId = el.GetProperty("fromUserId").GetInt32();
+            var sdp = el.GetProperty("sdp").GetString() ?? "";
+            MainThread.BeginInvokeOnMainThread(() => CallAnswerReceived?.Invoke(orderId, fromUserId, sdp));
+        });
+
+        _hub.On<JsonElement>("IceCandidateReceived", el =>
+        {
+            var orderId = el.GetProperty("orderId").GetInt32();
+            var fromUserId = el.GetProperty("fromUserId").GetInt32();
+            var candidateJson = el.GetProperty("candidateJson").GetString() ?? "";
+            MainThread.BeginInvokeOnMainThread(() => IceCandidateReceived?.Invoke(orderId, fromUserId, candidateJson));
+        });
+
+        _hub.On<JsonElement>("VoiceCallAccepted", el =>
+        {
+            var orderId = el.GetProperty("orderId").GetInt32();
+            var byUserId = el.GetProperty("byUserId").GetInt32();
+            MainThread.BeginInvokeOnMainThread(() => VoiceCallAccepted?.Invoke(orderId, byUserId));
+        });
+
+        _hub.On<JsonElement>("VoiceCallRejected", el =>
+        {
+            var orderId = el.GetProperty("orderId").GetInt32();
+            var byUserId = el.GetProperty("byUserId").GetInt32();
+            MainThread.BeginInvokeOnMainThread(() => VoiceCallRejected?.Invoke(orderId, byUserId));
+        });
+
+        _hub.On<JsonElement>("VoiceCallEnded", el =>
+        {
+            var orderId = el.GetProperty("orderId").GetInt32();
+            var byUserId = el.GetProperty("byUserId").GetInt32();
+            MainThread.BeginInvokeOnMainThread(() => VoiceCallEnded?.Invoke(orderId, byUserId));
+        });
+
         // ✅ FIX #1 & #3 — السيرفر بيبعت DriverAssigned لما الدرايفر يقبل الطلب
         _hub.On<JsonElement>("DriverAssigned", el =>
         {
@@ -93,6 +144,36 @@ public class SignalRService
     public async Task StartVoiceCallAsync(int orderId)
     {
         if (IsConnected) await _hub!.InvokeAsync("StartVoiceCall", orderId);
+    }
+
+    public async Task AcceptVoiceCallAsync(int orderId)
+    {
+        if (IsConnected) await _hub!.InvokeAsync("AcceptVoiceCall", orderId);
+    }
+
+    public async Task SendCallOfferAsync(int orderId, string sdp)
+    {
+        if (IsConnected) await _hub!.InvokeAsync("SendCallOffer", orderId, sdp);
+    }
+
+    public async Task SendCallAnswerAsync(int orderId, string sdp)
+    {
+        if (IsConnected) await _hub!.InvokeAsync("SendCallAnswer", orderId, sdp);
+    }
+
+    public async Task SendIceCandidateAsync(int orderId, string candidateJson)
+    {
+        if (IsConnected) await _hub!.InvokeAsync("SendIceCandidate", orderId, candidateJson);
+    }
+
+    public async Task RejectVoiceCallAsync(int orderId)
+    {
+        if (IsConnected) await _hub!.InvokeAsync("RejectVoiceCall", orderId);
+    }
+
+    public async Task EndVoiceCallAsync(int orderId)
+    {
+        if (IsConnected) await _hub!.InvokeAsync("EndVoiceCall", orderId);
     }
 
     public async Task DisconnectAsync()
