@@ -1,13 +1,9 @@
+using global::Android.Content;
 using global::Android.Media;
-using DeliveryApp.Customer.Services.Call;
+using DeliveryApp.Customer.Services.Call;   // Driver: DeliveryApp.Driver.Services.Call
 
-namespace DeliveryApp.Customer.Platforms.Android;
+namespace DeliveryApp.Customer.Platforms.Android;   // Driver: DeliveryApp.Driver.Platforms.Android
 
-/// <summary>
-/// التقاط الصوت من المايك وتشغيله على السماعة على أندرويد، باستخدام Android.Media.AudioRecord/
-/// AudioTrack مباشرة (Java APIs متاحة native في .NET Android، مفيش حاجة إضافية لازم تتحمّل).
-/// ⚠️ مقدرتش أختبر الكود ده على جهاز/إيموليتور حقيقي في البيئة دي — جرّبه وقولّي لو حصل استثناء.
-/// </summary>
 public class AndroidAudioIO : IPlatformAudioIO
 {
     public int SampleRate => 48000;
@@ -17,18 +13,78 @@ public class AndroidAudioIO : IPlatformAudioIO
     AudioTrack? _player;
     CancellationTokenSource? _captureCts;
     Task? _captureTask;
+    AudioManager? _audioManager;
+    AudioFocusRequestClass? _focusRequest;
+    int _priorMode = (int)Mode.Normal;
+
+    AudioManager? GetAudioManager()
+    {
+        if (_audioManager != null) return _audioManager;
+        var ctx = global::Android.App.Application.Context;
+        _audioManager = ctx.GetSystemService(Context.AudioService) as AudioManager;
+        return _audioManager;
+    }
+
+    void ConfigureAudioForCall()
+    {
+        var am = GetAudioManager();
+        if (am == null) return;
+
+        _priorMode = (int)am.Mode;
+
+        if (OperatingSystem.IsAndroidVersionAtLeast(26))
+        {
+            var attrs = new AudioAttributes.Builder()!
+                .SetUsage(AudioUsageKind.VoiceCommunication)!
+                .SetContentType(AudioContentType.Speech)!
+                .Build()!;
+            _focusRequest = new AudioFocusRequestClass.Builder(AudioFocus.Gain)!
+                .SetAudioAttributes(attrs)!
+                .Build()!;
+            am.RequestAudioFocus(_focusRequest);
+        }
+        else
+        {
+#pragma warning disable CA1422
+            am.RequestAudioFocus(null, global::Android.Media.Stream.VoiceCall, AudioFocus.Gain);
+#pragma warning restore CA1422
+        }
+
+        am.Mode = Mode.InCommunication;
+        am.SpeakerphoneOn = true;
+    }
+
+    void RestoreAudio()
+    {
+        var am = GetAudioManager();
+        if (am == null) return;
+        try
+        {
+            am.SpeakerphoneOn = false;
+            am.Mode = (Mode)_priorMode;
+            if (OperatingSystem.IsAndroidVersionAtLeast(26) && _focusRequest != null)
+                am.AbandonAudioFocusRequest(_focusRequest);
+            else
+#pragma warning disable CA1422
+                am.AbandonAudioFocus(null);
+#pragma warning restore CA1422
+        }
+        catch { }
+        _focusRequest = null;
+    }
 
     public void StartCapture()
     {
         if (_recorder != null) return;
+        ConfigureAudioForCall();
         int minBufBytes = AudioRecord.GetMinBufferSize(
-            SampleRate, ChannelIn.Mono, Encoding.Pcm16bit);   // ← بدون "Android.Media."
+            SampleRate, ChannelIn.Mono, Encoding.Pcm16bit);
         int bufBytes = Math.Max(minBufBytes, FrameSizeSamples * 2 * 4);
         _recorder = new AudioRecord(
             AudioSource.VoiceCommunication,
             SampleRate,
             ChannelIn.Mono,
-            Encoding.Pcm16bit,                                // ← بدون "Android.Media."
+            Encoding.Pcm16bit,
             bufBytes);
         _recorder.StartRecording();
         _captureCts = new CancellationTokenSource();
@@ -56,13 +112,15 @@ public class AndroidAudioIO : IPlatformAudioIO
         _recorder = null;
         _captureCts = null;
         _captureTask = null;
+        if (_player == null) RestoreAudio();
     }
 
     public void StartPlayback()
     {
         if (_player != null) return;
+        if (_recorder == null) ConfigureAudioForCall();
         int minBufBytes = AudioTrack.GetMinBufferSize(
-            SampleRate, ChannelOut.Mono, Encoding.Pcm16bit);   // ← بدون "Android.Media."
+            SampleRate, ChannelOut.Mono, Encoding.Pcm16bit);
         int bufBytes = Math.Max(minBufBytes, FrameSizeSamples * 2 * 4);
         _player = new AudioTrack(
             new AudioAttributes.Builder()!
@@ -72,7 +130,7 @@ public class AndroidAudioIO : IPlatformAudioIO
             new AudioFormat.Builder()!
                 .SetSampleRate(SampleRate)!
                 .SetChannelMask(ChannelOut.Mono)!
-                .SetEncoding(Encoding.Pcm16bit)!               // ← بدون "Android.Media."
+                .SetEncoding(Encoding.Pcm16bit)!
                 .Build()!,
             bufBytes,
             AudioTrackMode.Stream,
@@ -85,6 +143,7 @@ public class AndroidAudioIO : IPlatformAudioIO
         try { _player?.Stop(); } catch { }
         _player?.Release();
         _player = null;
+        if (_recorder == null) RestoreAudio();
     }
 
     public void PlayPcm(short[] pcm)
