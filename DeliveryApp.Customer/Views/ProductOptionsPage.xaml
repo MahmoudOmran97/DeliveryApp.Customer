@@ -7,6 +7,7 @@
              x:Class="DeliveryApp.Customer.Views.ProductOptionsPage"
              x:DataType="vm:ProductOptionsViewModel"
              Shell.NavBarIsVisible="False"
+             Shell.PresentationMode="ModalAnimated"
              BackgroundColor="#80000000">
 
     <Grid Padding="0" RowDefinitions="*,Auto">

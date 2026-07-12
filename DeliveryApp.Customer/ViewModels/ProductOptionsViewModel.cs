@@ -34,12 +34,19 @@ public partial class ProductOptionsViewModel : BaseViewModel
         if (string.IsNullOrWhiteSpace(value)) return;
         try
         {
-            var decoded = Uri.UnescapeDataString(value);
-            Product = System.Text.Json.JsonSerializer.Deserialize<Product>(decoded,
+            // NOTE: Shell already URL-decodes [QueryProperty] values before this setter runs.
+            // Do NOT call Uri.UnescapeDataString(value) here again — double-decoding a JSON
+            // payload that contains a literal '%' (e.g. a product name/description like
+            // "Discount 20%") throws a UriFormatException, which the catch below then
+            // swallows silently, leaving Product null and the sheet blank.
+            Product = System.Text.Json.JsonSerializer.Deserialize<Product>(value,
                 new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             LoadVariants();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ProductOptionsViewModel] Failed to parse product JSON: {ex}");
+        }
     }
 
     void LoadVariants()
