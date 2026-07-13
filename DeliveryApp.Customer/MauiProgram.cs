@@ -78,8 +78,12 @@ public static class MauiProgram
 #endif
 
         // ── Pages ─────────────────────────────────
-        builder.Services.AddSingleton<AppShell>();
-        builder.Services.AddSingleton<SplashPage>();
+        // ✅ FIX: كانوا Singleton — لما بنعمل RestartApp() (مثلاً بعد تغيير اللغة)
+        // كنا بناخد نفس الـ Shell/Splash القديمة اللي أصلاً اتفصلت عن الـ Window
+        // (الـ native handlers بتاعتها اتلغت)، وربطها تاني كـ MainPage كان بيرمي
+        // NullReferenceException جوا محرك الـ Shell. لازم Instance جديدة كل مرة.
+        builder.Services.AddTransient<AppShell>();
+        builder.Services.AddTransient<SplashPage>();
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<RegisterPage>();
         builder.Services.AddTransient<HomePage>();

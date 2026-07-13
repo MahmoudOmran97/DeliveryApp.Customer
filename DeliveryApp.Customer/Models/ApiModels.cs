@@ -116,13 +116,16 @@ public class Product
     public decimal MinVariantPrice => HasVariants ? Variants.Min(v => v.Price) : EffectivePrice;
 }
 
-public class ProductVariant
+public partial class ProductVariant : ObservableObject
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public int SortOrder { get; set; }
     public string PriceText => $"+{Price:F0} EGP";
+
+    [ObservableProperty]
+    private bool _isSelected;
 }
 
 // ─── Cart ────────────────────────────────────────────────────────────────────

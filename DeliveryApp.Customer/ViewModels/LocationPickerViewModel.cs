@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace DeliveryApp.Customer.ViewModels;
@@ -14,7 +15,11 @@ public partial class LocationPickerViewModel : BaseViewModel
     [RelayCommand]
     async Task ConfirmLocation()
     {
+        // ✅ FIX: نفس مشكلة deliveryFee — لازم InvariantCulture عشان الفاصلة
+        // العشرية تفضل "." مش "٫" لو اللغة عربي، وإلا الـ query string بيتبعت غلط.
+        var lat = SelectedLat.ToString(CultureInfo.InvariantCulture);
+        var lng = SelectedLng.ToString(CultureInfo.InvariantCulture);
         // العودة لصفحة الشيك أوت مع إرسال الإحداثيات في الرابط
-        await Shell.Current.GoToAsync($"..?lat={SelectedLat}&lng={SelectedLng}");
+        await Shell.Current.GoToAsync($"..?lat={lat}&lng={lng}");
     }
 }

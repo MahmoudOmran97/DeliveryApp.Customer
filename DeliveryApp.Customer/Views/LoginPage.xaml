@@ -13,8 +13,13 @@
 			<Grid Grid.Row="0" BackgroundColor="#FF5722">
 				<VerticalStackLayout VerticalOptions="End" HorizontalOptions="Center"
                                      Padding="0,0,0,36" Spacing="10">
-					<Label Text="🛵" FontSize="60" HorizontalOptions="Center"/>
-					<Label Text="{loc:Loc Key=WelcomeBack}"
+                    <Image x:Name="imgLogo"
+Aspect="AspectFill"
+HeightRequest="110"
+WidthRequest="110"
+HorizontalOptions="Center"
+VerticalOptions="Center"/>
+                    <Label Text="{loc:Loc Key=WelcomeBack}"
                            FontFamily="CairoBold" FontSize="30" TextColor="White" HorizontalOptions="Center"/>
 					<Label Text="{loc:Loc Key=SignInToContinue}"
                            FontFamily="CairoRegular" FontSize="14" TextColor="#FFCCBC" HorizontalOptions="Center"/>

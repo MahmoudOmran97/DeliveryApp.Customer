@@ -35,7 +35,7 @@ public partial class ProductOptionsViewModel : BaseViewModel
         try
         {
             // NOTE: Shell already URL-decodes [QueryProperty] values before this setter runs.
-            // Do NOT call Uri.UnescapeDataString(value) here again — double-decoding a JSON
+            // Do NOT call Uri.UnescapeDataString(value) here again ? double-decoding a JSON
             // payload that contains a literal '%' (e.g. a product name/description like
             // "Discount 20%") throws a UriFormatException, which the catch below then
             // swallows silently, leaving Product null and the sheet blank.
@@ -64,7 +64,13 @@ public partial class ProductOptionsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    void SelectVariant(ProductVariant variant) => SelectedVariant = variant;
+    void SelectVariant(ProductVariant variant)
+    {
+        foreach (var v in Variants)
+            v.IsSelected = v == variant;
+
+        SelectedVariant = variant;
+    }
 
     [RelayCommand]
     void IncreaseQty() => Quantity++;
