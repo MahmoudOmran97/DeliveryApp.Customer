@@ -21,9 +21,28 @@ public partial class LoginViewModel : BaseViewModel
 
     [ObservableProperty] string _password = string.Empty;
 
+    // ── Language toggle (top of Login page) ────────────────────
+    // Shows the *other* language's name, since tapping switches to it.
+    public string OtherLanguageLabel =>
+        LocalizationService.Current.TwoLetterISOLanguageName == LocalizationService.Arabic
+            ? "English"
+            : "العربية";
+
     public LoginViewModel(ApiService api, AuthService auth, FcmTokenService fcm)
 
     { _api = api; _auth = auth; _fcm = fcm; }
+
+    [RelayCommand]
+    void ToggleLanguage()
+    {
+        // {loc:Loc} markup extension resolves the string once at page-build time,
+        // it doesn't auto-refresh on language change — so we rebuild the Login page
+        // after switching, same approach SettingsViewModel uses for the rest of the app.
+        LocalizationService.ToggleLanguage();
+
+        var loginPage = IPlatformApplication.Current!.Services.GetService<LoginPage>()!;
+        Application.Current!.MainPage = new NavigationPage(loginPage);
+    }
 
     [RelayCommand]
 
@@ -74,5 +93,3 @@ public partial class LoginViewModel : BaseViewModel
     }
 
 }
-
-

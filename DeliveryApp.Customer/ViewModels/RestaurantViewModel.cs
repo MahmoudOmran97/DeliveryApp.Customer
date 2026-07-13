@@ -2,6 +2,7 @@
 // DeliveryApp.Customer / ViewModels / RestaurantViewModel.cs
 // ═══════════════════════════════════════════════════════════════
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -58,8 +59,12 @@ public partial class RestaurantViewModel : BaseViewModel
         if (p.HasVariants)
         {
             var json = Uri.EscapeDataString(JsonSerializer.Serialize(p));
+            // ✅ FIX: نفس مشكلة LocationPickerViewModel — لازم InvariantCulture عشان الفاصلة
+            // العشرية تفضل "." مش "٫" لو اللغة عربي، وإلا الـ decimal QueryProperty
+            // في ProductOptionsPage بيفشل بـ FormatException.
+            var fee = (Restaurant?.DeliveryFee ?? 15m).ToString(CultureInfo.InvariantCulture);
             await Shell.Current.GoToAsync(
-                $"ProductOptionsPage?product={json}&restaurantId={RestaurantId}&deliveryFee={Restaurant?.DeliveryFee ?? 15m}");
+                $"ProductOptionsPage?product={json}&restaurantId={RestaurantId}&deliveryFee={fee}");
             return;
         }
         await AddToCart(p);

@@ -6,12 +6,26 @@
              x:Class="DeliveryApp.Customer.Views.LoginPage"
              x:DataType="vm:LoginViewModel"
              NavigationPage.HasNavigationBar="False">
-	<ScrollView>
-		<Grid RowDefinitions="280,*">
+    <ScrollView>
+        <Grid RowDefinitions="280,*">
 
-			<!-- Orange top section -->
-			<Grid Grid.Row="0" BackgroundColor="#FF5722">
-				<VerticalStackLayout VerticalOptions="End" HorizontalOptions="Center"
+            <!-- Orange top section -->
+            <Grid Grid.Row="0" BackgroundColor="#FF5722">
+
+                <!-- Language toggle -->
+                <Border HorizontalOptions="End" VerticalOptions="Start"
+                        Margin="0,16,16,0" Padding="12,6"
+                        StrokeShape="RoundRectangle 16"
+                        Stroke="#FFCCBC"
+                        BackgroundColor="Transparent">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleLanguageCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="{Binding OtherLanguageLabel}"
+                           FontFamily="CairoRegular" FontSize="13" TextColor="White"/>
+                </Border>
+
+                <VerticalStackLayout VerticalOptions="End" HorizontalOptions="Center"
                                      Padding="0,0,0,36" Spacing="10">
                     <Image x:Name="imgLogo"
 Aspect="AspectFill"
@@ -21,73 +35,73 @@ HorizontalOptions="Center"
 VerticalOptions="Center"/>
                     <Label Text="{loc:Loc Key=WelcomeBack}"
                            FontFamily="CairoBold" FontSize="30" TextColor="White" HorizontalOptions="Center"/>
-					<Label Text="{loc:Loc Key=SignInToContinue}"
+                    <Label Text="{loc:Loc Key=SignInToContinue}"
                            FontFamily="CairoRegular" FontSize="14" TextColor="#FFCCBC" HorizontalOptions="Center"/>
-				</VerticalStackLayout>
-			</Grid>
+                </VerticalStackLayout>
+            </Grid>
 
-			<!-- White card -->
-			<Border Grid.Row="0" Grid.RowSpan="2"
+            <!-- White card -->
+            <Border Grid.Row="0" Grid.RowSpan="2"
                     BackgroundColor="#F8F9FA"
                     StrokeShape="RoundRectangle 32,32,0,0"
                     Stroke="Transparent"
                     VerticalOptions="End"
                     Padding="28,32,28,40">
-				<VerticalStackLayout Spacing="18">
+                <VerticalStackLayout Spacing="18">
 
-					<Label Text="{loc:Loc Key=Login}"
+                    <Label Text="{loc:Loc Key=Login}"
                            FontFamily="CairoBold" FontSize="26" TextColor="#212121"/>
 
-					<!-- Email -->
-					<VerticalStackLayout Spacing="6">
-						<Label Text="{loc:Loc Key=Email}"
+                    <!-- Email -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{loc:Loc Key=Email}"
                                FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-						<Border Style="{StaticResource InputBorder}">
-							<Entry Placeholder="{loc:Loc Key=EmailPlaceholder}"
+                        <Border Style="{StaticResource InputBorder}">
+                            <Entry Placeholder="{loc:Loc Key=EmailPlaceholder}"
                                    Text="{Binding Email}"
                                    Keyboard="Email" HeightRequest="50"
                                    BackgroundColor="Transparent"
                                    FontFamily="CairoRegular" FontSize="15" TextColor="#212121"/>
-						</Border>
-					</VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
 
-					<!-- Password -->
-					<VerticalStackLayout Spacing="6">
-						<Label Text="{loc:Loc Key=Password}"
+                    <!-- Password -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{loc:Loc Key=Password}"
                                FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-						<Border Style="{StaticResource InputBorder}">
-							<Entry Placeholder="{loc:Loc Key=PasswordPlaceholder}"
+                        <Border Style="{StaticResource InputBorder}">
+                            <Entry Placeholder="{loc:Loc Key=PasswordPlaceholder}"
                                    Text="{Binding Password}"
                                    IsPassword="True"
                                    HeightRequest="50" BackgroundColor="Transparent"
                                    FontFamily="CairoRegular" FontSize="15" TextColor="#212121"
                                    ReturnCommand="{Binding LoginCommand}"/>
-						</Border>
-					</VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
 
-					<Button Text="{loc:Loc Key=Login}"
+                    <Button Text="{loc:Loc Key=Login}"
                             Command="{Binding LoginCommand}"
                             IsEnabled="{Binding IsNotBusy}"
                             Style="{StaticResource PrimaryBtn}"
                             Margin="0,6,0,0"/>
 
-					<ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
                                        Color="#FF5722" HorizontalOptions="Center"/>
 
-					<HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
-						<Label Text="{loc:Loc Key=DontHaveAccount}"
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                        <Label Text="{loc:Loc Key=DontHaveAccount}"
                                FontFamily="CairoRegular" FontSize="14" TextColor="#757575" VerticalOptions="Center"/>
-						<Label Text="{loc:Loc Key=Register}"
+                        <Label Text="{loc:Loc Key=Register}"
                                FontFamily="CairoBold" FontSize="14" TextColor="#FF5722" VerticalOptions="Center">
-							<Label.GestureRecognizers>
-								<TapGestureRecognizer Command="{Binding GoToRegisterCommand}"/>
-							</Label.GestureRecognizers>
-						</Label>
-					</HorizontalStackLayout>
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoToRegisterCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </HorizontalStackLayout>
 
-				</VerticalStackLayout>
-			</Border>
+                </VerticalStackLayout>
+            </Border>
 
-		</Grid>
-	</ScrollView>
+        </Grid>
+    </ScrollView>
 </ContentPage>

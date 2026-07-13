@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Models;
@@ -8,14 +9,41 @@ namespace DeliveryApp.Customer.ViewModels;
 
 [QueryProperty(nameof(ProductJson), "product")]
 [QueryProperty(nameof(RestaurantId), "restaurantId")]
-[QueryProperty(nameof(DeliveryFee), "deliveryFee")]
+[QueryProperty(nameof(DeliveryFeeRaw), "deliveryFee")]
 public partial class ProductOptionsViewModel : BaseViewModel
 {
     readonly CartService _cart;
 
     [ObservableProperty] string _productJson = "";
     [ObservableProperty] int _restaurantId;
-    [ObservableProperty] decimal _deliveryFee = 15m;
+
+    // ? FIX: MAUI Shell's [QueryProperty] type-converts the raw string into the target
+    // property type using CurrentCulture, NOT InvariantCulture. So when the UI language
+    // is Arabic, converting "35.00" straight into a `decimal` property throws
+    // FormatException, because the Arabic culture doesn't accept "." as the decimal
+    // separator. Fix: receive the value as a plain `string` (no implicit conversion),
+    // then parse it ourselves with CultureInfo.InvariantCulture.
+    // NOTE: written manually (no [ObservableProperty]) to avoid any ambiguity with a
+    // stale generated "DeliveryFee" property from a previous build.
+    string _deliveryFeeRaw = "15";
+    public string DeliveryFeeRaw
+    {
+        get => _deliveryFeeRaw;
+        set
+        {
+            if (_deliveryFeeRaw == value) return;
+            _deliveryFeeRaw = value;
+            OnPropertyChanged(nameof(DeliveryFeeRaw));
+
+            if (decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var fee))
+                DeliveryFee = fee;
+            else
+                System.Diagnostics.Debug.WriteLine($"[ProductOptionsViewModel] Could not parse deliveryFee '{value}', keeping default {DeliveryFee}");
+        }
+    }
+
+    public decimal DeliveryFee { get; private set; } = 15m;
+
     [ObservableProperty] Product? _product;
     [ObservableProperty] ProductVariant? _selectedVariant;
     [ObservableProperty] int _quantity = 1;
