@@ -21,59 +21,89 @@
             <Label Text="{loc:Loc Key=CreateAccount}" FontFamily="CairoBold" FontSize="28" TextColor="#212121"/>
             <Label Text="{loc:Loc Key=FillDetails}" FontFamily="CairoRegular" FontSize="14" TextColor="#757575"/>
 
-            <!-- Full Name -->
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{loc:Loc Key=FullName}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-                <Border Style="{StaticResource InputBorder}">
-                    <Entry Placeholder="{loc:Loc Key=FullNamePlaceholder}" Text="{Binding FullName}"
-                           HeightRequest="50" BackgroundColor="Transparent"
-                           FontFamily="CairoRegular" FontSize="15"/>
-                </Border>
+            <!-- ── خطوة 1: بيانات الحساب ────────────────────────────────── -->
+            <VerticalStackLayout IsVisible="{Binding IsNotOtpStep}" Spacing="16">
+
+                <!-- Full Name -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{loc:Loc Key=FullName}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                    <Border Style="{StaticResource InputBorder}">
+                        <Entry Placeholder="{loc:Loc Key=FullNamePlaceholder}" Text="{Binding FullName}"
+                               HeightRequest="50" BackgroundColor="Transparent"
+                               FontFamily="CairoRegular" FontSize="15"/>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Email -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{loc:Loc Key=Email}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                    <Border Style="{StaticResource InputBorder}">
+                        <Entry Placeholder="{loc:Loc Key=EmailPlaceholder}" Text="{Binding Email}" Keyboard="Email"
+                               HeightRequest="50" BackgroundColor="Transparent"
+                               FontFamily="CairoRegular" FontSize="15"/>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Phone -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{loc:Loc Key=PhoneNumber}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                    <Border Style="{StaticResource InputBorder}">
+                        <Entry Placeholder="{loc:Loc Key=PhonePlaceholder}" Text="{Binding Phone}" Keyboard="Telephone"
+                               HeightRequest="50" BackgroundColor="Transparent"
+                               FontFamily="CairoRegular" FontSize="15"/>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Password -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{loc:Loc Key=Password}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                    <Border Style="{StaticResource InputBorder}">
+                        <Entry Placeholder="{loc:Loc Key=MinPasswordHint}" Text="{Binding Password}" IsPassword="True"
+                               HeightRequest="50" BackgroundColor="Transparent"
+                               FontFamily="CairoRegular" FontSize="15"/>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Confirm Password -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{loc:Loc Key=ConfirmPassword}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                    <Border Style="{StaticResource InputBorder}">
+                        <Entry Placeholder="{loc:Loc Key=ConfirmPasswordPlaceholder}" Text="{Binding ConfirmPassword}"
+                               IsPassword="True" HeightRequest="50" BackgroundColor="Transparent"
+                               FontFamily="CairoRegular" FontSize="15"
+                               ReturnCommand="{Binding SendOtpCommand}"/>
+                    </Border>
+                </VerticalStackLayout>
+
+                <Button Text="{loc:Loc Key=SendCode}" Command="{Binding SendOtpCommand}"
+                        IsEnabled="{Binding IsNotBusy}" Style="{StaticResource PrimaryBtn}" Margin="0,8,0,0"/>
             </VerticalStackLayout>
 
-            <!-- Email -->
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{loc:Loc Key=Email}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-                <Border Style="{StaticResource InputBorder}">
-                    <Entry Placeholder="{loc:Loc Key=EmailPlaceholder}" Text="{Binding Email}" Keyboard="Email"
-                           HeightRequest="50" BackgroundColor="Transparent"
-                           FontFamily="CairoRegular" FontSize="15"/>
-                </Border>
-            </VerticalStackLayout>
+            <!-- ── خطوة 2: تأكيد كود التحقق ─────────────────────────────── -->
+            <VerticalStackLayout IsVisible="{Binding IsOtpStep}" Spacing="16">
 
-            <!-- Phone -->
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{loc:Loc Key=PhoneNumber}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-                <Border Style="{StaticResource InputBorder}">
-                    <Entry Placeholder="{loc:Loc Key=PhonePlaceholder}" Text="{Binding Phone}" Keyboard="Telephone"
-                           HeightRequest="50" BackgroundColor="Transparent"
-                           FontFamily="CairoRegular" FontSize="15"/>
-                </Border>
-            </VerticalStackLayout>
+                <Label Text="{loc:Loc Key=EnterOtpAndNewPassword}" FontFamily="CairoRegular" FontSize="14" TextColor="#757575"/>
 
-            <!-- Password -->
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{loc:Loc Key=Password}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-                <Border Style="{StaticResource InputBorder}">
-                    <Entry Placeholder="{loc:Loc Key=MinPasswordHint}" Text="{Binding Password}" IsPassword="True"
-                           HeightRequest="50" BackgroundColor="Transparent"
-                           FontFamily="CairoRegular" FontSize="15"/>
-                </Border>
-            </VerticalStackLayout>
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{loc:Loc Key=OtpCode}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                    <Border Style="{StaticResource InputBorder}">
+                        <Entry Placeholder="{loc:Loc Key=OtpPlaceholder}" Text="{Binding Otp}" Keyboard="Numeric"
+                               HeightRequest="50" BackgroundColor="Transparent"
+                               FontFamily="CairoRegular" FontSize="15"
+                               ReturnCommand="{Binding RegisterCommand}"/>
+                    </Border>
+                </VerticalStackLayout>
 
-            <!-- Confirm Password -->
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{loc:Loc Key=ConfirmPassword}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-                <Border Style="{StaticResource InputBorder}">
-                    <Entry Placeholder="{loc:Loc Key=ConfirmPasswordPlaceholder}" Text="{Binding ConfirmPassword}"
-                           IsPassword="True" HeightRequest="50" BackgroundColor="Transparent"
-                           FontFamily="CairoRegular" FontSize="15"
-                           ReturnCommand="{Binding RegisterCommand}"/>
-                </Border>
-            </VerticalStackLayout>
+                <Button Text="{loc:Loc Key=CreateAccount}" Command="{Binding RegisterCommand}"
+                        IsEnabled="{Binding IsNotBusy}" Style="{StaticResource PrimaryBtn}" Margin="0,8,0,0"/>
 
-            <Button Text="{loc:Loc Key=CreateAccount}" Command="{Binding RegisterCommand}"
-                    IsEnabled="{Binding IsNotBusy}" Style="{StaticResource PrimaryBtn}" Margin="0,8,0,0"/>
+                <Label Text="{loc:Loc Key=ChangeEmail}" FontFamily="CairoBold" FontSize="14"
+                       TextColor="#FF5722" HorizontalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding EditDetailsCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </VerticalStackLayout>
 
             <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
                                Color="#FF5722" HorizontalOptions="Center"/>

@@ -131,9 +131,25 @@ public class ApiService
 
         => PostAsync<LoginResponse>("auth/login", new { Email = email, Password = password });
 
-    public Task<LoginResponse?> RegisterAsync(string name, string email, string password, string phone)
+    // ✅ الجديد: بارامتر otp إضافي — لازم يتبعت مع بيانات التسجيل عشان يتحقق منه السيرفر
+    public Task<LoginResponse?> RegisterAsync(string name, string email, string password, string phone, string otp)
 
-        => PostAsync<LoginResponse>("auth/register", new { FullName = name, Email = email, Password = password, Phone = phone, Role = "Customer" });
+        => PostAsync<LoginResponse>("auth/register", new { FullName = name, Email = email, Password = password, Phone = phone, Role = "Customer", Otp = otp });
+
+    // ─── OTP (تسجيل حساب جديد / نسيت كلمة المرور) ─────────────────────────────
+    // purpose: "Register" أو "ResetPassword"
+
+    public async Task SendOtpAsync(string email, string purpose)
+        => await PostAsync<object>("auth/send-otp", new { Email = email, Purpose = purpose });
+
+    public async Task<bool> VerifyOtpAsync(string email, string code, string purpose)
+    {
+        var result = await PostAsync<object>("auth/verify-otp", new { Email = email, Code = code, Purpose = purpose });
+        return result != null;
+    }
+
+    public async Task ResetPasswordAsync(string email, string code, string newPassword)
+        => await PostAsync<object>("auth/reset-password", new { Email = email, Code = code, NewPassword = newPassword });
 
     // ─── Restaurants ─────────────────────────────────────────────────────────
 
@@ -423,6 +439,3 @@ public class RedeemPointsResult
     public string CouponCode { get; set; } = string.Empty;
     public decimal Discount { get; set; }
 }
-
-
-   

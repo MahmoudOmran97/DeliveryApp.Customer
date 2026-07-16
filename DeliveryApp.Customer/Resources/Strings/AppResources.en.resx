@@ -545,184 +545,184 @@
 	</data>
 
 
-		<!-- Points & Rewards -->
-		<data name="PointsTitle">
-			<value>Points History</value>
-		</data>
-		<data name="PointsBalanceLabel">
-			<value>points</value>
-		</data>
-		<data name="PointsSubTitle">
-			<value>Orders over 200 EGP earn 20 points + 10 for each extra 100 EGP</value>
-		</data>
-		<data name="Tab_All">
-			<value>All</value>
-		</data>
-		<data name="Tab_Earned">
-			<value>Earned</value>
-		</data>
-		<data name="Tab_Spent">
-			<value>Spent</value>
-		</data>
-		<data name="NoPointsFound">
-			<value>No points history found</value>
-		</data>
-		<data name="Points">
-			<value>Points</value>
-		</data>
-		<data name="Coupons">
-			<value>Coupons</value>
-		</data>
-		<data name="Rewards">
-			<value>Rewards</value>
-		</data>
-		<data name="OrderNow">
-			<value>Order Now</value>
-		</data>
-		<data name="Categories">
-			<value>Categories</value>
-		</data>
-		<data name="Cat_Restaurants">
-			<value>Restaurants</value>
-		</data>
-		<data name="Cat_Grocery">
-			<value>Grocery</value>
-		</data>
-		<data name="Cat_Pharmacy">
-			<value>Pharmacy</value>
-		</data>
-		<data name="Cat_Drinks">
-			<value>Drinks</value>
-		</data>
-		<data name="UseAndSave">
-			<value>Use &amp; Save</value>
-		</data>
+	<!-- Points & Rewards -->
+	<data name="PointsTitle">
+		<value>Points History</value>
+	</data>
+	<data name="PointsBalanceLabel">
+		<value>points</value>
+	</data>
+	<data name="PointsSubTitle">
+		<value>Orders over 200 EGP earn 20 points + 10 for each extra 100 EGP</value>
+	</data>
+	<data name="Tab_All">
+		<value>All</value>
+	</data>
+	<data name="Tab_Earned">
+		<value>Earned</value>
+	</data>
+	<data name="Tab_Spent">
+		<value>Spent</value>
+	</data>
+	<data name="NoPointsFound">
+		<value>No points history found</value>
+	</data>
+	<data name="Points">
+		<value>Points</value>
+	</data>
+	<data name="Coupons">
+		<value>Coupons</value>
+	</data>
+	<data name="Rewards">
+		<value>Rewards</value>
+	</data>
+	<data name="OrderNow">
+		<value>Order Now</value>
+	</data>
+	<data name="Categories">
+		<value>Categories</value>
+	</data>
+	<data name="Cat_Restaurants">
+		<value>Restaurants</value>
+	</data>
+	<data name="Cat_Grocery">
+		<value>Grocery</value>
+	</data>
+	<data name="Cat_Pharmacy">
+		<value>Pharmacy</value>
+	</data>
+	<data name="Cat_Drinks">
+		<value>Drinks</value>
+	</data>
+	<data name="UseAndSave">
+		<value>Use &amp; Save</value>
+	</data>
 
-		<!-- Coupons Tabs -->
-		<data name="Tab_Valid">
-			<value>Valid</value>
-		</data>
-		<data name="Tab_Used">
-			<value>Used</value>
-		</data>
-		<data name="Tab_Expired">
-			<value>Expired</value>
-		</data>
-		<data name="Status_Valid">
-			<value>Available</value>
-		</data>
-		<data name="Status_Used">
-			<value>Used</value>
-		</data>
-		<data name="Status_Expired">
-			<value>Expired</value>
-		</data>
-		<data name="UseNow">
-			<value>Use Now</value>
-		</data>
+	<!-- Coupons Tabs -->
+	<data name="Tab_Valid">
+		<value>Valid</value>
+	</data>
+	<data name="Tab_Used">
+		<value>Used</value>
+	</data>
+	<data name="Tab_Expired">
+		<value>Expired</value>
+	</data>
+	<data name="Status_Valid">
+		<value>Available</value>
+	</data>
+	<data name="Status_Used">
+		<value>Used</value>
+	</data>
+	<data name="Status_Expired">
+		<value>Expired</value>
+	</data>
+	<data name="UseNow">
+		<value>Use Now</value>
+	</data>
 
-		<!-- Order Details Extras -->
-		<data name="DiscountAmount">
-			<value>Discount</value>
-		</data>
-		<data name="FinalTotal">
-			<value>Final Total</value>
-		</data>
-		<data name="FlowDirection">
-			<value>LeftToRight</value>
-		</data>
-		<data name="Location">
-			<value>Aswan, Egypt</value>
-		</data>
-		<data name="CartIcon">
-			<value>🛒</value>
-		</data>
-		<data name="RewardsIcon">
-			<value>🎁</value>
-		</data>
-		<data name="CouponsIcon">
-			<value>🎟️</value>
-		</data>
-		<data name="WelcomeToRewards">
-			<value>Welcome to your rewards</value>
-		</data>
-		<data name="ViewHistory">
-			<value>View History</value>
-		</data>
-		<data name="ViewCoupons">
-			<value>View Coupons</value>
-		</data>
-		<data name="NoDealsFound">
-			<value>No deals found</value>
-		</data>
-		<data name="FollowUsForDeals">
-			<value>Follow us for the latest deals and discounts</value>
-		</data>
-		<data name="RestaurantDeals">
-			<value>Restaurant Deals</value>
-		</data>
+	<!-- Order Details Extras -->
+	<data name="DiscountAmount">
+		<value>Discount</value>
+	</data>
+	<data name="FinalTotal">
+		<value>Final Total</value>
+	</data>
+	<data name="FlowDirection">
+		<value>LeftToRight</value>
+	</data>
+	<data name="Location">
+		<value>Aswan, Egypt</value>
+	</data>
+	<data name="CartIcon">
+		<value>🛒</value>
+	</data>
+	<data name="RewardsIcon">
+		<value>🎁</value>
+	</data>
+	<data name="CouponsIcon">
+		<value>🎟️</value>
+	</data>
+	<data name="WelcomeToRewards">
+		<value>Welcome to your rewards</value>
+	</data>
+	<data name="ViewHistory">
+		<value>View History</value>
+	</data>
+	<data name="ViewCoupons">
+		<value>View Coupons</value>
+	</data>
+	<data name="NoDealsFound">
+		<value>No deals found</value>
+	</data>
+	<data name="FollowUsForDeals">
+		<value>Follow us for the latest deals and discounts</value>
+	</data>
+	<data name="RestaurantDeals">
+		<value>Restaurant Deals</value>
+	</data>
 
-		<!-- New keys added for full localization -->
-		<data name="Driver">
-			<value>Driver</value>
-		</data>
-		<data name="DeliveryDriver">
-			<value>🛵 Delivery Driver</value>
-		</data>
-		<data name="MessageFrom">
-			<value>Message from</value>
-		</data>
-		<data name="OpenChat">
-			<value>Open Chat</value>
-		</data>
-		<data name="Later">
-			<value>Later</value>
-		</data>
-		<data name="ChatEmptyTitle">
-			<value>Start chatting with the delivery driver</value>
-		</data>
-		<data name="ChatEmptySub">
-			<value>You can coordinate delivery or ask about arrival time</value>
-		</data>
-		<data name="DifferentRestaurant">
-			<value>Different Restaurant</value>
-		</data>
-		<data name="DifferentRestaurantMsg">
-			<value>Your cart has items from another restaurant. Clear and add?</value>
-		</data>
-		<data name="YesClear">
-			<value>Yes, clear</value>
-		</data>
-		<data name="PasswordsNotMatch">
-			<value>Passwords do not match</value>
-		</data>
-		<data name="RegisterFailed">
-			<value>Registration failed. Email may already exist.</value>
-		</data>
-		<data name="CodeCopied">
-			<value>Code copied</value>
-		</data>
-		<data name="HaveCoupon">
-			<value>Have a coupon code?</value>
-		</data>
-		<data name="HaveCouponSub">
-			<value>Add it and enjoy the savings</value>
-		</data>
-		<data name="Verify">
-			<value>Verify</value>
-		</data>
-		<data name="NoCoupons">
-			<value>No coupons found</value>
-		</data>
-		<data name="NoCouponsSub">
-			<value>You can get coupons by using points in the rewards program</value>
-		</data>
-		<data name="YourLocation">
-			<value>📍 Your location</value>
-		</data>
-		<data name="TapToSelect">
-			<value>Tap to select location</value>
-		</data>
+	<!-- New keys added for full localization -->
+	<data name="Driver">
+		<value>Driver</value>
+	</data>
+	<data name="DeliveryDriver">
+		<value>🛵 Delivery Driver</value>
+	</data>
+	<data name="MessageFrom">
+		<value>Message from</value>
+	</data>
+	<data name="OpenChat">
+		<value>Open Chat</value>
+	</data>
+	<data name="Later">
+		<value>Later</value>
+	</data>
+	<data name="ChatEmptyTitle">
+		<value>Start chatting with the delivery driver</value>
+	</data>
+	<data name="ChatEmptySub">
+		<value>You can coordinate delivery or ask about arrival time</value>
+	</data>
+	<data name="DifferentRestaurant">
+		<value>Different Restaurant</value>
+	</data>
+	<data name="DifferentRestaurantMsg">
+		<value>Your cart has items from another restaurant. Clear and add?</value>
+	</data>
+	<data name="YesClear">
+		<value>Yes, clear</value>
+	</data>
+	<data name="PasswordsNotMatch">
+		<value>Passwords do not match</value>
+	</data>
+	<data name="RegisterFailed">
+		<value>Registration failed. Email may already exist.</value>
+	</data>
+	<data name="CodeCopied">
+		<value>Code copied</value>
+	</data>
+	<data name="HaveCoupon">
+		<value>Have a coupon code?</value>
+	</data>
+	<data name="HaveCouponSub">
+		<value>Add it and enjoy the savings</value>
+	</data>
+	<data name="Verify">
+		<value>Verify</value>
+	</data>
+	<data name="NoCoupons">
+		<value>No coupons found</value>
+	</data>
+	<data name="NoCouponsSub">
+		<value>You can get coupons by using points in the rewards program</value>
+	</data>
+	<data name="YourLocation">
+		<value>📍 Your location</value>
+	</data>
+	<data name="TapToSelect">
+		<value>Tap to select location</value>
+	</data>
 	<data name="ChooseLocation">
 		<value>Choose Location</value>
 	</data>
@@ -825,4 +825,52 @@
 	<data name="Success">
 		<value>Success</value>
 	</data>
-	</root>
+	<data name="ForgotPassword">
+		<value>Forgot password?</value>
+	</data>
+	<data name="ForgotPasswordTitle">
+		<value>Reset Password</value>
+	</data>
+	<data name="EnterEmailToReset">
+		<value>Enter your email and we'll send you a verification code</value>
+	</data>
+	<data name="SendCode">
+		<value>Send Code</value>
+	</data>
+	<data name="EnterOtpAndNewPassword">
+		<value>Enter the code sent to your email</value>
+	</data>
+	<data name="OtpCode">
+		<value>Verification Code</value>
+	</data>
+	<data name="OtpPlaceholder">
+		<value>Enter 6-digit code</value>
+	</data>
+	<data name="NewPassword">
+		<value>New Password</value>
+	</data>
+	<data name="ResetPassword">
+		<value>Reset Password</value>
+	</data>
+	<data name="ChangeEmail">
+		<value>Change email</value>
+	</data>
+	<data name="OtpSent">
+		<value>Verification code sent to your email</value>
+	</data>
+	<data name="EnterOtpCode">
+		<value>Please enter the verification code</value>
+	</data>
+	<data name="EnterEmailFirst">
+		<value>Please enter your email</value>
+	</data>
+	<data name="PasswordResetSuccess">
+		<value>Password reset successfully, please log in</value>
+	</data>
+	<data name="InvalidCredentials">
+		<value>Invalid email or password</value>
+	</data>
+	<data name="UnexpectedError">
+		<value>Something went wrong, please try again</value>
+	</data>
+</root>

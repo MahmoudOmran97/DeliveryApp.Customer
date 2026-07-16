@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.Views;
+using static DeliveryApp.Customer.Services.ApiService;
 
 namespace DeliveryApp.Customer.ViewModels;
 
@@ -52,7 +53,7 @@ public partial class LoginViewModel : BaseViewModel
 
         if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
 
-        { await AlertAsync("Please fill in all fields"); return; }
+        { await AlertAsync(LocalizationService.Get("LoginFillFields")); return; }
 
         IsBusy = true;
 
@@ -76,8 +77,20 @@ public partial class LoginViewModel : BaseViewModel
 
             }
 
-            else await AlertAsync("Invalid email or password");
+            else await AlertAsync(LocalizationService.Get("InvalidCredentials"));
 
+        }
+
+        // ✅ الفيكس: ده كان سبب الجليتش/الكراش لما اليوزر يدخل إيميل أو باسورد غلط.
+        // الـ API بيرجع 401 مع رسالة، وPostAsync كان بيرمي ApiException، لكن هنا
+        // ما كانش في catch ليها، فالاستثناء كان بيطلع Unhandled ويوقف الشاشة.
+        catch (ApiException ex)
+        {
+            await AlertAsync(ex.Message);
+        }
+        catch (Exception)
+        {
+            await AlertAsync(LocalizationService.Get("UnexpectedError"));
         }
 
         finally { IsBusy = false; }
@@ -90,6 +103,14 @@ public partial class LoginViewModel : BaseViewModel
         // ✅ Navigation عادي
         await Application.Current!.MainPage!.Navigation.PushAsync(
             IPlatformApplication.Current!.Services.GetService<RegisterPage>()!);
+    }
+
+    // ✅ الجديد: نسيت كلمة المرور
+    [RelayCommand]
+    async Task GoToForgotPassword()
+    {
+        await Application.Current!.MainPage!.Navigation.PushAsync(
+            IPlatformApplication.Current!.Services.GetService<ForgotPasswordPage>()!);
     }
 
 }

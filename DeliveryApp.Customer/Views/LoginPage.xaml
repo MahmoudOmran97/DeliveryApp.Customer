@@ -79,6 +79,14 @@ VerticalOptions="Center"/>
                         </Border>
                     </VerticalStackLayout>
 
+                    <Label Text="{loc:Loc Key=ForgotPassword}"
+                           FontFamily="CairoRegular" FontSize="13" TextColor="#FF5722"
+                           HorizontalOptions="End">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToForgotPasswordCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+
                     <Button Text="{loc:Loc Key=Login}"
                             Command="{Binding LoginCommand}"
                             IsEnabled="{Binding IsNotBusy}"

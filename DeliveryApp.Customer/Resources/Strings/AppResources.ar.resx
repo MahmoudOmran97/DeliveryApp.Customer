@@ -497,184 +497,184 @@
 
 
 
-			<!-- Points & Rewards -->
-			<data name="PointsTitle">
-				<value>سجل النقاط</value>
-			</data>
-			<data name="PointsBalanceLabel">
-				<value>نقطة</value>
-			</data>
-			<data name="PointsSubTitle">
-				<value>كل فاتورة فوق 200 جنيه = 20 نقطة + 10 نقاط لكل 100 جنيه زيادة</value>
-			</data>
-			<data name="Tab_All">
-				<value>الكل</value>
-			</data>
-			<data name="Tab_Earned">
-				<value>المكتسبة</value>
-			</data>
-			<data name="Tab_Spent">
-				<value>المنفقة</value>
-			</data>
-			<data name="NoPointsFound">
-				<value>لم نعثر على ما طلبت</value>
-			</data>
-			<data name="Points">
-				<value>النقاط</value>
-			</data>
-			<data name="Coupons">
-				<value>القسائم</value>
-			</data>
-			<data name="Rewards">
-				<value>المكافآت</value>
-			</data>
-			<data name="OrderNow">
-				<value>اطلب الآن</value>
-			</data>
-			<data name="Categories">
-				<value>التصنيفات</value>
-			</data>
-			<data name="Cat_Restaurants">
-				<value>المطاعم</value>
-			</data>
-			<data name="Cat_Grocery">
-				<value>بقالة</value>
-			</data>
-			<data name="Cat_Pharmacy">
-				<value>صيدلية</value>
-			</data>
-			<data name="Cat_Drinks">
-				<value>مشروبات</value>
-			</data>
-			<data name="UseAndSave">
-				<value>استخدم ووفر</value>
-			</data>
+	<!-- Points & Rewards -->
+	<data name="PointsTitle">
+		<value>سجل النقاط</value>
+	</data>
+	<data name="PointsBalanceLabel">
+		<value>نقطة</value>
+	</data>
+	<data name="PointsSubTitle">
+		<value>كل فاتورة فوق 200 جنيه = 20 نقطة + 10 نقاط لكل 100 جنيه زيادة</value>
+	</data>
+	<data name="Tab_All">
+		<value>الكل</value>
+	</data>
+	<data name="Tab_Earned">
+		<value>المكتسبة</value>
+	</data>
+	<data name="Tab_Spent">
+		<value>المنفقة</value>
+	</data>
+	<data name="NoPointsFound">
+		<value>لم نعثر على ما طلبت</value>
+	</data>
+	<data name="Points">
+		<value>النقاط</value>
+	</data>
+	<data name="Coupons">
+		<value>القسائم</value>
+	</data>
+	<data name="Rewards">
+		<value>المكافآت</value>
+	</data>
+	<data name="OrderNow">
+		<value>اطلب الآن</value>
+	</data>
+	<data name="Categories">
+		<value>التصنيفات</value>
+	</data>
+	<data name="Cat_Restaurants">
+		<value>المطاعم</value>
+	</data>
+	<data name="Cat_Grocery">
+		<value>بقالة</value>
+	</data>
+	<data name="Cat_Pharmacy">
+		<value>صيدلية</value>
+	</data>
+	<data name="Cat_Drinks">
+		<value>مشروبات</value>
+	</data>
+	<data name="UseAndSave">
+		<value>استخدم ووفر</value>
+	</data>
 
-		<!-- Coupons Tabs -->
-		<data name="Tab_Valid">
-			<value>صالح</value>
-		</data>
-		<data name="Tab_Used">
-			<value>استخدم</value>
-		</data>
-		<data name="Tab_Expired">
-			<value>انتهت</value>
-		</data>
-		<data name="Status_Valid">
-			<value>متاح</value>
-		</data>
-		<data name="Status_Used">
-			<value>مستخدم</value>
-		</data>
-		<data name="Status_Expired">
-			<value>منتهي</value>
-		</data>
-		<data name="UseNow">
-			<value>استخدم الآن</value>
-		</data>
+	<!-- Coupons Tabs -->
+	<data name="Tab_Valid">
+		<value>صالح</value>
+	</data>
+	<data name="Tab_Used">
+		<value>استخدم</value>
+	</data>
+	<data name="Tab_Expired">
+		<value>انتهت</value>
+	</data>
+	<data name="Status_Valid">
+		<value>متاح</value>
+	</data>
+	<data name="Status_Used">
+		<value>مستخدم</value>
+	</data>
+	<data name="Status_Expired">
+		<value>منتهي</value>
+	</data>
+	<data name="UseNow">
+		<value>استخدم الآن</value>
+	</data>
 
-		<!-- Order Details Extras -->
-		<data name="DiscountAmount">
-			<value>الخصم</value>
-		</data>
-		<data name="FinalTotal">
-			<value>الإجمالي النهائي</value>
-		</data>
-		<data name="FlowDirection">
-			<value>RightToLeft</value>
-		</data>
-		<data name="Location">
-			<value>أسوان، مصر</value>
-		</data>
-		<data name="CartIcon">
-			<value>🛒</value>
-		</data>
-		<data name="RewardsIcon">
-			<value>🎁</value>
-		</data>
-		<data name="CouponsIcon">
-			<value>🎟️</value>
-		</data>
-		<data name="WelcomeToRewards">
-			<value>أهلاً بك في مكافآتك</value>
-		</data>
-		<data name="ViewHistory">
-			<value>عرض السجل</value>
-		</data>
-		<data name="ViewCoupons">
-			<value>عرض القسائم</value>
-		</data>
-		<data name="NoDealsFound">
-			<value>لا توجد عروض حالياً</value>
-		</data>
-		<data name="FollowUsForDeals">
-			<value>تابعنا لمعرفة أحدث عروض وتخفيضات المطاعم</value>
-		</data>
-		<data name="RestaurantDeals">
-			<value>عروض المطاعم</value>
-		</data>
+	<!-- Order Details Extras -->
+	<data name="DiscountAmount">
+		<value>الخصم</value>
+	</data>
+	<data name="FinalTotal">
+		<value>الإجمالي النهائي</value>
+	</data>
+	<data name="FlowDirection">
+		<value>RightToLeft</value>
+	</data>
+	<data name="Location">
+		<value>أسوان، مصر</value>
+	</data>
+	<data name="CartIcon">
+		<value>🛒</value>
+	</data>
+	<data name="RewardsIcon">
+		<value>🎁</value>
+	</data>
+	<data name="CouponsIcon">
+		<value>🎟️</value>
+	</data>
+	<data name="WelcomeToRewards">
+		<value>أهلاً بك في مكافآتك</value>
+	</data>
+	<data name="ViewHistory">
+		<value>عرض السجل</value>
+	</data>
+	<data name="ViewCoupons">
+		<value>عرض القسائم</value>
+	</data>
+	<data name="NoDealsFound">
+		<value>لا توجد عروض حالياً</value>
+	</data>
+	<data name="FollowUsForDeals">
+		<value>تابعنا لمعرفة أحدث عروض وتخفيضات المطاعم</value>
+	</data>
+	<data name="RestaurantDeals">
+		<value>عروض المطاعم</value>
+	</data>
 
-		<!-- مفاتيح جديدة للترجمة الكاملة -->
-		<data name="Driver">
-			<value>المندوب</value>
-		</data>
-		<data name="DeliveryDriver">
-			<value>🛵 مندوب التوصيل</value>
-		</data>
-		<data name="MessageFrom">
-			<value>رسالة من</value>
-		</data>
-		<data name="OpenChat">
-			<value>فتح المحادثة</value>
-		</data>
-		<data name="Later">
-			<value>لاحقاً</value>
-		</data>
-		<data name="ChatEmptyTitle">
-			<value>ابدأ المحادثة مع مندوب التوصيل</value>
-		</data>
-		<data name="ChatEmptySub">
-			<value>يمكنك تنسيق التوصيل أو الاستفسار عن وقت الوصول</value>
-		</data>
-		<data name="DifferentRestaurant">
-			<value>مطعم مختلف</value>
-		</data>
-		<data name="DifferentRestaurantMsg">
-			<value>سلتك تحتوي على عناصر من مطعم آخر. هل تريد مسحها والإضافة؟</value>
-		</data>
-		<data name="YesClear">
-			<value>نعم، امسح</value>
-		</data>
-		<data name="PasswordsNotMatch">
-			<value>كلمتا المرور غير متطابقتين</value>
-		</data>
-		<data name="RegisterFailed">
-			<value>فشل التسجيل. قد يكون البريد الإلكتروني مستخدماً بالفعل.</value>
-		</data>
-		<data name="CodeCopied">
-			<value>تم نسخ الكود</value>
-		</data>
-		<data name="HaveCoupon">
-			<value>لديك كود خصم؟</value>
-		</data>
-		<data name="HaveCouponSub">
-			<value>أضفه واستمتع بالتوفير</value>
-		</data>
-		<data name="Verify">
-			<value>تحقق</value>
-		</data>
-		<data name="NoCoupons">
-			<value>لا يوجد قسائم</value>
-		</data>
-		<data name="NoCouponsSub">
-			<value>يمكنك الحصول على قسائم عن طريق استخدام النقاط في برنامج المكافآت</value>
-		</data>
-		<data name="YourLocation">
-			<value>📍 موقعك</value>
-		</data>
-		<data name="TapToSelect">
-			<value>اضغط لتحديد الموقع</value>
-		</data>
+	<!-- مفاتيح جديدة للترجمة الكاملة -->
+	<data name="Driver">
+		<value>المندوب</value>
+	</data>
+	<data name="DeliveryDriver">
+		<value>🛵 مندوب التوصيل</value>
+	</data>
+	<data name="MessageFrom">
+		<value>رسالة من</value>
+	</data>
+	<data name="OpenChat">
+		<value>فتح المحادثة</value>
+	</data>
+	<data name="Later">
+		<value>لاحقاً</value>
+	</data>
+	<data name="ChatEmptyTitle">
+		<value>ابدأ المحادثة مع مندوب التوصيل</value>
+	</data>
+	<data name="ChatEmptySub">
+		<value>يمكنك تنسيق التوصيل أو الاستفسار عن وقت الوصول</value>
+	</data>
+	<data name="DifferentRestaurant">
+		<value>مطعم مختلف</value>
+	</data>
+	<data name="DifferentRestaurantMsg">
+		<value>سلتك تحتوي على عناصر من مطعم آخر. هل تريد مسحها والإضافة؟</value>
+	</data>
+	<data name="YesClear">
+		<value>نعم، امسح</value>
+	</data>
+	<data name="PasswordsNotMatch">
+		<value>كلمتا المرور غير متطابقتين</value>
+	</data>
+	<data name="RegisterFailed">
+		<value>فشل التسجيل. قد يكون البريد الإلكتروني مستخدماً بالفعل.</value>
+	</data>
+	<data name="CodeCopied">
+		<value>تم نسخ الكود</value>
+	</data>
+	<data name="HaveCoupon">
+		<value>لديك كود خصم؟</value>
+	</data>
+	<data name="HaveCouponSub">
+		<value>أضفه واستمتع بالتوفير</value>
+	</data>
+	<data name="Verify">
+		<value>تحقق</value>
+	</data>
+	<data name="NoCoupons">
+		<value>لا يوجد قسائم</value>
+	</data>
+	<data name="NoCouponsSub">
+		<value>يمكنك الحصول على قسائم عن طريق استخدام النقاط في برنامج المكافآت</value>
+	</data>
+	<data name="YourLocation">
+		<value>📍 موقعك</value>
+	</data>
+	<data name="TapToSelect">
+		<value>اضغط لتحديد الموقع</value>
+	</data>
 	<data name="ChooseLocation">
 		<value>اختر موقعك</value>
 	</data>
@@ -777,4 +777,52 @@
 	<data name="Success">
 		<value>تم بنجاح</value>
 	</data>
-	</root>
+	<data name="ForgotPassword">
+		<value>نسيت كلمة المرور؟</value>
+	</data>
+	<data name="ForgotPasswordTitle">
+		<value>استعادة كلمة المرور</value>
+	</data>
+	<data name="EnterEmailToReset">
+		<value>ادخل بريدك الإلكتروني وهنبعتلك كود تحقق</value>
+	</data>
+	<data name="SendCode">
+		<value>إرسال الكود</value>
+	</data>
+	<data name="EnterOtpAndNewPassword">
+		<value>ادخل الكود اللي وصلك على الإيميل</value>
+	</data>
+	<data name="OtpCode">
+		<value>كود التحقق</value>
+	</data>
+	<data name="OtpPlaceholder">
+		<value>ادخل الكود المكون من 6 أرقام</value>
+	</data>
+	<data name="NewPassword">
+		<value>كلمة المرور الجديدة</value>
+	</data>
+	<data name="ResetPassword">
+		<value>تغيير كلمة المرور</value>
+	</data>
+	<data name="ChangeEmail">
+		<value>تغيير البريد الإلكتروني</value>
+	</data>
+	<data name="OtpSent">
+		<value>تم إرسال كود التحقق على بريدك الإلكتروني</value>
+	</data>
+	<data name="EnterOtpCode">
+		<value>من فضلك ادخل كود التحقق</value>
+	</data>
+	<data name="EnterEmailFirst">
+		<value>من فضلك ادخل بريدك الإلكتروني</value>
+	</data>
+	<data name="PasswordResetSuccess">
+		<value>تم تغيير كلمة المرور بنجاح، سجل دخولك</value>
+	</data>
+	<data name="InvalidCredentials">
+		<value>البريد الإلكتروني أو كلمة المرور غير صحيحة</value>
+	</data>
+	<data name="UnexpectedError">
+		<value>حصل خطأ غير متوقع، حاول تاني</value>
+	</data>
+</root>
