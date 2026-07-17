@@ -422,8 +422,17 @@ public class ApiService
         => System.Diagnostics.Debug.WriteLine($"[API] {path}: {ex.Message}");
     public Task<List<object>?> GetIceServersAsync()
        => GetAsync<List<object>>("webrtc/ice-servers");
+    public Task<AgoraTokenResult?> GetAgoraTokenAsync(string channelName, uint uid = 0)
+    => GetAsync<AgoraTokenResult>($"agora/token?channelName={Uri.EscapeDataString(channelName)}&uid={uid}");
 }
-
+public class AgoraTokenResult
+{
+    public string AppId { get; set; } = "";
+    public string ChannelName { get; set; } = "";
+    public uint Uid { get; set; }
+    public string Token { get; set; } = "";
+    public int ExpiresInSeconds { get; set; }
+}
 public class CouponValidationResult
 {
     public int Id { get; set; }

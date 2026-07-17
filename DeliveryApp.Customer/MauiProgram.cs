@@ -71,11 +71,11 @@ public static class MauiProgram
         builder.Services.AddTransient<PointsViewModel>();
         builder.Services.AddTransient<CategoryViewModel>();
         builder.Services.AddTransient<CallViewModel>();
-        builder.Services.AddTransient<CallAudioService>();
+       // builder.Services.AddTransient<CallAudioService>();
 #if ANDROID
-        builder.Services.AddSingleton<DeliveryApp.Customer.Services.Call.IPlatformAudioIO, DeliveryApp.Customer.Platforms.Android.AndroidAudioIO>();
+        builder.Services.AddSingleton<Services.Call.IAgoraCallService, Platforms.Android.AgoraCallServiceAndroid>();
 #elif IOS
-        builder.Services.AddSingleton<DeliveryApp.Customer.Services.Call.IPlatformAudioIO, DeliveryApp.Customer.Platforms.iOS.IosAudioIO>();
+builder.Services.AddSingleton<Services.Call.IAgoraCallService, Platforms.iOS.AgoraCallServiceiOS>();
 #endif
 
         // ── Pages ─────────────────────────────────
