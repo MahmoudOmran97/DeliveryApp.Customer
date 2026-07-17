@@ -79,8 +79,18 @@ public class Category
     public string Name { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }
     public List<Product> Products { get; set; } = new();
-}
 
+    private const string _cImgBase = "https://deliveryappapi.runasp.net";
+    public string? FullImageUrl
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(ImageUrl)) return null;
+            if (ImageUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return ImageUrl;
+            return _cImgBase + (ImageUrl.StartsWith("/") ? ImageUrl : "/" + ImageUrl);
+        }
+    }
+}
 public class Product
 {
     public int Id { get; set; }

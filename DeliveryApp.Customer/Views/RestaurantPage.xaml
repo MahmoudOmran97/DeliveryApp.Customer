@@ -46,7 +46,7 @@
 
             <Grid HorizontalOptions="End" VerticalOptions="Start" Margin="0,48,16,0">
 
-                <Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Black"
 
                         WidthRequest="42" HeightRequest="42">
 
@@ -80,7 +80,7 @@
 
         <!-- Content -->
 
-        <ScrollView Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0">
+        <ScrollView x:Name="ContentScrollView" Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0">
 
             <VerticalStackLayout Spacing="0">
 
@@ -147,6 +147,50 @@
                 <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
                                    Color="#FF5722" Margin="0,16"/>
 
+                <!-- Categories quick-jump bar -->
+                <CollectionView ItemsSource="{Binding Menu}" SelectionMode="None"
+                                IsVisible="{Binding Menu.Count, Converter={StaticResource IntToBool}}"
+                                ItemsLayout="HorizontalList"
+                                HeightRequest="86" Margin="0,10,0,0">
+
+                    <CollectionView.ItemTemplate>
+
+                        <DataTemplate x:DataType="m:Category">
+
+                            <VerticalStackLayout Spacing="4" Padding="10,0" WidthRequest="66" HorizontalOptions="Center">
+
+                                <VerticalStackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnCategoryChipTapped" CommandParameter="{Binding .}"/>
+                                </VerticalStackLayout.GestureRecognizers>
+
+                                <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 30"
+                                        Stroke="#EEEEEE" WidthRequest="60" HeightRequest="60"
+                                        HorizontalOptions="Center">
+                                    <Grid>
+                                        <!-- Fallback -->
+                                        <Label Text="🍽️" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center"
+                                               IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                                        <!-- Category image -->
+                                        <ff:CachedImage Source="{Binding FullImageUrl}"
+                                               Aspect="AspectFill"
+                                               CacheDuration="7"
+                                               HeightRequest="60" WidthRequest="60"
+                                               IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
+                                    </Grid>
+                                </Border>
+
+                                <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="11"
+                                       TextColor="#212121" HorizontalTextAlignment="Center"
+                                       LineBreakMode="TailTruncation" MaxLines="1"/>
+
+                            </VerticalStackLayout>
+
+                        </DataTemplate>
+
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
                 <!-- Pharmacy: upload prescription -->
                 <Border IsVisible="{Binding IsPharmacy}" BackgroundColor="#E3F2FD"
                         StrokeShape="RoundRectangle 14" Stroke="#90CAF9" Margin="16,8"
@@ -170,15 +214,14 @@
 
                 <!-- Menu Categories -->
 
-                <CollectionView ItemsSource="{Binding Menu}" SelectionMode="None"
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Menu}"
+                                      BackgroundColor="#F8F9FA">
 
-                                BackgroundColor="#F8F9FA">
-
-                    <CollectionView.ItemTemplate>
+                    <BindableLayout.ItemTemplate>
 
                         <DataTemplate x:DataType="m:Category">
 
-                            <VerticalStackLayout Padding="16,0" Spacing="10">
+                            <VerticalStackLayout Padding="16,0" Spacing="10" Loaded="OnCategorySectionLoaded">
 
                                 <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="17"
 
@@ -272,9 +315,9 @@
 
                         </DataTemplate>
 
-                    </CollectionView.ItemTemplate>
+                    </BindableLayout.ItemTemplate>
 
-                </CollectionView>
+                </VerticalStackLayout>
 
                 <BoxView HeightRequest="100" Color="Transparent"/>
 

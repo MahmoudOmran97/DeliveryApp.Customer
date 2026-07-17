@@ -72,7 +72,7 @@
                 <!-- Cart -->
                 <Grid Grid.Column="1" WidthRequest="44" HeightRequest="44">
                     <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
-                            Stroke="Transparent" WidthRequest="44" HeightRequest="44">
+                            Stroke="Black" WidthRequest="44" HeightRequest="44">
                         <Label Text="🛒" FontSize="22"
                                HorizontalOptions="Center" VerticalOptions="Center">
                             <Label.GestureRecognizers>
@@ -94,12 +94,12 @@
 
             <!-- Search -->
             <Border Grid.Row="2" BackgroundColor="White"
-                    StrokeShape="RoundRectangle 12" Stroke="Transparent" Padding="4,0">
+                    StrokeShape="RoundRectangle 12" Stroke="Black" Padding="4,0">
                 <SearchBar Placeholder="{Binding SearchHint}"
                            Text="{Binding SearchText}"
                            SearchCommand="{Binding SearchCommand}"
                            BackgroundColor="Transparent"
-                           FontFamily="CairoRegular" FontSize="14" TextColor="#212121"/>
+                           FontFamily="CairoRegular" FontSize="14" TextColor="Black"/>
             </Border>
 
         </Grid>
