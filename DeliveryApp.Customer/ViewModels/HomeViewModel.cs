@@ -205,8 +205,20 @@ public partial class HomeViewModel : BaseViewModel
     [RelayCommand]
     async Task RefreshAsync() { IsRefreshing = true; await LoadAsync(); }
 
+    /// <summary>
+    /// لما المستخدم يدوس بحث من الرئيسية، بنودّيه على صفحة المحلات (CategoryPage)
+    /// وهي اللي هتعرض النتائج، بنفس الكاتيجوري المختارة لو فيه واحدة
+    /// </summary>
     [RelayCommand]
-    Task SearchAsync() => LoadAsync();
+    async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+            return;
+
+        var category = SelectedCategory ?? string.Empty;
+        await Shell.Current.GoToAsync(
+            $"{nameof(Views.CategoryPage)}?category={Uri.EscapeDataString(category)}&search={Uri.EscapeDataString(SearchText)}");
+    }
 
     [RelayCommand]
     static Task OpenRestaurant(Restaurant r)

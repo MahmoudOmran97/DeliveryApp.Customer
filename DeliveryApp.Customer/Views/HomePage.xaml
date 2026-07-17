@@ -81,7 +81,7 @@
                         </Label>
                     </Border>
                     <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10"
-                            Stroke="Transparent"
+                            Stroke="Black"
                             IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
                             WidthRequest="20" HeightRequest="20"
                             HorizontalOptions="End" VerticalOptions="Start">

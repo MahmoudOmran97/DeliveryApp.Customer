@@ -118,6 +118,17 @@ public partial class CallViewModel : BaseViewModel, IDisposable
     {
         try
         {
+            // ✅ FIX #Mic — من غير طلب إذن المايك وقت التشغيل (runtime permission)، الـ RtcEngine
+            // بيفشل يفتح مسار الصوت بالكامل (تسجيل واستقبال) حتى لو الإذن متعرّف
+            // في الـ Manifest، فبيبقى مفيش أي صوت خالص من الطرفين.
+            var micStatus = await Permissions.RequestAsync<Permissions.Microphone>();
+            if (micStatus != PermissionStatus.Granted)
+            {
+                await AlertAsync("محتاجين إذن الميكروفون عشان تقدر تعمل مكالمة صوتية. من فضلك فعّله من إعدادات التطبيق.");
+                await CloseAsync();
+                return;
+            }
+
             // اسم القناة = رقم الأوردر، ثابت بين الطرفين
             var channelName = $"order-{OrderId}";
             var tokenResult = await _api.GetAgoraTokenAsync(channelName);

@@ -130,6 +130,9 @@
 	<data name="SearchPlaceholder">
 		<value>ابحث عن مطعم أو طعام…</value>
 	</data>
+	<data name="SearchResults">
+		<value>نتائج البحث</value>
+	</data>
 	<data name="RestaurantsNearYou">
 		<value>المطاعم القريبة منك</value>
 	</data>

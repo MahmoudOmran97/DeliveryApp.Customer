@@ -7,6 +7,7 @@ using DeliveryApp.Customer.Services;
 namespace DeliveryApp.Customer.ViewModels;
 
 [QueryProperty(nameof(CategoryName), "category")]
+[QueryProperty(nameof(SearchText), "search")]
 public partial class CategoryViewModel : BaseViewModel
 {
     readonly ApiService _api;
@@ -14,19 +15,34 @@ public partial class CategoryViewModel : BaseViewModel
 
     [ObservableProperty] string _categoryName = string.Empty;
     [ObservableProperty] string _displayTitle = string.Empty;
+    [ObservableProperty] string _searchText = string.Empty;
+
+    /// <summary>نفس الـ Placeholder المستخدم في صفحة الرئيسية</summary>
+    public string SearchHint => LocalizationService.Get("SearchPlaceholder");
 
     public ObservableCollection<Restaurant> Items { get; } = new();
+
+    /// <summary>True لما تبقى القايمة فاضية بعد التحميل (مش وانت لسه بتحمل)</summary>
+    public bool HasNoResults => !IsBusy && Items.Count == 0;
 
     public CategoryViewModel(ApiService api, LocationService location)
     {
         _api = api;
         _location = location;
+        Items.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasNoResults));
     }
 
-    partial void OnCategoryNameChanged(string value)
+    partial void OnCategoryNameChanged(string value) => RefreshTitle();
+
+    partial void OnSearchTextChanged(string value) => RefreshTitle();
+
+    /// <summary>
+    /// العنوان بيتحدد حسب الكاتيجوري، أو "نتائج البحث" لو جاي من السيرش من غير كاتيجوري محددة
+    /// </summary>
+    void RefreshTitle()
     {
         // نستخدم LocalizationService عشان يدعم Arabic/English
-        var locKey = value switch
+        var locKey = CategoryName switch
         {
             "Restaurants" => "Cat_Restaurants",
             "Grocery" => "Cat_Grocery",
@@ -37,8 +53,12 @@ public partial class CategoryViewModel : BaseViewModel
             "Drinks" => "Cat_Drinks",
             _ => null
         };
-        DisplayTitle = locKey != null ? LocalizationService.Get(locKey) : value;
-        _ = LoadAsync();
+
+        DisplayTitle = locKey != null
+            ? LocalizationService.Get(locKey)
+            : !string.IsNullOrWhiteSpace(SearchText)
+                ? LocalizationService.Get("SearchResults")
+                : LocalizationService.Get("Cat_All");
     }
 
     [RelayCommand]
@@ -55,6 +75,7 @@ public partial class CategoryViewModel : BaseViewModel
             double? lng = _location.HasLocation ? _location.Longitude : null;
 
             var result = await _api.GetRestaurantsAsync(
+                search: SearchText,
                 category: CategoryName,
                 lat: lat,
                 lng: lng,
@@ -66,8 +87,12 @@ public partial class CategoryViewModel : BaseViewModel
             foreach (var x in result?.Data ?? new())
                 Items.Add(x);
         }
-        finally { IsBusy = false; }
+        finally { IsBusy = false; OnPropertyChanged(nameof(HasNoResults)); }
     }
+
+    /// <summary>بيتنفذ لما المستخدم يدوس Enter/بحث في مربع السيرش اللي فوق</summary>
+    [RelayCommand]
+    Task SearchAsync() => LoadAsync();
 
     [RelayCommand]
     static Task OpenRestaurant(Restaurant r)

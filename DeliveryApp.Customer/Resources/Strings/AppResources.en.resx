@@ -131,6 +131,9 @@
 	<data name="SearchPlaceholder">
 		<value>Search restaurants or food…</value>
 	</data>
+	<data name="SearchResults">
+		<value>Search Results</value>
+	</data>
 	<data name="RestaurantsNearYou">
 		<value>Restaurants Near You</value>
 	</data>
