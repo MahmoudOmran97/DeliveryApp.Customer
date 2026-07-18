@@ -27,6 +27,18 @@ public partial class App : Application
                 // دلوقتي بنوصلها من بداية تشغيل الأبليكيشن عشان تشتغل من أي صفحة.
                 await signalR.ConnectAsync(auth.GetToken());
             }
+
+            // ✅ لو التطبيق اتفتح لسه (cold start) بسبب دوس على زرار "قبول" في نوتيفيكيشن
+            // مكالمة واردة، انقل المستخدم مباشرة لصفحة المكالمة مع قبول تلقائي.
+            var pendingCall = Services.PendingCallNavigation.TakePending();
+            if (pendingCall != null)
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await Shell.Current.GoToAsync(
+                        $"CallPage?orderId={pendingCall.Value.orderId}&otherPartyName={Uri.EscapeDataString(pendingCall.Value.callerName)}&isIncoming=true&autoAccept=true");
+                });
+            }
         });
 
         // ✅ CALL FIX — لما مكالمة واردة توصل والأبليكيشن فاتح (foreground/background بس مش

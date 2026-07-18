@@ -63,6 +63,10 @@
 		<GoogleServicesJson Include="Platforms\Android\google-services.json" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="Platforms\Android\Resources\drawable\ic_call_accept.xml" />
+	  <None Remove="Platforms\Android\Resources\drawable\ic_call_reject.xml" />
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		

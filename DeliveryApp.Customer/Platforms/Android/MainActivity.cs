@@ -4,6 +4,7 @@ using Android.Content.PM;
 using Android.OS;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using DeliveryApp.Customer.Platforms.Android;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.Firebase.CloudMessaging.Platforms.Android.Extensions;
 
@@ -37,8 +38,23 @@ namespace DeliveryApp.Customer
 
         private static void HandleIntent(Intent? intent)
         {
-            if (intent != null)
-                FirebaseCloudMessagingImplementation.OnNewIntent(intent);
+            if (intent == null) return;
+
+            FirebaseCloudMessagingImplementation.OnNewIntent(intent);
+
+            // ✅ لو التطبيق اتفتح من نوتيفيكيشن المكالمة الواردة (زرار قبول أو جسم
+            // النوتيفيكيشن نفسه)، خزّن بيانات المكالمة عشان الـ App.xaml.cs ينقل
+            // المستخدم لصفحة المكالمة أول ما الـ Shell يخلص يتظبط.
+            if (intent.GetStringExtra("tawseela_call_action") == "accept")
+            {
+                var orderId = intent.GetIntExtra("tawseela_order_id", 0);
+                var callerName = intent.GetStringExtra("tawseela_caller_name") ?? "";
+                if (orderId != 0)
+                {
+                    DeliveryApp.Customer.Services.PendingCallNavigation.OrderId = orderId;
+                    DeliveryApp.Customer.Services.PendingCallNavigation.CallerName = callerName;
+                }
+            }
         }
 
         private void CreateNotificationChannel()
@@ -72,6 +88,18 @@ namespace DeliveryApp.Customer
                 try
                 {
                     var context = ApplicationContext;
+
+                    // ✅ لو النوتيفيكيشن دي مكالمة واردة (type=IncomingCall) اعرضها كنوتيفيكيشن
+                    // full-screen بزرار قبول أخضر ورفض أحمر بدل النوتيفيكيشن العادي.
+                    var data = notification.Data;
+                    if (data != null
+                        && data.TryGetValue("type", out var type) && type == "IncomingCall"
+                        && data.TryGetValue("orderId", out var orderIdStr)
+                        && int.TryParse(orderIdStr, out var orderId))
+                    {
+                        IncomingCallNotificationHelper.Show(context, orderId, "المندوب");
+                        return;
+                    }
 
                     var intent = PackageManager?.GetLaunchIntentForPackage(PackageName ?? "");
                     if (intent != null)

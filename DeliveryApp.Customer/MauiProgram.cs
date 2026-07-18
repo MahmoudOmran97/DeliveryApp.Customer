@@ -71,9 +71,10 @@ public static class MauiProgram
         builder.Services.AddTransient<PointsViewModel>();
         builder.Services.AddTransient<CategoryViewModel>();
         builder.Services.AddTransient<CallViewModel>();
-       // builder.Services.AddTransient<CallAudioService>();
+        // builder.Services.AddTransient<CallAudioService>();
 #if ANDROID
         builder.Services.AddSingleton<Services.Call.IAgoraCallService, Platforms.Android.AgoraCallServiceAndroid>();
+        builder.Services.AddSingleton<Services.Call.IRingtoneService, Platforms.Android.RingtoneServiceAndroid>();
 #elif IOS
 builder.Services.AddSingleton<Services.Call.IAgoraCallService, Platforms.iOS.AgoraCallServiceiOS>();
 #endif
