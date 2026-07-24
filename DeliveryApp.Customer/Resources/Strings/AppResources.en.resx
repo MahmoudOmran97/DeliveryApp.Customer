@@ -182,6 +182,12 @@
 	<data name="AddressPlaceholder">
 		<value>Enter your delivery address</value>
 	</data>
+	<data name="DeliverToMySavedAddress">
+		<value>Deliver to my saved address</value>
+	</data>
+	<data name="DeliverToAnotherAddress">
+		<value>Deliver to another address</value>
+	</data>
 	<data name="NotesPlaceholder">
 		<value>Notes for driver (optional)</value>
 	</data>

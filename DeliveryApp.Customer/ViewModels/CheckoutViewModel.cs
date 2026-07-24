@@ -4,6 +4,9 @@ using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.Views;
 using Microsoft.Maui.ApplicationModel;
+using System.Globalization;
+using System.Net.Http.Json;
+using System.Text.Json.Serialization;
 
 namespace DeliveryApp.Customer.ViewModels;
 
@@ -14,6 +17,8 @@ public partial class CheckoutViewModel : BaseViewModel
     readonly ApiService _api;
     readonly CartService _cart;
     readonly LocationService _location;
+    readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(10) };
+    int _feeRequestVersion = 0;
 
     [ObservableProperty] string _address = string.Empty;
     [ObservableProperty] bool _useMySavedAddress = true;
@@ -46,21 +51,98 @@ public partial class CheckoutViewModel : BaseViewModel
         SubTotal = cart.TotalPrice;
         DeliveryFee = cart.RestaurantDeliveryFee;
         RecalcTotal();
-        
+
         if (_location.HasLocation)
         {
             Address = _location.AddressLabel;
             DeliveryLat = _location.Latitude;
             DeliveryLng = _location.Longitude;
         }
-        
+
         _ = LoadRestaurantAsync();
     }
 
     async Task LoadRestaurantAsync()
     {
         if (!_cart.RestaurantId.HasValue) return;
-        Restaurant = await _api.GetRestaurantAsync(_cart.RestaurantId.Value);
+        var lat = DeliveryLat == 0 ? (double?)null : DeliveryLat;
+        var lng = DeliveryLng == 0 ? (double?)null : DeliveryLng;
+        Restaurant = await _api.GetRestaurantAsync(_cart.RestaurantId.Value, lat, lng);
+        // ✅ FIX: كان بيفضل ياخد سعر التوصيل الثابت من الكارت (RestaurantDeliveryFee)
+        // وميحسبش المسافة الحقيقية، فبدل ما نسيب DeliveryFee زي ما هي نحدّثها من
+        // نفس السعر اللي الـ API رجعه (اللي بيحسب المسافة لو بعتنا lat/lng).
+        if (Restaurant != null)
+            DeliveryFee = Restaurant.DeliveryFee;
+    }
+
+    // ── إعادة حساب سعر التوصيل كل ما موقع العميل يتغيّر ──
+    // (استخدام موقعي الحالي / اختيار من الخريطة / التبديل لعنواني المسجل)
+    async Task RecalculateDeliveryFeeAsync()
+    {
+        if (!_cart.RestaurantId.HasValue || DeliveryLat == 0 || DeliveryLng == 0) return;
+
+        var version = ++_feeRequestVersion;
+        try
+        {
+            var r = await _api.GetRestaurantAsync(_cart.RestaurantId.Value, DeliveryLat, DeliveryLng);
+            // لو وصل رد لطلب أقدم بعد طلب أحدث، تجاهله عشان مايكتبش فوق القيمة الصح
+            if (version != _feeRequestVersion || r == null) return;
+
+            Restaurant = r;
+            DeliveryFee = r.DeliveryFee;
+        }
+        catch
+        {
+            // تجاهل فشل الشبكة هنا — نسيب آخر سعر معروف بدل ما نوقف الشاشة
+        }
+    }
+
+    // ── Reverse Geocoding (نفس أسلوب HomeLocationPickerViewModel) ──
+    // بيحوّل الإحداثيات لاسم مكان مقروء بدل ما العنوان يفضل فاضي أو أرقام
+    async Task ResolveAddressAsync(double lat, double lng)
+    {
+        try
+        {
+            var url = string.Format(CultureInfo.InvariantCulture,
+                "https://nominatim.openstreetmap.org/reverse?lat={0:F6}&lon={1:F6}&format=json&accept-language=ar",
+                lat, lng);
+
+            _httpClient.DefaultRequestHeaders.Remove("User-Agent");
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "DeliveryApp/1.0");
+
+            var result = await _httpClient.GetFromJsonAsync<NominatimResponse>(url);
+            var addr = result?.Address;
+            if (addr == null) { Address = $"{lat:F4}, {lng:F4}"; return; }
+
+            var parts = new List<string>();
+            var detail = addr.Suburb ?? addr.Neighbourhood ?? addr.Road ?? addr.Village ?? addr.Town;
+            if (!string.IsNullOrEmpty(detail)) parts.Add(detail);
+            var city = addr.City ?? addr.County ?? addr.State;
+            if (!string.IsNullOrEmpty(city) && city != detail) parts.Add(city);
+
+            Address = parts.Count > 0 ? string.Join("، ", parts) : $"{lat:F4}, {lng:F4}";
+        }
+        catch
+        {
+            Address = $"{lat:F4}, {lng:F4}";
+        }
+    }
+
+    private class NominatimResponse
+    {
+        [JsonPropertyName("address")] public NominatimAddress? Address { get; set; }
+    }
+
+    private class NominatimAddress
+    {
+        [JsonPropertyName("road")] public string? Road { get; set; }
+        [JsonPropertyName("suburb")] public string? Suburb { get; set; }
+        [JsonPropertyName("neighbourhood")] public string? Neighbourhood { get; set; }
+        [JsonPropertyName("village")] public string? Village { get; set; }
+        [JsonPropertyName("town")] public string? Town { get; set; }
+        [JsonPropertyName("city")] public string? City { get; set; }
+        [JsonPropertyName("county")] public string? County { get; set; }
+        [JsonPropertyName("state")] public string? State { get; set; }
     }
 
     partial void OnUseMySavedAddressChanged(bool value)
@@ -70,6 +152,7 @@ public partial class CheckoutViewModel : BaseViewModel
             Address = _location.AddressLabel;
             DeliveryLat = _location.Latitude;
             DeliveryLng = _location.Longitude;
+            _ = RecalculateDeliveryFeeAsync();
         }
         else if (!value)
         {
@@ -96,7 +179,16 @@ public partial class CheckoutViewModel : BaseViewModel
     {
         if (double.TryParse(v, System.Globalization.NumberStyles.Any,
                 System.Globalization.CultureInfo.InvariantCulture, out var val))
+        {
             DeliveryLng = val;
+            // ✅ FIX: العنوان اللي المستخدم مختاره من الخريطة كان بيتجاهل تماماً —
+            // مكنش بيتحط في Address ولا بيتحسب على أساسه سعر التوصيل.
+            if (DeliveryLat != 0)
+            {
+                _ = ResolveAddressAsync(DeliveryLat, DeliveryLng);
+                _ = RecalculateDeliveryFeeAsync();
+            }
+        }
     }
 
     partial void OnDeliveryLatChanged(double v) => HasLocationSelected = v != 0;
@@ -157,6 +249,10 @@ public partial class CheckoutViewModel : BaseViewModel
             {
                 DeliveryLat = loc.Latitude;
                 DeliveryLng = loc.Longitude;
+                // ✅ FIX: كان بيوقف عند تحديد الإحداثيات بس، من غير ما يحدّث نص
+                // العنوان ولا يعيد حساب سعر التوصيل بناءً على الموقع الجديد.
+                _ = ResolveAddressAsync(DeliveryLat, DeliveryLng);
+                _ = RecalculateDeliveryFeeAsync();
             }
         }
         catch
@@ -216,8 +312,8 @@ public partial class CheckoutViewModel : BaseViewModel
             {
                 await Shell.Current.DisplayAlert(
                     LocalizationService.Get("Notice"),
-                    LocalizationService.Current.TwoLetterISOLanguageName == "ar" 
-                        ? "عذراً، الموقع المختار بعيد جداً عن المحل (أكثر من 10 كم)" 
+                    LocalizationService.Current.TwoLetterISOLanguageName == "ar"
+                        ? "عذراً، الموقع المختار بعيد جداً عن المحل (أكثر من 10 كم)"
                         : "Sorry, the selected location is too far from the store (more than 10km)",
                     LocalizationService.Get("Ok"));
                 return;

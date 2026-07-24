@@ -181,6 +181,12 @@
 	<data name="AddressPlaceholder">
 		<value>اكتب عنوان التوصيل</value>
 	</data>
+	<data name="DeliverToMySavedAddress">
+		<value>توصيل إلى عنواني المسجل</value>
+	</data>
+	<data name="DeliverToAnotherAddress">
+		<value>توصيل إلى عنوان آخر</value>
+	</data>
 	<data name="NotesPlaceholder">
 		<value>ملاحظات للمندوب (اختياري)</value>
 	</data>
