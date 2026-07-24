@@ -186,9 +186,22 @@ public class ApiService
         return GetAsync<PagedResult<Restaurant>>(q);
     }
 
-    public Task<Restaurant?> GetRestaurantAsync(int id)
-
-        => GetAsync<Restaurant>($"restaurants/{id}");
+    /// <summary>
+    /// lat/lng (اختياري) → لو اتبعتوا (موقع العميل الحالي)، السعر الراجع في
+    /// Restaurant.DeliveryFee بيبقى محسوب فعلياً حسب المسافة الحقيقية بين
+    /// المحل والعميل (أول 3 كم بسعر المحل الأساسي، وبعدها 10 جنيه على كل
+    /// كيلومتر زيادة أو جزء منه).
+    /// </summary>
+    public Task<Restaurant?> GetRestaurantAsync(int id, double? lat = null, double? lng = null)
+    {
+        var q = $"restaurants/{id}";
+        if (lat.HasValue && lng.HasValue)
+        {
+            q += $"?lat={lat.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+            q += $"&lng={lng.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+        }
+        return GetAsync<Restaurant>(q);
+    }
 
     public Task<List<Category>?> GetMenuAsync(int restaurantId)
 

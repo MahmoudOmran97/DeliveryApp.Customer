@@ -16,6 +16,7 @@ public partial class RestaurantViewModel : BaseViewModel
 {
     readonly ApiService _api;
     readonly CartService _cart;
+    readonly LocationService _location;
 
     [ObservableProperty] int _restaurantId;
     [ObservableProperty] Restaurant? _restaurant;
@@ -26,10 +27,11 @@ public partial class RestaurantViewModel : BaseViewModel
 
     public ObservableCollection<Category> Menu { get; } = new();
 
-    public RestaurantViewModel(ApiService api, CartService cart)
+    public RestaurantViewModel(ApiService api, CartService cart, LocationService location)
     {
         _api = api;
         _cart = cart;
+        _location = location;
         _cart.CartChanged += () => CartCount = _cart.TotalCount;
     }
 
@@ -42,7 +44,10 @@ public partial class RestaurantViewModel : BaseViewModel
         IsBusy = true;
         try
         {
-            var t1 = _api.GetRestaurantAsync(RestaurantId);
+            // لو معانا موقع العميل، نبعته عشان السيرفر يحسب سعر التوصيل الفعلي حسب المسافة
+            var t1 = _location.HasLocation
+                ? _api.GetRestaurantAsync(RestaurantId, _location.Latitude, _location.Longitude)
+                : _api.GetRestaurantAsync(RestaurantId);
             var t2 = _api.GetMenuAsync(RestaurantId);
             await Task.WhenAll(t1, t2);
             Restaurant = t1.Result;
