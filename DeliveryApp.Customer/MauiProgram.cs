@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui;
 using FFImageLoading.Maui;
 using Microsoft.Maui.LifecycleEvents;
+using Microsoft.Maui.Handlers;
 using Plugin.Firebase.CloudMessaging;
 
 #if ANDROID
@@ -36,6 +37,41 @@ public static class MauiProgram
                 fonts.AddFont("Cairo-Regular.ttf", "CairoRegular");
                 fonts.AddFont("Cairo-Bold.ttf", "CairoBold");
             });
+
+        // ── FIX: أيقونة العدسة (🔍) في SearchBar بتاخد لونها من ثيم النظام
+        // (Android SearchView) فبتبقى شفافة/مختفية في الدارك مود. بنجبرها
+        // على لون ثابت يبان في أي ثيم.
+        SearchBarHandler.Mapper.AppendToMapping("ForceSearchIconColor", (handler, view) =>
+        {
+#if ANDROID
+            if (handler.PlatformView is AndroidX.AppCompat.Widget.SearchView searchView)
+            {
+                var iconId = searchView.Resources?.GetIdentifier("android:id/search_mag_icon", null, null) ?? 0;
+                if (iconId > 0)
+                {
+                    var icon = searchView.FindViewById<Android.Widget.ImageView>(iconId);
+                    icon?.SetColorFilter(Android.Graphics.Color.ParseColor("#757575"), Android.Graphics.PorterDuff.Mode.SrcIn!);
+                }
+
+                var closeIconId = searchView.Resources?.GetIdentifier("android:id/search_close_btn", null, null) ?? 0;
+                if (closeIconId > 0)
+                {
+                    var closeIcon = searchView.FindViewById<Android.Widget.ImageView>(closeIconId);
+                    closeIcon?.SetColorFilter(Android.Graphics.Color.ParseColor("#757575"), Android.Graphics.PorterDuff.Mode.SrcIn!);
+                }
+            }
+#elif IOS
+            if (handler.PlatformView is UIKit.UISearchBar uiSearchBar)
+            {
+                var textField = uiSearchBar.SearchTextField;
+                if (textField?.LeftView is UIKit.UIImageView leftIcon)
+                {
+                    leftIcon.Image = leftIcon.Image?.ImageWithRenderingMode(UIKit.UIImageRenderingMode.AlwaysTemplate);
+                    leftIcon.TintColor = UIKit.UIColor.FromRGB(0x75, 0x75, 0x75);
+                }
+            }
+#endif
+        });
 
         // ── Services ─────────────────────────────
         builder.Services.AddSingleton<AuthService>();

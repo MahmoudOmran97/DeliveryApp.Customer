@@ -109,14 +109,99 @@
                     Style="{StaticResource PrimaryBtn}"
                     IsVisible="{Binding Order.CanRate}"/>
 
-                <!-- Rating Panel -->
+                <!-- ✅ تقييمك السابق (لو الأوردر اتقيّم قبل كده) — بالنجوم على طول -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding Order.IsRated}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{loc:Loc Key=RateOrder}" FontFamily="CairoBold" FontSize="18" TextColor="#212121"/>
+
+                        <Label Text="{loc:Loc Key=RateRestaurant}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=1}" FontSize="26" TextColor="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=1}"/>
+                            <Label Text="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=2}" FontSize="26" TextColor="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=2}"/>
+                            <Label Text="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=3}" FontSize="26" TextColor="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=3}"/>
+                            <Label Text="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=4}" FontSize="26" TextColor="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=4}"/>
+                            <Label Text="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=5}" FontSize="26" TextColor="{Binding Order.Rating.RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=5}"/>
+                        </HorizontalStackLayout>
+
+                        <Label Text="{loc:Loc Key=RateDriver}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"
+                               IsVisible="{Binding Order.Rating.DriverRating, Converter={StaticResource IntToBool}}"/>
+                        <HorizontalStackLayout Spacing="6"
+                               IsVisible="{Binding Order.Rating.DriverRating, Converter={StaticResource IntToBool}}">
+                            <Label Text="{Binding Order.Rating.DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=1}" FontSize="26" TextColor="{Binding Order.Rating.DriverRating, Converter={StaticResource StarColor}, ConverterParameter=1}"/>
+                            <Label Text="{Binding Order.Rating.DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=2}" FontSize="26" TextColor="{Binding Order.Rating.DriverRating, Converter={StaticResource StarColor}, ConverterParameter=2}"/>
+                            <Label Text="{Binding Order.Rating.DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=3}" FontSize="26" TextColor="{Binding Order.Rating.DriverRating, Converter={StaticResource StarColor}, ConverterParameter=3}"/>
+                            <Label Text="{Binding Order.Rating.DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=4}" FontSize="26" TextColor="{Binding Order.Rating.DriverRating, Converter={StaticResource StarColor}, ConverterParameter=4}"/>
+                            <Label Text="{Binding Order.Rating.DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=5}" FontSize="26" TextColor="{Binding Order.Rating.DriverRating, Converter={StaticResource StarColor}, ConverterParameter=5}"/>
+                        </HorizontalStackLayout>
+
+                        <Label Text="{Binding Order.Rating.Comment}" FontFamily="CairoRegular" FontSize="14"
+                               TextColor="#424242" IsVisible="{Binding Order.Rating.Comment, Converter={StaticResource HasImage}}"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Rating Panel (فورم إدخال التقييم — لسه ماتقيّمش) -->
                 <Border Style="{StaticResource Card}" IsVisible="{Binding ShowRating}">
                     <VerticalStackLayout Spacing="14">
                         <Label Text="{loc:Loc Key=RateOrder}" FontFamily="CairoBold" FontSize="18" TextColor="#212121"/>
+
                         <Label Text="{loc:Loc Key=RateRestaurant}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-                        <Stepper Value="{Binding RestaurantRating}" Minimum="1" Maximum="5" Increment="1" HorizontalOptions="Start"/>
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{Binding RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=1}" FontSize="30" TextColor="{Binding RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=1}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetRestaurantRatingCommand}" CommandParameter="1"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="{Binding RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=2}" FontSize="30" TextColor="{Binding RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=2}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetRestaurantRatingCommand}" CommandParameter="2"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="{Binding RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=3}" FontSize="30" TextColor="{Binding RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=3}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetRestaurantRatingCommand}" CommandParameter="3"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="{Binding RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=4}" FontSize="30" TextColor="{Binding RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=4}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetRestaurantRatingCommand}" CommandParameter="4"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="{Binding RestaurantRating, Converter={StaticResource StarGlyph}, ConverterParameter=5}" FontSize="30" TextColor="{Binding RestaurantRating, Converter={StaticResource StarColor}, ConverterParameter=5}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetRestaurantRatingCommand}" CommandParameter="5"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </HorizontalStackLayout>
+
                         <Label Text="{loc:Loc Key=RateDriver}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
-                        <Stepper Value="{Binding DriverRating}" Minimum="1" Maximum="5" Increment="1" HorizontalOptions="Start"/>
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{Binding DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=1}" FontSize="30" TextColor="{Binding DriverRating, Converter={StaticResource StarColor}, ConverterParameter=1}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetDriverRatingCommand}" CommandParameter="1"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="{Binding DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=2}" FontSize="30" TextColor="{Binding DriverRating, Converter={StaticResource StarColor}, ConverterParameter=2}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetDriverRatingCommand}" CommandParameter="2"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="{Binding DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=3}" FontSize="30" TextColor="{Binding DriverRating, Converter={StaticResource StarColor}, ConverterParameter=3}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetDriverRatingCommand}" CommandParameter="3"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="{Binding DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=4}" FontSize="30" TextColor="{Binding DriverRating, Converter={StaticResource StarColor}, ConverterParameter=4}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetDriverRatingCommand}" CommandParameter="4"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label Text="{Binding DriverRating, Converter={StaticResource StarGlyph}, ConverterParameter=5}" FontSize="30" TextColor="{Binding DriverRating, Converter={StaticResource StarColor}, ConverterParameter=5}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SetDriverRatingCommand}" CommandParameter="5"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </HorizontalStackLayout>
+
                         <Border Style="{StaticResource InputBorder}" Padding="12">
                             <Editor Text="{Binding Comment}" Placeholder="{loc:Loc Key=CommentPlaceholder}"
                                 FontFamily="CairoRegular" FontSize="14" HeightRequest="80"

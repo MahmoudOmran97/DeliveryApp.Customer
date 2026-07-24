@@ -24,10 +24,10 @@ public class IntToBoolConverter : IValueConverter
         bool result = false;
         if (v is int i) result = i > 0;
         else if (v is bool b) result = b;
-        
+
         if (p is string s && s == "invert")
             return !result;
-            
+
         return result;
     }
 
@@ -108,6 +108,57 @@ public class BoolToColorConverter : IValueConverter
             catch { }
         }
         return isTrue ? Color.FromArgb("#FF5722") : Color.FromArgb("#E0E0E0");
+    }
+
+    public object ConvertBack(object? v, Type t, object? p, CultureInfo c)
+        => throw new NotImplementedException();
+}
+
+// بيقارن قيمة التقييم الحالية (int) برقم النجمة (ConverterParameter) عشان
+// يحدد لو النجمة دي المفروض تبقى ذهبي (متعبّية) ولا رمادي (فاضية)
+public class RatingStarColorConverter : IValueConverter
+{
+    public object Convert(object? v, Type t, object? p, CultureInfo c)
+    {
+        int rating = v switch
+        {
+            int i => i,
+            double d => (int)d,
+            _ => 0
+        };
+        int starIndex = p switch
+        {
+            string s when int.TryParse(s, out var idx) => idx,
+            int i => i,
+            _ => 0
+        };
+        return rating >= starIndex ? Color.FromArgb("#FFC107") : Color.FromArgb("#E0E0E0");
+    }
+
+    public object ConvertBack(object? v, Type t, object? p, CultureInfo c)
+        => throw new NotImplementedException();
+}
+
+// ⚠️ ملحوظة مهمة: إيموجي النجمة "⭐" ليه لون مدمج جوه الفونت نفسه ومش
+// بيستجيب لـ TextColor خالص على أندرويد/iOS. عشان كده لازم نستخدم رمزين
+// مختلفين فعليًا: ★ (ممتلئ) و ☆ (فاضي) بدل ما نعتمد على تلوين نفس الرمز.
+public class RatingStarGlyphConverter : IValueConverter
+{
+    public object Convert(object? v, Type t, object? p, CultureInfo c)
+    {
+        int rating = v switch
+        {
+            int i => i,
+            double d => (int)d,
+            _ => 0
+        };
+        int starIndex = p switch
+        {
+            string s when int.TryParse(s, out var idx) => idx,
+            int i => i,
+            _ => 0
+        };
+        return rating >= starIndex ? "★" : "☆";
     }
 
     public object ConvertBack(object? v, Type t, object? p, CultureInfo c)

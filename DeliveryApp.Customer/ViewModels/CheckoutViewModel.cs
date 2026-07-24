@@ -145,6 +145,13 @@ public partial class CheckoutViewModel : BaseViewModel
         [JsonPropertyName("state")] public string? State { get; set; }
     }
 
+    // ── اختيار نوع العنوان (عنوان محفوظ / عنوان تاني) ──
+    [RelayCommand]
+    void SelectAddressType(string mode)
+    {
+        UseMySavedAddress = mode == "Saved";
+    }
+
     partial void OnUseMySavedAddressChanged(bool value)
     {
         if (value && _location.HasLocation)

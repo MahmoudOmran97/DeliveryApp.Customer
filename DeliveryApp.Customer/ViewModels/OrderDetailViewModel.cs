@@ -22,9 +22,11 @@ public partial class OrderDetailViewModel : BaseViewModel
 
     [ObservableProperty] bool _showRating;
 
-    [ObservableProperty] int _restaurantRating = 5;
+    // ── بيبدأو من 0 (مفيش تقييم لسه) بدل 5 عشان النجوم تبان فاضية
+    // لحد ما المستخدم يدوس عليها، أو لحد ما نحمّل تقييم سابق محفوظ ──
+    [ObservableProperty] int _restaurantRating;
 
-    [ObservableProperty] int _driverRating = 5;
+    [ObservableProperty] int _driverRating;
 
     [ObservableProperty] string _comment = string.Empty;
 
@@ -42,8 +44,20 @@ public partial class OrderDetailViewModel : BaseViewModel
 
         IsBusy = true;
 
-        try { Order = await _api.GetOrderAsync(OrderId); }
+        try
+        {
+            Order = await _api.GetOrderAsync(OrderId);
 
+            // ✅ FIX: لو الأوردر ده اتقيم قبل كده، بنعرض التقييم المحفوظ
+            // بالنجوم على طول بدل ما نسيب الفورم فاضي وكأنه لسه مش متقيّم
+            if (Order?.Rating != null)
+            {
+                RestaurantRating = Order.Rating.RestaurantRating;
+                DriverRating = Order.Rating.DriverRating ?? 0;
+                Comment = Order.Rating.Comment ?? string.Empty;
+                ShowRating = false;
+            }
+        }
         finally { IsBusy = false; }
 
     }
@@ -64,7 +78,20 @@ public partial class OrderDetailViewModel : BaseViewModel
 
     }
 
-    [RelayCommand] void Rate() => ShowRating = true;
+    [RelayCommand]
+    void Rate()
+    {
+        if (Order?.IsRated == true) return; // ✅ متقيّم قبل كده، منفتحش الفورم تاني
+        RestaurantRating = 0;
+        DriverRating = 0;
+        Comment = string.Empty;
+        ShowRating = true;
+    }
+
+    // ── تقييم المطعم/السواق بالنجوم (تاب على نجمة = القيمة دي) ──
+    [RelayCommand] void SetRestaurantRating(string star) => RestaurantRating = int.Parse(star);
+
+    [RelayCommand] void SetDriverRating(string star) => DriverRating = int.Parse(star);
 
     [RelayCommand]
 
@@ -74,9 +101,34 @@ public partial class OrderDetailViewModel : BaseViewModel
 
         if (Order == null) return;
 
-        if (await _api.RateOrderAsync(Order.Id, RestaurantRating, DriverRating, Comment))
+        if (RestaurantRating < 1)
+        {
+            await AlertAsync("من فضلك اختر تقييم للمطعم أولاً");
+            return;
+        }
 
-        { ShowRating = false; await AlertAsync("Thank you for your feedback!"); }
+        IsBusy = true;
+        try
+        {
+            var success = await _api.RateOrderAsync(
+                Order.Id, RestaurantRating, DriverRating > 0 ? DriverRating : null, Comment);
+
+            if (success)
+            {
+                ShowRating = false;
+                await AlertAsync("شكرًا لتقييمك!");
+                await LoadAsync(); // ✅ يرجع يحمّل الأوردر عشان يبان التقييم بالنجوم على طول
+            }
+        }
+        catch (ApiService.ApiException ex)
+        {
+            // ✅ FIX: كان بيرمي استثناء غير متوقع (مثلاً "Order already rated")
+            // ويكسر الصفحة. دلوقتي بنعرض رسالة واضحة ونحدّث الشاشة بدل الكراش
+            ShowRating = false;
+            await AlertAsync(ex.Message);
+            await LoadAsync();
+        }
+        finally { IsBusy = false; }
 
     }
 

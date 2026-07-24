@@ -216,7 +216,19 @@ public class Order
 
     public bool IsActive => Status is "Pending" or "Accepted" or "Preparing" or "ReadyForPickup" or "OnTheWay";
     public bool CanCancel => Status is "Pending" or "Accepted";
-    public bool CanRate => Status == "Delivered";
+
+    public OrderRatingInfo? Rating { get; set; }
+    public bool IsRated => Rating != null;
+    public bool CanRate => Status == "Delivered" && !IsRated;
+}
+
+public class OrderRatingInfo
+{
+    public int RestaurantRating { get; set; }
+    public int? DriverRating { get; set; }
+    public int? FoodRating { get; set; }
+    public string? Comment { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 public class OrderItem

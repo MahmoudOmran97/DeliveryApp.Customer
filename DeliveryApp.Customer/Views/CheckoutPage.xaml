@@ -36,12 +36,59 @@
 
                         <!-- خيارات العنوان -->
                         <VerticalStackLayout Spacing="10" Margin="0,5">
-                            <HorizontalStackLayout Spacing="10">
-                                <RadioButton IsChecked="{Binding UseMySavedAddress}" Content="{loc:Loc Key=DeliverToMySavedAddress}" FontFamily="CairoRegular" FontSize="14"/>
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout Spacing="10">
-                                <RadioButton IsChecked="{Binding UseMySavedAddress, Converter={StaticResource InvertBool}}" Content="{loc:Loc Key=DeliverToAnotherAddress}" FontFamily="CairoRegular" FontSize="14"/>
-                            </HorizontalStackLayout>
+
+                            <!-- عنوان محفوظ -->
+                            <Border StrokeShape="RoundRectangle 12"
+                                    StrokeThickness="1.5"
+                                    Stroke="{Binding UseMySavedAddress, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#E0E0E0'}"
+                                    BackgroundColor="{Binding UseMySavedAddress, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3EE|#FFFFFF'}"
+                                    Padding="14,12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectAddressTypeCommand}" CommandParameter="Saved"/>
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Grid Grid.Column="0" WidthRequest="20" HeightRequest="20" VerticalOptions="Center">
+                                        <Ellipse WidthRequest="20" HeightRequest="20"
+                                                 Fill="Transparent" StrokeThickness="1.5"
+                                                 Stroke="{Binding UseMySavedAddress, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#BDBDBD'}"/>
+                                        <Ellipse WidthRequest="10" HeightRequest="10"
+                                                 Fill="#FF5722"
+                                                 HorizontalOptions="Center" VerticalOptions="Center"
+                                                 IsVisible="{Binding UseMySavedAddress}"/>
+                                    </Grid>
+                                    <Label Grid.Column="1" Text="{loc:Loc Key=DeliverToMySavedAddress}"
+                                           FontFamily="CairoRegular" FontSize="14"
+                                           TextColor="#212121"
+                                           Margin="10,0,0,0" VerticalOptions="Center"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- عنوان تاني -->
+                            <Border StrokeShape="RoundRectangle 12"
+                                    StrokeThickness="1.5"
+                                    Stroke="{Binding UseMySavedAddress, Converter={StaticResource BoolToColor}, ConverterParameter='#E0E0E0|#FF5722'}"
+                                    BackgroundColor="{Binding UseMySavedAddress, Converter={StaticResource BoolToColor}, ConverterParameter='#FFFFFF|#FFF3EE'}"
+                                    Padding="14,12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectAddressTypeCommand}" CommandParameter="Other"/>
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Grid Grid.Column="0" WidthRequest="20" HeightRequest="20" VerticalOptions="Center">
+                                        <Ellipse WidthRequest="20" HeightRequest="20"
+                                                 Fill="Transparent" StrokeThickness="1.5"
+                                                 Stroke="{Binding UseMySavedAddress, Converter={StaticResource BoolToColor}, ConverterParameter='#BDBDBD|#FF5722'}"/>
+                                        <Ellipse WidthRequest="10" HeightRequest="10"
+                                                 Fill="#FF5722"
+                                                 HorizontalOptions="Center" VerticalOptions="Center"
+                                                 IsVisible="{Binding UseMySavedAddress, Converter={StaticResource InvertBool}}"/>
+                                    </Grid>
+                                    <Label Grid.Column="1" Text="{loc:Loc Key=DeliverToAnotherAddress}"
+                                           FontFamily="CairoRegular" FontSize="14"
+                                           TextColor="#212121"
+                                           Margin="10,0,0,0" VerticalOptions="Center"/>
+                                </Grid>
+                            </Border>
+
                         </VerticalStackLayout>
 
                         <Entry Text="{Binding Address}"
