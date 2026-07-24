@@ -10,7 +10,7 @@
              x:DataType="vm:HomeViewModel"
              Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F8F9FA" FlowDirection="RightToLeft">
+    <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F8F9FA">
 
         <!-- ══════════════════════════════════════════════
              HEADER  (بسيط — موقع + سيرش فقط، مفيش chips)
@@ -119,7 +119,7 @@
                                 Margin="0,14,0,4"
                                 BackgroundColor="White"
                                 Padding="8,10">
-                        <HorizontalStackLayout Spacing="4" FlowDirection="RightToLeft">
+                        <HorizontalStackLayout Spacing="4">
                             <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
                                 <VerticalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
@@ -350,7 +350,7 @@
                     <!-- ── Rewards / Coupons Row ── -->
                     <Label Text="{loc:Loc Key=UseAndSave}"
                            FontFamily="CairoBold" FontSize="16" TextColor="#212121"
-                           Margin="16,18,16,10" FlowDirection="RightToLeft"/>
+                           Margin="16,18,16,10"/>
 
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="16,0">
                         <Border Grid.Column="0" BackgroundColor="White"
@@ -359,7 +359,7 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenRewardsCommand}"/>
                             </Border.GestureRecognizers>
-                            <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
+                            <HorizontalStackLayout Spacing="10">
                                 <Border BackgroundColor="#FFF3E0" StrokeShape="RoundRectangle 20"
                                         Stroke="Transparent" WidthRequest="36" HeightRequest="36">
                                     <Label Text="🎁" FontSize="18"
@@ -376,7 +376,7 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenCouponsCommand}"/>
                             </Border.GestureRecognizers>
-                            <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
+                            <HorizontalStackLayout Spacing="10">
                                 <Border BackgroundColor="#FFF3E0" StrokeShape="RoundRectangle 20"
                                         Stroke="Transparent" WidthRequest="36" HeightRequest="36">
                                     <Label Text="🎟️" FontSize="18"
@@ -416,7 +416,7 @@
                     <!-- ── Section Title ── -->
                     <Label Text="{Binding SectionTitle}"
                            FontFamily="CairoBold" FontSize="16" TextColor="#212121"
-                           Margin="16,18,16,10" FlowDirection="RightToLeft"/>
+                           Margin="16,18,16,10"/>
 
                     <!-- ── Loading ── -->
                     <ActivityIndicator IsRunning="{Binding IsBusy}"
@@ -473,7 +473,7 @@
                                                    FontFamily="CairoRegular" FontSize="12"
                                                    TextColor="#757575" MaxLines="1"
                                                    LineBreakMode="TailTruncation"/>
-                                            <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
+                                            <HorizontalStackLayout Spacing="10">
                                                 <HorizontalStackLayout Spacing="3">
                                                     <Label Text="⭐" FontSize="12" VerticalOptions="Center"/>
                                                     <Label Text="{Binding RatingText}"

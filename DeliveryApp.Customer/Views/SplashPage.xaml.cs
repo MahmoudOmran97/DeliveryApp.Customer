@@ -15,6 +15,8 @@ public partial class SplashPage : ContentPage
         _auth = auth;
         _fcm = fcm;
 
+        FlowDirection = LocalizationService.Flow;
+
         string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
 
         imgLogo.Source = lang == "ar"

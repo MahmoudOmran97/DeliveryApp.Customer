@@ -1,4 +1,5 @@
 using DeliveryApp.Customer.Converters;
+using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.Views;
 
 namespace DeliveryApp.Customer;
@@ -13,6 +14,12 @@ public partial class AppShell : Shell
         BindingContext = locale;          // ← tabs bind to LocaleStrings properties
 
         InitializeComponent();
+
+        // ✅ يحدد اتجاه كل صفحات التطبيق (تابات + الصفحات المفتوحة عن طريقها)
+        // حسب اللغة الحالية. الصفحات مش بتحدد FlowDirection بتاعها بنفسها بعد
+        // كده، فبتورث القيمة دي من هنا تلقائي.
+        FlowDirection = LocalizationService.Flow;
+
         Shell.SetTabBarIsVisible(this, false);
         Navigated += OnShellNavigated;
 

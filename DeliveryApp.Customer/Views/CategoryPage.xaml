@@ -10,7 +10,7 @@
              x:DataType="vm:CategoryViewModel"
              Title="{Binding DisplayTitle}">
 
-    <Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA" FlowDirection="RightToLeft">
+    <Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA">
 
         <!-- ══════════════════════════════════════════════
              HEADER  (رجوع + عنوان + سيرش — نفس أسلوب الرئيسية)
@@ -87,7 +87,7 @@
                                            FontFamily="CairoRegular" FontSize="12"
                                            TextColor="#757575" MaxLines="1"
                                            LineBreakMode="TailTruncation"/>
-                                    <HorizontalStackLayout Spacing="10" FlowDirection="RightToLeft">
+                                    <HorizontalStackLayout Spacing="10">
                                         <HorizontalStackLayout Spacing="3">
                                             <Label Text="⭐" FontSize="12" VerticalOptions="Center"/>
                                             <Label Text="{Binding RatingText}"

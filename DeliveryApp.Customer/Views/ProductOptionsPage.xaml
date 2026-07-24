@@ -10,8 +10,7 @@
              Shell.PresentationMode="ModalAnimated"
              BackgroundColor="#80000000">
 
-    <!-- FlowDirection="RightToLeft" hardcoded — matches other pages, avoids XC0009 -->
-    <Grid Padding="0" RowDefinitions="*,Auto" FlowDirection="RightToLeft">
+    <Grid Padding="0" RowDefinitions="*,Auto">
         <BoxView Grid.RowSpan="2" Color="Transparent">
             <BoxView.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding CloseCommand}"/>
