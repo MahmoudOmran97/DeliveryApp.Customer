@@ -6,87 +6,161 @@
              x:Class="DeliveryApp.Customer.Views.PointsPage"
              x:DataType="vm:PointsViewModel"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="White">
+             BackgroundColor="{StaticResource Background}">
 
-    <!-- FlowDirection="RightToLeft" hardcoded — fixes XC0009 -->
-    <Grid RowDefinitions="Auto,Auto,Auto,*" FlowDirection="RightToLeft">
+    <Grid RowDefinitions="Auto,*" FlowDirection="RightToLeft">
 
-        <!-- Header -->
-        <Grid Grid.Row="0" Padding="20,52,20,20" ColumnDefinitions="Auto,*,Auto">
+        <!-- ══════ HEADER ══════ -->
+        <Grid Grid.Row="0" BackgroundColor="{StaticResource Primary}" Padding="20,52,20,20"
+              ColumnDefinitions="44,*">
             <ImageButton Grid.Column="0" Source="icon_back.png"
                          Command="{Binding BackCommand}"
-                         WidthRequest="40" HeightRequest="40"
-                         BackgroundColor="Transparent"/>
+                         WidthRequest="38" HeightRequest="38"
+                         BackgroundColor="Transparent"
+                         VerticalOptions="Center"/>
             <Label Grid.Column="1" Text="{loc:Loc Key=Points}"
                    FontFamily="CairoBold" FontSize="20"
-                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                   TextColor="White" VerticalOptions="Center"
+                   HorizontalOptions="Center" Margin="0,0,38,0"/>
         </Grid>
 
-        <!-- Points Summary -->
-        <VerticalStackLayout Grid.Row="1" Padding="20,10" Spacing="10" HorizontalOptions="Center">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
-                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
-                    <Label Text="{Binding PointsBalance, StringFormat='{0} '}{loc:Loc Key=PointsBalanceLabel}"
-                           FontFamily="CairoBold" FontSize="32" TextColor="Black"/>
-                    <Label Text="{loc:Loc Key=PointsSubTitle}"
-                           FontFamily="CairoRegular" FontSize="14" TextColor="Gray"/>
-                </VerticalStackLayout>
-                <Image Grid.Column="1" Source="tab_home.svg" WidthRequest="80" HeightRequest="80"/>
-            </Grid>
-            <Button Text="{loc:Loc Key=Redeem100Points}"
-                    Command="{Binding RedeemPointsCommand}"
-                    BackgroundColor="#FF5722" TextColor="White"
-                    FontFamily="CairoBold" CornerRadius="12" Margin="0,8,0,0"/>
-        </VerticalStackLayout>
+        <RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16" Spacing="20">
 
-        <!-- Tabs -->
-        <Grid Grid.Row="2" ColumnDefinitions="*,*,*" Margin="0,20,0,0">
-            <VerticalStackLayout Grid.Column="0">
-                <Button Text="{loc:Loc Key=Tab_All}" BackgroundColor="Transparent" TextColor="Black" FontFamily="CairoBold"
-                        Command="{Binding FilterTransactionsCommand}" CommandParameter="All"/>
-                <BoxView HeightRequest="2" BackgroundColor="Black"
-                         IsVisible="{Binding SelectedTab, Converter={StaticResource StringEquals}, ConverterParameter='All'}"/>
-            </VerticalStackLayout>
-            <VerticalStackLayout Grid.Column="1">
-                <Button Text="{loc:Loc Key=Tab_Earned}" BackgroundColor="Transparent" TextColor="Gray" FontFamily="CairoBold"
-                        Command="{Binding FilterTransactionsCommand}" CommandParameter="Earned"/>
-                <BoxView HeightRequest="2" BackgroundColor="Black"
-                         IsVisible="{Binding SelectedTab, Converter={StaticResource StringEquals}, ConverterParameter='Earned'}"/>
-            </VerticalStackLayout>
-            <VerticalStackLayout Grid.Column="2">
-                <Button Text="{loc:Loc Key=Tab_Spent}" BackgroundColor="Transparent" TextColor="Gray" FontFamily="CairoBold"
-                        Command="{Binding FilterTransactionsCommand}" CommandParameter="Spent"/>
-                <BoxView HeightRequest="2" BackgroundColor="Black"
-                         IsVisible="{Binding SelectedTab, Converter={StaticResource StringEquals}, ConverterParameter='Spent'}"/>
-            </VerticalStackLayout>
-        </Grid>
-
-        <!-- Transactions List -->
-        <RefreshView Grid.Row="3" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
-            <CollectionView ItemsSource="{Binding FilteredTransactions}" Margin="20,10">
-                <CollectionView.EmptyView>
-                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
-                                         Spacing="20" Margin="0,50,0,0">
-                        <Label Text="{loc:Loc Key=NoPointsFound}"
-                               FontFamily="CairoBold" FontSize="20"
-                               HorizontalOptions="Center" TextColor="Black"/>
-                    </VerticalStackLayout>
-                </CollectionView.EmptyView>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="vm:PointTransaction">
-                        <Grid ColumnDefinitions="*,Auto" Padding="0,15">
-                            <VerticalStackLayout Grid.Column="0" Spacing="2">
-                                <Label Text="{Binding Title}" FontFamily="CairoBold" FontSize="16" TextColor="Black"/>
-                                <Label Text="{Binding DateText}" FontFamily="CairoRegular" FontSize="12" TextColor="Gray"/>
+                    <!-- ══════ POINTS BALANCE HERO CARD ══════ -->
+                    <Border BackgroundColor="{StaticResource Primary}"
+                            StrokeShape="RoundRectangle 24"
+                            Stroke="Transparent"
+                            Padding="24"
+                            Shadow="{Shadow Brush=Black, Offset='0,8', Opacity=0.15, Radius=15}">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="{loc:Loc Key=PointsBalanceLabel}"
+                                       FontFamily="CairoRegular" FontSize="14"
+                                       TextColor="#FFCCBC"/>
+                                <Label Text="{Binding PointsBalance}"
+                                       FontFamily="CairoBold" FontSize="42"
+                                       TextColor="White"/>
+                                <Label Text="{loc:Loc Key=PointsSubTitle}"
+                                       FontFamily="CairoRegular" FontSize="12"
+                                       TextColor="#FFCCBC"
+                                       Margin="0,4,0,0"/>
                             </VerticalStackLayout>
-                            <Label Grid.Column="1" Text="{Binding AmountText}"
-                                   FontFamily="CairoBold" FontSize="16"
-                                   TextColor="{Binding Amount, Converter={StaticResource AmountToColor}}"
-                                   VerticalOptions="Center"/>
+
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="10">
+                                <Label Text="✨" FontSize="48" HorizontalOptions="Center"/>
+                                <Button Text="{loc:Loc Key=Redeem100Points}"
+                                        Command="{Binding RedeemPointsCommand}"
+                                        BackgroundColor="White"
+                                        TextColor="{StaticResource Primary}"
+                                        FontFamily="CairoBold"
+                                        FontSize="13"
+                                        Padding="16,0"
+                                        HeightRequest="36"
+                                        CornerRadius="18"/>
+                            </VerticalStackLayout>
                         </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                    </Border>
+
+                    <!-- ══════ TABS / FILTERS ══════ -->
+                    <Border BackgroundColor="White"
+                            StrokeShape="RoundRectangle 16"
+                            Stroke="Transparent"
+                            Padding="4"
+                            HeightRequest="56">
+                        <Grid ColumnDefinitions="*,*,*">
+                            <!-- All Tab -->
+                            <Button Grid.Column="0" Text="{loc:Loc Key=Tab_All}"
+                                    Command="{Binding FilterTransactionsCommand}" CommandParameter="All"
+                                    BackgroundColor="{Binding SelectedTab, Converter={StaticResource BoolToColor}, ConverterParameter='All'}"
+                                    TextColor="{Binding SelectedTab, Converter={StaticResource BoolToColor}, ConverterParameter='All_Text'}"
+                                    FontFamily="CairoBold" FontSize="14" CornerRadius="12"/>
+
+                            <!-- Earned Tab -->
+                            <Button Grid.Column="1" Text="{loc:Loc Key=Tab_Earned}"
+                                    Command="{Binding FilterTransactionsCommand}" CommandParameter="Earned"
+                                    BackgroundColor="{Binding SelectedTab, Converter={StaticResource BoolToColor}, ConverterParameter='Earned'}"
+                                    TextColor="{Binding SelectedTab, Converter={StaticResource BoolToColor}, ConverterParameter='Earned_Text'}"
+                                    FontFamily="CairoBold" FontSize="14" CornerRadius="12"/>
+
+                            <!-- Spent Tab -->
+                            <Button Grid.Column="2" Text="{loc:Loc Key=Tab_Spent}"
+                                    Command="{Binding FilterTransactionsCommand}" CommandParameter="Spent"
+                                    BackgroundColor="{Binding SelectedTab, Converter={StaticResource BoolToColor}, ConverterParameter='Spent'}"
+                                    TextColor="{Binding SelectedTab, Converter={StaticResource BoolToColor}, ConverterParameter='Spent_Text'}"
+                                    FontFamily="CairoBold" FontSize="14" CornerRadius="12"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- ══════ TRANSACTIONS LIST ══════ -->
+                    <Label Text="{loc:Loc Key=ViewHistory}" 
+                           FontFamily="CairoBold" FontSize="18" 
+                           TextColor="{StaticResource TextPrimary}"
+                           Margin="4,10,0,0"/>
+
+                    <CollectionView ItemsSource="{Binding FilteredTransactions}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Margin="0,60,0,0" Spacing="15">
+                                <Label Text="📭" FontSize="60" HorizontalOptions="Center"/>
+                                <Label Text="{loc:Loc Key=NoPointsFound}"
+                                       FontFamily="CairoBold" FontSize="18"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalOptions="Center"/>
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:PointTransaction">
+                                <Grid Padding="0,0,0,12">
+                                    <Border BackgroundColor="White"
+                                            StrokeShape="RoundRectangle 16"
+                                            Stroke="#F0F0F0"
+                                            StrokeThickness="1"
+                                            Padding="0">
+                                        <Grid ColumnDefinitions="6, *, Auto">
+                                            <!-- Color Indicator Strip -->
+                                            <Border Grid.Column="0" 
+                                                    BackgroundColor="{Binding Amount, Converter={StaticResource AmountToColor}}"
+                                                    StrokeShape="RoundRectangle 16,0,0,16"
+                                                    StrokeThickness="0"
+                                                    WidthRequest="6"
+                                                    HorizontalOptions="Start"/>
+
+                                            <!-- Content -->
+                                            <VerticalStackLayout Grid.Column="1" Padding="16,12" Spacing="4">
+                                                <Label Text="{Binding Title}" 
+                                                       FontFamily="CairoBold" FontSize="15" 
+                                                       TextColor="{StaticResource TextPrimary}"/>
+                                                <HorizontalStackLayout Spacing="6">
+                                                    <Label Text="📅" FontSize="12" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding DateText}" 
+                                                           FontFamily="CairoRegular" FontSize="12" 
+                                                           TextColor="{StaticResource TextSecondary}"/>
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+
+                                            <!-- Amount Banner -->
+                                            <Border Grid.Column="2" 
+                                                    Margin="12"
+                                                    Padding="12,6"
+                                                    BackgroundColor="{Binding Amount, Converter={StaticResource AmountToColor}, ConverterParameter='Light'}"
+                                                    StrokeShape="RoundRectangle 10"
+                                                    Stroke="Transparent"
+                                                    VerticalOptions="Center">
+                                                <Label Text="{Binding AmountText}"
+                                                       FontFamily="CairoBold" FontSize="16"
+                                                       TextColor="{Binding Amount, Converter={StaticResource AmountToColor}}"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </ScrollView>
         </RefreshView>
     </Grid>
 </ContentPage>

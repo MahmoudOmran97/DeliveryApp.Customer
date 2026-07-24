@@ -6,11 +6,21 @@ public class AmountToColorConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is decimal amount)
+        int amount = 0;
+        if (value is int i) amount = i;
+        else if (value is decimal d) amount = (int)d;
+
+        bool isEarned = amount > 0;
+        bool isLight = parameter is string s && s == "Light";
+
+        if (isEarned)
         {
-            return amount > 0 ? Color.FromArgb("#4CAF50") : Color.FromArgb("#F44336");
+            return isLight ? Color.FromArgb("#E8F5E9") : Color.FromArgb("#4CAF50");
         }
-        return Colors.Black;
+        else
+        {
+            return isLight ? Color.FromArgb("#FFEBEE") : Color.FromArgb("#F44336");
+        }
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

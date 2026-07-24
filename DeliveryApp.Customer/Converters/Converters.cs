@@ -81,6 +81,19 @@ public class BoolToColorConverter : IValueConverter
 {
     public object Convert(object? v, Type t, object? p, CultureInfo c)
     {
+        // Special case for PointsPage tabs
+        if (v is string selectedTab && p is string targetTab)
+        {
+            bool isText = targetTab.EndsWith("_Text");
+            string actualTarget = isText ? targetTab.Replace("_Text", "") : targetTab;
+            bool isActive = selectedTab == actualTarget;
+
+            if (isText)
+                return isActive ? Colors.White : Color.FromArgb("#757575");
+            else
+                return isActive ? Color.FromArgb("#FF5722") : Colors.Transparent;
+        }
+
         bool isTrue = v switch
         {
             bool b => b,
