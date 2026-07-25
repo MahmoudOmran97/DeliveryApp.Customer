@@ -231,32 +231,40 @@ public partial class HomeViewModel : BaseViewModel
     [RelayCommand]
     static async Task OpenBanner(Banner? banner)
     {
-        var target = banner?.ActionUrl?.Trim();
-        if (string.IsNullOrWhiteSpace(target)) return;
-
-        // رابط خارجي كامل → افتحه في المتصفح
-        if (target.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+        try
         {
-            await Launcher.OpenAsync(target);
-            return;
+            var target = banner?.ActionUrl?.Trim();
+            if (string.IsNullOrWhiteSpace(target)) return;
+
+            // رابط خارجي كامل → افتحه في المتصفح
+            if (target.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                await Launcher.OpenAsync(target);
+                return;
+            }
+
+            var parts = target.Split('/', 2, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length < 2) return;
+
+            var type = parts[0].ToLowerInvariant();
+            var value = parts[1];
+
+            switch (type)
+            {
+                case "restaurant":
+                case "store":
+                    await Shell.Current.GoToAsync($"RestaurantPage?id={value}");
+                    break;
+
+                case "category":
+                    await Shell.Current.GoToAsync($"{nameof(Views.CategoryPage)}?category={Uri.EscapeDataString(value)}");
+                    break;
+            }
         }
-
-        var parts = target.Split('/', 2, StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length < 2) return;
-
-        var type = parts[0].ToLowerInvariant();
-        var value = parts[1];
-
-        switch (type)
+        catch (Exception ex)
         {
-            case "restaurant":
-            case "store":
-                await Shell.Current.GoToAsync($"RestaurantPage?id={value}");
-                break;
-
-            case "category":
-                await Shell.Current.GoToAsync($"{nameof(Views.CategoryPage)}?category={Uri.EscapeDataString(value)}");
-                break;
+            // أي مشكلة في رابط البنر (رابط غلط، معرّف مش موجود...) متكسرش التطبيق
+            System.Diagnostics.Debug.WriteLine($"OpenBanner failed: {ex}");
         }
     }
 
