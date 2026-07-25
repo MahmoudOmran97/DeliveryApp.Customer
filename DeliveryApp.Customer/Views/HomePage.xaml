@@ -24,7 +24,7 @@
             <Grid Grid.Row="0" Grid.RowSpan="3"
                   HorizontalOptions="Fill" VerticalOptions="Fill"
                   HeightRequest="120"
-                 
+
                   Opacity="0.2" InputTransparent="True">
                 <Image x:Name="LogoBase" Source="logo_anim_base.png"
                        Aspect="AspectFit" HorizontalOptions="Fill" VerticalOptions="Fill"/>
@@ -120,25 +120,30 @@
                                 BackgroundColor="White"
                                 Padding="8,10">
                         <HorizontalStackLayout Spacing="4">
+
+                            <!-- الكل -->
                             <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
                                 <VerticalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SelectCategoryCommand}"
-                               CommandParameter="{x:Null}"/>
+                                                          CommandParameter="{x:Null}"/>
                                 </VerticalStackLayout.GestureRecognizers>
                                 <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
-             BackgroundColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
-             WidthRequest="58" HeightRequest="58"
-             HorizontalOptions="Center">
-                                    <Label Text="🏠" FontSize="28"
-                HorizontalOptions="Center" VerticalOptions="Center"/>
+                                        BackgroundColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
+                                        WidthRequest="70" HeightRequest="70"
+                                        HorizontalOptions="Center">
+                                    <Image Source="cat_all.png"
+                                           WidthRequest="65" HeightRequest="65"
+                                           Aspect="AspectFit"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
                                 <Label Text="{loc:Loc Key=Cat_All}"
-            FontFamily="CairoRegular" FontSize="11"
-            TextColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
-            HorizontalOptions="Center"
-            HorizontalTextAlignment="Center"
-            MaxLines="1" LineBreakMode="TailTruncation"/>
+                                       FontFamily="CairoBold" FontSize="11"
+                                       TextColor="{Binding IsCatAll, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
                             </VerticalStackLayout>
+
                             <!-- مطاعم -->
                             <VerticalStackLayout Spacing="5" WidthRequest="72" HorizontalOptions="Center">
                                 <VerticalStackLayout.GestureRecognizers>
@@ -147,13 +152,15 @@
                                 </VerticalStackLayout.GestureRecognizers>
                                 <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
                                         BackgroundColor="{Binding IsCatRestaurants, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
-                                        WidthRequest="58" HeightRequest="58"
+                                        WidthRequest="70" HeightRequest="70"
                                         HorizontalOptions="Center">
-                                    <Label Text="🍽️" FontSize="28"
+                                    <Image Source="cat_restaurants.png"
+                                           WidthRequest="65" HeightRequest="65"
+                                           Aspect="AspectFit"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
                                 <Label Text="{loc:Loc Key=Cat_Restaurants}"
-                                       FontFamily="CairoRegular" FontSize="11"
+                                       FontFamily="CairoBold" FontSize="11"
                                        TextColor="{Binding IsCatRestaurants, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
                                        HorizontalOptions="Center"
                                        HorizontalTextAlignment="Center"
@@ -168,13 +175,15 @@
                                 </VerticalStackLayout.GestureRecognizers>
                                 <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
                                         BackgroundColor="{Binding IsCatGrocery, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
-                                        WidthRequest="58" HeightRequest="58"
+                                        WidthRequest="70" HeightRequest="70"
                                         HorizontalOptions="Center">
-                                    <Label Text="🛍️" FontSize="28"
+                                    <Image Source="cat_grocery.png"
+                                           WidthRequest="65" HeightRequest="65"
+                                           Aspect="AspectFit"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
                                 <Label Text="{loc:Loc Key=Cat_Grocery}"
-                                       FontFamily="CairoRegular" FontSize="11"
+                                       FontFamily="CairoBold" FontSize="11"
                                        TextColor="{Binding IsCatGrocery, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
                                        HorizontalOptions="Center"
                                        HorizontalTextAlignment="Center"
@@ -189,13 +198,15 @@
                                 </VerticalStackLayout.GestureRecognizers>
                                 <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
                                         BackgroundColor="{Binding IsCatPharmacy, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
-                                        WidthRequest="58" HeightRequest="58"
+                                        WidthRequest="70" HeightRequest="70"
                                         HorizontalOptions="Center">
-                                    <Label Text="💊" FontSize="28"
+                                    <Image Source="cat_pharmacy.png"
+                                           WidthRequest="65" HeightRequest="65"
+                                           Aspect="AspectFit"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
                                 <Label Text="{loc:Loc Key=Cat_Pharmacy}"
-                                       FontFamily="CairoRegular" FontSize="11"
+                                       FontFamily="CairoBold" FontSize="11"
                                        TextColor="{Binding IsCatPharmacy, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
                                        HorizontalOptions="Center"
                                        HorizontalTextAlignment="Center"
@@ -210,13 +221,15 @@
                                 </VerticalStackLayout.GestureRecognizers>
                                 <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
                                         BackgroundColor="{Binding IsCatSupermarket, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
-                                        WidthRequest="58" HeightRequest="58"
+                                        WidthRequest="70" HeightRequest="70"
                                         HorizontalOptions="Center">
-                                    <Label Text="🏪" FontSize="28"
+                                    <Image Source="cat_supermarket.png"
+                                           WidthRequest="65" HeightRequest="65"
+                                           Aspect="AspectFit"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
                                 <Label Text="{loc:Loc Key=Cat_Supermarket}"
-                                       FontFamily="CairoRegular" FontSize="11"
+                                       FontFamily="CairoBold" FontSize="11"
                                        TextColor="{Binding IsCatSupermarket, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
                                        HorizontalOptions="Center"
                                        HorizontalTextAlignment="Center"
@@ -231,13 +244,15 @@
                                 </VerticalStackLayout.GestureRecognizers>
                                 <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
                                         BackgroundColor="{Binding IsCatVegetables, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
-                                        WidthRequest="58" HeightRequest="58"
+                                        WidthRequest="70" HeightRequest="70"
                                         HorizontalOptions="Center">
-                                    <Label Text="🥦" FontSize="28"
+                                    <Image Source="cat_vegetables.png"
+                                           WidthRequest="65" HeightRequest="65"
+                                           Aspect="AspectFit"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
                                 <Label Text="{loc:Loc Key=Cat_Vegetables}"
-                                       FontFamily="CairoRegular" FontSize="11"
+                                      FontFamily="CairoBold" FontSize="11"
                                        TextColor="{Binding IsCatVegetables, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
                                        HorizontalOptions="Center"
                                        HorizontalTextAlignment="Center"
@@ -252,13 +267,15 @@
                                 </VerticalStackLayout.GestureRecognizers>
                                 <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
                                         BackgroundColor="{Binding IsCatDrinks, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
-                                        WidthRequest="58" HeightRequest="58"
+                                        WidthRequest="70" HeightRequest="70"
                                         HorizontalOptions="Center">
-                                    <Label Text="🧃" FontSize="28"
+                                    <Image Source="cat_drinks.png"
+                                           WidthRequest="65" HeightRequest="65"
+                                           Aspect="AspectFit"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
                                 <Label Text="{loc:Loc Key=Cat_Drinks}"
-                                       FontFamily="CairoRegular" FontSize="11"
+                                       FontFamily="CairoBold" FontSize="11"
                                        TextColor="{Binding IsCatDrinks, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
                                        HorizontalOptions="Center"
                                        HorizontalTextAlignment="Center"
@@ -273,21 +290,20 @@
                                 </VerticalStackLayout.GestureRecognizers>
                                 <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
                                         BackgroundColor="{Binding IsCatAccessories, Converter={StaticResource BoolToColor}, ConverterParameter='#FFF3E0|#F5F5F5'}"
-                                        WidthRequest="58" HeightRequest="58"
+                                        WidthRequest="70" HeightRequest="70"
                                         HorizontalOptions="Center">
-                                    <Label Text="👜" FontSize="28"
+                                    <Image Source="cat_accessories.png"
+                                           WidthRequest="65" HeightRequest="65"
+                                           Aspect="AspectFit"
                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                 </Border>
                                 <Label Text="{loc:Loc Key=Cat_Accessories}"
-                                       FontFamily="CairoRegular" FontSize="11"
+                                       FontFamily="CairoBold" FontSize="11"
                                        TextColor="{Binding IsCatAccessories, Converter={StaticResource BoolToColor}, ConverterParameter='#FF5722|#424242'}"
                                        HorizontalOptions="Center"
                                        HorizontalTextAlignment="Center"
                                        MaxLines="1" LineBreakMode="TailTruncation"/>
                             </VerticalStackLayout>
-
-                            <!-- الكل -->
-
 
                         </HorizontalStackLayout>
                     </ScrollView>
