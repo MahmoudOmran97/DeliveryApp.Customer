@@ -318,9 +318,38 @@
                             <DataTemplate x:DataType="m:Banner">
                                 <Grid Margin="12,0">
                                     <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
-                                            BackgroundColor="{Binding BgColor}" HeightRequest="150">
-                                        <Grid ColumnDefinitions="*,Auto" Padding="20,16">
-                                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="6">
+                                            BackgroundColor="{Binding BgColor}" HeightRequest="150"
+                                            Padding="0" HorizontalOptions="Fill">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenBannerCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+                                        <Grid>
+                                            <!-- الصورة بتغطي البنر بالكامل زي طلبات -->
+                                            <ff:CachedImage Source="{Binding FullImageUrl}"
+                                                            Aspect="AspectFill"
+                                                            IsVisible="{Binding HasImage}"
+                                                            HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                                            <Label Text="🍔" FontSize="60"
+                                                   HorizontalOptions="Center" VerticalOptions="Center"
+                                                   IsVisible="{Binding HasImage, Converter={StaticResource InvertBool}}"/>
+
+                                            <!-- تدرج شفاف فوق الصورة عشان النص يبان واضح -->
+                                            <BoxView IsVisible="{Binding HasImage}"
+                                                     HorizontalOptions="Fill" VerticalOptions="Fill">
+                                                <BoxView.Background>
+                                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                                        <GradientStop Color="#CC000000" Offset="0.0"/>
+                                                        <GradientStop Color="#66000000" Offset="0.55"/>
+                                                        <GradientStop Color="#00000000" Offset="1.0"/>
+                                                    </LinearGradientBrush>
+                                                </BoxView.Background>
+                                            </BoxView>
+
+                                            <VerticalStackLayout VerticalOptions="Center"
+                                                                  HorizontalOptions="Start"
+                                                                  Spacing="6" Padding="20,16">
                                                 <Label Text="{Binding Title}"
                                                        FontFamily="CairoBold" FontSize="18"
                                                        TextColor="White" MaxLines="2"
@@ -339,15 +368,6 @@
                                                            TextColor="#FF5722"/>
                                                 </Border>
                                             </VerticalStackLayout>
-                                            <ff:CachedImage Grid.Column="1"
-                                                            Source="{Binding FullImageUrl}"
-                                                            WidthRequest="100" HeightRequest="110"
-                                                            Aspect="AspectFit"
-                                                            IsVisible="{Binding HasImage}"
-                                                            VerticalOptions="Center"/>
-                                            <Label Grid.Column="1" Text="🍔" FontSize="60"
-                                                   HorizontalOptions="Center" VerticalOptions="Center"
-                                                   IsVisible="{Binding HasImage, Converter={StaticResource InvertBool}}"/>
                                         </Grid>
                                     </Border>
                                 </Grid>

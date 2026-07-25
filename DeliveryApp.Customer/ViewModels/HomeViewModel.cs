@@ -224,6 +224,42 @@ public partial class HomeViewModel : BaseViewModel
     static Task OpenRestaurant(Restaurant r)
         => Shell.Current.GoToAsync($"RestaurantPage?id={r.Id}");
 
+    /// <summary>
+    /// لما المستخدم يدوس على البنر، بنفك ActionUrl اللي جاي من الأدمن
+    /// (بصيغة "restaurant/5" أو "category/Pharmacy" أو رابط خارجي كامل) ونوديه المكان الصح
+    /// </summary>
+    [RelayCommand]
+    static async Task OpenBanner(Banner? banner)
+    {
+        var target = banner?.ActionUrl?.Trim();
+        if (string.IsNullOrWhiteSpace(target)) return;
+
+        // رابط خارجي كامل → افتحه في المتصفح
+        if (target.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+        {
+            await Launcher.OpenAsync(target);
+            return;
+        }
+
+        var parts = target.Split('/', 2, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 2) return;
+
+        var type = parts[0].ToLowerInvariant();
+        var value = parts[1];
+
+        switch (type)
+        {
+            case "restaurant":
+            case "store":
+                await Shell.Current.GoToAsync($"RestaurantPage?id={value}");
+                break;
+
+            case "category":
+                await Shell.Current.GoToAsync($"{nameof(Views.CategoryPage)}?category={Uri.EscapeDataString(value)}");
+                break;
+        }
+    }
+
     [RelayCommand]
     static Task OpenCart() => Shell.Current.GoToAsync("CartPage");
 
