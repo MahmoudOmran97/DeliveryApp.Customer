@@ -1,15 +1,51 @@
 ﻿using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DeliveryApp.Customer;
 
 public partial class App : Application
 {
+    bool _loggedOutDueToDeactivation;
+
     public App(SplashPage splash, ChatNotificationService chatNotif, FcmTokenService fcmToken,
-        AuthService auth, SignalRService signalR)
+        AuthService auth, SignalRService signalR, ApiService api, IServiceProvider services)
     {
         InitializeComponent();
         _ = chatNotif;
+
+        // ✅ لو الأدمن أوقف حساب العميل، اعمل logout فوري من أي مكان في الأبليكيشن.
+        // بنسمع الحدث من مصدرين: SignalR (لما الأبليكيشن يكون فاتح ومتصل)،
+        // و ApiService (لو أي طلب API عادي رجع 401 بسبب إن الحساب موقوف).
+        //
+        // ملاحظة: بنعمل resolve لـ LoginPage من الـ IServiceProvider وقت الحاجة بس (جوه
+        // الميثود دي)، مش كباراميتر في الـ constructor. لو اتحقنت كباراميتر مباشر، الـ DI
+        // كان بيعمل new للصفحة قبل ما App.xaml نفسه يخلص تحميل الـ ResourceDictionary
+        // بتاعه، فأي StaticResource (زي InputBorder) مكانش لسه موجود وقت إنشاء الصفحة
+        // → XamlParseException.
+        async Task HandleAccountDeactivatedAsync()
+        {
+            if (_loggedOutDueToDeactivation) return;
+            _loggedOutDueToDeactivation = true;
+
+            try { await signalR.DisconnectAsync(); } catch { }
+            auth.Logout();
+
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                var loginPage = services.GetRequiredService<LoginPage>();
+                var nav = new NavigationPage(loginPage);
+                MainPage = nav;
+                await nav.DisplayAlert(
+                    "الحساب موقوف",
+                    "تم إيقاف حسابك من قبل الإدارة. تواصل مع الدعم لمزيد من التفاصيل.",
+                    "حسنًا");
+            });
+        }
+
+        signalR.AccountDeactivated += () => _ = HandleAccountDeactivatedAsync();
+        api.AccountDeactivated += () => _ = HandleAccountDeactivatedAsync();
+        fcmToken.AccountDeactivated += () => _ = HandleAccountDeactivatedAsync();
 
         fcmToken.ListenForTokenRefresh();
         fcmToken.ListenForMessages();

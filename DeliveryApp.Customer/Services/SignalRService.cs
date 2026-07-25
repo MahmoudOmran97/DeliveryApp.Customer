@@ -16,11 +16,14 @@ public class SignalRService
     public event Action<int, string, string>? ChatMessageReceived;   // orderId, senderId, message
     public event Action<int, int>? IncomingVoiceCall;
     public event Action<int, int>? VoiceCallAccepted; // orderId, byUserId
-   
+
     public event Action<int, int>? VoiceCallRejected; // orderId, byUserId
     public event Action<int, int>? VoiceCallEnded;    // orderId, byUserId
     // ✅ FIX #1 & #3 — استقبال إشعار قبول الدرايفر للطلب
     public event Action<int, int, string>? DriverAssigned;          // orderId, driverId, driverName
+
+    // ✅ بيتبعت لما الأدمن يوقف حساب العميل — لازم الأبليكيشن يعمل logout فوري
+    public event Action? AccountDeactivated;
 
     public bool IsConnected => _hub?.State == HubConnectionState.Connected;
 
@@ -63,11 +66,11 @@ public class SignalRService
             MainThread.BeginInvokeOnMainThread(() => IncomingVoiceCall?.Invoke(orderId, callerId));
         });
 
-       
 
-       
 
-       
+
+
+
 
         _hub.On<JsonElement>("VoiceCallAccepted", el =>
         {
@@ -88,6 +91,14 @@ public class SignalRService
             var orderId = el.GetProperty("orderId").GetInt32();
             var byUserId = el.GetProperty("byUserId").GetInt32();
             MainThread.BeginInvokeOnMainThread(() => VoiceCallEnded?.Invoke(orderId, byUserId));
+        });
+
+        // ✅ لما الأدمن يوقف/يفعّل الحساب، السيرفر بيبعت الحالة الجديدة فوراً
+        _hub.On<JsonElement>("AccountStatusChanged", el =>
+        {
+            var isActive = el.TryGetProperty("isActive", out var ia) && ia.GetBoolean();
+            if (!isActive)
+                MainThread.BeginInvokeOnMainThread(() => AccountDeactivated?.Invoke());
         });
 
         // ✅ FIX #1 & #3 — السيرفر بيبعت DriverAssigned لما الدرايفر يقبل الطلب
@@ -131,7 +142,7 @@ public class SignalRService
         if (IsConnected) await _hub!.InvokeAsync("AcceptVoiceCall", orderId);
     }
 
-  
+
 
     public async Task RejectVoiceCallAsync(int orderId)
     {

@@ -44,6 +44,30 @@ public class ApiService
 
     }
 
+    // ✅ بيتبعت مرة واحدة بس لما أي طلب يرجع 401 بكود ACCOUNT_DEACTIVATED،
+    // عشان الأبليكيشن يعمل logout فوري بغض النظر عن مكان الاستدعاء.
+    public event Action? AccountDeactivated;
+
+    // بيفحص لو الـ 401 راجع بسبب إن الحساب موقوف، ولو كده بيطلق الحدث ويرجع true
+    private bool CheckAccountDeactivated(System.Net.HttpStatusCode statusCode, string body)
+    {
+        if (statusCode != System.Net.HttpStatusCode.Unauthorized)
+            return false;
+
+        try
+        {
+            var doc = System.Text.Json.JsonDocument.Parse(body);
+            if (doc.RootElement.TryGetProperty("code", out var code) &&
+                code.GetString() == "ACCOUNT_DEACTIVATED")
+            {
+                AccountDeactivated?.Invoke();
+                return true;
+            }
+        }
+        catch { }
+        return false;
+    }
+
     private async Task<T?> GetAsync<T>(string path)
 
     {
@@ -59,6 +83,9 @@ public class ApiService
             if (r.IsSuccessStatusCode)
 
                 return await r.Content.ReadFromJsonAsync<T>(_json);
+
+            var errorBody = await r.Content.ReadAsStringAsync();
+            CheckAccountDeactivated(r.StatusCode, errorBody);
 
         }
 
@@ -83,6 +110,10 @@ public class ApiService
 
             // ← قراءة رسالة الخطأ من الـ API
             var errorBody = await r.Content.ReadAsStringAsync();
+
+            if (CheckAccountDeactivated(r.StatusCode, errorBody))
+                throw new ApiException("Account is deactivated");
+
             try
             {
                 var doc = System.Text.Json.JsonDocument.Parse(errorBody);
@@ -114,6 +145,12 @@ public class ApiService
                 ? await _http.PutAsJsonAsync($"{Base}/{path}", payload)
 
                 : await _http.PutAsync($"{Base}/{path}", null);
+
+            if (!r.IsSuccessStatusCode)
+            {
+                var errorBody = await r.Content.ReadAsStringAsync();
+                CheckAccountDeactivated(r.StatusCode, errorBody);
+            }
 
             return r.IsSuccessStatusCode;
 
@@ -407,7 +444,11 @@ public class ApiService
             if (response.IsSuccessStatusCode)
                 System.Diagnostics.Debug.WriteLine("[API] FCM token saved to backend");
             else
+            {
                 System.Diagnostics.Debug.WriteLine($"[API] user/fcm-token failed: {(int)response.StatusCode} {response.ReasonPhrase}");
+                var errorBody = await response.Content.ReadAsStringAsync();
+                CheckAccountDeactivated(response.StatusCode, errorBody);
+            }
         }
         catch (Exception ex) { Debug(ex, "user/fcm-token"); }
     }
