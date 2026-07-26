@@ -331,6 +331,8 @@
                                             <ff:CachedImage Source="{Binding FullImageUrl}"
                                                             Aspect="AspectFill"
                                                             IsVisible="{Binding HasImage}"
+                                                            DownsampleWidth="720"
+                                                            CacheDuration="7"
                                                             HorizontalOptions="Fill" VerticalOptions="Fill"/>
                                             <Label Text="🍔" FontSize="60"
                                                    HorizontalOptions="Center" VerticalOptions="Center"
@@ -506,7 +508,8 @@
                                                 <ff:CachedImage Source="{Binding FullImageUrl}"
                                                                Aspect="AspectFill"
                                                                HeightRequest="88" WidthRequest="95"
-                                                               CacheDuration="7"
+                                                              DownsampleToViewSize="True"
+                                                              CacheDuration="7"
                                                                IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
                                             </Grid>
                                         </Border>

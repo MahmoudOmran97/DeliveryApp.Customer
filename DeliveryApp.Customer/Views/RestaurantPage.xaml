@@ -70,7 +70,7 @@
             <!-- Back -->
 
             <Image Source="icon_back.png" WidthRequest="42" HeightRequest="42"
-                   Margin="16,48,0,0" HorizontalOptions="Start" VerticalOptions="Start">
+                   Margin="16,45,0,0" HorizontalOptions="Start" VerticalOptions="Start">
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
                 </Image.GestureRecognizers>
@@ -117,7 +117,7 @@
         <ScrollView x:Name="ContentScrollView" Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0"
                     Scrolled="OnContentScrolled">
 
-            <VerticalStackLayout Spacing="0">
+            <VerticalStackLayout Spacing="0"   >
 
                 <!-- Info Card -->
 
@@ -183,12 +183,14 @@
                                    Color="#FF5722" Margin="0,16"/>
 
                 <!-- Categories quick-jump bar -->
-                <CollectionView x:Name="InlineCategoriesBar"
+                <CollectionView x:Name="InlineCategoriesBar" 
                                 ItemsSource="{Binding Menu}" SelectionMode="None"
                                 IsVisible="{Binding Menu.Count, Converter={StaticResource IntToBool}}"
                                 ItemsLayout="HorizontalList"
                                 ItemTemplate="{StaticResource CategoryChipTemplate}"
-                                HeightRequest="86" Margin="0,10,0,0"
+                                HeightRequest="85" Margin="0,10,0,0"
+                             
+                                BackgroundColor="White" 
                                 SizeChanged="OnInlineCategoriesBarSizeChanged"/>
 
                 <!-- Pharmacy: upload prescription -->
