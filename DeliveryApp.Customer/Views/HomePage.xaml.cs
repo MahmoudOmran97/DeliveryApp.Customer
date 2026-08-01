@@ -7,6 +7,7 @@ public partial class HomePage : ContentPage
     readonly HomeViewModel _vm;
     IDispatcherTimer? _bannerTimer;
     CancellationTokenSource? _logoAnimCts;
+    bool _suppressPositionChangedRestart;
 
     public HomePage(HomeViewModel vm)
     {
@@ -30,6 +31,13 @@ public partial class HomePage : ContentPage
         StopLogoAnimation();
     }
 
+    // ══════════════════════════════════════════════
+    //  Banner Auto-Scroll Timer
+    //  - بيغيّر CurrentBannerIndex بس (مش بيعمل ScrollTo يدوي)
+    //  - الـ CarouselView + IndicatorView متبطتين على نفس الـ Property
+    //    (Position TwoWay) فبيتحركوا لوحدهم تلقائي
+    //  - try/catch عشان أي استثناء ميوقفش التطبيق
+    // ══════════════════════════════════════════════
     void StartBannerTimer()
     {
         _bannerTimer?.Stop();
@@ -37,27 +45,53 @@ public partial class HomePage : ContentPage
         _bannerTimer.Interval = TimeSpan.FromSeconds(3);
         _bannerTimer.Tick += (_, _) =>
         {
-            // guard: only scroll if we have banners
-            if (_vm.Banners == null || _vm.Banners.Count <= 1) return;
+            try
+            {
+                if (_vm.Banners == null || _vm.Banners.Count <= 1) return;
 
-            var next = (_vm.CurrentBannerIndex + 1) % _vm.Banners.Count;
-            _vm.CurrentBannerIndex = next;
+                var next = (_vm.CurrentBannerIndex + 1) % _vm.Banners.Count;
 
-            try { BannerCarousel.ScrollTo(next, animate: true); }
-            catch { /* ignore if carousel not ready */ }
+                // منع الـ PositionChanged من إعادة تشغيل التايمر وهو أصلاً شغال من التايمر نفسه
+                _suppressPositionChangedRestart = true;
+                _vm.CurrentBannerIndex = next;
+            }
+            catch
+            {
+                // تجاهل أي استثناء عشان التايمر مايوقفش التطبيق
+            }
+            finally
+            {
+                _suppressPositionChangedRestart = false;
+            }
         };
         _bannerTimer.Start();
     }
 
+    void RestartBannerTimer()
+    {
+        try
+        {
+            _bannerTimer?.Stop();
+            _bannerTimer?.Start();
+        }
+        catch { /* تجاهل */ }
+    }
+
+    // بيتنادى لما الـ Position يتغيّر - سواء من التايمر أو من قلب المستخدم يدوي
+    void BannerCarousel_PositionChanged(object? sender, PositionChangedEventArgs e)
+    {
+        // لو المستخدم هو اللي قلّب يدوي (مش التايمر) نعيد ضبط العداد
+        // عشان مايجيش يقلب من تحت إيده بعد نص ثانية
+        if (!_suppressPositionChangedRestart)
+            RestartBannerTimer();
+    }
+
     // ══════════════════════════════════════════════
     //  Logo Animation (Header)
-    //  - LogoPin: يطفو لأعلى وأسفل (Float)
-    //  - LogoSpeedWave + LogoSpeedLine: يتحركوا يمين/شمال بإحساس سرعة
-    //  - LogoBase: ثابت تمامًا (مرجع بصري للوجو)
     // ══════════════════════════════════════════════
     void StartLogoAnimation()
     {
-        StopLogoAnimation(); // تأمين عدم تكرار اللووب لو الصفحة ظهرت أكتر من مرة
+        StopLogoAnimation();
         _logoAnimCts = new CancellationTokenSource();
         var token = _logoAnimCts.Token;
 
@@ -84,7 +118,7 @@ public partial class HomePage : ContentPage
                 await LogoPin.TranslateTo(0, 0, 1100, Easing.SinInOut);
             }
         }
-        catch (ObjectDisposedException) { /* الصفحة راحت قبل ما اللووب يخلص */ }
+        catch (ObjectDisposedException) { }
         catch (TaskCanceledException) { }
     }
 
@@ -111,7 +145,6 @@ public partial class HomePage : ContentPage
     {
         try
         {
-            // تأخير بسيط في البداية عن LogoSpeedWave يعطي إحساس عمق (الخطوط مش بتتحرك مع بعض بنفس التوقيت بالظبط)
             await Task.Delay(150, token);
             while (!token.IsCancellationRequested)
             {

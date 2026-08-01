@@ -310,85 +310,84 @@
                     </ScrollView>
 
                     <!-- ── Banners Carousel ── -->
+                    <!-- ── Banners Carousel ── -->
                     <CarouselView x:Name="BannerCarousel"
-                                  ItemsSource="{Binding Banners}"
-                                  HeightRequest="160" Loop="True"
-                                  IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"
-                                  Margin="0,12,0,0">
+              ItemsSource="{Binding Banners}"
+              Position="{Binding CurrentBannerIndex, Mode=TwoWay}"
+              HeightRequest="200" Loop="True"
+              IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"
+              Margin="0,12,0,0"
+              PositionChanged="BannerCarousel_PositionChanged">
                         <CarouselView.ItemTemplate>
                             <DataTemplate x:DataType="m:Banner">
                                 <Grid Margin="12,0">
                                     <Border StrokeShape="RoundRectangle 16" Stroke="Transparent"
-                                            BackgroundColor="{Binding BgColor}" HeightRequest="150"
-                                            Padding="0" HorizontalOptions="Fill">
+                        BackgroundColor="{Binding BgColor}" HeightRequest="170"
+                        Padding="0" HorizontalOptions="Fill">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.OpenBannerCommand}"
-                                                CommandParameter="{Binding .}"/>
+                            Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.OpenBannerCommand}"
+                            CommandParameter="{Binding .}"/>
                                         </Border.GestureRecognizers>
                                         <Grid>
-                                            <!-- الصورة بتغطي البنر بالكامل زي طلبات -->
                                             <ff:CachedImage Source="{Binding FullImageUrl}"
-                                                            Aspect="AspectFill"
-                                                            IsVisible="{Binding HasImage}"
-                                                            DownsampleWidth="720"
-                                                            CacheDuration="7"
-                                                            HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                                        Aspect="AspectFill"
+                                        IsVisible="{Binding HasImage}"
+                                        DownsampleWidth="720"
+                                        CacheDuration="7"
+                                        HorizontalOptions="Fill" VerticalOptions="Fill"/>
                                             <Label Text="🍔" FontSize="60"
-                                                   HorizontalOptions="Center" VerticalOptions="Center"
-                                                   IsVisible="{Binding HasImage, Converter={StaticResource InvertBool}}"/>
+                               HorizontalOptions="Center" VerticalOptions="Center"
+                               IsVisible="{Binding HasImage, Converter={StaticResource InvertBool}}"/>
 
-                                            <!-- شريط سفلي بلون صلب شبه معتم: النص هنا واضح دايماً
-                                                 مهما كانت الصورة، بدل ما يتحط فوق الصورة مباشرة -->
                                             <Border IsVisible="{Binding HasImage}"
-                                                    VerticalOptions="End" HorizontalOptions="Fill"
-                                                    BackgroundColor="#80000000"
-                                                    StrokeShape="RoundRectangle 0,0,16,16" Stroke="Transparent"
-                                                    Padding="16,10">
+                                VerticalOptions="End" HorizontalOptions="Fill"
+                                BackgroundColor="#80000000"
+                                StrokeShape="RoundRectangle 0,0,16,16" Stroke="Transparent"
+                                Padding="16,10">
                                                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                                                     <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="3">
                                                         <Label Text="{Binding Title}"
-                                                               FontFamily="CairoBold" FontSize="16"
-                                                               TextColor="White" MaxLines="1"
-                                                               LineBreakMode="TailTruncation"/>
+                                           FontFamily="CairoBold" FontSize="16"
+                                           TextColor="White" MaxLines="1"
+                                           LineBreakMode="TailTruncation"/>
                                                         <Label Text="{Binding SubTitle}"
-                                                               FontFamily="CairoRegular" FontSize="12"
-                                                               TextColor="#FFECB3"
-                                                               IsVisible="{Binding SubTitle, Converter={StaticResource HasImage}}"
-                                                               MaxLines="1" LineBreakMode="TailTruncation"/>
+                                           FontFamily="CairoRegular" FontSize="12"
+                                           TextColor="#FFECB3"
+                                           IsVisible="{Binding SubTitle, Converter={StaticResource HasImage}}"
+                                           MaxLines="1" LineBreakMode="TailTruncation"/>
                                                     </VerticalStackLayout>
                                                     <Border Grid.Column="1" BackgroundColor="White"
-                                                            StrokeShape="RoundRectangle 8"
-                                                            Stroke="Transparent" Padding="12,6"
-                                                            VerticalOptions="Center">
+                                        StrokeShape="RoundRectangle 8"
+                                        Stroke="Transparent" Padding="12,6"
+                                        VerticalOptions="Center">
                                                         <Label Text="{loc:Loc Key=OrderNow}"
-                                                               FontFamily="CairoBold" FontSize="12"
-                                                               TextColor="#FF5722"/>
+                                           FontFamily="CairoBold" FontSize="12"
+                                           TextColor="#FF5722"/>
                                                     </Border>
                                                 </Grid>
                                             </Border>
 
-                                            <!-- مفيش صورة أصلاً → نرجع للتصميم النصي القديم فوق لون الخلفية -->
                                             <VerticalStackLayout IsVisible="{Binding HasImage, Converter={StaticResource InvertBool}}"
-                                                                  VerticalOptions="Center"
-                                                                  HorizontalOptions="Start"
-                                                                  Spacing="6" Padding="20,16">
+                                              VerticalOptions="Center"
+                                              HorizontalOptions="Start"
+                                              Spacing="6" Padding="20,16">
                                                 <Label Text="{Binding Title}"
-                                                       FontFamily="CairoBold" FontSize="18"
-                                                       TextColor="White" MaxLines="2"
-                                                       LineBreakMode="WordWrap"/>
+                                   FontFamily="CairoBold" FontSize="18"
+                                   TextColor="White" MaxLines="2"
+                                   LineBreakMode="WordWrap"/>
                                                 <Label Text="{Binding SubTitle}"
-                                                       FontFamily="CairoRegular" FontSize="13"
-                                                       TextColor="#FFECB3"
-                                                       IsVisible="{Binding SubTitle, Converter={StaticResource HasImage}}"
-                                                       MaxLines="2" LineBreakMode="WordWrap"/>
+                                   FontFamily="CairoRegular" FontSize="13"
+                                   TextColor="#FFECB3"
+                                   IsVisible="{Binding SubTitle, Converter={StaticResource HasImage}}"
+                                   MaxLines="2" LineBreakMode="WordWrap"/>
                                                 <Border BackgroundColor="White"
-                                                        StrokeShape="RoundRectangle 8"
-                                                        Stroke="Transparent" Padding="14,6"
-                                                        HorizontalOptions="Start">
+                                    StrokeShape="RoundRectangle 8"
+                                    Stroke="Transparent" Padding="14,6"
+                                    HorizontalOptions="Start">
                                                     <Label Text="{loc:Loc Key=OrderNow}"
-                                                           FontFamily="CairoBold" FontSize="13"
-                                                           TextColor="#FF5722"/>
+                                       FontFamily="CairoBold" FontSize="13"
+                                       TextColor="#FF5722"/>
                                                 </Border>
                                             </VerticalStackLayout>
                                         </Grid>
@@ -400,11 +399,15 @@
 
                     <!-- Banner dots -->
                     <IndicatorView x:Name="bannerIndicator"
-                                   HorizontalOptions="Center"
-                                   IndicatorColor="#D1D8DB"
-                                   SelectedIndicatorColor="#FF5722"
-                                   Margin="0,6,0,0"
-                                   IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"/>
+               ItemsSource="{Binding Banners}"
+               Position="{Binding CurrentBannerIndex, Mode=TwoWay}"
+               IndicatorsShape="Circle"
+               IndicatorSize="7"
+               HorizontalOptions="Center"
+               IndicatorColor="#D1D8DB"
+               SelectedIndicatorColor="#FF5722"
+               Margin="0,6,0,0"
+               IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"/>
 
                     <!-- ── Rewards / Coupons Row ── -->
                     <Label Text="{loc:Loc Key=UseAndSave}"

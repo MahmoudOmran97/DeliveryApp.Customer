@@ -5,6 +5,7 @@ public interface IAgoraCallService
     event Action<Exception>? CallError;
     event Action? RemoteUserJoined;
     event Action? RemoteUserLeft;
+    event Action? LocalUserJoined;
 
     Task JoinChannelAsync(string appId, string token, string channelName, uint uid);
     void LeaveChannel();
