@@ -30,7 +30,15 @@ public partial class ProfileViewModel : BaseViewModel
     async Task Load()
     {
         IsBusy = true;
-        try { User = await _api.GetProfileAsync(); }
+        try
+        {
+            User = await _api.GetProfileAsync();
+
+            // ✅ لو المستخدم راجع من اختيار الموقع على الخريطة وهو لسه في وضع التعديل،
+            // نحدّث حقل العنوان بس من غير ما نلمس الاسم/التليفون اللي ممكن يكون عدّلهم
+            // ولسه ما حفظش، عشان ميحصلش overwrite للعنوان الجديد لو ضغط Save بعدين.
+            if (IsEditing) EditAddress = User?.Address ?? "";
+        }
         finally { IsBusy = false; }
     }
 
@@ -41,6 +49,12 @@ public partial class ProfileViewModel : BaseViewModel
         EditName = User.FullName; EditPhone = User.Phone; EditAddress = User.Address ?? "";
         IsEditing = true;
     }
+
+    // ── اختيار العنوان من الخريطة (نفس صفحة الهوم) ─────────────
+    // الصفحة دي بتحفظ العنوان مباشرة في البروفايل عبر UpdateProfileAsync،
+    // وبمجرد الرجوع، الـ OnAppearing بيستدعي Load تاني فيحدّث EditAddress تلقائيًا.
+    [RelayCommand]
+    static Task PickAddressFromMap() => Shell.Current.GoToAsync("HomeLocationPickerPage");
 
     [RelayCommand]
     async Task Save()

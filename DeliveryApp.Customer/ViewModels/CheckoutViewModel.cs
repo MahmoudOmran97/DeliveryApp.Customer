@@ -48,7 +48,9 @@ public partial class CheckoutViewModel : BaseViewModel
         _api = api;
         _cart = cart;
         _location = location;
-        SubTotal = cart.TotalPrice;
+        // ✅ لو الأوردر ده روشتة اتفق عليها سعر عبر الشات، السعر ده هو الـ SubTotal
+        // مش مجموع عناصر السلة (اللي هتكون فاضية أصلاً في حالة الروشتة).
+        SubTotal = cart.PrescriptionAgreedPrice ?? cart.TotalPrice;
         DeliveryFee = cart.RestaurantDeliveryFee;
         RecalcTotal();
 
@@ -341,7 +343,8 @@ public partial class CheckoutViewModel : BaseViewModel
                 couponCode: CouponApplied ? CouponCode : null,
                 couponId: CouponApplied ? _appliedCouponId : null,
                 prescriptionImageUrl: _cart.PrescriptionImageUrl,
-                prescriptionNotes: _cart.PrescriptionNotes
+                prescriptionNotes: _cart.PrescriptionNotes,
+                prescriptionRequestId: _cart.PrescriptionRequestId
             );
 
             if (order != null)

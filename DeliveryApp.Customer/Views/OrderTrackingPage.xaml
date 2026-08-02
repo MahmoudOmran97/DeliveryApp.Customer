@@ -112,6 +112,14 @@
                         </VerticalStackLayout>
                     </Grid>
 
+                    <!-- Cancel Order Button — يظهر بس قبل بدء التحضير (Pending/Accepted) -->
+                    <Button Text="{loc:Loc Key=CancelOrder}"
+                            Command="{Binding CancelOrderCommand}"
+                            IsVisible="{Binding Order.CanCancel}"
+                            BackgroundColor="#FFF3EF" TextColor="#F44336"
+                            FontFamily="CairoBold" FontSize="14"
+                            CornerRadius="12" HeightRequest="46"/>
+
                     <!-- Driver Info -->
                     <Border BackgroundColor="#F8F9FA" StrokeShape="RoundRectangle 14"
                             Stroke="Transparent" Padding="14" IsVisible="{Binding HasDriver}">

@@ -65,6 +65,7 @@ public partial class App : Application
             }
 
             TryNavigatePendingCall();
+            TryNavigatePendingNotification();
         });
 
         signalR.IncomingVoiceCall += (orderId, callerId) =>
@@ -111,6 +112,7 @@ public partial class App : Application
         base.OnResume();
         IsInForeground = true;
         TryNavigatePendingCall();
+        TryNavigatePendingNotification();
 
         if (_auth.IsLoggedIn)
         {
@@ -147,6 +149,46 @@ public partial class App : Application
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[Call] Pending navigate failed: {ex.Message}");
+            }
+        });
+    }
+
+    // ✅ NAV FIX — لو المستخدم فتح التطبيق من نوتيفيكيشن عادي (مش مكالمة)، وجّهه
+    // للمكان المناسب حسب نوع النوتيفيكيشن بدل ما يفضل واقف على الهوم بس.
+    void TryNavigatePendingNotification()
+    {
+        var pending = PendingNotificationNavigation.TakePending();
+        if (pending == null) return;
+
+        var (orderId, type) = pending.Value;
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            try
+            {
+                switch (type)
+                {
+                    // إشعارات مرتبطة بحالة أوردر معين — روشتة/طلب عادي/إلخ.
+                    case "OrderStatusChanged" or "OrderAccepted" or "OrderRejected"
+                        or "OrderPreparing" or "OrderReady" or "OrderOnTheWay"
+                        when orderId.HasValue:
+                        await Shell.Current.GoToAsync($"OrderDetailPage?orderId={orderId}");
+                        break;
+
+                    // نوع عام لسه بيحمل OrderId — نفس سلوك شاشة الإشعارات بالظبط.
+                    case var _ when orderId.HasValue:
+                        await Shell.Current.GoToAsync($"OrderDetailPage?orderId={orderId}");
+                        break;
+
+                    // إشعار عام من غير OrderId — يفتح شاشة الإشعارات نفسها.
+                    default:
+                        await Shell.Current.GoToAsync("NotificationsPage");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Notif] Pending navigate failed: {ex.Message}");
             }
         });
     }

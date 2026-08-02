@@ -265,6 +265,9 @@
 	<data name="CancelReason">
 		<value>السبب (اختياري):</value>
 	</data>
+	<data name="CancelOrderConfirm">
+		<value>هل أنت متأكد من إلغاء الطلب؟</value>
+	</data>
 	<data name="CancelFailed">
 		<value>لا يمكن الإلغاء في هذه المرحلة</value>
 	</data>
@@ -366,6 +369,9 @@
 	</data>
 	<data name="AddressFieldPlaceholder">
 		<value>عنوانك</value>
+	</data>
+	<data name="PickFromMap">
+		<value>📍 اختر الموقع من الخريطة</value>
 	</data>
 	<data name="UpdateFailed">
 		<value>فشل التحديث</value>
@@ -754,16 +760,31 @@
 		<value>ارفع الروشتة</value>
 	</data>
 	<data name="PrescriptionHint">
-		<value>ارفع روشتة الدكتور وهنجهزلك الطلب بدون ما تدور على الأدوية</value>
+		<value>ارفع روشتة الدكتور وهيتفتحلك شات مع الصيدلية يحددوا لك تمن الفاتورة</value>
 	</data>
 	<data name="ChoosePrescriptionImage">
 		<value>اختر صورة الروشتة</value>
 	</data>
-	<data name="OrderWithPrescription">
-		<value>اطلب بالروشتة</value>
-	</data>
 	<data name="PrescriptionAdded">
 		<value>تم رفع الروشتة بنجاح</value>
+	</data>
+	<data name="PrescriptionChatSubtitle">
+		<value>شات الروشتة</value>
+	</data>
+	<data name="PharmacyPricedTitle">
+		<value>تمن الفاتورة</value>
+	</data>
+	<data name="AgreeAndContinue">
+		<value>موافق، كمّل الطلب</value>
+	</data>
+	<data name="PrescriptionChatEmptyTitle">
+		<value>ابدأ المحادثة مع الصيدلية</value>
+	</data>
+	<data name="PrescriptionChatEmptySub">
+		<value>هيردوا عليك بتمن الفاتورة بعد ما يشوفوا الروشتة</value>
+	</data>
+	<data name="ActionFailed">
+		<value>حصل خطأ، حاول تاني</value>
 	</data>
 	<data name="UploadPrescriptionFirst">
 		<value>ارفع الروشتة الأول</value>

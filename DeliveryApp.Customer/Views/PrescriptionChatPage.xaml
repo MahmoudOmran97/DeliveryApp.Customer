@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:cv="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:models="clr-namespace:DeliveryApp.Customer.Models"
+             x:Class="DeliveryApp.Customer.Views.PrescriptionChatPage"
+             x:DataType="vm:PrescriptionChatViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <cv:InvertedBoolConverter x:Key="InvertBool"/>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" BackgroundColor="#F5F5F5">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" BackgroundColor="#1976D2" Padding="16,50,16,14">
+            <Grid ColumnDefinitions="44,*,44">
+
+                <Border Grid.Column="0" BackgroundColor="#125A9C"
+                        StrokeShape="RoundRectangle 22" WidthRequest="38" HeightRequest="38"
+                        VerticalOptions="Center" HorizontalOptions="Start">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="‹" FontFamily="CairoBold" FontSize="22" TextColor="White"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">
+                    <Label Text="{Binding RestaurantName}"
+                           FontFamily="CairoBold" FontSize="16" TextColor="White"
+                           HorizontalOptions="Center"/>
+                    <Label Text="{loc:Loc Key=PrescriptionChatSubtitle}"
+                           FontFamily="CairoRegular" FontSize="11" TextColor="#BBDEFB"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <Border Grid.Column="2" BackgroundColor="#125A9C"
+                        StrokeShape="RoundRectangle 22" WidthRequest="38" HeightRequest="38"
+                        VerticalOptions="Center" HorizontalOptions="End">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding CancelRequestCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="✕" FontFamily="CairoBold" FontSize="16" TextColor="White"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Price banner — يظهر بس لما صاحب الصيدلية يحدد السعر -->
+        <Border Grid.Row="1" BackgroundColor="#FFF3E0" Padding="16,12"
+                IsVisible="{Binding IsPriced}">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <Label Text="{loc:Loc Key=PharmacyPricedTitle}"
+                           FontFamily="CairoBold" FontSize="13" TextColor="#E65100"/>
+                    <Label Text="{Binding AgreedPrice, StringFormat='{0:F0} EGP'}"
+                           FontFamily="CairoBold" FontSize="18" TextColor="#212121"/>
+                </VerticalStackLayout>
+                <Button Grid.Column="1" Text="{loc:Loc Key=AgreeAndContinue}"
+                        Command="{Binding ConfirmPriceCommand}"
+                        BackgroundColor="#FF5722" TextColor="White"
+                        FontFamily="CairoBold" FontSize="13"
+                        CornerRadius="10" Padding="14,0" HeightRequest="42"/>
+            </Grid>
+        </Border>
+
+        <!-- Messages List -->
+        <CollectionView Grid.Row="2"
+                        x:Name="ChatList"
+                        ItemsSource="{Binding Messages}"
+                        Margin="0,6,0,0">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center"
+                                     Spacing="12" Margin="40,60">
+                    <Label Text="💊" FontSize="52" HorizontalOptions="Center"/>
+                    <Label Text="{loc:Loc Key=PrescriptionChatEmptyTitle}"
+                           FontFamily="CairoBold" FontSize="15" TextColor="#9E9E9E"
+                           HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                    <Label Text="{loc:Loc Key=PrescriptionChatEmptySub}"
+                           FontFamily="CairoRegular" FontSize="13" TextColor="#BDBDBD"
+                           HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:PrescriptionMessage">
+                    <Grid Margin="12,5">
+
+                        <!-- ── رسالة من صاحب الصيدلية (يسار) ── -->
+                        <HorizontalStackLayout HorizontalOptions="Start"
+                                               IsVisible="{Binding IsMine, Converter={StaticResource InvertBool}}"
+                                               Spacing="8" MaximumWidthRequest="300">
+                            <Border BackgroundColor="#1976D2"
+                                    StrokeShape="RoundRectangle 18"
+                                    Stroke="Transparent"
+                                    WidthRequest="34" HeightRequest="34"
+                                    VerticalOptions="End">
+                                <Label Text="💊" FontSize="16"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+
+                            <Border BackgroundColor="White"
+                                    StrokeShape="RoundRectangle 18,18,18,4"
+                                    Stroke="#E8E8E8" StrokeThickness="1"
+                                    Padding="12,9">
+                                <Label Text="{Binding Message}"
+                                       FontFamily="CairoRegular"
+                                       FontSize="14" TextColor="#212121"/>
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <!-- ── رسالة من العميل (يمين) ── -->
+                        <HorizontalStackLayout HorizontalOptions="End"
+                                               IsVisible="{Binding IsMine}"
+                                               Spacing="8" MaximumWidthRequest="300">
+                            <Border BackgroundColor="#FF5722"
+                                    StrokeShape="RoundRectangle 18,18,4,18"
+                                    Stroke="Transparent"
+                                    Padding="12,9">
+                                <Label Text="{Binding Message}"
+                                       FontFamily="CairoRegular"
+                                       FontSize="14" TextColor="White"/>
+                            </Border>
+
+                            <Border BackgroundColor="#2196F3"
+                                    StrokeShape="RoundRectangle 18"
+                                    Stroke="Transparent"
+                                    WidthRequest="34" HeightRequest="34"
+                                    VerticalOptions="End">
+                                <Label Text="👤" FontSize="16"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                        </HorizontalStackLayout>
+
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Input Bar -->
+        <Border Grid.Row="3" BackgroundColor="White"
+                Stroke="#E8E8E8" StrokeThickness="1"
+                Padding="12,10,12,32"
+                IsVisible="{Binding IsConfirmed, Converter={StaticResource InvertBool}}">
+            <Grid ColumnDefinitions="*,52" ColumnSpacing="10">
+
+                <Border Grid.Column="0"
+                        BackgroundColor="#F5F5F5"
+                        StrokeShape="RoundRectangle 24"
+                        Stroke="#E0E0E0" StrokeThickness="1"
+                        Padding="16,0">
+                    <Entry x:Name="MessageEntry"
+                           Text="{Binding InputText}"
+                           Placeholder="{loc:Loc Key=ChatPlaceholder}"
+                           PlaceholderColor="#BDBDBD"
+                           FontFamily="CairoRegular"
+                           FontSize="14"
+                           TextColor="#212121"
+                           BackgroundColor="Transparent"
+                           HeightRequest="46"
+                           ReturnCommand="{Binding SendCommand}"/>
+                </Border>
+
+                <Border Grid.Column="1"
+                        BackgroundColor="#1976D2"
+                        StrokeShape="RoundRectangle 26"
+                        Stroke="Transparent"
+                        WidthRequest="50" HeightRequest="50"
+                        VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SendCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="➤" FontSize="20" TextColor="White"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+</ContentPage>

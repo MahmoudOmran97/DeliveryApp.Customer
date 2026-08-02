@@ -10,6 +10,11 @@ public class CartService
     public string? PrescriptionImageUrl { get; private set; }
     public string? PrescriptionNotes { get; private set; }
 
+    // ✅ لما العميل وصاحب الصيدلية يتفقوا على السعر عبر الشات، بنقفلهم هنا
+    // عشان الـ Checkout يستخدمهم بدل ما يبعت أوردر بسعر مجهول.
+    public int? PrescriptionRequestId { get; private set; }
+    public decimal? PrescriptionAgreedPrice { get; private set; }
+
     public event Action? CartChanged;
 
     public IReadOnlyList<CartItem> Items => _items.AsReadOnly();
@@ -78,10 +83,20 @@ public class CartService
         CartChanged?.Invoke();
     }
 
+    // ✅ بعد ما العميل يوافق على سعر الروشتة في شات الصيدلية
+    public void SetPrescriptionAgreedPrice(int prescriptionRequestId, decimal price)
+    {
+        PrescriptionRequestId = prescriptionRequestId;
+        PrescriptionAgreedPrice = price;
+        CartChanged?.Invoke();
+    }
+
     public void ClearPrescription()
     {
         PrescriptionImageUrl = null;
         PrescriptionNotes = null;
+        PrescriptionRequestId = null;
+        PrescriptionAgreedPrice = null;
         CartChanged?.Invoke();
     }
 
@@ -116,6 +131,8 @@ public class CartService
         _restaurantDeliveryFee = 15m;
         PrescriptionImageUrl = null;
         PrescriptionNotes = null;
+        PrescriptionRequestId = null;
+        PrescriptionAgreedPrice = null;
         CartChanged?.Invoke();
     }
 }

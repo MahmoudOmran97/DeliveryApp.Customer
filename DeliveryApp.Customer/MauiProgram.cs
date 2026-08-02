@@ -99,6 +99,7 @@ public static class MauiProgram
         builder.Services.AddTransient<ProfileViewModel>();
         builder.Services.AddTransient<SupportChatViewModel>();
         builder.Services.AddTransient<DriverChatViewModel>();
+        builder.Services.AddTransient<PrescriptionChatViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<LocationPickerViewModel>();
         builder.Services.AddTransient<HomeLocationPickerViewModel>();
@@ -137,6 +138,7 @@ builder.Services.AddSingleton<Services.Call.IAgoraCallService, Platforms.iOS.Ago
         builder.Services.AddTransient<ProfilePage>();
         builder.Services.AddTransient<SupportChatPage>();
         builder.Services.AddTransient<DriverChatPage>();
+        builder.Services.AddTransient<PrescriptionChatPage>();
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<LocationPickerPage>();
         builder.Services.AddTransient<HomeLocationPickerPage>();

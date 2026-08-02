@@ -126,6 +126,29 @@ public partial class OrderTrackingViewModel : BaseViewModel
             $"DriverChatPage?orderId={OrderId}&driverName={Uri.EscapeDataString(driverName)}");
     }
 
+    // ── إلغاء الطلب (متاح بس قبل ما يبدأ التحضير — Pending/Accepted) ──
+    [RelayCommand]
+    async Task CancelOrderAsync()
+    {
+        if (Order == null || !Order.CanCancel) return;
+
+        var confirm = await Shell.Current.DisplayAlert(
+            LocalizationService.Get("CancelOrder"),
+            LocalizationService.Get("CancelOrderConfirm"),
+            LocalizationService.Get("Ok"),
+            LocalizationService.Get("Cancel"));
+        if (!confirm) return;
+
+        var reason = await Shell.Current.DisplayPromptAsync(
+            LocalizationService.Get("CancelOrder"),
+            LocalizationService.Get("CancelReason"));
+
+        if (await _api.CancelOrderAsync(OrderId, reason))
+            await LoadAsync();
+        else
+            await AlertAsync(LocalizationService.Get("CancelFailed"));
+    }
+
     // ✅ FIX — زرار الاتصال كان مش متربط بأي Command خالص في الـ XAML
     [RelayCommand]
     async Task CallDriverAsync()

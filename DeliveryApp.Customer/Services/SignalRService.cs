@@ -28,6 +28,10 @@ public class SignalRService
     // بعد AutomaticReconnect الجروبات بتتفقد — ننبّه App ترجع تنضم للأوردرات النشطة
     public event Action? Reconnected;
 
+    // ✅ شات الروشتة قبل الأوردر (رسائل مباشرة عن طريق NotifyUserDirectly — مش group)
+    public event Action<int, string, string, DateTime>? PrescriptionMessageReceived; // requestId, senderRole, message, createdAt
+    public event Action<int, decimal>? PrescriptionPriceSet; // requestId, agreedPrice
+
     public bool IsConnected => _hub?.State == HubConnectionState.Connected;
 
     public async Task ConnectAsync(string token)
@@ -128,6 +132,24 @@ public class SignalRService
                              ? dn.GetString() ?? "" : "";
             MainThread.BeginInvokeOnMainThread(
                 () => DriverAssigned?.Invoke(orderId, driverId, driverName));
+        });
+
+        // ✅ شات الروشتة قبل الأوردر
+        _hub.On<JsonElement>("PrescriptionMessageReceived", el =>
+        {
+            var reqId = el.GetProperty("id").GetInt32();
+            var role = el.GetProperty("senderRole").GetString() ?? "";
+            var msg = el.GetProperty("message").GetString() ?? "";
+            var createdAt = el.TryGetProperty("createdAt", out var ca) && ca.TryGetDateTime(out var dt) ? dt : DateTime.UtcNow;
+            MainThread.BeginInvokeOnMainThread(
+                () => PrescriptionMessageReceived?.Invoke(reqId, role, msg, createdAt));
+        });
+
+        _hub.On<JsonElement>("PrescriptionPriceSet", el =>
+        {
+            var reqId = el.GetProperty("id").GetInt32();
+            var price = el.GetProperty("agreedPrice").GetDecimal();
+            MainThread.BeginInvokeOnMainThread(() => PrescriptionPriceSet?.Invoke(reqId, price));
         });
 
         try { await _hub.StartAsync(); }

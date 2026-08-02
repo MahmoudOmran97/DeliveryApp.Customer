@@ -251,7 +251,8 @@ public class ApiService
         string address, double lat, double lng,
         string? notes, string paymentMethod,
         string? couponCode = null, int? couponId = null,
-        string? prescriptionImageUrl = null, string? prescriptionNotes = null)
+        string? prescriptionImageUrl = null, string? prescriptionNotes = null,
+        int? prescriptionRequestId = null)
         => PostAsync<Order>("orders", new
         {
             RestaurantId = restaurantId,
@@ -269,6 +270,7 @@ public class ApiService
             DeliveryNotes = notes,
             PrescriptionImageUrl = prescriptionImageUrl,
             PrescriptionNotes = prescriptionNotes,
+            PrescriptionRequestId = prescriptionRequestId,
             PaymentMethod = paymentMethod,
             CouponCode = couponCode,
             CouponId = couponId
@@ -294,6 +296,34 @@ public class ApiService
             return null;
         }
     }
+
+    // ─── Prescription Chat (روشتة قبل الأوردر) ─────────────────────────────────
+
+    public Task<PrescriptionRequestCreatedResult?> CreatePrescriptionRequestAsync(int restaurantId, string imageUrl, string? notes)
+        => PostAsync<PrescriptionRequestCreatedResult>("prescriptionrequests", new
+        {
+            RestaurantId = restaurantId,
+            ImageUrl = imageUrl,
+            Notes = notes
+        });
+
+    public Task<PrescriptionRequest?> GetPrescriptionRequestAsync(int id)
+        => GetAsync<PrescriptionRequest>($"prescriptionrequests/{id}");
+
+    public Task<List<PrescriptionRequest>?> GetMyPrescriptionRequestsAsync()
+        => GetAsync<List<PrescriptionRequest>>("prescriptionrequests/my");
+
+    public Task<List<PrescriptionMessage>?> GetPrescriptionMessagesAsync(int id)
+        => GetAsync<List<PrescriptionMessage>>($"prescriptionrequests/{id}/messages");
+
+    public Task<PrescriptionMessage?> SendPrescriptionMessageAsync(int id, string message)
+        => PostAsync<PrescriptionMessage>($"prescriptionrequests/{id}/messages", new { Message = message });
+
+    public Task<bool> ConfirmPrescriptionPriceAsync(int id)
+        => PutAsync($"prescriptionrequests/{id}/confirm");
+
+    public Task<bool> CancelPrescriptionRequestAsync(int id)
+        => PutAsync($"prescriptionrequests/{id}/cancel");
 
     public Task<Product?> GetProductAsync(int id)
         => GetAsync<Product>($"products/{id}");

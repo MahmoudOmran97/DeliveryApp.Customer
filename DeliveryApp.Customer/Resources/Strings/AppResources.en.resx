@@ -266,6 +266,9 @@
 	<data name="CancelReason">
 		<value>Reason (optional):</value>
 	</data>
+	<data name="CancelOrderConfirm">
+		<value>Are you sure you want to cancel this order?</value>
+	</data>
 	<data name="CancelFailed">
 		<value>Could not cancel at this stage</value>
 	</data>
@@ -367,6 +370,9 @@
 	</data>
 	<data name="AddressFieldPlaceholder">
 		<value>Your address</value>
+	</data>
+	<data name="PickFromMap">
+		<value>📍 Pick location from map</value>
 	</data>
 	<data name="UpdateFailed">
 		<value>Update failed</value>
@@ -802,16 +808,31 @@
 		<value>Upload prescription</value>
 	</data>
 	<data name="PrescriptionHint">
-		<value>Upload your doctor's prescription and we'll prepare your order</value>
+		<value>Upload your doctor's prescription and chat with the pharmacy to agree on the price</value>
 	</data>
 	<data name="ChoosePrescriptionImage">
 		<value>Choose prescription image</value>
 	</data>
-	<data name="OrderWithPrescription">
-		<value>Order with prescription</value>
-	</data>
 	<data name="PrescriptionAdded">
 		<value>Prescription uploaded successfully</value>
+	</data>
+	<data name="PrescriptionChatSubtitle">
+		<value>Prescription chat</value>
+	</data>
+	<data name="PharmacyPricedTitle">
+		<value>Invoice total</value>
+	</data>
+	<data name="AgreeAndContinue">
+		<value>Agree &amp; continue</value>
+	</data>
+	<data name="PrescriptionChatEmptyTitle">
+		<value>Start chatting with the pharmacy</value>
+	</data>
+	<data name="PrescriptionChatEmptySub">
+		<value>They'll reply with the invoice total after reviewing your prescription</value>
+	</data>
+	<data name="ActionFailed">
+		<value>Something went wrong, please try again</value>
 	</data>
 	<data name="UploadPrescriptionFirst">
 		<value>Please upload a prescription first</value>

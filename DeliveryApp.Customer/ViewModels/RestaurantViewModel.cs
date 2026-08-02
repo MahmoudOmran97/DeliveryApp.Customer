@@ -116,25 +116,24 @@ public partial class RestaurantViewModel : BaseViewModel
             }
 
             PrescriptionPreview = url.StartsWith("http") ? url : $"https://deliveryappapi.runasp.net{url}";
+
+            // ✅ بدل ما نروح checkout على طول بسعر مجهول، نعمل PrescriptionRequest
+            // ونفتح شات مع صاحب الصيدلية عشان يحدد تمن الفاتورة الأول.
+            var created = await _api.CreatePrescriptionRequestAsync(RestaurantId, url, PrescriptionNotes);
+            if (created == null)
+            {
+                await AlertAsync(LocalizationService.Get("UploadFailed"));
+                return;
+            }
+
             _cart.SetPrescription(RestaurantId, url, PrescriptionNotes, Restaurant?.DeliveryFee ?? 15m);
-            await AlertAsync(LocalizationService.Get("PrescriptionAdded"));
+            await Shell.Current.GoToAsync($"PrescriptionChatPage?requestId={created.Id}");
         }
         catch (Exception ex)
         {
             await AlertAsync(ex.Message);
         }
         finally { IsBusy = false; }
-    }
-
-    [RelayCommand]
-    async Task OrderPrescriptionAsync()
-    {
-        if (string.IsNullOrEmpty(_cart.PrescriptionImageUrl))
-        {
-            await AlertAsync(LocalizationService.Get("UploadPrescriptionFirst"));
-            return;
-        }
-        await Shell.Current.GoToAsync("CheckoutPage");
     }
 
     [RelayCommand]

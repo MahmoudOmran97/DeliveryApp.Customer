@@ -206,11 +206,6 @@
                                 Command="{Binding UploadPrescriptionCommand}"
                                 BackgroundColor="#1976D2" TextColor="White"
                                 FontFamily="CairoBold" CornerRadius="10"/>
-                        <Button Text="{loc:Loc Key=OrderWithPrescription}"
-                                Command="{Binding OrderPrescriptionCommand}"
-                                BackgroundColor="#FF5722" TextColor="White"
-                                FontFamily="CairoBold" CornerRadius="10"
-                                IsVisible="{Binding PrescriptionPreview, Converter={StaticResource HasImage}}"/>
                     </VerticalStackLayout>
                 </Border>
 

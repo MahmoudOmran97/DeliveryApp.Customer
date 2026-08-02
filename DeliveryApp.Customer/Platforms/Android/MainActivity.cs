@@ -57,6 +57,18 @@ namespace DeliveryApp.Customer
                     DeliveryApp.Customer.Services.PendingCallNavigation.CallerName = callerName;
                     DeliveryApp.Customer.Services.PendingCallNavigation.AutoAccept = callAction == "accept";
                 }
+                return;
+            }
+
+            // ✅ NAV FIX — نوتيفيكيشن عادي (مش مكالمة) اتضغط عليها — نسجل type/orderId
+            // عشان App.xaml.cs يوجّه المستخدم للمكان الصح بمجرد ما التطبيق يفتح.
+            var notifType = intent.GetStringExtra("tawseela_notif_type");
+            var notifOrderIdStr = intent.GetStringExtra("tawseela_notif_order_id");
+            if (!string.IsNullOrEmpty(notifType) || !string.IsNullOrEmpty(notifOrderIdStr))
+            {
+                DeliveryApp.Customer.Services.PendingNotificationNavigation.Type = notifType;
+                if (int.TryParse(notifOrderIdStr, out var notifOrderId) && notifOrderId != 0)
+                    DeliveryApp.Customer.Services.PendingNotificationNavigation.OrderId = notifOrderId;
             }
         }
 
@@ -110,6 +122,17 @@ namespace DeliveryApp.Customer
                         intent.PutExtra(FirebaseCloudMessagingImplementation.IntentKeyFCMNotification,
                             notification.ToBundle());
                         intent.SetFlags(ActivityFlags.ClearTop | ActivityFlags.SingleTop);
+
+                        // ✅ NAV FIX — نحط type/orderId كـ extras بسيطة على الـ intent (زي فلو المكالمة)
+                        // عشان لما المستخدم يدوس على النوتيفيكيشن، الـ HandleIntent يقدر يوجّهه
+                        // لمكان محدد جوه التطبيق بدل ما يفتح على الهوم بس.
+                        if (data != null)
+                        {
+                            if (data.TryGetValue("type", out var notifType) && !string.IsNullOrEmpty(notifType))
+                                intent.PutExtra("tawseela_notif_type", notifType);
+                            if (data.TryGetValue("orderId", out var notifOrderId) && !string.IsNullOrEmpty(notifOrderId))
+                                intent.PutExtra("tawseela_notif_order_id", notifOrderId);
+                        }
                     }
 
                     var pendingIntent = intent != null

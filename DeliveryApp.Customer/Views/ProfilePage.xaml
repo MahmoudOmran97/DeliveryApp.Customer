@@ -94,6 +94,10 @@
                                        FontFamily="CairoRegular" FontSize="14"
                                        TextColor="#212121"/>
                             </Border>
+                            <Button Text="{loc:Loc Key=PickFromMap}"
+                                    Command="{Binding PickAddressFromMapCommand}"
+                                    Style="{StaticResource OutlineBtn}"
+                                    HeightRequest="46" FontSize="13"/>
                         </VerticalStackLayout>
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
                             <Button Grid.Column="0" Text="{loc:Loc Key=Cancel}"

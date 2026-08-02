@@ -291,6 +291,40 @@ public class Notification
     public Color BackgroundColor => IsRead ? Colors.White : Color.FromArgb("#FFF3EF");
 }
 
+// ─── Prescription Chat (روشتة قبل الأوردر) ────────────────────────────────────
+
+public class PrescriptionRequest
+{
+    public int Id { get; set; }
+    public int RestaurantId { get; set; }
+    public string? RestaurantName { get; set; }
+    public string ImageUrl { get; set; } = string.Empty;
+    public string? Notes { get; set; }
+    public string Status { get; set; } = "Pending"; // Pending/Priced/Confirmed/Ordered/Cancelled
+    public decimal? AgreedPrice { get; set; }
+    public int? OrderId { get; set; }
+    public DateTime CreatedAt { get; set; }
+
+    public bool IsPriced => Status == "Priced" && AgreedPrice.HasValue;
+    public bool IsConfirmed => Status == "Confirmed";
+    public bool IsWaiting => Status == "Pending";
+}
+
+public class PrescriptionMessage
+{
+    public int Id { get; set; }
+    public string SenderRole { get; set; } = "Customer"; // Customer/Pharmacy
+    public string Message { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public bool IsMine => SenderRole == "Customer";
+}
+
+public class PrescriptionRequestCreatedResult
+{
+    public int Id { get; set; }
+    public string Status { get; set; } = "Pending";
+}
+
 // ─── Paged Result ─────────────────────────────────────────────────────────────
 
 public class PagedResult<T>
