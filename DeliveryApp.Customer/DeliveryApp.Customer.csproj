@@ -152,6 +152,9 @@
 		<MauiXaml Update="Views\PrescriptionChatPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
+		<MauiXaml Update="Views\PrescriptionRequestsPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="Views\ProfilePage.xaml">
 			<Generator></Generator>
 		</MauiXaml>

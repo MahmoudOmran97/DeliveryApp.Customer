@@ -56,6 +56,8 @@
                         </Grid>
                         <Button Text="{loc:Loc Key=EditProfile}" Command="{Binding StartEditCommand}"
                                 Style="{StaticResource OutlineBtn}"/>
+                        <Button Text="روشاتي" Command="{Binding OpenPrescriptionsCommand}"
+                                Style="{StaticResource OutlineBtn}"/>
                     </VerticalStackLayout>
                 </Border>
 
