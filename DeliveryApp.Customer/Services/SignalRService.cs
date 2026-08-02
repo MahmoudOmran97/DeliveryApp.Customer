@@ -25,16 +25,34 @@ public class SignalRService
     // ✅ بيتبعت لما الأدمن يوقف حساب العميل — لازم الأبليكيشن يعمل logout فوري
     public event Action? AccountDeactivated;
 
+    // بعد AutomaticReconnect الجروبات بتتفقد — ننبّه App ترجع تنضم للأوردرات النشطة
+    public event Action? Reconnected;
+
     public bool IsConnected => _hub?.State == HubConnectionState.Connected;
 
     public async Task ConnectAsync(string token)
     {
-        if (IsConnected) return;
+        if (_hub != null && _hub.State != HubConnectionState.Disconnected)
+        {
+            if (IsConnected) return;
+        }
+
+        if (_hub != null)
+        {
+            try { await _hub.DisposeAsync(); } catch { }
+            _hub = null;
+        }
 
         _hub = new HubConnectionBuilder()
             .WithUrl(HubUrl, o => o.AccessTokenProvider = () => Task.FromResult<string?>(token))
-            .WithAutomaticReconnect()
+            .WithAutomaticReconnect(new[] { TimeSpan.Zero, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10) })
             .Build();
+
+        _hub.Reconnected += _ =>
+        {
+            Reconnected?.Invoke();
+            return Task.CompletedTask;
+        };
 
         _hub.On<JsonElement>("OrderStatusChanged", el =>
         {

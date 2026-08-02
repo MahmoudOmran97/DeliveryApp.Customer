@@ -1,5 +1,6 @@
 ﻿using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.Views;
+using DeliveryApp.Customer.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DeliveryApp.Customer;
@@ -7,22 +8,23 @@ namespace DeliveryApp.Customer;
 public partial class App : Application
 {
     bool _loggedOutDueToDeactivation;
+    int? _navigatingIncomingCallOrderId;
+    readonly AuthService _auth;
+    readonly SignalRService _signalR;
+    readonly ApiService _api;
+
+    /// <summary>true لما التطبيق ظاهر قدام المستخدم — عشان نقرر نفتح CallPage ولا شاشة الرنين الخارجية.</summary>
+    public static bool IsInForeground { get; private set; }
 
     public App(SplashPage splash, ChatNotificationService chatNotif, FcmTokenService fcmToken,
         AuthService auth, SignalRService signalR, ApiService api, IServiceProvider services)
     {
         InitializeComponent();
         _ = chatNotif;
+        _auth = auth;
+        _signalR = signalR;
+        _api = api;
 
-        // ✅ لو الأدمن أوقف حساب العميل، اعمل logout فوري من أي مكان في الأبليكيشن.
-        // بنسمع الحدث من مصدرين: SignalR (لما الأبليكيشن يكون فاتح ومتصل)،
-        // و ApiService (لو أي طلب API عادي رجع 401 بسبب إن الحساب موقوف).
-        //
-        // ملاحظة: بنعمل resolve لـ LoginPage من الـ IServiceProvider وقت الحاجة بس (جوه
-        // الميثود دي)، مش كباراميتر في الـ constructor. لو اتحقنت كباراميتر مباشر، الـ DI
-        // كان بيعمل new للصفحة قبل ما App.xaml نفسه يخلص تحميل الـ ResourceDictionary
-        // بتاعه، فأي StaticResource (زي InputBorder) مكانش لسه موجود وقت إنشاء الصفحة
-        // → XamlParseException.
         async Task HandleAccountDeactivatedAsync()
         {
             if (_loggedOutDueToDeactivation) return;
@@ -50,46 +52,118 @@ public partial class App : Application
         fcmToken.ListenForTokenRefresh();
         fcmToken.ListenForMessages();
 
-        // Register FCM token only when user is already logged in (needs JWT for API)
+        signalR.Reconnected += () => _ = JoinActiveOrderGroupsAsync();
+
         _ = Task.Run(async () =>
         {
             await Task.Delay(1500);
             if (auth.IsLoggedIn)
             {
                 await fcmToken.RegisterAsync();
-
-                // ✅ CALL FIX — كانت SignalR بتتوصل بس جوه صفحة تتبع الطلب أو الشات،
-                // فلو العميل فاتح صفحة تانية (الهوم مثلاً) مكنش هيوصله نداء المكالمة إطلاقاً.
-                // دلوقتي بنوصلها من بداية تشغيل الأبليكيشن عشان تشتغل من أي صفحة.
                 await signalR.ConnectAsync(auth.GetToken());
+                await JoinActiveOrderGroupsAsync();
             }
 
-            // ✅ لو التطبيق اتفتح لسه (cold start) بسبب دوس على زرار "قبول" في نوتيفيكيشن
-            // مكالمة واردة، انقل المستخدم مباشرة لصفحة المكالمة مع قبول تلقائي.
-            var pendingCall = Services.PendingCallNavigation.TakePending();
-            if (pendingCall != null)
-            {
-                MainThread.BeginInvokeOnMainThread(async () =>
-                {
-                    await Shell.Current.GoToAsync(
-                        $"CallPage?orderId={pendingCall.Value.orderId}&otherPartyName={Uri.EscapeDataString(pendingCall.Value.callerName)}&isIncoming=true&autoAccept=true");
-                });
-            }
+            TryNavigatePendingCall();
         });
 
-        // ✅ CALL FIX — لما مكالمة واردة توصل والأبليكيشن فاتح (foreground/background بس مش
-        // مقفول خالص)، افتح شاشة المكالمة تلقائي زي أي تطبيق اتصال. لو الأبليكيشن مقفول
-        // تماماً، ده بيتوصل عن طريق الـ FCM data push بدل SignalR (شوف Platforms/Android
-        // للـ full-screen notification).
         signalR.IncomingVoiceCall += (orderId, callerId) =>
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                await Shell.Current.GoToAsync(
-                    $"CallPage?orderId={orderId}&otherPartyName={Uri.EscapeDataString("المندوب")}&isIncoming=true");
+                if (_navigatingIncomingCallOrderId == orderId) return;
+                _navigatingIncomingCallOrderId = orderId;
+
+#if ANDROID
+                if (!IsInForeground)
+                {
+                    try
+                    {
+                        Platforms.Android.IncomingCallNotificationHelper.Show(
+                            Android.App.Application.Context, orderId, "المندوب");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[Call] Show incoming UI failed: {ex.Message}");
+                        _navigatingIncomingCallOrderId = null;
+                    }
+                    return;
+                }
+#endif
+                try
+                {
+                    await Shell.Current.GoToAsync(
+                        $"CallPage?orderId={orderId}&otherPartyName={Uri.EscapeDataString("المندوب")}&isIncoming=true");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[Call] Navigate failed: {ex.Message}");
+                    _navigatingIncomingCallOrderId = null;
+                }
             });
         };
 
         MainPage = splash;
+    }
+
+    protected override void OnResume()
+    {
+        base.OnResume();
+        IsInForeground = true;
+        TryNavigatePendingCall();
+
+        if (_auth.IsLoggedIn)
+        {
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(500);
+                await _signalR.ConnectAsync(_auth.GetToken());
+                await JoinActiveOrderGroupsAsync();
+            });
+        }
+    }
+
+    protected override void OnSleep()
+    {
+        base.OnSleep();
+        IsInForeground = false;
+    }
+
+    void TryNavigatePendingCall()
+    {
+        var pendingCall = PendingCallNavigation.TakePending();
+        if (pendingCall == null) return;
+
+        var (orderId, callerName, autoAccept) = pendingCall.Value;
+        var autoAcceptFlag = autoAccept ? "true" : "false";
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            try
+            {
+                await Shell.Current.GoToAsync(
+                    $"CallPage?orderId={orderId}&otherPartyName={Uri.EscapeDataString(callerName)}&isIncoming=true&autoAccept={autoAcceptFlag}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[Call] Pending navigate failed: {ex.Message}");
+            }
+        });
+    }
+
+    async Task JoinActiveOrderGroupsAsync()
+    {
+        try
+        {
+            if (!_signalR.IsConnected) return;
+            var result = await _api.GetMyOrdersAsync();
+            var active = result?.Data?.Where(o => o.IsActive) ?? Enumerable.Empty<Order>();
+            foreach (var order in active)
+                await _signalR.JoinOrderAsync(order.Id);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Call] JoinActiveOrders failed: {ex.Message}");
+        }
     }
 }
