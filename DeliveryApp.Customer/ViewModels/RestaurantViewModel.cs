@@ -24,6 +24,7 @@ public partial class RestaurantViewModel : BaseViewModel
     [ObservableProperty] bool _isPharmacy;
     [ObservableProperty] string? _prescriptionPreview;
     [ObservableProperty] string _prescriptionNotes = "";
+    [ObservableProperty] bool _hasActivePrescriptionChat;
 
     public ObservableCollection<Category> Menu { get; } = new();
 
@@ -32,7 +33,21 @@ public partial class RestaurantViewModel : BaseViewModel
         _api = api;
         _cart = cart;
         _location = location;
-        _cart.CartChanged += () => CartCount = _cart.TotalCount;
+        _cart.CartChanged += () => { CartCount = _cart.TotalCount; UpdateActivePrescriptionChat(); };
+    }
+
+    void UpdateActivePrescriptionChat()
+    {
+        HasActivePrescriptionChat = RestaurantId != 0
+            && _cart.RestaurantId == RestaurantId
+            && _cart.PrescriptionRequestId.HasValue;
+    }
+
+    [RelayCommand]
+    async Task ReturnToPrescriptionChat()
+    {
+        if (_cart.PrescriptionRequestId is int id)
+            await Shell.Current.GoToAsync($"PrescriptionChatPage?requestId={id}");
     }
 
     partial void OnRestaurantIdChanged(int value) => LoadCommand.Execute(null);
@@ -54,6 +69,7 @@ public partial class RestaurantViewModel : BaseViewModel
             IsPharmacy = Restaurant?.StoreType.Equals("Pharmacy", StringComparison.OrdinalIgnoreCase) == true;
             Menu.Clear();
             foreach (var c in t2.Result ?? new()) Menu.Add(c);
+            UpdateActivePrescriptionChat();
         }
         finally { IsBusy = false; }
     }
@@ -127,6 +143,7 @@ public partial class RestaurantViewModel : BaseViewModel
             }
 
             _cart.SetPrescription(RestaurantId, url, PrescriptionNotes, Restaurant?.DeliveryFee ?? 15m);
+            _cart.SetPrescriptionRequestId(created.Id);
             await Shell.Current.GoToAsync($"PrescriptionChatPage?requestId={created.Id}");
         }
         catch (Exception ex)

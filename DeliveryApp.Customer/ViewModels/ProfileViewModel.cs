@@ -73,9 +73,6 @@ public partial class ProfileViewModel : BaseViewModel
     [RelayCommand] void CancelEdit() => IsEditing = false;
 
     [RelayCommand]
-    static async Task OpenPrescriptions() => await Shell.Current.GoToAsync(nameof(Views.PrescriptionRequestsPage));
-
-    [RelayCommand]
     async Task Logout()
     {
         var confirm = LocalizationService.Get("LogoutConfirm");

@@ -765,6 +765,15 @@
 	<data name="ChoosePrescriptionImage">
 		<value>اختر صورة الروشتة</value>
 	</data>
+	<data name="PrescriptionChatOngoingTitle">
+		<value>عندك محادثة روشتة شغالة</value>
+	</data>
+	<data name="PrescriptionChatOngoingHint">
+		<value>لسه مستنيين تحديد تمن الفاتورة من الصيدلية</value>
+	</data>
+	<data name="ReturnToChat">
+		<value>ارجع للمحادثة</value>
+	</data>
 	<data name="PrescriptionAdded">
 		<value>تم رفع الروشتة بنجاح</value>
 	</data>

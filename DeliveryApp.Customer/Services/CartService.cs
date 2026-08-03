@@ -83,6 +83,14 @@ public class CartService
         CartChanged?.Invoke();
     }
 
+    // ✅ بيتسجل من ساعة ما الطلب اتعمل (قبل ما يتحدد السعر) عشان لو العميل رجع
+    // لصفحة الصيدلية نقدر نوريله زرار "ارجع للمحادثة" بدل ما يبدأ من الأول.
+    public void SetPrescriptionRequestId(int prescriptionRequestId)
+    {
+        PrescriptionRequestId = prescriptionRequestId;
+        CartChanged?.Invoke();
+    }
+
     // ✅ بعد ما العميل يوافق على سعر الروشتة في شات الصيدلية
     public void SetPrescriptionAgreedPrice(int prescriptionRequestId, decimal price)
     {

@@ -813,6 +813,15 @@
 	<data name="ChoosePrescriptionImage">
 		<value>Choose prescription image</value>
 	</data>
+	<data name="PrescriptionChatOngoingTitle">
+		<value>You have an ongoing prescription chat</value>
+	</data>
+	<data name="PrescriptionChatOngoingHint">
+		<value>Still waiting for the pharmacy to set the invoice total</value>
+	</data>
+	<data name="ReturnToChat">
+		<value>Return to chat</value>
+	</data>
 	<data name="PrescriptionAdded">
 		<value>Prescription uploaded successfully</value>
 	</data>

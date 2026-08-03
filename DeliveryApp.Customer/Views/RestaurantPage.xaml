@@ -193,6 +193,26 @@
                                 BackgroundColor="White" 
                                 SizeChanged="OnInlineCategoriesBarSizeChanged"/>
 
+                <!-- Pharmacy: return to an already-open prescription chat -->
+                <Border IsVisible="{Binding HasActivePrescriptionChat}" BackgroundColor="#FFF3E0"
+                        StrokeShape="RoundRectangle 14" Stroke="#FFB74D" Margin="16,8,16,0"
+                        Padding="16,14">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="{loc:Loc Key=PrescriptionChatOngoingTitle}" FontFamily="CairoBold"
+                                   FontSize="14" TextColor="#E65100"/>
+                            <Label Text="{loc:Loc Key=PrescriptionChatOngoingHint}" FontFamily="CairoRegular"
+                                   FontSize="12" TextColor="#424242"/>
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1" Text="{loc:Loc Key=ReturnToChat}"
+                                Command="{Binding ReturnToPrescriptionChatCommand}"
+                                BackgroundColor="#FF5722" TextColor="White"
+                                FontFamily="CairoBold" FontSize="13"
+                                CornerRadius="10" Padding="14,0" HeightRequest="42"
+                                VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+
                 <!-- Pharmacy: upload prescription -->
                 <Border IsVisible="{Binding IsPharmacy}" BackgroundColor="#E3F2FD"
                         StrokeShape="RoundRectangle 14" Stroke="#90CAF9" Margin="16,8"

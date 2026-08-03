@@ -19,15 +19,11 @@
         <Grid Grid.Row="0" BackgroundColor="#1976D2" Padding="16,50,16,14">
             <Grid ColumnDefinitions="44,*,44">
 
-                <Border Grid.Column="0" BackgroundColor="#125A9C"
-                        StrokeShape="RoundRectangle 22" WidthRequest="38" HeightRequest="38"
-                        VerticalOptions="Center" HorizontalOptions="Start">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-                    </Border.GestureRecognizers>
-                    <Label Text="‹" FontFamily="CairoBold" FontSize="22" TextColor="White"
-                           HorizontalOptions="Center" VerticalOptions="Center"/>
-                </Border>
+                <ImageButton Grid.Column="0" Source="icon_back.png"
+                             WidthRequest="38" HeightRequest="38"
+                             BackgroundColor="Transparent"
+                             VerticalOptions="Center" HorizontalOptions="Start"
+                             Command="{Binding GoBackCommand}"/>
 
                 <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">
                     <Label Text="{Binding RestaurantName}"
