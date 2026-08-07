@@ -21,11 +21,19 @@
                 StrokeShape="RoundRectangle 24,24,0,0"
                 Stroke="Transparent" Padding="20,16,20,28">
             <VerticalStackLayout Spacing="16">
+                <!-- ✅ FIX: صورة المنتج مكنتش ظاهرة في شاشة التفاصيل خالص -->
+                <Border StrokeShape="RoundRectangle 16" HeightRequest="180"
+                        IsVisible="{Binding Product.FullImageUrl, Converter={StaticResource HasImage}}">
+                    <Image Source="{Binding Product.FullImageUrl}" Aspect="AspectFill" HeightRequest="180"/>
+                </Border>
+
                 <Grid ColumnDefinitions="*,Auto">
                     <VerticalStackLayout Grid.Column="0" Spacing="4">
                         <Label Text="{Binding Product.Name}" FontFamily="CairoBold" FontSize="20" TextColor="#212121"/>
                         <Label Text="{Binding Product.Description}" FontFamily="CairoRegular"
-                               FontSize="13" TextColor="#757575" MaxLines="2"/>
+                               FontSize="13" TextColor="#757575"/>
+                        <Label Text="{Binding Product.Price, StringFormat='{0:F0} EGP'}"
+                               FontFamily="CairoBold" FontSize="15" TextColor="#FF5722"/>
                     </VerticalStackLayout>
                     <Label Grid.Column="1" Text="✕" FontSize="22" TextColor="#757575" Padding="8">
                         <Label.GestureRecognizers>
@@ -34,7 +42,8 @@
                     </Label>
                 </Grid>
 
-                <VerticalStackLayout Spacing="8">
+                <!-- ✅ FIX: قسم اختيار المقاس بيظهر بس لو المنتج فعلاً عنده Variants -->
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding HasVariants}">
                     <Grid ColumnDefinitions="*,Auto">
                         <Label Text="{loc:Loc Key=ChooseSize}" FontFamily="CairoBold" FontSize="16"/>
                         <Border BackgroundColor="#212121" StrokeShape="RoundRectangle 6" Padding="8,4">

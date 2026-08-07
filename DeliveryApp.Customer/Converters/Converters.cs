@@ -23,6 +23,8 @@ public class IntToBoolConverter : IValueConverter
     {
         bool result = false;
         if (v is int i) result = i > 0;
+        else if (v is decimal dec) result = dec > 0;
+        else if (v is double dbl) result = dbl > 0;
         else if (v is bool b) result = b;
 
         if (p is string s && s == "invert")

@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:models="clr-namespace:DeliveryApp.Customer.Models"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.CheckoutPage"
              x:DataType="vm:CheckoutViewModel"
@@ -201,6 +202,25 @@
                     <VerticalStackLayout Spacing="10">
                         <Label Text="{loc:Loc Key=OrderSummary}"
                                FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+                        <BoxView Color="#E0E0E0" HeightRequest="1"/>
+
+                        <!-- ✅ FIX: عناصر الطلب مكنتش ظاهرة هنا خالص -->
+                        <CollectionView ItemsSource="{Binding CartItems}" SelectionMode="None">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:CartItem">
+                                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,4" ColumnSpacing="8">
+                                        <Label Grid.Column="0" Text="{Binding Quantity, StringFormat='{0}x'}"
+                                               FontFamily="CairoBold" FontSize="13" TextColor="#FF5722"/>
+                                        <Label Grid.Column="1" Text="{Binding DisplayName}"
+                                               FontFamily="CairoRegular" FontSize="13" TextColor="#424242"
+                                               LineBreakMode="TailTruncation"/>
+                                        <Label Grid.Column="2" Text="{Binding TotalPriceText}"
+                                               FontFamily="CairoBold" FontSize="13" TextColor="#212121"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
                         <BoxView Color="#E0E0E0" HeightRequest="1"/>
 
                         <Grid ColumnDefinitions="*,Auto">

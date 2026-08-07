@@ -34,6 +34,9 @@ public partial class CheckoutViewModel : BaseViewModel
     [ObservableProperty] string _lat = "";
     [ObservableProperty] string _lng = "";
 
+    // ✅ FIX: عناصر السلة مكنتش متعروضة في الشيك اوت لأنه معملهاش binding أصلاً
+    public IReadOnlyList<CartItem> CartItems => _cart.Items;
+
     // Coupon
     [ObservableProperty] string _couponCode = string.Empty;
     [ObservableProperty] string _couponFeedback = string.Empty;

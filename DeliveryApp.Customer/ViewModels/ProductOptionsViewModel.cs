@@ -50,7 +50,10 @@ public partial class ProductOptionsViewModel : BaseViewModel
 
     public ObservableCollection<ProductVariant> Variants { get; } = new();
 
-    public bool CanAddToCart => SelectedVariant != null;
+    // ✅ FIX: المنتج اللي معندوش اختيارات (Variants) مكانش ينفع يتضاف للسلة خالص
+    // لأن CanAddToCart كانت بتعتمد بس على SelectedVariant != null.
+    public bool HasVariants => Variants.Count > 0;
+    public bool CanAddToCart => !HasVariants || SelectedVariant != null;
     public string AddButtonText => CanAddToCart
         ? LocalizationService.Get("AddToCart")
         : LocalizationService.Get("CompleteSelections");
@@ -83,6 +86,9 @@ public partial class ProductOptionsViewModel : BaseViewModel
         if (Product == null) return;
         foreach (var v in Product.Variants.OrderBy(x => x.SortOrder))
             Variants.Add(v);
+        OnPropertyChanged(nameof(HasVariants));
+        OnPropertyChanged(nameof(CanAddToCart));
+        OnPropertyChanged(nameof(AddButtonText));
     }
 
     partial void OnSelectedVariantChanged(ProductVariant? value)
@@ -112,14 +118,18 @@ public partial class ProductOptionsViewModel : BaseViewModel
     [RelayCommand]
     async Task AddToCartAsync()
     {
-        if (Product == null || SelectedVariant == null) return;
+        if (Product == null || !CanAddToCart) return;
+
+        // ✅ FIX: لو المنتج معندوش Variants، مفيش SelectedVariant أصلاً —
+        // بنستخدم سعر المنتج نفسه (أو السعر بعد الخصم لو موجود) بدل ما نرجع من غير ما نضيف حاجة.
+        var unitPrice = SelectedVariant?.Price ?? Product.DiscountedPrice ?? Product.Price;
 
         var ok = _cart.AddItem(
             RestaurantId, Product, Quantity,
             deliveryFee: DeliveryFee,
-            variantId: SelectedVariant.Id,
-            variantName: SelectedVariant.Name,
-            unitPrice: SelectedVariant.Price);
+            variantId: SelectedVariant?.Id,
+            variantName: SelectedVariant?.Name,
+            unitPrice: unitPrice);
 
         if (!ok)
         {
@@ -132,8 +142,8 @@ public partial class ProductOptionsViewModel : BaseViewModel
             {
                 _cart.Clear();
                 _cart.AddItem(RestaurantId, Product, Quantity, deliveryFee: DeliveryFee,
-                    variantId: SelectedVariant.Id, variantName: SelectedVariant.Name,
-                    unitPrice: SelectedVariant.Price);
+                    variantId: SelectedVariant?.Id, variantName: SelectedVariant?.Name,
+                    unitPrice: unitPrice);
             }
             else return;
         }

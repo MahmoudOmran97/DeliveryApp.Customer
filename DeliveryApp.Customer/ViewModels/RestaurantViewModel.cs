@@ -92,18 +92,16 @@ public partial class RestaurantViewModel : BaseViewModel
     [RelayCommand]
     async Task ProductTapped(Product p)
     {
-        if (p.HasVariants)
-        {
-            var json = Uri.EscapeDataString(JsonSerializer.Serialize(p));
-            // ✅ FIX: نفس مشكلة LocationPickerViewModel — لازم InvariantCulture عشان الفاصلة
-            // العشرية تفضل "." مش "٫" لو اللغة عربي، وإلا الـ decimal QueryProperty
-            // في ProductOptionsPage بيفشل بـ FormatException.
-            var fee = (Restaurant?.DeliveryFee ?? 15m).ToString(CultureInfo.InvariantCulture);
-            await Shell.Current.GoToAsync(
-                $"ProductOptionsPage?product={json}&restaurantId={RestaurantId}&deliveryFee={fee}");
-            return;
-        }
-        await AddToCart(p);
+        // ✅ FIX: دلوقتي أي منتج (سواء عنده اختيارات أو لأ) بيفتح شاشة التفاصيل
+        // (صورة + وصف + سعر + تحكم في الكمية) بدل ما يتضاف للسلة على طول من غير ما
+        // المستخدم يشوف حاجة.
+        var json = Uri.EscapeDataString(JsonSerializer.Serialize(p));
+        // ✅ FIX: نفس مشكلة LocationPickerViewModel — لازم InvariantCulture عشان الفاصلة
+        // العشرية تفضل "." مش "٫" لو اللغة عربي، وإلا الـ decimal QueryProperty
+        // في ProductOptionsPage بيفشل بـ FormatException.
+        var fee = (Restaurant?.DeliveryFee ?? 15m).ToString(CultureInfo.InvariantCulture);
+        await Shell.Current.GoToAsync(
+            $"ProductOptionsPage?product={json}&restaurantId={RestaurantId}&deliveryFee={fee}");
     }
 
     [RelayCommand]
