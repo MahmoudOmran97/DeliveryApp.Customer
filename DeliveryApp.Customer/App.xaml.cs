@@ -160,31 +160,15 @@ public partial class App : Application
         var pending = PendingNotificationNavigation.TakePending();
         if (pending == null) return;
 
-        var (orderId, type) = pending.Value;
+        var (orderId, type, actionUrl) = pending.Value;
 
         MainThread.BeginInvokeOnMainThread(async () =>
         {
             try
             {
-                switch (type)
-                {
-                    // إشعارات مرتبطة بحالة أوردر معين — روشتة/طلب عادي/إلخ.
-                    case "OrderStatusChanged" or "OrderAccepted" or "OrderRejected"
-                        or "OrderPreparing" or "OrderReady" or "OrderOnTheWay"
-                        when orderId.HasValue:
-                        await Shell.Current.GoToAsync($"OrderDetailPage?orderId={orderId}");
-                        break;
-
-                    // نوع عام لسه بيحمل OrderId — نفس سلوك شاشة الإشعارات بالظبط.
-                    case var _ when orderId.HasValue:
-                        await Shell.Current.GoToAsync($"OrderDetailPage?orderId={orderId}");
-                        break;
-
-                    // إشعار عام من غير OrderId — يفتح شاشة الإشعارات نفسها.
-                    default:
-                        await Shell.Current.GoToAsync("NotificationsPage");
-                        break;
-                }
+                // لو الأدمن حدد وجهة صريحة (ActionUrl) وقت إرسال الإشعار، بتاخد الأولوية.
+                // لو مفيش، نرجع للسلوك القديم المعتمد على type/orderId.
+                await NotificationNavigationHelper.NavigateAsync(actionUrl, orderId);
             }
             catch (Exception ex)
             {

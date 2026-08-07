@@ -60,15 +60,18 @@ namespace DeliveryApp.Customer
                 return;
             }
 
-            // ✅ NAV FIX — نوتيفيكيشن عادي (مش مكالمة) اتضغط عليها — نسجل type/orderId
+            // ✅ NAV FIX — نوتيفيكيشن عادي (مش مكالمة) اتضغط عليها — نسجل type/orderId/actionUrl
             // عشان App.xaml.cs يوجّه المستخدم للمكان الصح بمجرد ما التطبيق يفتح.
             var notifType = intent.GetStringExtra("tawseela_notif_type");
             var notifOrderIdStr = intent.GetStringExtra("tawseela_notif_order_id");
-            if (!string.IsNullOrEmpty(notifType) || !string.IsNullOrEmpty(notifOrderIdStr))
+            var notifActionUrl = intent.GetStringExtra("tawseela_notif_action_url");
+            if (!string.IsNullOrEmpty(notifType) || !string.IsNullOrEmpty(notifOrderIdStr) || !string.IsNullOrEmpty(notifActionUrl))
             {
                 DeliveryApp.Customer.Services.PendingNotificationNavigation.Type = notifType;
                 if (int.TryParse(notifOrderIdStr, out var notifOrderId) && notifOrderId != 0)
                     DeliveryApp.Customer.Services.PendingNotificationNavigation.OrderId = notifOrderId;
+                if (!string.IsNullOrEmpty(notifActionUrl))
+                    DeliveryApp.Customer.Services.PendingNotificationNavigation.ActionUrl = notifActionUrl;
             }
         }
 
@@ -132,6 +135,8 @@ namespace DeliveryApp.Customer
                                 intent.PutExtra("tawseela_notif_type", notifType);
                             if (data.TryGetValue("orderId", out var notifOrderId) && !string.IsNullOrEmpty(notifOrderId))
                                 intent.PutExtra("tawseela_notif_order_id", notifOrderId);
+                            if (data.TryGetValue("actionUrl", out var notifActionUrl) && !string.IsNullOrEmpty(notifActionUrl))
+                                intent.PutExtra("tawseela_notif_action_url", notifActionUrl);
                         }
                     }
 

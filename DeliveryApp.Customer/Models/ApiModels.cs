@@ -274,6 +274,7 @@ public class Notification
     public string Type { get; set; } = string.Empty;
     public bool IsRead { get; set; }
     public int? OrderId { get; set; }
+    public string? ActionUrl { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public string TimeText

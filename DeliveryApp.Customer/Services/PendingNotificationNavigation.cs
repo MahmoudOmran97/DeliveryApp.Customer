@@ -7,13 +7,15 @@ public static class PendingNotificationNavigation
 {
     public static int? OrderId;
     public static string? Type;
+    public static string? ActionUrl;
 
-    public static (int? orderId, string type)? TakePending()
+    public static (int? orderId, string type, string? actionUrl)? TakePending()
     {
-        if (OrderId is null && string.IsNullOrEmpty(Type)) return null;
-        var result = (OrderId, Type ?? "General");
+        if (OrderId is null && string.IsNullOrEmpty(Type) && string.IsNullOrEmpty(ActionUrl)) return null;
+        var result = (OrderId, Type ?? "General", ActionUrl);
         OrderId = null;
         Type = null;
+        ActionUrl = null;
         return result;
     }
 }

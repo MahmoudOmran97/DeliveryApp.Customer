@@ -70,9 +70,9 @@ public partial class NotificationsViewModel : BaseViewModel
 
         if (!n.IsRead) await _api.MarkNotificationReadAsync(n.Id);
 
-        if (n.OrderId.HasValue)
+        try { await NotificationNavigationHelper.NavigateAsync(n.ActionUrl, n.OrderId); }
 
-            await Shell.Current.GoToAsync($"OrderDetailPage?orderId={n.OrderId}");
+        catch { /* already on notifications list — nothing else to do */ }
 
     }
 
