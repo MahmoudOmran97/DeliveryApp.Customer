@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DeliveryApp.Customer.Helpers;
 using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.Services;
 
@@ -27,6 +28,15 @@ public partial class RestaurantViewModel : BaseViewModel
     [ObservableProperty] bool _hasActivePrescriptionChat;
 
     public ObservableCollection<Category> Menu { get; } = new();
+
+    /// <summary>
+    /// نفس الـ Menu بس متلفوفة كـ Grouping عشان CollectionView واحد بس
+    /// (IsGrouped=True) يعرضها كلها مع الـ virtualization شغالة صح —
+    /// بدل ما كل كاتيجوري كانت بتاخد CollectionView منفصل جوه ScrollView،
+    /// وده كان بيخلي كل المنتجات (وصورها) في المطعم كله تترندر مرة واحدة
+    /// من أول ما الصفحة تفتح حتى لو مش ظاهرة على الشاشة، وده أكبر سبب للتقل.
+    /// </summary>
+    public ObservableCollection<Grouping<Category, Product>> MenuGroups { get; } = new();
 
     public RestaurantViewModel(ApiService api, CartService cart, LocationService location)
     {
@@ -68,7 +78,12 @@ public partial class RestaurantViewModel : BaseViewModel
             Restaurant = t1.Result;
             IsPharmacy = Restaurant?.StoreType.Equals("Pharmacy", StringComparison.OrdinalIgnoreCase) == true;
             Menu.Clear();
-            foreach (var c in t2.Result ?? new()) Menu.Add(c);
+            MenuGroups.Clear();
+            foreach (var c in t2.Result ?? new())
+            {
+                Menu.Add(c);
+                MenuGroups.Add(new Grouping<Category, Product>(c, c.Products));
+            }
             UpdateActivePrescriptionChat();
         }
         finally { IsBusy = false; }

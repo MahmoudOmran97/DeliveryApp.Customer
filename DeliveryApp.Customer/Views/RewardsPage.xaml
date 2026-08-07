@@ -215,6 +215,8 @@
                                             <ff:CachedImage Source="{Binding ImageUrl}"
                                                             Aspect="AspectFill"
                                                             HeightRequest="130"
+                                                            DownsampleHeight="260"
+                                                            CacheDuration="7"
                                                             IsVisible="{Binding ImageUrl, Converter={StaticResource HasImage}}"/>
                                             <Border BackgroundColor="{Binding BadgeColorValue}"
                                                     StrokeShape="RoundRectangle 6"

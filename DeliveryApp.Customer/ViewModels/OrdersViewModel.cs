@@ -20,6 +20,11 @@ public partial class OrdersViewModel : BaseViewModel
 
     [ObservableProperty] bool _isEmpty;
 
+    // ── Pagination (تحميل تدريجي زي التطبيقات الكبيرة) ──────────
+    int _currentPage = 1;
+    bool _hasMore = true;
+    [ObservableProperty] bool _isLoadingMore;
+
     public ObservableCollection<Order> Orders { get; } = new();
 
     public OrdersViewModel(ApiService api) { _api = api; }
@@ -32,11 +37,15 @@ public partial class OrdersViewModel : BaseViewModel
 
         IsBusy = true;
 
+        _currentPage = 1;
+
+        _hasMore = true;
+
         try
 
         {
 
-            var r = await _api.GetMyOrdersAsync();
+            var r = await _api.GetMyOrdersAsync(_currentPage);
 
             Orders.Clear();
 
@@ -44,9 +53,44 @@ public partial class OrdersViewModel : BaseViewModel
 
             IsEmpty = !Orders.Any();
 
+            _hasMore = r != null && (r.TotalPages.HasValue ? _currentPage < r.TotalPages.Value : r.Data.Count > 0);
+
         }
 
         finally { IsBusy = false; IsRefreshing = false; }
+
+    }
+
+    /// <summary>بتتنفذ لما اليوزر يقرب من آخر أوردر في القايمة (RemainingItemsThreshold)</summary>
+    [RelayCommand]
+
+    async Task LoadMoreAsync()
+
+    {
+
+        if (IsBusy || IsLoadingMore || !_hasMore) return;
+
+        IsLoadingMore = true;
+
+        try
+
+        {
+
+            var nextPage = _currentPage + 1;
+
+            var r = await _api.GetMyOrdersAsync(nextPage);
+
+            if (r?.Data is { Count: > 0 })
+            {
+                foreach (var o in r.Data) Orders.Add(o);
+                _currentPage = nextPage;
+            }
+
+            _hasMore = r != null && (r.TotalPages.HasValue ? _currentPage < r.TotalPages.Value : r.Data.Count > 0);
+
+        }
+
+        finally { IsLoadingMore = false; }
 
     }
 

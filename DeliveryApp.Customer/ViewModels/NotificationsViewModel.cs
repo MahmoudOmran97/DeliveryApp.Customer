@@ -18,6 +18,11 @@ public partial class NotificationsViewModel : BaseViewModel
 
     [ObservableProperty] int _unread;
 
+    // ── Pagination (تحميل تدريجي زي التطبيقات الكبيرة) ──────────
+    int _currentPage = 1;
+    bool _hasMore = true;
+    [ObservableProperty] bool _isLoadingMore;
+
     public ObservableCollection<Notification> Notifications { get; } = new();
 
     public NotificationsViewModel(ApiService api) { _api = api; }
@@ -30,11 +35,15 @@ public partial class NotificationsViewModel : BaseViewModel
 
         IsBusy = true;
 
+        _currentPage = 1;
+
+        _hasMore = true;
+
         try
 
         {
 
-            var r = await _api.GetNotificationsAsync();
+            var r = await _api.GetNotificationsAsync(_currentPage);
 
             Notifications.Clear();
 
@@ -46,6 +55,12 @@ public partial class NotificationsViewModel : BaseViewModel
 
                 Unread = r.Data.Count(n => !n.IsRead);
 
+                _hasMore = r.TotalPages.HasValue ? _currentPage < r.TotalPages.Value : r.Data.Count > 0;
+
+            }
+            else
+            {
+                _hasMore = false;
             }
 
             IsEmpty = !Notifications.Any();
@@ -53,6 +68,40 @@ public partial class NotificationsViewModel : BaseViewModel
         }
 
         finally { IsBusy = false; IsRefreshing = false; }
+
+    }
+
+    /// <summary>بتتنفذ لما اليوزر يقرب من آخر إشعار في القايمة (RemainingItemsThreshold)</summary>
+    [RelayCommand]
+
+    async Task LoadMoreAsync()
+
+    {
+
+        if (IsBusy || IsLoadingMore || !_hasMore) return;
+
+        IsLoadingMore = true;
+
+        try
+
+        {
+
+            var nextPage = _currentPage + 1;
+
+            var r = await _api.GetNotificationsAsync(nextPage);
+
+            if (r?.Data is { Count: > 0 })
+            {
+                foreach (var n in r.Data) Notifications.Add(n);
+                Unread += r.Data.Count(n => !n.IsRead);
+                _currentPage = nextPage;
+            }
+
+            _hasMore = r != null && (r.TotalPages.HasValue ? _currentPage < r.TotalPages.Value : r.Data.Count > 0);
+
+        }
+
+        finally { IsLoadingMore = false; }
 
     }
 

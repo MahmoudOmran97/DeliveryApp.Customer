@@ -61,6 +61,7 @@
                                     <ff:CachedImage Source="{Binding Product.FullImageUrl}"
                                                    Aspect="AspectFill"
                                                    HeightRequest="64" WidthRequest="64"
+                                                   DownsampleToViewSize="True"
                                                    CacheDuration="7"
                                                    IsVisible="{Binding Product.FullImageUrl, Converter={StaticResource HasImage}}"/>
                                 </Grid>

@@ -38,6 +38,7 @@
                         <ff:CachedImage Source="{Binding FullImageUrl}"
                                Aspect="AspectFill"
                                CacheDuration="7"
+                               DownsampleToViewSize="True"
                                HeightRequest="60" WidthRequest="60"
                                IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
                     </Grid>
@@ -65,6 +66,7 @@
             <ff:CachedImage Source="{Binding Restaurant.FullCoverImageUrl}"
                    Aspect="AspectFill"
                    CacheDuration="7"
+                   DownsampleToViewSize="True"
                    IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}}" />
 
             <!-- Back -->
@@ -113,10 +115,18 @@
         </Grid>
 
         <!-- Content -->
+        <!-- ✅ FIX (performance): كان ده ScrollView لافّ جواه VerticalStackLayout فيها
+             BindableLayout بيولّد CollectionView منفصل لكل كاتيجوري. الـ CollectionView
+             جوه ScrollView بيلغي الـ virtualization بتاعته تمامًا، يعني كل المنتجات
+             (وكل صورها) في المطعم كله كانت بترندر وتتحمل مرة واحدة من أول ما الصفحة
+             تفتح حتى اللي مش ظاهر على الشاشة — وده كان أكبر سبب لتقل صفحة المحل.
+             دلوقتي فيه CollectionView واحد بس بـ IsGrouped، فبيعرض بس اللي ظاهر على
+             الشاشة وبيعيد استخدام الخلايا (recycling) زي أي تطبيق كبير. -->
+        <CollectionView x:Name="MenuCollectionView" Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0"
+                        ItemsSource="{Binding MenuGroups}" IsGrouped="True" SelectionMode="None"
+                        Scrolled="OnContentScrolled">
 
-        <ScrollView x:Name="ContentScrollView" Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0"
-                    Scrolled="OnContentScrolled">
-
+            <CollectionView.Header>
             <VerticalStackLayout Spacing="0"   >
 
                 <!-- Info Card -->
@@ -229,28 +239,24 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Menu Categories -->
+            </VerticalStackLayout>
+            </CollectionView.Header>
 
-                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Menu}"
-                                      BackgroundColor="#F8F9FA">
+            <!-- Menu Categories: كل عنصر جوه IsGrouped=True فبيتعرض بس وقت ما يظهر
+                 فعليًا على الشاشة (recycling)، مش كله مرة واحدة زي قبل كده -->
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding Key.Name}" FontFamily="CairoBold" FontSize="17"
+                           TextColor="#212121" BackgroundColor="#F8F9FA"
+                           Padding="16,18,16,2"/>
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
 
-                    <BindableLayout.ItemTemplate>
-
-                        <DataTemplate x:DataType="m:Category">
-
-                            <VerticalStackLayout Padding="16,0" Spacing="10" Loaded="OnCategorySectionLoaded">
-
-                                <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="17"
-
-                                       TextColor="#212121" Margin="0,18,0,2"/>
-
-                                <CollectionView ItemsSource="{Binding Products}" SelectionMode="None">
-
-                                    <CollectionView.ItemTemplate>
+                                <CollectionView.ItemTemplate>
 
                                         <DataTemplate x:DataType="m:Product">
 
-                                            <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+                                            <Border Style="{StaticResource Card}" Margin="16,0,16,10">
                                                 <Border.GestureRecognizers>
                                                     <TapGestureRecognizer
                                                         Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.ProductTappedCommand}"
@@ -298,6 +304,7 @@
                                                                        Aspect="AspectFill"
                                                                        HeightRequest="84" WidthRequest="84"
                                                                        CacheDuration="7"
+                                                                       DownsampleToViewSize="True"
                                                                        IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}" />
                                                             </Grid>
                                                         </Border>
@@ -326,21 +333,11 @@
 
                                     </CollectionView.ItemTemplate>
 
-                                </CollectionView>
-
-                            </VerticalStackLayout>
-
-                        </DataTemplate>
-
-                    </BindableLayout.ItemTemplate>
-
-                </VerticalStackLayout>
-
+            <CollectionView.Footer>
                 <BoxView HeightRequest="100" Color="Transparent"/>
+            </CollectionView.Footer>
 
-            </VerticalStackLayout>
-
-        </ScrollView>
+        </CollectionView>
 
         <!-- نسخة عايمة (Sticky) من شريط الكاتوجريز — بتظهر بس لما اليوزر ينزل
              وتوصل النسخة الأصلية لحافة الاسكرول، فبيبان كأنه لزق فوق -->

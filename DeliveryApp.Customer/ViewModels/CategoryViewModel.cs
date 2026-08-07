@@ -17,6 +17,15 @@ public partial class CategoryViewModel : BaseViewModel
     [ObservableProperty] string _displayTitle = string.Empty;
     [ObservableProperty] string _searchText = string.Empty;
 
+    // ── Pagination (تحميل تدريجي زي التطبيقات الكبيرة) ──────────
+    // كانت الصفحة بتجيب أول صفحة بس من السيرفر (20 محل) وتقف عندها؛ أي محل
+    // بعد كده مكنش بيظهر خالص. دلوقتي لما اليوزر ينزل تحت، بنجيب الصفحة اللي
+    // بعدها ونضيفها، لغاية ما السيرفر يقول مفيش صفحات زيادة.
+    const int PageSize = 20;
+    int _currentPage = 1;
+    bool _hasMore = true;
+    [ObservableProperty] bool _isLoadingMore;
+
     /// <summary>نفس الـ Placeholder المستخدم في صفحة الرئيسية</summary>
     public string SearchHint => LocalizationService.Get("SearchPlaceholder");
 
@@ -68,6 +77,8 @@ public partial class CategoryViewModel : BaseViewModel
     async Task LoadAsync()
     {
         IsBusy = true;
+        _currentPage = 1;
+        _hasMore = true;
         try
         {
             // بنبعت lat/lng للـ API مباشرة — هو بيفلتر جوه الـ 10km
@@ -81,13 +92,56 @@ public partial class CategoryViewModel : BaseViewModel
                 lng: lng,
                 radiusKm: 10.0,
                 minRating: 0.0,
-                sortBy: "rating");
+                sortBy: "rating",
+                page: _currentPage,
+                pageSize: PageSize);
 
             Items.Clear();
             foreach (var x in result?.Data ?? new())
                 Items.Add(x);
+
+            _hasMore = result != null
+                && (result.TotalPages.HasValue ? _currentPage < result.TotalPages.Value : result.Data.Count == PageSize);
         }
         finally { IsBusy = false; OnPropertyChanged(nameof(HasNoResults)); }
+    }
+
+    /// <summary>
+    /// بتتنفذ تلقائيًا لما اليوزر يقرب من آخر عنصر في القايمة (RemainingItemsThreshold
+    /// في الـ XAML) — بنجيب الصفحة اللي بعدها ونضيفها بدل ما نستنى اليوزر يدوس حاجة.
+    /// </summary>
+    [RelayCommand]
+    async Task LoadMoreAsync()
+    {
+        if (IsBusy || IsLoadingMore || !_hasMore) return;
+        IsLoadingMore = true;
+        try
+        {
+            double? lat = _location.HasLocation ? _location.Latitude : null;
+            double? lng = _location.HasLocation ? _location.Longitude : null;
+
+            var nextPage = _currentPage + 1;
+            var result = await _api.GetRestaurantsAsync(
+                search: SearchText,
+                category: CategoryName,
+                lat: lat,
+                lng: lng,
+                radiusKm: 10.0,
+                minRating: 0.0,
+                sortBy: "rating",
+                page: nextPage,
+                pageSize: PageSize);
+
+            if (result?.Data is { Count: > 0 })
+            {
+                foreach (var x in result.Data) Items.Add(x);
+                _currentPage = nextPage;
+            }
+
+            _hasMore = result != null
+                && (result.TotalPages.HasValue ? _currentPage < result.TotalPages.Value : result.Data.Count == PageSize);
+        }
+        finally { IsLoadingMore = false; }
     }
 
     /// <summary>بيتنفذ لما المستخدم يدوس Enter/بحث في مربع السيرش اللي فوق</summary>
