@@ -20,15 +20,11 @@
             <Grid ColumnDefinitions="44,*,44">
 
                 <!-- Back -->
-                <Border Grid.Column="0" BackgroundColor="#CC4419"
-                        StrokeShape="RoundRectangle 22" WidthRequest="38" HeightRequest="38"
-                        VerticalOptions="Center" HorizontalOptions="Start">
-                    <Border.GestureRecognizers>
+                <Image Grid.Column="0" Source="icon_back.png" WidthRequest="38" HeightRequest="38" VerticalOptions="Center">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-                    </Border.GestureRecognizers>
-                    <Label Text="‹" FontFamily="CairoBold" FontSize="22" TextColor="White"
-                           HorizontalOptions="Center" VerticalOptions="Center"/>
-                </Border>
+                    </Image.GestureRecognizers>
+                </Image>
 
                 <!-- Title -->
                 <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" Spacing="2">

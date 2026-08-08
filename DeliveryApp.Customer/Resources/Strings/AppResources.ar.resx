@@ -498,6 +498,18 @@
 	<data name="AiOnline">
 		<value>متاح دائماً</value>
 	</data>
+	<data name="SupportChatWelcome">
+		<value>👋 أهلاً بيك! أنا مساعد الدعم بتاعك. تقدر تسألني عن حالة طلبك، الإلغاء، الاسترجاع، أو أي مشكلة واجهتك.</value>
+	</data>
+	<data name="SupportChatOpenError">
+		<value>⚠️ مش قادرين نفتح شات الدعم دلوقتي، حاول تاني كمان شوية.</value>
+	</data>
+	<data name="SupportChatSendError">
+		<value>⚠️ الرسالة معملتش، حاول تاني.</value>
+	</data>
+	<data name="SupportChatConnectionError">
+		<value>⚠️ في مشكلة في الاتصال، حاول تاني.</value>
+	</data>
 	<data name="AiTyping">
 		<value>يكتب…</value>
 	</data>

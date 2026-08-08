@@ -13,27 +13,19 @@
         <!-- Header -->
         <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="16,48,16,16">
             <Grid ColumnDefinitions="44,*,44">
-                <Border Grid.Column="0" BackgroundColor="#CC4419"
-                        StrokeShape="RoundRectangle 22" WidthRequest="36" HeightRequest="36"
-                        VerticalOptions="Center" HorizontalOptions="Start">
-                    <Border.GestureRecognizers>
+                <Image Grid.Column="0" Source="icon_back.png" WidthRequest="38" HeightRequest="38" VerticalOptions="Center">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-                    </Border.GestureRecognizers>
-                    <Label Text="‹" FontFamily="CairoBold" FontSize="22" TextColor="White"
-                           HorizontalOptions="Center" VerticalOptions="Center"/>
-                </Border>
+                    </Image.GestureRecognizers>
+                </Image>
                 <Label Grid.Column="1" Text="{loc:Loc Key=MyComplaints}"
                        FontFamily="CairoBold" FontSize="17" TextColor="White"
                        HorizontalOptions="Center" VerticalOptions="Center"/>
-                <Border Grid.Column="2" BackgroundColor="#CC4419"
-                        StrokeShape="RoundRectangle 22" WidthRequest="36" HeightRequest="36"
-                        VerticalOptions="Center" HorizontalOptions="End">
-                    <Border.GestureRecognizers>
+                <Image Grid.Column="2" Source="icon_add.png" WidthRequest="38" HeightRequest="38" VerticalOptions="Center">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ToggleFormCommand}"/>
-                    </Border.GestureRecognizers>
-                    <Label Text="+" FontFamily="CairoBold" FontSize="22" TextColor="White"
-                           HorizontalOptions="Center" VerticalOptions="Center"/>
-                </Border>
+                    </Image.GestureRecognizers>
+                </Image>
             </Grid>
         </Grid>
 

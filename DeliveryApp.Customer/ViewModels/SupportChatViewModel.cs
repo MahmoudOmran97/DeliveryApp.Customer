@@ -50,7 +50,7 @@ public partial class SupportChatViewModel : BaseViewModel
             var session = await _api.GetOrCreateSupportSessionAsync();
             if (session == null)
             {
-                Messages.Add(new ChatMessage { Text = "⚠️ مش قادرين نفتح شات الدعم دلوقتي، حاول تاني كمان شوية.", IsFromAi = true });
+                Messages.Add(new ChatMessage { Text = LocalizationService.Get("SupportChatOpenError"), IsFromAi = true });
                 return;
             }
 
@@ -61,7 +61,7 @@ public partial class SupportChatViewModel : BaseViewModel
             {
                 Messages.Add(new ChatMessage
                 {
-                    Text = "👋 أهلاً بيك! أنا مساعد الدعم بتاعك. تقدر تسألني عن حالة طلبك، الإلغاء، الاسترجاع، أو أي مشكلة واجهتك.",
+                    Text = LocalizationService.Get("SupportChatWelcome"),
                     IsFromAi = true
                 });
             }
@@ -100,7 +100,7 @@ public partial class SupportChatViewModel : BaseViewModel
             var result = await _api.SendSupportMessageAsync(_sessionId, text);
             if (result == null)
             {
-                Messages.Add(new ChatMessage { Text = "⚠️ الرسالة معملتش، حاول تاني.", IsFromAi = true });
+                Messages.Add(new ChatMessage { Text = LocalizationService.Get("SupportChatSendError"), IsFromAi = true });
                 return;
             }
 
@@ -114,7 +114,7 @@ public partial class SupportChatViewModel : BaseViewModel
         }
         catch (Exception)
         {
-            Messages.Add(new ChatMessage { Text = "⚠️ في مشكلة في الاتصال، حاول تاني.", IsFromAi = true });
+            Messages.Add(new ChatMessage { Text = LocalizationService.Get("SupportChatConnectionError"), IsFromAi = true });
         }
         finally
         {
