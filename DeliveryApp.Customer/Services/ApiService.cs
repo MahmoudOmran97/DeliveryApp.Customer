@@ -331,7 +331,8 @@ public class ApiService
         => GetAsync<SupportSessionDto>("supportchat/session");
 
     public Task<SupportSendResult?> SendSupportMessageAsync(int sessionId, string message)
-        => PostAsync<SupportSendResult>($"supportchat/{sessionId}/messages", new { Message = message });
+     => PostAsync<SupportSendResult>($"supportchat/{sessionId}/messages",
+         new { Message = message, Language = LocalizationService.Current.TwoLetterISOLanguageName });
 
     // ─── Complaints (شكاوى العميل) ──────────────────────────────────────────
 
