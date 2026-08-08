@@ -68,4 +68,11 @@ public partial class SettingsViewModel : BaseViewModel
     {
         await Shell.Current.GoToAsync(nameof(SupportChatPage));
     }
+
+    // ── Open My Complaints ───────────────────────────────────────
+    [RelayCommand]
+    async Task OpenComplaints()
+    {
+        await Shell.Current.GoToAsync(nameof(ComplaintsPage));
+    }
 }

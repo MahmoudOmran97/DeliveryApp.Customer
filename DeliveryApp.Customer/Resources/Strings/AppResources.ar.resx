@@ -124,6 +124,27 @@
 	<data name="ChatWithUs">
 		<value>تحدث معنا · مدعوم بالذكاء الاصطناعي</value>
 	</data>
+	<data name="MyComplaints">
+		<value>شكاويّ</value>
+	</data>
+	<data name="MyComplaintsSubtitle">
+		<value>تابع حالة الشكاوى اللي قدمتها</value>
+	</data>
+	<data name="NewComplaint">
+		<value>شكوى جديدة</value>
+	</data>
+	<data name="ComplaintSubject">
+		<value>عنوان الشكوى</value>
+	</data>
+	<data name="ComplaintDescription">
+		<value>تفاصيل الشكوى</value>
+	</data>
+	<data name="SubmitComplaint">
+		<value>إرسال الشكوى</value>
+	</data>
+	<data name="NoComplaintsYet">
+		<value>لسه معملتش أي شكوى</value>
+	</data>
 	<data name="Tab_Profile">
 		<value>حسابي</value>
 	</data>

@@ -98,6 +98,8 @@ public static class MauiProgram
         builder.Services.AddTransient<NotificationsViewModel>();
         builder.Services.AddTransient<ProfileViewModel>();
         builder.Services.AddTransient<SupportChatViewModel>();
+        builder.Services.AddTransient<ComplaintsViewModel>();
+        builder.Services.AddTransient<Views.ComplaintsPage>();
         builder.Services.AddTransient<DriverChatViewModel>();
         builder.Services.AddTransient<PrescriptionChatViewModel>();
 

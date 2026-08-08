@@ -125,6 +125,27 @@
 	<data name="ChatWithUs">
 		<value>Chat with us · AI-powered</value>
 	</data>
+	<data name="MyComplaints">
+		<value>My Complaints</value>
+	</data>
+	<data name="MyComplaintsSubtitle">
+		<value>Track the complaints you've submitted</value>
+	</data>
+	<data name="NewComplaint">
+		<value>New Complaint</value>
+	</data>
+	<data name="ComplaintSubject">
+		<value>Subject</value>
+	</data>
+	<data name="ComplaintDescription">
+		<value>Details</value>
+	</data>
+	<data name="SubmitComplaint">
+		<value>Submit Complaint</value>
+	</data>
+	<data name="NoComplaintsYet">
+		<value>You haven't submitted any complaints yet</value>
+	</data>
 	<data name="Tab_Profile">
 		<value>Profile</value>
 	</data>

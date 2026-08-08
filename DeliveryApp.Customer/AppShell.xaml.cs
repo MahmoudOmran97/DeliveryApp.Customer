@@ -33,6 +33,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
         Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
         Routing.RegisterRoute(nameof(SupportChatPage), typeof(SupportChatPage));
+        Routing.RegisterRoute(nameof(ComplaintsPage), typeof(ComplaintsPage));
         Routing.RegisterRoute(nameof(DriverChatPage), typeof(DriverChatPage));
         Routing.RegisterRoute(nameof(PrescriptionChatPage), typeof(PrescriptionChatPage));
 

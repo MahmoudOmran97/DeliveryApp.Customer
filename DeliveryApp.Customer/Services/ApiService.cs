@@ -325,6 +325,22 @@ public class ApiService
     public Task<bool> CancelPrescriptionRequestAsync(int id)
         => PutAsync($"prescriptionrequests/{id}/cancel");
 
+    // ─── Support Chat (AI) ──────────────────────────────────────────────────
+
+    public Task<SupportSessionDto?> GetOrCreateSupportSessionAsync()
+        => GetAsync<SupportSessionDto>("supportchat/session");
+
+    public Task<SupportSendResult?> SendSupportMessageAsync(int sessionId, string message)
+        => PostAsync<SupportSendResult>($"supportchat/{sessionId}/messages", new { Message = message });
+
+    // ─── Complaints (شكاوى العميل) ──────────────────────────────────────────
+
+    public Task<ComplaintCreatedResult?> CreateComplaintAsync(string subject, string description, int? orderId = null)
+        => PostAsync<ComplaintCreatedResult>("complaints", new { Subject = subject, Description = description, OrderId = orderId });
+
+    public Task<List<ComplaintDto>?> GetMyComplaintsAsync()
+        => GetAsync<List<ComplaintDto>>("complaints/my");
+
     public Task<Product?> GetProductAsync(int id)
         => GetAsync<Product>($"products/{id}");
 

@@ -32,6 +32,8 @@ public class SignalRService
     public event Action<int, string, string, DateTime>? PrescriptionMessageReceived; // requestId, senderRole, message, createdAt
     public event Action<int, decimal>? PrescriptionPriceSet; // requestId, agreedPrice
 
+    public event Action<int, string>? SupportMessageReceived; // sessionId, message (from Admin)
+
     public bool IsConnected => _hub?.State == HubConnectionState.Connected;
 
     public async Task ConnectAsync(string token)
@@ -150,6 +152,14 @@ public class SignalRService
             var reqId = el.GetProperty("id").GetInt32();
             var price = el.GetProperty("agreedPrice").GetDecimal();
             MainThread.BeginInvokeOnMainThread(() => PrescriptionPriceSet?.Invoke(reqId, price));
+        });
+
+        // ✅ رد الأدمن الحقيقي على شات الدعم بعد ما يتحول له من الـ AI
+        _hub.On<JsonElement>("SupportMessageReceived", el =>
+        {
+            var sessionId = el.TryGetProperty("id", out var idEl) ? idEl.GetInt32() : 0;
+            var msg = el.GetProperty("message").GetString() ?? "";
+            MainThread.BeginInvokeOnMainThread(() => SupportMessageReceived?.Invoke(sessionId, msg));
         });
 
         try { await _hub.StartAsync(); }

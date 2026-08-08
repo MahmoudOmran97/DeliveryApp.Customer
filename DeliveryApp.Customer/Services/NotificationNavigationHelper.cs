@@ -53,6 +53,16 @@ public static class NotificationNavigationHelper
                     await Shell.Current.GoToAsync($"CategoryPage?category={Uri.EscapeDataString(value)}");
                     break;
 
+                case "supportchat":
+                    // supportchat/{sessionId} — رد فريق الدعم على شات مفتوح، أو حالة تصعيد لأدمن
+                    await Shell.Current.GoToAsync("SupportChatPage");
+                    break;
+
+                case "complaint":
+                    // complaint/{id} — تحديث على حالة شكوى العميل
+                    await Shell.Current.GoToAsync("ComplaintsPage");
+                    break;
+
                 default:
                     // صيغة غير معروفة — بدل ما نفضل واقفين، افتح شاشة الإشعارات
                     await Shell.Current.GoToAsync("NotificationsPage");

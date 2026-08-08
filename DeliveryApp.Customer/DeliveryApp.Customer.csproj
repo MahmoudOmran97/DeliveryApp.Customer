@@ -51,7 +51,7 @@
 		<MauiSplashScreen Include="Resources\Splash\splash.png" Color="#FF5722" />
 
 		<!-- Images -->
-		<MauiImage Include="Resources\Images\*" Exclude="Resources\Images\notification_logo.png" />
+		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
 
 		<!-- Custom Fonts -->
@@ -62,20 +62,9 @@
 	</ItemGroup>
 
 	<!-- منع تعارض AppxManifest مع WindowsPackageType=None -->
-	<ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
-		<AppxManifest Remove="Platforms\Windows\Package.appxmanifest" />
-	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
 		<GoogleServicesJson Include="Platforms\Android\google-services.json" />
-	</ItemGroup>
-	<ItemGroup>
-	  <MauiImage Remove="Resources\Images\logo.png" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="Platforms\Android\Resources\drawable\ic_call_accept.xml" />
-	  <None Remove="Platforms\Android\Resources\drawable\ic_call_reject.xml" />
-	  <None Remove="Resources\Splash\splash.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <MauiImage Include="Resources\Splash\splash.png" />
@@ -112,6 +101,9 @@
 		</MauiXaml>
 		<MauiXaml Update="Views\CheckoutPage.xaml">
 			<Generator></Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\ComplaintsPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
 		<MauiXaml Update="Views\CouponsPage.xaml">
 			<Generator>MSBuild:Compile</Generator>

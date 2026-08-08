@@ -326,6 +326,54 @@ public class PrescriptionRequestCreatedResult
     public string Status { get; set; } = "Pending";
 }
 
+// ─── Support Chat (AI) ──────────────────────────────────────────────────────
+
+public class SupportSessionMessage
+{
+    public int Id { get; set; }
+    public string SenderRole { get; set; } = "Customer"; // Customer/AI/Admin
+    public string Message { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public bool IsMine => SenderRole == "Customer";
+    public bool IsAi => SenderRole == "AI";
+}
+
+public class SupportSessionDto
+{
+    public int Id { get; set; }
+    public string Status { get; set; } = "AI"; // AI/Escalated/Closed
+    public List<SupportSessionMessage> Messages { get; set; } = new();
+}
+
+public class SupportSendResult
+{
+    public int Id { get; set; }
+    public SupportSessionMessage? AiReply { get; set; }
+    public bool Escalated { get; set; }
+    public int? ComplaintId { get; set; }
+}
+
+// ─── Complaints (شكاوى العميل) ───────────────────────────────────────────────
+
+public class ComplaintDto
+{
+    public int Id { get; set; }
+    public string Subject { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Status { get; set; } = "Open"; // Open/InProgress/Resolved/Closed
+    public string Source { get; set; } = "Customer"; // Customer/AI
+    public int? OrderId { get; set; }
+    public string? AdminNote { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? ResolvedAt { get; set; }
+}
+
+public class ComplaintCreatedResult
+{
+    public int Id { get; set; }
+    public string Status { get; set; } = "Open";
+}
+
 // ─── Paged Result ─────────────────────────────────────────────────────────────
 
 public class PagedResult<T>

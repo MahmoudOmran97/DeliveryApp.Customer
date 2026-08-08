@@ -1,46 +1,87 @@
-﻿using System.Collections.ObjectModel;
-using System.Text;
-using System.Text.Json;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Models;
+using DeliveryApp.Customer.Services;
 
 namespace DeliveryApp.Customer.ViewModels;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// شات الدعم: كان قبل كده بيكلم Anthropic API مباشرة من الموبايل (والـ API key
+// كانت متخزنة/هاردكودد جوا التطبيق نفسه، وده خطر أمني). دلوقتي التطبيق بيكلم
+// الباكإند بس (SupportChatController)، والباكإند هو اللي بيكلم الـ AI باستخدام
+// إعدادات AiSettings اللي الأدمن بيتحكم فيها من لوحة التحكم. الباكإند برضو هو
+// اللي بيقرر لو محتاج يسجل شكوى تلقائي أو يحول الشات لأدمن حقيقي.
+// ─────────────────────────────────────────────────────────────────────────────
 public partial class SupportChatViewModel : BaseViewModel
 {
-    // ── State ─────────────────────────────────────────────────────
+    readonly ApiService _api;
+    readonly SignalRService _signalR;
+
     public ObservableCollection<ChatMessage> Messages { get; } = new();
 
     [ObservableProperty] string _inputText = string.Empty;
     [ObservableProperty] bool _isTyping;
+    [ObservableProperty] bool _isEscalated; // true لما الشات يتحول لأدمن حقيقي
 
     private bool _initialized;
+    private int _sessionId;
 
-    // Anthropic API key — loaded from config / secrets at runtime
-    private const string ApiUrl = "https://api.anthropic.com/v1/messages";
-    private const string Model = "claude-sonnet-4-20250514";
+    public SupportChatViewModel(ApiService api, SignalRService signalR)
+    {
+        _api = api;
+        _signalR = signalR;
+        _signalR.SupportMessageReceived += OnAdminMessageReceived;
+    }
 
-    // Keep a simple history for multi-turn context (user/assistant pairs)
-    private readonly List<object> _history = new();
-
-    private const string SystemPrompt =
-        "You are a helpful customer support agent for a food delivery app called 'Deliver'. " +
-        "Be friendly, concise, and helpful. Help customers with order issues, tracking, refunds, " +
-        "cancellations, and general questions. Ask clarifying questions when needed. " +
-        "Respond in the same language the user writes in (Arabic or English). " +
-        "Keep responses short (2-4 sentences max unless detail is needed).";
-
-    // ── Init greeting ─────────────────────────────────────────────
+    // ── Init: يجيب (أو يعمل) شات الدعم المفتوح بتاع العميل ويحمّل تاريخه ──
     public void InitIfNeeded()
     {
         if (_initialized) return;
         _initialized = true;
-        Messages.Add(new ChatMessage
+        _ = InitAsync();
+    }
+
+    async Task InitAsync()
+    {
+        IsBusy = true;
+        try
         {
-            Text = "👋 Hello! I'm your support assistant. How can I help you today?\n\nYou can ask me about:\n• Order status & tracking\n• Cancellations & refunds\n• Account issues\n• General questions",
-            IsFromAi = true
-        });
+            var session = await _api.GetOrCreateSupportSessionAsync();
+            if (session == null)
+            {
+                Messages.Add(new ChatMessage { Text = "⚠️ مش قادرين نفتح شات الدعم دلوقتي، حاول تاني كمان شوية.", IsFromAi = true });
+                return;
+            }
+
+            _sessionId = session.Id;
+            IsEscalated = session.Status == "Escalated";
+
+            if (session.Messages.Count == 0)
+            {
+                Messages.Add(new ChatMessage
+                {
+                    Text = "👋 أهلاً بيك! أنا مساعد الدعم بتاعك. تقدر تسألني عن حالة طلبك، الإلغاء، الاسترجاع، أو أي مشكلة واجهتك.",
+                    IsFromAi = true
+                });
+            }
+            else
+            {
+                foreach (var m in session.Messages)
+                {
+                    Messages.Add(new ChatMessage
+                    {
+                        Text = m.Message,
+                        IsFromAi = !m.IsMine,
+                        Time = m.CreatedAt
+                    });
+                }
+            }
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     // ── Send ──────────────────────────────────────────────────────
@@ -48,30 +89,32 @@ public partial class SupportChatViewModel : BaseViewModel
     async Task Send()
     {
         var text = InputText.Trim();
-        if (string.IsNullOrEmpty(text) || IsTyping) return;
+        if (string.IsNullOrEmpty(text) || IsTyping || _sessionId == 0) return;
 
         InputText = string.Empty;
-
-        // Add user message
         Messages.Add(new ChatMessage { Text = text, IsFromAi = false });
-
-        // Build history
-        _history.Add(new { role = "user", content = text });
 
         IsTyping = true;
         try
         {
-            var reply = await CallClaudeAsync();
-            _history.Add(new { role = "assistant", content = reply });
-            Messages.Add(new ChatMessage { Text = reply, IsFromAi = true });
-        }
-        catch (Exception ex)
-        {
-            Messages.Add(new ChatMessage
+            var result = await _api.SendSupportMessageAsync(_sessionId, text);
+            if (result == null)
             {
-                Text = "⚠️ Sorry, I'm having trouble connecting right now. Please try again.",
-                IsFromAi = true
-            });
+                Messages.Add(new ChatMessage { Text = "⚠️ الرسالة معملتش، حاول تاني.", IsFromAi = true });
+                return;
+            }
+
+            if (result.Escalated) IsEscalated = true;
+
+            // في وضع Escalated الرد بييجي من أدمن حقيقي عن طريق SignalR مش رد فوري هنا
+            if (result.AiReply != null)
+            {
+                Messages.Add(new ChatMessage { Text = result.AiReply.Message, IsFromAi = true, Time = result.AiReply.CreatedAt });
+            }
+        }
+        catch (Exception)
+        {
+            Messages.Add(new ChatMessage { Text = "⚠️ في مشكلة في الاتصال، حاول تاني.", IsFromAi = true });
         }
         finally
         {
@@ -79,45 +122,15 @@ public partial class SupportChatViewModel : BaseViewModel
         }
     }
 
-    // ── Anthropic API call ────────────────────────────────────────
-    private static readonly HttpClient _http = new();
-
-    private async Task<string> CallClaudeAsync()
+    // ── رسالة جاية من الأدمن لحظيًا بعد ما الشات اتحول له ──
+    void OnAdminMessageReceived(int sessionId, string message)
     {
-        // Build request
-        var body = new
+        if (sessionId != _sessionId) return;
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            model = Model,
-            max_tokens = 512,
-            system = SystemPrompt,
-            messages = _history
-        };
-
-        var json = JsonSerializer.Serialize(body);
-        var request = new HttpRequestMessage(HttpMethod.Post, ApiUrl);
-        request.Headers.Add("x-api-key", GetApiKey());
-        request.Headers.Add("anthropic-version", "2023-06-01");
-        request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await _http.SendAsync(request);
-        var responseBody = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-            throw new Exception($"API error: {response.StatusCode}");
-
-        using var doc = JsonDocument.Parse(responseBody);
-        return doc.RootElement
-                   .GetProperty("content")[0]
-                   .GetProperty("text")
-                   .GetString() ?? "Sorry, I couldn't generate a response.";
-    }
-
-    // ── Load API key from Preferences or app config ───────────────
-    private static string GetApiKey()
-    {
-        // Store your key via: Preferences.Set("claude_api_key", "sk-ant-...")
-        // Or replace with your key for testing:
-        return Preferences.Get("claude_api_key", string.Empty);
+            IsEscalated = true;
+            Messages.Add(new ChatMessage { Text = message, IsFromAi = true });
+        });
     }
 
     // ── Back ──────────────────────────────────────────────────────
