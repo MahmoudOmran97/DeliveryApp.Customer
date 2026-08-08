@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DeliveryApp.Customer.Views.ImageZoomPage"
+             Shell.NavBarIsVisible="False"
+             Shell.PresentationMode="ModalAnimated"
+             BackgroundColor="Black">
+
+    <Grid>
+        <!-- الصورة بالحجم الكامل - تكبير/تصغير بإصبعين (Pinch) وتحريك (Pan) وضغطتين للريست -->
+        <Image x:Name="ZoomImage"
+               Aspect="AspectFit"
+               HorizontalOptions="Fill" VerticalOptions="Fill">
+            <Image.GestureRecognizers>
+                <PinchGestureRecognizer PinchUpdated="OnPinchUpdated"/>
+                <PanGestureRecognizer PanUpdated="OnPanUpdated"/>
+                <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="OnDoubleTapped"/>
+            </Image.GestureRecognizers>
+        </Image>
+
+        <!-- زرار قفل -->
+        <Border BackgroundColor="#66000000" StrokeShape="RoundRectangle 20"
+                WidthRequest="40" HeightRequest="40"
+                HorizontalOptions="End" VerticalOptions="Start"
+                Margin="16,48,16,0">
+            <Label Text="✕" FontSize="20" TextColor="White"
+                   HorizontalOptions="Center" VerticalOptions="Center"/>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCloseTapped"/>
+            </Border.GestureRecognizers>
+        </Border>
+    </Grid>
+</ContentPage>

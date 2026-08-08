@@ -168,9 +168,16 @@ public partial class HomeViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    async Task LoadAsync()
+    async Task LoadAsync() => await LoadInternalAsync(silent: false);
+
+    // ✅ FIX: تحديث هادئ للبيانات بيتنفذ لما نرجع للصفحة تاني، من غير ما يوقف
+    // الـ Spinner على كل المحتوى أو يقفل الكاروسيل وهي شغالة (سبب رئيسي في
+    // الإحساس بـ"قفشة"/تعليق كل ما ترجع للهوم)
+    public async Task RefreshSilentlyAsync() => await LoadInternalAsync(silent: true);
+
+    async Task LoadInternalAsync(bool silent)
     {
-        IsBusy = true;
+        if (!silent) IsBusy = true;
         try
         {
             // Banners (no location filter)
@@ -195,11 +202,15 @@ public partial class HomeViewModel : BaseViewModel
 
             Banners.Clear();
             foreach (var b in bannersTask.Result ?? new()) Banners.Add(b);
+            // ✅ FIX: لو الـ index الحالي بقى برا حدود القائمة الجديدة بعد التحديث
+            // (مثلاً كان على آخر بانر واتقلل عددهم)، نرجعه لـ 0 بدل ما يعمل مشكلة
+            // في الـ CarouselView.
+            if (CurrentBannerIndex >= Banners.Count) CurrentBannerIndex = 0;
 
             Restaurants.Clear();
             foreach (var x in restaurantsTask.Result?.Data ?? new()) Restaurants.Add(x);
         }
-        finally { IsBusy = false; IsRefreshing = false; OnPropertyChanged(nameof(HasNoResults)); }
+        finally { if (!silent) IsBusy = false; IsRefreshing = false; OnPropertyChanged(nameof(HasNoResults)); }
     }
 
     [RelayCommand]

@@ -25,6 +25,7 @@ public partial class AppShell : Shell
 
         Routing.RegisterRoute(nameof(RestaurantPage), typeof(RestaurantPage));
         Routing.RegisterRoute(nameof(ProductOptionsPage), typeof(ProductOptionsPage));
+        Routing.RegisterRoute(nameof(ImageZoomPage), typeof(ImageZoomPage));
         Routing.RegisterRoute(nameof(CartPage), typeof(CartPage));
         Routing.RegisterRoute(nameof(CheckoutPage), typeof(CheckoutPage));
         Routing.RegisterRoute(nameof(OrderTrackingPage), typeof(OrderTrackingPage));
@@ -34,7 +35,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(SupportChatPage), typeof(SupportChatPage));
         Routing.RegisterRoute(nameof(DriverChatPage), typeof(DriverChatPage));
         Routing.RegisterRoute(nameof(PrescriptionChatPage), typeof(PrescriptionChatPage));
-       
+
         Routing.RegisterRoute(nameof(LocationPickerPage), typeof(LocationPickerPage));
         Routing.RegisterRoute("HomeLocationPickerPage", typeof(HomeLocationPickerPage));
         Routing.RegisterRoute(nameof(CouponsPage), typeof(CouponsPage));

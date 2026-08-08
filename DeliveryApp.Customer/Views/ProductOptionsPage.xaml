@@ -22,8 +22,12 @@
                 Stroke="Transparent" Padding="20,16,20,28">
             <VerticalStackLayout Spacing="16">
                 <!-- ✅ FIX: صورة المنتج مكنتش ظاهرة في شاشة التفاصيل خالص -->
+                <!-- ✅ FIX: دلوقتي تقدر تدوس على الصورة تفتحلك بحجمها الكامل مع إمكانية الزوم -->
                 <Border StrokeShape="RoundRectangle 16" HeightRequest="180"
                         IsVisible="{Binding Product.FullImageUrl, Converter={StaticResource HasImage}}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenImageCommand}"/>
+                    </Border.GestureRecognizers>
                     <Image Source="{Binding Product.FullImageUrl}" Aspect="AspectFill" HeightRequest="180"/>
                 </Border>
 

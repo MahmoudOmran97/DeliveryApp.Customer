@@ -7,7 +7,11 @@ public partial class HomePage : ContentPage
     readonly HomeViewModel _vm;
     IDispatcherTimer? _bannerTimer;
     CancellationTokenSource? _logoAnimCts;
-    bool _suppressPositionChangedRestart;
+    // ✅ FIX: كان فيه bool flag بيترجع false في finally على طول (sync)، لكن
+    // CarouselView بيطلق PositionChanged بعد ما الأنيميشن يخلص (async)، فالـ flag
+    // كان يبقى false قبل ما الـ event يوصل أصلاً → RestartBannerTimer() بيتنادى
+    // غلط ويعمل تعارض/تعليق. دلوقتي بنقارن بالـ index الفعلي بدل التوقيت.
+    int? _programmaticBannerIndex;
 
     public HomePage(HomeViewModel vm)
     {
@@ -19,7 +23,15 @@ public partial class HomePage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        if (!_vm.IsBusy) _vm.LoadCommand.Execute(null);
+        // ✅ FIX: قبل كده كان بيعيد تحميل كل حاجة (Clear + إعادة API call) في كل
+        // مرة ترجع للصفحة، وده كان بيسبب "قفشة"/تعليق محسوس خصوصًا مع الكاروسيل.
+        // أول مرة بس بنعمل تحميل عادي (بيبين الـ Spinner)، وبعد كده بنعمل تحديث
+        // هادئ في الخلفية من غير ما نلمس المحتوى الظاهر أو نوقف الكاروسيل.
+        if (_vm.Restaurants.Count == 0 && !_vm.IsBusy)
+            _vm.LoadCommand.Execute(null);
+        else
+            _ = _vm.RefreshSilentlyAsync();
+
         StartBannerTimer();
         StartLogoAnimation();
     }
@@ -52,16 +64,12 @@ public partial class HomePage : ContentPage
                 var next = (_vm.CurrentBannerIndex + 1) % _vm.Banners.Count;
 
                 // منع الـ PositionChanged من إعادة تشغيل التايمر وهو أصلاً شغال من التايمر نفسه
-                _suppressPositionChangedRestart = true;
+                _programmaticBannerIndex = next;
                 _vm.CurrentBannerIndex = next;
             }
             catch
             {
                 // تجاهل أي استثناء عشان التايمر مايوقفش التطبيق
-            }
-            finally
-            {
-                _suppressPositionChangedRestart = false;
             }
         };
         _bannerTimer.Start();
@@ -80,10 +88,16 @@ public partial class HomePage : ContentPage
     // بيتنادى لما الـ Position يتغيّر - سواء من التايمر أو من قلب المستخدم يدوي
     void BannerCarousel_PositionChanged(object? sender, PositionChangedEventArgs e)
     {
-        // لو المستخدم هو اللي قلّب يدوي (مش التايمر) نعيد ضبط العداد
-        // عشان مايجيش يقلب من تحت إيده بعد نص ثانية
-        if (!_suppressPositionChangedRestart)
-            RestartBannerTimer();
+        // ✅ FIX: بنقارن بالـ index اللي التايمر نفسه ضبطه بدل flag بتوقيت غلط.
+        // لو ده نفس التغيير اللي التايمر عمله، منعملش Restart. أي تغيير تاني
+        // (سحب المستخدم يدوي) بيعمل Restart عادي.
+        if (_programmaticBannerIndex.HasValue && _programmaticBannerIndex.Value == e.CurrentPosition)
+        {
+            _programmaticBannerIndex = null;
+            return;
+        }
+        _programmaticBannerIndex = null;
+        RestartBannerTimer();
     }
 
     // ══════════════════════════════════════════════

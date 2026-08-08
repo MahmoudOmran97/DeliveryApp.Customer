@@ -311,10 +311,14 @@
 
                     <!-- ── Banners Carousel ── -->
                     <!-- ── Banners Carousel ── -->
+                    <!-- ✅ FIX: Loop="True" مع Position TwoWay binding في CarouselView من .NET MAUI
+                         فيه Bug معروف على أندرويد (تعليق/Crash/Index خاطئ) لما تتغير الـ Position برمجيًا
+                         أثناء اللف. بنعمل اللفة يدوي بنفسنا (التايمر بيرجع لـ index=0 لما يوصل الآخر)
+                         وده بيتجنب الـ Bug تمامًا. -->
                     <CarouselView x:Name="BannerCarousel"
               ItemsSource="{Binding Banners}"
               Position="{Binding CurrentBannerIndex, Mode=TwoWay}"
-              HeightRequest="200" Loop="True"
+              HeightRequest="200" Loop="False"
               IsVisible="{Binding Banners.Count, Converter={StaticResource IntToBool}}"
               Margin="0,12,0,0"
               PositionChanged="BannerCarousel_PositionChanged">

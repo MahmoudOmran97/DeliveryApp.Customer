@@ -153,4 +153,13 @@ public partial class ProductOptionsViewModel : BaseViewModel
 
     [RelayCommand]
     async Task CloseAsync() => await Shell.Current.GoToAsync("..");
+
+    // ✅ FIX: يفتح صورة المنتج بحجمها الكامل مع إمكانية الزوم بإصبعين
+    [RelayCommand]
+    async Task OpenImage()
+    {
+        if (string.IsNullOrWhiteSpace(Product?.FullImageUrl)) return;
+        var url = Uri.EscapeDataString(Product.FullImageUrl);
+        await Shell.Current.GoToAsync($"ImageZoomPage?url={url}");
+    }
 }
