@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 using System.Text.Json;
@@ -283,7 +284,11 @@ public class ApiService
             SetAuth();
             using var content = new MultipartFormDataContent();
             await using var stream = await file.OpenReadAsync();
-            content.Add(new StreamContent(stream), "file", file.FileName);
+            var fileContent = new StreamContent(stream);
+            // ✅ لازم نحدد Content-Type للملف، وإلا الـ API هيرفض الرفع (Cloudinary محتاج نوع صالح).
+            // file.ContentType مش دايمًا متظبط على كل المنصات، فبنعمل fallback من الامتداد.
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(GetContentType(file));
+            content.Add(fileContent, "file", file.FileName);
             var response = await _http.PostAsync($"{Base}/upload/prescription", content);
             if (!response.IsSuccessStatusCode) return null;
             var json = await response.Content.ReadAsStringAsync();
@@ -295,6 +300,22 @@ public class ApiService
             Debug(ex, "upload/prescription");
             return null;
         }
+    }
+
+    private static string GetContentType(FileResult file)
+    {
+        if (!string.IsNullOrWhiteSpace(file.ContentType))
+            return file.ContentType;
+
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        return ext switch
+        {
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            ".webp" => "image/webp",
+            ".pdf" => "application/pdf",
+            _ => "application/octet-stream"
+        };
     }
 
     // ─── Prescription Chat (روشتة قبل الأوردر) ─────────────────────────────────
