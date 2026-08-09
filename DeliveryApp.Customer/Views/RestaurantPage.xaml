@@ -50,6 +50,71 @@
 
             </VerticalStackLayout>
         </DataTemplate>
+
+        <!-- ✅ FEATURE: كارت قسم في شبكة الأقسام (سوبر ماركت/صيدلية) — الدوس عليه
+             يودّي لصفحة منتجات القسم ده لوحده -->
+        <DataTemplate x:Key="CategoryGridTemplate" x:DataType="m:Category">
+            <Border Style="{StaticResource Card}" Margin="6" Padding="10" WidthRequest="100">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.GoToCategoryCommand}"
+                        CommandParameter="{Binding .}"/>
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                    <Border BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 14" Stroke="Transparent"
+                            WidthRequest="72" HeightRequest="72">
+                        <Grid>
+                            <Label Text="🛍️" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"
+                                   IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                            <ff:CachedImage Source="{Binding FullImageUrl}" Aspect="AspectFill"
+                                   CacheDuration="7" DownsampleToViewSize="True"
+                                   IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
+                        </Grid>
+                    </Border>
+                    <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="12" TextColor="#212121"
+                           HorizontalTextAlignment="Center" MaxLines="1" LineBreakMode="TailTruncation"/>
+                </VerticalStackLayout>
+            </Border>
+        </DataTemplate>
+
+        <!-- ✅ FEATURE: كارت منتج في صف "الأفضل مبيعًا" -->
+        <DataTemplate x:Key="BestSellerTemplate" x:DataType="m:Product">
+            <Border Style="{StaticResource Card}" WidthRequest="120" Margin="0,0,10,4" Padding="8">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.ProductTappedCommand}"
+                        CommandParameter="{Binding .}"/>
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="4">
+                    <Grid>
+                        <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 10" Stroke="Transparent" HeightRequest="76">
+                            <Grid>
+                                <Label Text="🔥" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center"
+                                       IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                                <ff:CachedImage Source="{Binding FullImageUrl}" Aspect="AspectFill"
+                                       CacheDuration="7" DownsampleToViewSize="True"
+                                       IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
+                            </Grid>
+                        </Border>
+                        <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#EEEEEE"
+                                HorizontalOptions="End" VerticalOptions="End" Margin="0,0,-4,-4"
+                                WidthRequest="26" HeightRequest="26"
+                                IsVisible="{Binding HasVariants, Converter={StaticResource InvertBool}}">
+                            <Label Text="+" FontSize="16" FontFamily="CairoBold" TextColor="#FF5722"
+                                   HorizontalOptions="Center" VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.AddToCartCommand}"
+                                        CommandParameter="{Binding .}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Border>
+                    </Grid>
+                    <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="11" MaxLines="1" LineBreakMode="TailTruncation"/>
+                    <Label Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="12" TextColor="#FF5722"/>
+                </VerticalStackLayout>
+            </Border>
+        </DataTemplate>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="220,*">
@@ -124,6 +189,7 @@
              الشاشة وبيعيد استخدام الخلايا (recycling) زي أي تطبيق كبير. -->
         <CollectionView x:Name="MenuCollectionView" Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0"
                         ItemsSource="{Binding MenuGroups}" IsGrouped="True" SelectionMode="None"
+                        IsVisible="{Binding IsGroceryStoreLayout, Converter={StaticResource InvertBool}}"
                         Scrolled="OnContentScrolled">
 
             <CollectionView.Header>
@@ -338,6 +404,102 @@
             </CollectionView.Footer>
 
         </CollectionView>
+
+        <!-- ✅ FEATURE: تصميم السوبر ماركت/الصيدلية — شبكة أقسام بدل القايمة الكاملة.
+             الدوس على أي قسم يودّي لصفحة منتجات القسم لوحده (فلترة/فرز + اقتراحات). -->
+        <ScrollView Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0"
+                    IsVisible="{Binding IsGroceryStoreLayout}">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- Info Card (نفس تصميم المطعم) -->
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 24,24,0,0"
+                        Stroke="Transparent" Padding="20,22,20,16">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{Binding Restaurant.Name}" FontFamily="CairoBold" FontSize="22" TextColor="#212121"/>
+                        <Label Text="{Binding Restaurant.Description}" FontFamily="CairoRegular"
+                               FontSize="13" TextColor="#757575"/>
+                        <HorizontalStackLayout Spacing="20" Margin="0,6,0,0">
+                            <VerticalStackLayout Spacing="1">
+                                <Label Text="{loc:Loc Key=Rating}" FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+                                <Label Text="{Binding Restaurant.RatingText}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+                            </VerticalStackLayout>
+                            <BoxView Color="#E0E0E0" WidthRequest="1" HeightRequest="38"/>
+                            <VerticalStackLayout Spacing="1">
+                                <Label Text="{loc:Loc Key=DeliveryLabel}" FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+                                <Label Text="{Binding Restaurant.DeliveryFeeText}" FontFamily="CairoBold" FontSize="16" TextColor="#FF5722"/>
+                            </VerticalStackLayout>
+                            <BoxView Color="#E0E0E0" WidthRequest="1" HeightRequest="38"/>
+                            <VerticalStackLayout Spacing="1">
+                                <Label Text="{loc:Loc Key=EstTime}" FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+                                <Label Text="{Binding Restaurant.EstimatedTimeText}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                   Color="#FF5722" Margin="0,16"/>
+
+                <!-- Pharmacy: return to an already-open prescription chat -->
+                <Border IsVisible="{Binding HasActivePrescriptionChat}" BackgroundColor="#FFF3E0"
+                        StrokeShape="RoundRectangle 14" Stroke="#FFB74D" Margin="16,10,16,0"
+                        Padding="16,14">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="{loc:Loc Key=PrescriptionChatOngoingTitle}" FontFamily="CairoBold"
+                                   FontSize="14" TextColor="#E65100"/>
+                            <Label Text="{loc:Loc Key=PrescriptionChatOngoingHint}" FontFamily="CairoRegular"
+                                   FontSize="12" TextColor="#424242"/>
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1" Text="{loc:Loc Key=ReturnToChat}"
+                                Command="{Binding ReturnToPrescriptionChatCommand}"
+                                BackgroundColor="#FF5722" TextColor="White"
+                                FontFamily="CairoBold" FontSize="13"
+                                CornerRadius="10" Padding="14,0" HeightRequest="42"
+                                VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Pharmacy: upload prescription -->
+                <Border IsVisible="{Binding IsPharmacy}" BackgroundColor="#E3F2FD"
+                        StrokeShape="RoundRectangle 14" Stroke="#90CAF9" Margin="16,10"
+                        Padding="16,14">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{loc:Loc Key=UploadPrescription}" FontFamily="CairoBold"
+                               FontSize="16" TextColor="#1565C0"/>
+                        <Label Text="{loc:Loc Key=PrescriptionHint}" FontFamily="CairoRegular"
+                               FontSize="13" TextColor="#424242"/>
+                        <Button Text="{loc:Loc Key=ChoosePrescriptionImage}"
+                                Command="{Binding UploadPrescriptionCommand}"
+                                BackgroundColor="#1976D2" TextColor="White"
+                                FontFamily="CairoBold" CornerRadius="10"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- الأفضل مبيعًا -->
+                <VerticalStackLayout Spacing="10" Margin="16,14,0,4"
+                                      IsVisible="{Binding BestSellers.Count, Converter={StaticResource IntToBool}}">
+                    <Label Text="{loc:Loc Key=BestSellersTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
+                    <CollectionView ItemsSource="{Binding BestSellers}" SelectionMode="None"
+                                    ItemsLayout="HorizontalList" ItemTemplate="{StaticResource BestSellerTemplate}"
+                                    HeightRequest="150" Margin="0,0,0,4"/>
+                </VerticalStackLayout>
+
+                <!-- شبكة الأقسام — عدد الأقسام في المحل الواحد محدود، فـ FlexLayout بيتحجم
+                     تلقائيًا حسب المحتوى جوه الـ ScrollView من غير مشكلة الـ CollectionView
+                     اللي محتاجة HeightRequest ثابت (المشكلة دي بالظبط اللي خلتنا نتجنبها
+                     مع المنتجات في صفحة المطعم العادية). -->
+                <VerticalStackLayout Spacing="10" Margin="16,10,16,20">
+                    <Label Text="{loc:Loc Key=ShopByCategoryTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
+                    <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Start"
+                                BindableLayout.ItemsSource="{Binding Menu}"
+                                BindableLayout.ItemTemplate="{StaticResource CategoryGridTemplate}"/>
+                </VerticalStackLayout>
+
+                <BoxView HeightRequest="100" Color="Transparent"/>
+
+            </VerticalStackLayout>
+        </ScrollView>
 
         <!-- نسخة عايمة (Sticky) من شريط الكاتوجريز — بتظهر بس لما اليوزر ينزل
              وتوصل النسخة الأصلية لحافة الاسكرول، فبيبان كأنه لزق فوق -->

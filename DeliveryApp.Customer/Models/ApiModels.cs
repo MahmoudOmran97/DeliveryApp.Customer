@@ -69,16 +69,30 @@ public class Restaurant
     public string StatusText => IsOpen ? "Open" : "Closed";
     public Color StatusColor => IsOpen ? Colors.Green : Colors.Red;
     public Color StatusBg => IsOpen ? Color.FromArgb("#E8F5E9") : Color.FromArgb("#FFEBEE");
+
+    // ✅ FEATURE: تصميم صفحة المحل بيتحدد حسب النوع — المطاعم بتفضل زي ما هي
+    // (قايمة أصناف كاملة تحت بعض)، أما السوبر ماركت والصيدلية فبيبقى عرض
+    // "أقسام" على شكل شبكة، والدوس على أي قسم يودّي لصفحة منتجات القسم ده لوحده
+    // (زي تصميم السوبر ماركت/الصيدلية في طلبات).
+    public bool IsGroceryStoreLayout =>
+        StoreType.Equals("Supermarket", StringComparison.OrdinalIgnoreCase)
+        || StoreType.Equals("Pharmacy", StringComparison.OrdinalIgnoreCase)
+        || StoreType.Equals("Grocery", StringComparison.OrdinalIgnoreCase);
 }
 
 // ─── Menu ────────────────────────────────────────────────────────────────────
 
-public class Category
+public partial class Category : ObservableObject
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? ImageUrl { get; set; }
     public List<Product> Products { get; set; } = new();
+
+    // ✅ FEATURE: مش جاي من الـ API — الـ ViewModel بتاع صفحة منتجات القسم
+    // (StoreCategoryProductsViewModel) بيحدثها لما القسم يتختار عشان شريط
+    // الأقسام العلوي يلوّن القسم النشط.
+    [ObservableProperty] bool _isSelectedForChip;
 
     private const string _cImgBase = "https://deliveryappapi.runasp.net";
     public string? FullImageUrl
@@ -103,6 +117,15 @@ public class Product
     public int? Calories { get; set; }
     public bool IsAvailable { get; set; }
     public List<ProductVariant> Variants { get; set; } = new();
+
+    // ✅ FEATURE: راجعين من /menu و /related — عدد مرات البيع الفعلي (أوردرات
+    // Delivered) وهل المنتج ده من أعلى 10 مبيعًا في المحل، عشان الفرز والفلترة
+    // في صفحة "الأفضل مبيعًا".
+    public int SalesCount { get; set; }
+    public bool IsBestSeller { get; set; }
+
+    public int CategoryId { get; set; }
+    public string? CategoryName { get; set; }
 
     private const string _pImgBase = "https://deliveryappapi.runasp.net";
     public string? FullImageUrl

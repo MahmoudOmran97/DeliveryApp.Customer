@@ -110,6 +110,7 @@ public static class MauiProgram
         builder.Services.AddTransient<RewardsViewModel>();
         builder.Services.AddTransient<PointsViewModel>();
         builder.Services.AddTransient<CategoryViewModel>();
+        builder.Services.AddTransient<StoreCategoryProductsViewModel>();
         builder.Services.AddTransient<CallViewModel>();
         // builder.Services.AddTransient<CallAudioService>();
 #if ANDROID
@@ -151,6 +152,7 @@ builder.Services.AddSingleton<Services.Call.IAgoraCallService, Platforms.iOS.Ago
         builder.Services.AddTransient<RewardsPage>();
         builder.Services.AddTransient<PointsPage>();
         builder.Services.AddTransient<CategoryPage>();
+        builder.Services.AddTransient<StoreCategoryProductsPage>();
         builder.Services.AddTransient<CallPage>();
 
 #if DEBUG

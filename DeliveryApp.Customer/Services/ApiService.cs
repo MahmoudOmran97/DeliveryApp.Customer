@@ -245,6 +245,10 @@ public class ApiService
 
         => GetAsync<List<Category>>($"restaurants/{restaurantId}/menu");
 
+    // ✅ FEATURE: "بيتطلب مع" — منتجات اتشترت فعليًا مع المنتج ده في نفس الأوردر
+    public Task<List<Product>?> GetRelatedProductsAsync(int restaurantId, int productId, int take = 6)
+        => GetAsync<List<Product>>($"restaurants/{restaurantId}/products/{productId}/related?take={take}");
+
     // ─── Orders ──────────────────────────────────────────────────────────────
 
     public Task<Order?> PlaceOrderAsync(

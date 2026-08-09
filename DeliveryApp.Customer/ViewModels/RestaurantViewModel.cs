@@ -27,6 +27,16 @@ public partial class RestaurantViewModel : BaseViewModel
     [ObservableProperty] string _prescriptionNotes = "";
     [ObservableProperty] bool _hasActivePrescriptionChat;
 
+    // ✅ FEATURE: تصميم الصفحة بيتفرّع حسب نوع المحل — المطاعم فاضلة زي ما هي
+    // (Menu/MenuGroups تحت بعض)، أما السوبر ماركت/الصيدلية فبتاخد شبكة أقسام
+    // (CategoryGrid) + شريط "الأفضل مبيعًا"، والدوس على أي قسم يودّي لصفحة
+    // منتجات القسم لوحده (StoreCategoryProductsPage).
+    public bool IsGroceryStoreLayout => Restaurant?.IsGroceryStoreLayout == true;
+
+    /// <summary>أعلى المنتجات مبيعًا في المحل كله (IsBestSeller من الـ API) — بتتعرض
+    /// كصف أفقي فوق شبكة الأقسام في محلات السوبر ماركت/الصيدلية.</summary>
+    public ObservableCollection<Product> BestSellers { get; } = new();
+
     public ObservableCollection<Category> Menu { get; } = new();
 
     /// <summary>
@@ -62,6 +72,8 @@ public partial class RestaurantViewModel : BaseViewModel
 
     partial void OnRestaurantIdChanged(int value) => LoadCommand.Execute(null);
 
+    partial void OnRestaurantChanged(Restaurant? value) => OnPropertyChanged(nameof(IsGroceryStoreLayout));
+
     [RelayCommand]
     async Task LoadAsync()
     {
@@ -79,14 +91,37 @@ public partial class RestaurantViewModel : BaseViewModel
             IsPharmacy = Restaurant?.StoreType.Equals("Pharmacy", StringComparison.OrdinalIgnoreCase) == true;
             Menu.Clear();
             MenuGroups.Clear();
+            BestSellers.Clear();
             foreach (var c in t2.Result ?? new())
             {
                 Menu.Add(c);
                 MenuGroups.Add(new Grouping<Category, Product>(c, c.Products));
             }
+
+            // صف "الأفضل مبيعًا" بيتعرض بس لمحلات السوبر ماركت/الصيدلية (شبكة الأقسام)
+            if (IsGroceryStoreLayout)
+            {
+                var top = Menu.SelectMany(c => c.Products)
+                    .Where(p => p.IsBestSeller)
+                    .OrderByDescending(p => p.SalesCount)
+                    .Take(10);
+                foreach (var p in top) BestSellers.Add(p);
+            }
+
             UpdateActivePrescriptionChat();
         }
         finally { IsBusy = false; }
+    }
+
+    // ✅ FEATURE: الدوس على قسم في شبكة أقسام السوبر ماركت/الصيدلية بيودّي
+    // لصفحة منتجات القسم ده لوحده (فلترة/فرز + "الأفضل مبيعًا" + "بيتطلب مع")
+    [RelayCommand]
+    async Task GoToCategory(Category c)
+    {
+        var fee = (Restaurant?.DeliveryFee ?? 15m).ToString(CultureInfo.InvariantCulture);
+        var storeName = Uri.EscapeDataString(Restaurant?.Name ?? "");
+        await Shell.Current.GoToAsync(
+            $"StoreCategoryProductsPage?restaurantId={RestaurantId}&categoryId={c.Id}&deliveryFee={fee}&storeName={storeName}");
     }
 
     [RelayCommand]

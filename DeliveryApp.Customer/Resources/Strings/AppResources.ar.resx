@@ -897,4 +897,37 @@
 	<data name="UnexpectedError">
 		<value>حصل خطأ غير متوقع، حاول تاني</value>
 	</data>
+	<data name="BestSellersTitle">
+		<value>🔥 الأفضل مبيعًا</value>
+	</data>
+	<data name="ShopByCategoryTitle">
+		<value>تسوق حسب القسم</value>
+	</data>
+	<data name="BestSellerBadge">
+		<value>الأفضل مبيعًا</value>
+	</data>
+	<data name="SortBestSeller">
+		<value>الأفضل مبيعًا</value>
+	</data>
+	<data name="SortPriceAsc">
+		<value>السعر: الأقل</value>
+	</data>
+	<data name="SortPriceDesc">
+		<value>السعر: الأعلى</value>
+	</data>
+	<data name="DiscountOnly">
+		<value>عليه خصم</value>
+	</data>
+	<data name="FrequentlyBoughtTogether">
+		<value>بيتطلب مع</value>
+	</data>
+	<data name="AddToCartShort">
+		<value>إضافة</value>
+	</data>
+	<data name="Customizable">
+		<value>يمكن تخصيصه</value>
+	</data>
+	<data name="NoProductsFound">
+		<value>مفيش منتجات في القسم ده دلوقتي</value>
+	</data>
 </root>

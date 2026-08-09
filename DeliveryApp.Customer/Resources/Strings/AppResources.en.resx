@@ -945,4 +945,37 @@
 	<data name="UnexpectedError">
 		<value>Something went wrong, please try again</value>
 	</data>
+	<data name="BestSellersTitle">
+		<value>🔥 Best Sellers</value>
+	</data>
+	<data name="ShopByCategoryTitle">
+		<value>Shop by Category</value>
+	</data>
+	<data name="BestSellerBadge">
+		<value>Best Seller</value>
+	</data>
+	<data name="SortBestSeller">
+		<value>Best Selling</value>
+	</data>
+	<data name="SortPriceAsc">
+		<value>Price: Low</value>
+	</data>
+	<data name="SortPriceDesc">
+		<value>Price: High</value>
+	</data>
+	<data name="DiscountOnly">
+		<value>On Sale</value>
+	</data>
+	<data name="FrequentlyBoughtTogether">
+		<value>Frequently Bought Together</value>
+	</data>
+	<data name="AddToCartShort">
+		<value>Add</value>
+	</data>
+	<data name="Customizable">
+		<value>Customizable</value>
+	</data>
+	<data name="NoProductsFound">
+		<value>No products in this category right now</value>
+	</data>
 </root>
