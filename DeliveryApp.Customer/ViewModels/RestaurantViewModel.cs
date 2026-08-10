@@ -27,6 +27,34 @@ public partial class RestaurantViewModel : BaseViewModel
     [ObservableProperty] string _prescriptionNotes = "";
     [ObservableProperty] bool _hasActivePrescriptionChat;
 
+    // ✅ FEATURE: بحث محلي (client-side) داخل قائمة المحل — بيفلتر MenuGroups
+    // بالاسم من غير أي نداء API جديد، لأن القائمة كلها أصلاً محمّلة في Menu.
+    [ObservableProperty] string _searchQuery = "";
+    [ObservableProperty] bool _isSearchActive;
+
+    partial void OnSearchQueryChanged(string value) => ApplyMenuFilter();
+
+    [RelayCommand]
+    void ToggleSearch()
+    {
+        IsSearchActive = !IsSearchActive;
+        if (!IsSearchActive) SearchQuery = "";
+    }
+
+    void ApplyMenuFilter()
+    {
+        MenuGroups.Clear();
+        var q = SearchQuery?.Trim();
+        foreach (var c in Menu)
+        {
+            var items = string.IsNullOrEmpty(q)
+                ? c.Products
+                : c.Products.Where(p => p.Name.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (items.Count > 0)
+                MenuGroups.Add(new Grouping<Category, Product>(c, items));
+        }
+    }
+
     // ✅ FEATURE: تصميم الصفحة بيتفرّع حسب نوع المحل — المطاعم فاضلة زي ما هي
     // (Menu/MenuGroups تحت بعض)، أما السوبر ماركت/الصيدلية فبتاخد شبكة أقسام
     // (CategoryGrid) + شريط "الأفضل مبيعًا"، والدوس على أي قسم يودّي لصفحة
@@ -93,10 +121,10 @@ public partial class RestaurantViewModel : BaseViewModel
             MenuGroups.Clear();
             BestSellers.Clear();
             foreach (var c in t2.Result ?? new())
-            {
                 Menu.Add(c);
-                MenuGroups.Add(new Grouping<Category, Product>(c, c.Products));
-            }
+            IsSearchActive = false;
+            SearchQuery = "";
+            ApplyMenuFilter();
 
             // صف "الأفضل مبيعًا" بيتعرض بس لمحلات السوبر ماركت/الصيدلية (شبكة الأقسام)
             if (IsGroceryStoreLayout)

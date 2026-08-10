@@ -34,6 +34,8 @@ public partial class RestaurantPage : ContentPage
     // بتاعة ScrollView) — الخاصية اللي بتدّينا الأوفست هي VerticalOffset.
     void OnContentScrolled(object? sender, ItemsViewScrolledEventArgs e)
     {
+        UpdateCoverCollapse(e.VerticalOffset);
+
         if (_categoryBarOffsetY <= 0) return;
 
         var shouldStick = e.VerticalOffset >= _categoryBarOffsetY;
@@ -55,6 +57,8 @@ public partial class RestaurantPage : ContentPage
     // زي CollectionView.Scrolled).
     void OnGroceryScrolled(object? sender, ScrolledEventArgs e)
     {
+        UpdateCoverCollapse(e.ScrollY);
+
         if (_groceryStickyOffsetY <= 0) return;
 
         var shouldStick = e.ScrollY >= _groceryStickyOffsetY;
@@ -62,6 +66,31 @@ public partial class RestaurantPage : ContentPage
 
         _isGroceryStuck = shouldStick;
         StickyCategoriesBar.IsVisible = shouldStick;
+    }
+
+    // ✅ FIX (تصغير الغلاف فعليًا زي طلبات): الحل اللي قبل كده كان بيخفت الصورة
+    // بس (Opacity) والمساحة المحجوزة (220) فاضلة زي ما هي — يعني حتى لو الصورة
+    // اختفت، المستطيل الفاضي مكانه لسه واخد نفس المساحة. دلوقتي بنربط ارتفاع
+    // الغلاف (CoverBorder.HeightRequest) والمسافة اللي بيبدأ منها المحتوى
+    // (Margin) مباشرة بنفس أوفست السكرول (1:1 من غير Animation)، فالغلاف نفسه
+    // بيصغّر فعليًا وهو بينزل لحد ما يوصل لأقل ارتفاع (92) بيفضل شايل فيه بس
+    // صف الأيقونات — بالظبط زي الشريط المضغوط اللي بيبان في طلبات بعد ما تنزل.
+    // بما إن المحتوى (CollectionView/ScrollView) بيتحرك بنفس القيمة بالظبط،
+    // فمفيش أي Overlap جديد بيحصل، فمفيش رجوع لمشكلة التداخل القديمة.
+    const double CoverExpandedHeight = 220;
+    const double CoverCollapsedHeight = 92;
+    const double CoverCollapseRange = CoverExpandedHeight - CoverCollapsedHeight;
+
+    void UpdateCoverCollapse(double offset)
+    {
+        var newHeight = Math.Max(CoverCollapsedHeight, CoverExpandedHeight - offset);
+        CoverBorder.HeightRequest = newHeight;
+        MenuCollectionView.Margin = new Thickness(0, newHeight, 0, 0);
+        GroceryScrollView.Margin = new Thickness(0, newHeight, 0, 0);
+
+        var fadeOpacity = 1 - Math.Clamp(offset / CoverCollapseRange, 0, 1);
+        CoverImage.Opacity = fadeOpacity;
+        CoverFallback.Opacity = fadeOpacity;
     }
 
     // لما المستخدم يدوس على أيقونة القسم في الشريط العلوي (أي نسخة، الأصلية أو العايمة)،

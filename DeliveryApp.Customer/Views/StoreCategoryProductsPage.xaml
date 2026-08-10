@@ -125,7 +125,14 @@
                         HeightRequest="52" Margin="8,10,8,0" BackgroundColor="White"/>
 
         <!-- شريط الفرز والفلترة -->
-        <HorizontalStackLayout Grid.Row="2" Spacing="8" Margin="12,10,12,6">
+        <!-- ✅ FIX: كانت الأربع تشيبس جوه HorizontalStackLayout عادي من غير Scroll،
+             فلو النصوص العربي طويلة (زي "الأفضل مبيعًا"، "عليه خصم") مجموع عرضهم
+             بيعدّي عرض الشاشة وآخر تشيب كان بيتقصّ من الحافة. لفيناها بـ ScrollView
+             أفقي بالظبط زي شريط الأقسام اللي فوقها، فدلوقتي أي تشيب مش لاقي مكان
+             ينزلق (يتاسكرول) بدل ما يتقصّ. -->
+        <ScrollView Grid.Row="2" Orientation="Horizontal" HorizontalScrollBarVisibility="Never"
+                    Margin="12,10,12,6">
+        <HorizontalStackLayout Spacing="8">
 
             <Border BackgroundColor="{Binding IsSortBest, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
                     StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="12,7">
@@ -164,6 +171,7 @@
             </Border>
 
         </HorizontalStackLayout>
+        </ScrollView>
 
         <!-- شبكة المنتجات -->
         <Grid Grid.Row="3">

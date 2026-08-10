@@ -822,6 +822,9 @@
 	<data name="NoShopsNearby">
 		<value>No shops found near this location</value>
 	</data>
+	<data name="SearchInMenu">
+		<value>Search in menu...</value>
+	</data>
 	<data name="ChooseSize">
 		<value>Choose size:</value>
 	</data>

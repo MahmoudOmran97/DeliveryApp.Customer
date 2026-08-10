@@ -113,18 +113,21 @@
                             <Label Text="🔥" FontSize="10"/>
                         </Border>
 
+                        <!-- ✅ FIX: بدل علامة "+" النصية، استخدمنا أيقونة الإضافة
+                             الرسمية بتاعة التطبيق (icon_add.png) عشان تبقى متسقة
+                             مع باقي أزرار الإضافة في التطبيق بدل شكل عام/جينيريك. -->
                         <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#EEEEEE"
                                 HorizontalOptions="End" VerticalOptions="End" Margin="0,0,-4,-4"
                                 WidthRequest="26" HeightRequest="26"
                                 IsVisible="{Binding HasVariants, Converter={StaticResource InvertBool}}">
-                            <Label Text="+" FontSize="20" FontFamily="CairoBold" TextColor="#FF5722"
+                            <Image Source="icon_add.png" WidthRequest="15" HeightRequest="15"
                                    HorizontalOptions="Center" VerticalOptions="Center">
-                                <Label.GestureRecognizers>
+                                <Image.GestureRecognizers>
                                     <TapGestureRecognizer
                                         Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.AddToCartCommand}"
                                         CommandParameter="{Binding .}"/>
-                                </Label.GestureRecognizers>
-                            </Label>
+                                </Image.GestureRecognizers>
+                            </Image>
                         </Border>
                     </Grid>
                     <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="11" MaxLines="1" LineBreakMode="TailTruncation"/>
@@ -138,25 +141,44 @@
          الـ Grid الرئيسية، فكانت بترجع للون خلفية الصفحة الافتراضي (ممكن يفرق عن
          لون الكارت الأبيض)، وأثناء الـ overscroll/fling السريع كان بيبان "ومضة"
          بلون مختلف تحت الغلاف قبل ما محتوى الكارت الأبيض يوصل مكانه. -->
-    <Grid RowDefinitions="220,*" BackgroundColor="White">
+    <Grid RowDefinitions="Auto,*" BackgroundColor="White">
 
         <!-- Cover -->
-
-        <Grid Grid.Row="0" BackgroundColor="#EEEEEE">
+        <!-- ✅ FIX: الحل السابق لجليتش التداخل شال الحواف الناعمة خالص من الغلاف
+             (بقى مستطيل حاد). الحواف الناعمة كانت زمان شغالة بعنصر منفصل فوق
+             الصورة، وده اللي كان بيسبب مشكلة الـ z-order مع ff:CachedImage على
+             أندرويد. هنا بنلف نفس الـ Grid (من غير ما نضيف عنصر تاني فوقه) جوه
+             Border واحد بس عشان الـ StrokeShape يقص زوايا العنصر نفسه تلقائيًا
+             مهما كان عرض الشاشة (من غير ما نثبّت عرض يدوي زي Clip Geometry)،
+             فمفيش أي طبقة إضافية فوق الصورة تسبب التداخل القديم.
+             ✅ FIX (تصغير الغلاف الحقيقي زي طلبات): الحل اللي قبل كده كان بيخفت
+             الصورة بس (Opacity) والمساحة (220) فاضلة محجوزة زي ما هي — يعني
+             مكان الغلاف نفسه مكانش بيتحرك. دلوقتي الـ Row بقت "Auto" وHeightRequest
+             بتاع الـ Border ده متحكم فيه من الكود (CoverBorder) وبيتقاس مباشرة مع
+             نفس الأوفست بتاع السكرول (UpdateCoverCollapse في RestaurantPage.xaml.cs)،
+             فالغلاف فعليًا بيصغّر (مش بس يخف لونه) وهو بيوصل لارتفاع صغير (92) بيفضل
+             شايل فيه بس الأيقونات، تمامًا زي الشريط المضغوط اللي بيبان في طلبات
+             بعد ما تنزل اسكرول. -->
+        <Border x:Name="CoverBorder" Grid.Row="0" HeightRequest="220"
+                StrokeShape="RoundRectangle 0,0,26,26" Stroke="Transparent"
+                Padding="0" BackgroundColor="#EEEEEE">
+        <Grid BackgroundColor="#EEEEEE">
 
             <!-- Fallback placeholder (shown when no cover image) -->
-            <Label Text="🍽️" FontSize="80" HorizontalOptions="Center" VerticalOptions="Center"
+            <Label x:Name="CoverFallback" Text="🍽️" FontSize="80" HorizontalOptions="Center" VerticalOptions="Center"
                    IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}" />
 
             <!-- Actual restaurant cover image -->
-            <ff:CachedImage Source="{Binding Restaurant.FullCoverImageUrl}"
+            <ff:CachedImage x:Name="CoverImage" Source="{Binding Restaurant.FullCoverImageUrl}"
                    Aspect="AspectFill"
                    CacheDuration="7"
                    DownsampleToViewSize="True"
                    IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}}" />
 
-            <!-- Back -->
-
+            <!-- ✅ FIX: أيقونة الرجوع (icon_back.png) أصلاً تصميمها مربع بحواف
+                 ناعمة وليها خلفية جوّاها (مش أيقونة شفافة محتاجة خلفية تانية)،
+                 فلفّها جوه دايرة بيضا كان بيكرر الخلفية مرتين وبيصغّرها جوه دايرة
+                 مش شكلها الطبيعي. دلوقتي بترجع لحجمها الطبيعي من غير أي إطار زيادة. -->
             <Image Source="icon_back.png" WidthRequest="42" HeightRequest="42"
                    Margin="16,45,0,0" HorizontalOptions="Start" VerticalOptions="Start">
                 <Image.GestureRecognizers>
@@ -164,13 +186,36 @@
                 </Image.GestureRecognizers>
             </Image>
 
+            <!-- ✅ FEATURE: زرار بحث داخل قائمة المحل (بيفلتر المنتجات المحمّلة
+                 بالاسم، بحث محلي فوري من غير أي API جديد) — بنفس شكل زرار الرجوع
+                 (مربع بحواف ناعمة) عشان يبقى فيه اتساق شكلي، مش دايرة. بيظهر بس
+                 لمحلات المطاعم العادية (مش السوبر ماركت/الصيدلية) لأن الفلترة دي
+                 شغالة على MenuGroups بتاعة تصميم المطعم بس. -->
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 14" Stroke="Transparent"
+                    WidthRequest="42" HeightRequest="42"
+                    Margin="16,101,0,0" HorizontalOptions="Start" VerticalOptions="Start"
+                    IsVisible="{Binding IsGroceryStoreLayout, Converter={StaticResource InvertBool}}">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Opacity="0.15" Radius="6"/>
+                </Border.Shadow>
+                <Label Text="🔍" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleSearchCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </Border>
+
             <!-- Cart -->
 
             <Grid HorizontalOptions="End" VerticalOptions="Start" Margin="0,48,16,0">
 
-                <Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Black"
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"
 
                         WidthRequest="42" HeightRequest="42">
+
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,2" Opacity="0.15" Radius="6"/>
+                    </Border.Shadow>
 
                     <Label Text="🛒" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center">
 
@@ -196,9 +241,36 @@
 
                 </Border>
 
+
             </Grid>
 
+            <!-- ✅ FEATURE: شريط البحث نفسه — بيظهر لما تدوس على أيقونة 🔍،
+                 وبيفلتر MenuGroups فورًا وأنت بتكتب (Two-way binding مباشر
+                 على SearchQuery في الـ ViewModel). -->
+            <Border IsVisible="{Binding IsSearchActive}"
+                    BackgroundColor="White" StrokeShape="RoundRectangle 14" Stroke="Transparent"
+                    Margin="16,101,16,0" Padding="14,0" HeightRequest="42"
+                    HorizontalOptions="Fill" VerticalOptions="Start">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Opacity="0.15" Radius="6"/>
+                </Border.Shadow>
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                    <Label Grid.Column="0" Text="🔍" FontSize="15" VerticalOptions="Center"/>
+                    <Entry Grid.Column="1" Text="{Binding SearchQuery}"
+                           Placeholder="{loc:Loc Key=SearchInMenu}"
+                           FontFamily="CairoRegular" FontSize="13" VerticalOptions="Center"
+                           BackgroundColor="Transparent"/>
+                    <Label Grid.Column="2" Text="✕" FontSize="14" TextColor="#9E9E9E" VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleSearchCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+            </Border>
+
         </Grid>
+        </Border>
+
 
         <!-- Content -->
         <!-- ✅ FIX (جليتش التداخل مع الغلاف): كان المحتوى بيبدأ من Margin=185 مع إن
@@ -553,7 +625,7 @@
         <Border x:Name="StickyCategoriesBar"
                 Grid.Row="0" Grid.RowSpan="2"
                 VerticalOptions="Start" HorizontalOptions="Fill"
-                Margin="0,220,0,0"
+                Margin="0,92,0,0"
                 BackgroundColor="White" Stroke="Transparent"
                 StrokeShape="Rectangle"
                 IsVisible="False">

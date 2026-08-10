@@ -106,7 +106,14 @@ public class BoolToColorConverter : IValueConverter
         if (p is string param && param.Contains('|'))
         {
             var parts = param.Split('|');
-            try { return Color.FromArgb(isTrue ? parts[0] : parts[1]); }
+            // ✅ FIX: كان بيستخدم Color.FromArgb اللي بيفهم Hex بس (#RRGGBB)، فلو
+            // البارامتر كان اسم لون زي "White" مش هيكس، كانت بترمي FormatException
+            // بتتلقط في الـ catch الفاضي من غير ما ترجع حاجة، فالكود كان بينزل على
+            // آخر سطر (fallback) اللي بيرجّع البرتقالي (#FF5722) للحالة المختارة —
+            // يعني نص أبيض متوقع كان بيطلع برتقالي فوق خلفية برتقالية (نفس اللون)
+            // فيبقى النص عمليًا مش ظاهر خالص. Color.Parse بيفهم الاتنين (أسماء
+            // الألوان زي White و Hex زي #424242) فبيشتغل صح في الحالتين.
+            try { return Color.Parse(isTrue ? parts[0] : parts[1]); }
             catch { }
         }
         return isTrue ? Color.FromArgb("#FF5722") : Color.FromArgb("#E0E0E0");

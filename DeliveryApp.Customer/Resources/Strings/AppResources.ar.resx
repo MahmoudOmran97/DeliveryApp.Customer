@@ -774,6 +774,9 @@
 	<data name="NoShopsNearby">
 		<value>مفيش محلات قريبة في المنطقة دي</value>
 	</data>
+	<data name="SearchInMenu">
+		<value>ابحث في القائمة...</value>
+	</data>
 	<data name="ChooseSize">
 		<value>اختر الحجم:</value>
 	</data>
