@@ -11,6 +11,13 @@ public partial class RestaurantPage : ContentPage
     double _categoryBarOffsetY = -1;
     bool _isSticky;
 
+    // ✅ FIX: نفس فكرة الـ Sticky بتاعة صفحة المطعم العادي، لكن هنا لصفحة
+    // السوبر ماركت/الصيدلية (ScrollView مش CollectionView). قبل كده مكنش فيه
+    // أي Scrolled handler هنا خالص، فالشريط العايم (واسم المحل) كان يفضل مختفي
+    // دايمًا حتى لو اليوزر نزل لتحت خالص.
+    double _groceryStickyOffsetY = -1;
+    bool _isGroceryStuck;
+
     public RestaurantPage(RestaurantViewModel vm) { InitializeComponent(); BindingContext = vm; }
 
     // بنقيس مكان شريط الكاتوجريز الأصلي كل ما حجمه/مكانه يتغيّر (مثلاً أول ما يتحمّل،
@@ -33,6 +40,27 @@ public partial class RestaurantPage : ContentPage
         if (shouldStick == _isSticky) return;
 
         _isSticky = shouldStick;
+        StickyCategoriesBar.IsVisible = shouldStick;
+    }
+
+    // بنقيس ارتفاع كارت المعلومات بتاع السوبر ماركت/الصيدلية — لما اليوزر ينزل
+    // اسكرول بمقدار ارتفاع الكارت ده، معناه وصل لحافة الشاشة فنظهر النسخة العايمة.
+    void OnGroceryInfoCardSizeChanged(object? sender, EventArgs e)
+    {
+        if (sender is not VisualElement view) return;
+        if (view.Height > 0) _groceryStickyOffsetY = view.Height;
+    }
+
+    // ScrollView.Scrolled بيرجّع ScrolledEventArgs بتاعة الـ ScrollY (مش VerticalOffset
+    // زي CollectionView.Scrolled).
+    void OnGroceryScrolled(object? sender, ScrolledEventArgs e)
+    {
+        if (_groceryStickyOffsetY <= 0) return;
+
+        var shouldStick = e.ScrollY >= _groceryStickyOffsetY;
+        if (shouldStick == _isGroceryStuck) return;
+
+        _isGroceryStuck = shouldStick;
         StickyCategoriesBar.IsVisible = shouldStick;
     }
 

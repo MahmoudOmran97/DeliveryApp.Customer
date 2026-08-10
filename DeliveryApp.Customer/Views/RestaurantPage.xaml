@@ -27,7 +27,10 @@
                     <TapGestureRecognizer Tapped="OnCategoryChipTapped" CommandParameter="{Binding .}"/>
                 </VerticalStackLayout.GestureRecognizers>
 
-                <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 30"
+                <!-- ✅ FIX: كانت الأيقونة دايرة كاملة (RoundRectangle 30 على مقاس 60x60
+                     = نص القطر = دايرة). دلوقتي مربعة بحواف ناعمة زي باقي الكروت في
+                     التطبيق (نفس معامل الانحناء المستخدم في CategoryGridTemplate). -->
+                <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 16"
                         Stroke="#EEEEEE" WidthRequest="60" HeightRequest="60"
                         HorizontalOptions="Center">
                     <Grid>
@@ -77,9 +80,16 @@
             </Border>
         </DataTemplate>
 
-        <!-- ✅ FEATURE: كارت منتج في صف "الأفضل مبيعًا" -->
+        <!-- ✅ FEATURE + FIX (تصميم مختلف): كارت منتج في صف "الأفضل مبيعًا" —
+             دلوقتي بتصميم مميز عن كروت المنتجات العادية: خلفية متدرجة خفيفة، برواز
+             برتقالي، وشارة "🔥 الأفضل مبيعًا" فوق الصورة، عشان يبان واضح إن الصف ده
+             مختلف عن باقي المنتجات، مع إنه لسه بيتعرض بـ Scroll جانبي (HorizontalList). -->
         <DataTemplate x:Key="BestSellerTemplate" x:DataType="m:Product">
-            <Border Style="{StaticResource Card}" WidthRequest="120" Margin="0,0,10,4" Padding="8">
+            <Border BackgroundColor="#FFF8F3" StrokeShape="RoundRectangle 14" Stroke="#FFD9C2"
+                    StrokeThickness="1.2" WidthRequest="128" Margin="0,4,10,4" Padding="8">
+                <Border.Shadow>
+                    <Shadow Brush="#FF5722" Offset="0,2" Opacity="0.08" Radius="6"/>
+                </Border.Shadow>
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer
                         Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.ProductTappedCommand}"
@@ -96,11 +106,18 @@
                                        IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
                             </Grid>
                         </Border>
+
+                        <!-- شارة "الأفضل مبيعًا" -->
+                        <Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 6" Stroke="Transparent"
+                                HorizontalOptions="Start" VerticalOptions="Start" Margin="4" Padding="5,2">
+                            <Label Text="🔥" FontSize="10"/>
+                        </Border>
+
                         <Border BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#EEEEEE"
                                 HorizontalOptions="End" VerticalOptions="End" Margin="0,0,-4,-4"
                                 WidthRequest="26" HeightRequest="26"
                                 IsVisible="{Binding HasVariants, Converter={StaticResource InvertBool}}">
-                            <Label Text="+" FontSize="16" FontFamily="CairoBold" TextColor="#FF5722"
+                            <Label Text="+" FontSize="20" FontFamily="CairoBold" TextColor="#FF5722"
                                    HorizontalOptions="Center" VerticalOptions="Center">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer
@@ -117,7 +134,11 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="220,*">
+    <!-- ✅ FIX (جليتش الخلفية أثناء السكرول): مفيش BackgroundColor كان متحدد على
+         الـ Grid الرئيسية، فكانت بترجع للون خلفية الصفحة الافتراضي (ممكن يفرق عن
+         لون الكارت الأبيض)، وأثناء الـ overscroll/fling السريع كان بيبان "ومضة"
+         بلون مختلف تحت الغلاف قبل ما محتوى الكارت الأبيض يوصل مكانه. -->
+    <Grid RowDefinitions="220,*" BackgroundColor="White">
 
         <!-- Cover -->
 
@@ -180,6 +201,15 @@
         </Grid>
 
         <!-- Content -->
+        <!-- ✅ FIX (جليتش التداخل مع الغلاف): كان المحتوى بيبدأ من Margin=185 مع إن
+             ارتفاع الغلاف 220 — يعني آخر 35px من الغلاف كانت بتتغطى بالكارت الأبيض،
+             وده كان بيعمل "تداخل" (glitch) وقت السكرول، لأن صورة الغلاف Cover بتتعرض
+             بمكتبة FFImageLoading (ff:CachedImage) اللي بترندر على Surface مستقل عن
+             شجرة الـ MAUI العادية على أندرويد، فمش دايمًا بتلتزم بترتيب الطبقات
+             (z-order) بتاع العناصر اللي فوقها، فبيظهر "تقطيع"/تداخل مش سموث بدل التراكب
+             الناعم المتوقع. الحل: خلينا المحتوى يبدأ بالظبط من نفس ارتفاع الغلاف
+             (220) من غير أي تراكب، فمفيش أي جزء من صورة الغلاف بيتغطى بحاجة تانية
+             خالص وقت السكرول. -->
         <!-- ✅ FIX (performance): كان ده ScrollView لافّ جواه VerticalStackLayout فيها
              BindableLayout بيولّد CollectionView منفصل لكل كاتيجوري. الـ CollectionView
              جوه ScrollView بيلغي الـ virtualization بتاعته تمامًا، يعني كل المنتجات
@@ -187,7 +217,7 @@
              تفتح حتى اللي مش ظاهر على الشاشة — وده كان أكبر سبب لتقل صفحة المحل.
              دلوقتي فيه CollectionView واحد بس بـ IsGrouped، فبيعرض بس اللي ظاهر على
              الشاشة وبيعيد استخدام الخلايا (recycling) زي أي تطبيق كبير. -->
-        <CollectionView x:Name="MenuCollectionView" Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0"
+        <CollectionView x:Name="MenuCollectionView" Grid.Row="0" Grid.RowSpan="2" Margin="0,220,0,0"
                         ItemsSource="{Binding MenuGroups}" IsGrouped="True" SelectionMode="None"
                         IsVisible="{Binding IsGroceryStoreLayout, Converter={StaticResource InvertBool}}"
                         Scrolled="OnContentScrolled">
@@ -407,13 +437,17 @@
 
         <!-- ✅ FEATURE: تصميم السوبر ماركت/الصيدلية — شبكة أقسام بدل القايمة الكاملة.
              الدوس على أي قسم يودّي لصفحة منتجات القسم لوحده (فلترة/فرز + اقتراحات). -->
-        <ScrollView Grid.Row="0" Grid.RowSpan="2" Margin="0,185,0,0"
-                    IsVisible="{Binding IsGroceryStoreLayout}">
+        <!-- ✅ FIX: مضاف Scrolled عشان اسم المحل يعوم فوق (Sticky) لما نعمل اسكرول
+             هنا برضو بالظبط زي صفحة المطعم العادية — قبل كده مكنش فيه أي wiring
+             للسكرول في اللاي أوت ده فالشريط العايم كان بيفضل مختفي طول الوقت. -->
+        <ScrollView x:Name="GroceryScrollView" Grid.Row="0" Grid.RowSpan="2" Margin="0,220,0,0"
+                    IsVisible="{Binding IsGroceryStoreLayout}" Scrolled="OnGroceryScrolled">
             <VerticalStackLayout Spacing="0">
 
                 <!-- Info Card (نفس تصميم المطعم) -->
-                <Border BackgroundColor="White" StrokeShape="RoundRectangle 24,24,0,0"
-                        Stroke="Transparent" Padding="20,22,20,16">
+                <Border x:Name="GroceryInfoCard" BackgroundColor="White" StrokeShape="RoundRectangle 24,24,0,0"
+                        Stroke="Transparent" Padding="20,22,20,16"
+                        SizeChanged="OnGroceryInfoCardSizeChanged">
                     <VerticalStackLayout Spacing="8">
                         <Label Text="{Binding Restaurant.Name}" FontFamily="CairoBold" FontSize="22" TextColor="#212121"/>
                         <Label Text="{Binding Restaurant.Description}" FontFamily="CairoRegular"
@@ -432,6 +466,15 @@
                             <VerticalStackLayout Spacing="1">
                                 <Label Text="{loc:Loc Key=EstTime}" FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
                                 <Label Text="{Binding Restaurant.EstimatedTimeText}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
+                            </VerticalStackLayout>
+
+                            <!-- ✅ FIX: كارت المعلومات بتاع السوبر ماركت/الصيدلية كان
+                                 ناقصه عمود المسافة اللي موجود في نفس الكارت بتاع المطعم
+                                 العادي (اتنسخ من فوق) -->
+                            <BoxView Color="#E0E0E0" WidthRequest="1" HeightRequest="38" IsVisible="{Binding Restaurant.DistanceKm, Converter={StaticResource IntToBool}}"/>
+                            <VerticalStackLayout Spacing="1" IsVisible="{Binding Restaurant.DistanceKm, Converter={StaticResource IntToBool}}">
+                                <Label Text="📍" FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+                                <Label Text="{Binding Restaurant.DistanceKm, StringFormat='{0:F1} km'}" FontFamily="CairoBold" FontSize="16" TextColor="#212121"/>
                             </VerticalStackLayout>
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
@@ -476,24 +519,26 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- الأفضل مبيعًا -->
-                <VerticalStackLayout Spacing="10" Margin="16,14,0,4"
-                                      IsVisible="{Binding BestSellers.Count, Converter={StaticResource IntToBool}}">
-                    <Label Text="{loc:Loc Key=BestSellersTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
-                    <CollectionView ItemsSource="{Binding BestSellers}" SelectionMode="None"
-                                    ItemsLayout="HorizontalList" ItemTemplate="{StaticResource BestSellerTemplate}"
-                                    HeightRequest="150" Margin="0,0,0,4"/>
-                </VerticalStackLayout>
-
-                <!-- شبكة الأقسام — عدد الأقسام في المحل الواحد محدود، فـ FlexLayout بيتحجم
-                     تلقائيًا حسب المحتوى جوه الـ ScrollView من غير مشكلة الـ CollectionView
-                     اللي محتاجة HeightRequest ثابت (المشكلة دي بالظبط اللي خلتنا نتجنبها
-                     مع المنتجات في صفحة المطعم العادية). -->
-                <VerticalStackLayout Spacing="10" Margin="16,10,16,20">
+                <!-- ✅ FIX (ترتيب): شبكة الأقسام دلوقتي فوق، وتحتها على طول قسم
+                     "الأفضل مبيعًا" (كان قبل كده الأفضل مبيعًا فوق الأقسام). عدد الأقسام
+                     في المحل الواحد محدود، فـ FlexLayout بيتحجم تلقائيًا حسب المحتوى
+                     جوه الـ ScrollView من غير مشكلة الـ CollectionView اللي محتاجة
+                     HeightRequest ثابت (المشكلة دي بالظبط اللي خلتنا نتجنبها مع
+                     المنتجات في صفحة المطعم العادية). -->
+                <VerticalStackLayout Spacing="10" Margin="16,10,16,4">
                     <Label Text="{loc:Loc Key=ShopByCategoryTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
                     <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Start"
                                 BindableLayout.ItemsSource="{Binding Menu}"
                                 BindableLayout.ItemTemplate="{StaticResource CategoryGridTemplate}"/>
+                </VerticalStackLayout>
+
+                <!-- الأفضل مبيعًا -->
+                <VerticalStackLayout Spacing="10" Margin="16,16,0,20"
+                                      IsVisible="{Binding BestSellers.Count, Converter={StaticResource IntToBool}}">
+                    <Label Text="{loc:Loc Key=BestSellersTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
+                    <CollectionView ItemsSource="{Binding BestSellers}" SelectionMode="None"
+                                    ItemsLayout="HorizontalList" ItemTemplate="{StaticResource BestSellerTemplate}"
+                                    HeightRequest="160" Margin="0,0,0,4"/>
                 </VerticalStackLayout>
 
                 <BoxView HeightRequest="100" Color="Transparent"/>
@@ -502,21 +547,27 @@
         </ScrollView>
 
         <!-- نسخة عايمة (Sticky) من شريط الكاتوجريز — بتظهر بس لما اليوزر ينزل
-             وتوصل النسخة الأصلية لحافة الاسكرول، فبيبان كأنه لزق فوق -->
+             وتوصل النسخة الأصلية لحافة الاسكرول، فبيبان كأنه لزق فوق.
+             ✅ FIX: مضاف اسم المحل هنا فوق شريط الأقسام، عشان لما يعمل اليوزر
+             اسكرول لتحت، اسم المحل يفضل ظاهر فوق بدل ما يختفي مع الغلاف. -->
         <Border x:Name="StickyCategoriesBar"
                 Grid.Row="0" Grid.RowSpan="2"
                 VerticalOptions="Start" HorizontalOptions="Fill"
-                Margin="0,185,0,0"
+                Margin="0,220,0,0"
                 BackgroundColor="White" Stroke="Transparent"
                 StrokeShape="Rectangle"
                 IsVisible="False">
             <Border.Shadow>
                 <Shadow Brush="Black" Offset="0,2" Opacity="0.10" Radius="6"/>
             </Border.Shadow>
-            <CollectionView ItemsSource="{Binding Menu}" SelectionMode="None"
-                            ItemsLayout="HorizontalList"
-                            ItemTemplate="{StaticResource CategoryChipTemplate}"
-                            HeightRequest="86" Margin="0,10,0,0"/>
+            <VerticalStackLayout Spacing="0">
+                <Label Text="{Binding Restaurant.Name}" FontFamily="CairoBold" FontSize="15"
+                       TextColor="#212121" Margin="16,10,16,0" MaxLines="1" LineBreakMode="TailTruncation"/>
+                <CollectionView ItemsSource="{Binding Menu}" SelectionMode="None"
+                                ItemsLayout="HorizontalList"
+                                ItemTemplate="{StaticResource CategoryChipTemplate}"
+                                HeightRequest="86" Margin="0,4,0,0"/>
+            </VerticalStackLayout>
         </Border>
 
         <!-- Floating View Cart Button -->

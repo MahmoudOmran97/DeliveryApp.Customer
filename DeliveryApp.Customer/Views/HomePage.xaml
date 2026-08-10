@@ -540,14 +540,20 @@
                                                    FontFamily="CairoRegular" FontSize="12"
                                                    TextColor="#757575" MaxLines="1"
                                                    LineBreakMode="TailTruncation"/>
-                                            <HorizontalStackLayout Spacing="10">
-                                                <HorizontalStackLayout Spacing="3">
+                                            <!-- ✅ FIX: العناصر الأربعة (تقييم/وقت/رسوم توصيل/مسافة) كانت
+                                                 جوه HorizontalStackLayout عادي من غير Wrap، فلو مجموع
+                                                 عرضهم عدّى عرض الكارت (وده بيحصل بسهولة لو النصوص طويلة
+                                                 شوية، عربي أو إنجليزي) كان آخر عنصر (المسافة) بيتقصّ من
+                                                 حافة الكارت بدل ما ينزل سطر جديد. FlexLayout مع Wrap
+                                                 بيخلي أي عنصر مش لاقي مكان ينزل تحت من غير ما يتقصّ. -->
+                                            <FlexLayout Direction="Row" Wrap="Wrap" AlignItems="Center" JustifyContent="Start">
+                                                <HorizontalStackLayout Spacing="3" Margin="0,0,10,4">
                                                     <Label Text="⭐" FontSize="12" VerticalOptions="Center"/>
                                                     <Label Text="{Binding RatingText}"
                                                            FontFamily="CairoBold" FontSize="12"
                                                            TextColor="#212121" VerticalOptions="Center"/>
                                                 </HorizontalStackLayout>
-                                                <HorizontalStackLayout Spacing="3">
+                                                <HorizontalStackLayout Spacing="3" Margin="0,0,10,4">
                                                     <Label Text="🕐" FontSize="12" VerticalOptions="Center"/>
                                                     <Label Text="{Binding EstimatedTimeText}"
                                                            FontFamily="CairoRegular" FontSize="12"
@@ -555,10 +561,10 @@
                                                 </HorizontalStackLayout>
                                                 <Label Text="{Binding DeliveryFeeText}"
                                                        FontFamily="CairoBold" FontSize="12"
-                                                       TextColor="#FF5722"/>
+                                                       TextColor="#FF5722" Margin="0,0,10,4"/>
                                                 <Border BackgroundColor="#F5F5F5"
                                                         StrokeShape="RoundRectangle 6"
-                                                        Stroke="Transparent" Padding="6,2"
+                                                        Stroke="Transparent" Padding="6,2" Margin="0,0,0,4"
                                                         IsVisible="{Binding DistanceKm, Converter={StaticResource IntToBool}}">
                                                     <Label FontFamily="CairoRegular" FontSize="11"
                                                            TextColor="#757575">
@@ -570,7 +576,7 @@
                                                         </Label.FormattedText>
                                                     </Label>
                                                 </Border>
-                                            </HorizontalStackLayout>
+                                            </FlexLayout>
                                         </VerticalStackLayout>
                                     </Grid>
                                 </Border>

@@ -83,7 +83,14 @@
 
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*">
+    <!-- ✅ FIX (تداخل/قصّ شريط الأقسام مع شريط الفلاتر): كان الصفين التانيين
+         "Auto" الارتفاع، وارتفاع الـ Auto لـ CollectionView على أندرويد مش
+         دايمًا بيتقاس صح في أول Layout pass (خصوصًا قبل ما العناصر تتحمل)،
+         فكان أحيانًا بيتحسب بارتفاع أصغر من المفروض وبالتالي الصف اللي بعده
+         (الفلاتر) بيتحرك لفوق ويتراكب/يتقطع فوق شريط الأقسام. الحل: ارتفاع
+         ثابت للصفين بدل Auto، بقيمة أكبر شوية من المحتوى الفعلي (52 و ~46)
+         عشان تضمن مساحة كافية دايمًا. -->
+    <Grid RowDefinitions="Auto,64,54,*">
 
         <!-- Header -->
         <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,14" ColumnDefinitions="Auto,*,Auto">
@@ -100,7 +107,10 @@
                         </Label.GestureRecognizers>
                     </Label>
                 </Border>
-                <Border BackgroundColor="#212121" StrokeShape="RoundRectangle 9" Stroke="Transparent"
+                <!-- ✅ FIX: كان لون البادچ هنا #212121 (أسود) وهو مختلف عن باقي الصفحات
+                     (الهوم وصفحة المحل) اللي بتستخدم #F44336. اتوحّد اللون عشان يبقى
+                     نفس شكل عداد السلة في كل مكان في التطبيق. -->
+                <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 9" Stroke="Transparent"
                         IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
                         WidthRequest="17" HeightRequest="17" HorizontalOptions="End" VerticalOptions="Start">
                     <Label Text="{Binding CartCount}" FontSize="9" FontFamily="CairoBold"
@@ -179,8 +189,13 @@
             </VerticalStackLayout>
 
             <!-- شريط اقتراحات "بيتطلب مع" -->
+            <!-- ✅ FIX: الكارت كان بيتقطع من تحت (زرار "إضافة" مش ظاهر) لسببين:
+                 1) الـ CollectionView كانت مساحتها (150) أصغر من محتوى الكارت الفعلي
+                    (صورة 70 + اسم + سعر + زرار 28 + الـ Spacing/Padding) بيوصلوا لحوالي 180.
+                 2) مفيش أي هامش سفلي بياخد باله من الـ Safe Area / أزرار النافيجيشن
+                    في الأندرويد، فكان بيتلزق في حافة الشاشة تمامًا. -->
             <Border IsVisible="{Binding ShowSuggestions}" VerticalOptions="End" BackgroundColor="White"
-                    StrokeShape="RoundRectangle 18,18,0,0" Stroke="#EEEEEE" Padding="14,12">
+                    StrokeShape="RoundRectangle 18,18,0,0" Stroke="#EEEEEE" Padding="14,12,14,20">
                 <Border.Shadow>
                     <Shadow Brush="Black" Offset="0,-3" Opacity="0.12" Radius="10"/>
                 </Border.Shadow>
@@ -196,7 +211,7 @@
                     </Grid>
 
                     <CollectionView ItemsSource="{Binding SuggestedProducts}" SelectionMode="None"
-                                    ItemsLayout="HorizontalList" HeightRequest="150">
+                                    ItemsLayout="HorizontalList" HeightRequest="184">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="m:Product">
                                 <Border Style="{StaticResource Card}" WidthRequest="118" Margin="0,0,10,4" Padding="8">
