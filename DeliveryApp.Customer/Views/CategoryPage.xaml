@@ -6,11 +6,13 @@
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:controls="clr-namespace:DeliveryApp.Customer.Controls"
              x:Class="DeliveryApp.Customer.Views.CategoryPage"
              x:DataType="vm:CategoryViewModel"
-             Title="{Binding DisplayTitle}">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
 
-    <Grid RowDefinitions="Auto,*" BackgroundColor="#F8F9FA">
+    <Grid RowDefinitions="Auto,*" BackgroundColor="White">
 
         <!-- ══════════════════════════════════════════════
              HEADER  (رجوع + عنوان + سيرش — نفس أسلوب الرئيسية)
@@ -145,5 +147,6 @@
 
         <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" 
                            Color="#FF5722" VerticalOptions="Center" HorizontalOptions="Center"/>
+
     </Grid>
 </ContentPage>

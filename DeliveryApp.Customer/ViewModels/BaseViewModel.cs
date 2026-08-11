@@ -11,6 +11,11 @@ public partial class BaseViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     private bool _isBusy;
 
+    partial void OnIsBusyChanged(bool value)
+    {
+        Services.LoadingService.Instance.SetBusy(value);
+    }
+
     [ObservableProperty]
     private string _title = string.Empty;
 

@@ -7,7 +7,8 @@
              xmlns:controls="clr-namespace:DeliveryApp.Customer.Controls"
              x:Class="DeliveryApp.Customer.Views.OrdersPage"
              x:DataType="vm:OrdersViewModel"
-             Shell.NavBarIsVisible="False">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
 
     <Grid RowDefinitions="Auto,*,Auto">
 
@@ -100,5 +101,6 @@
 		</RefreshView>
         <controls:CurvedBottomBar Grid.Row="2" SelectedTab="orders"
                          HorizontalOptions="Fill" Margin="0" Padding="0"/>
+
     </Grid>
 </ContentPage>

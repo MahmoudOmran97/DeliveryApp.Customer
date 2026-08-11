@@ -11,7 +11,7 @@
              x:DataType="vm:HomeViewModel"
              Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="#F8F9FA">
+    <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="White">
 
         <!-- ══════════════════════════════════════════════
              HEADER  (بسيط — موقع + سيرش فقط، مفيش chips)
@@ -604,5 +604,6 @@
         <!-- ══ BOTTOM BAR ══ -->
         <controls:CurvedBottomBar Grid.Row="1" SelectedTab="home"
                                    HorizontalOptions="Fill" Margin="0" Padding="0"/>
+
     </Grid>
 </ContentPage>

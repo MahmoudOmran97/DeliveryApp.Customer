@@ -71,7 +71,13 @@ public partial class CategoryViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    static Task GoBack() => Shell.Current.GoToAsync("..");
+    async Task GoBack()
+    {
+        IsBusy = true;
+        await Task.Yield();
+        try { await Shell.Current.GoToAsync(".."); }
+        finally { IsBusy = false; }
+    }
 
     [RelayCommand]
     async Task LoadAsync()

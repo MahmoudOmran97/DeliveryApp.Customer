@@ -7,7 +7,8 @@
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.CartPage"
              x:DataType="vm:CartViewModel"
-             Shell.NavBarIsVisible="False">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
 
     <Grid RowDefinitions="Auto,*,Auto">
 

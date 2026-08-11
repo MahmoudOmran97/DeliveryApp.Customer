@@ -18,7 +18,7 @@
 
     <Color x:Key="Background">#F8F9FA</Color>
 
-    <Color x:Key="CardBg">#FFFFFF</Color>
+    <Color x:Key="CardBg">#C2C2C2</Color> <!-- Cream/Off-white for cards -->
 
     <Color x:Key="Divider">#E0E0E0</Color>
 

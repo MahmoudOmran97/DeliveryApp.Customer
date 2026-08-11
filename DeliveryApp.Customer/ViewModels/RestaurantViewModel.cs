@@ -118,7 +118,11 @@ public partial class RestaurantViewModel : BaseViewModel
             await Shell.Current.GoToAsync($"PrescriptionChatPage?requestId={id}");
     }
 
-    partial void OnRestaurantIdChanged(int value) => LoadCommand.Execute(null);
+    partial void OnRestaurantIdChanged(int value)
+    {
+        IsBusy = true; // Force early busy state for overlay visibility
+        LoadCommand.Execute(null);
+    }
 
     partial void OnRestaurantChanged(Restaurant? value) => OnPropertyChanged(nameof(IsGroceryStoreLayout));
 
@@ -175,16 +179,16 @@ public partial class RestaurantViewModel : BaseViewModel
     [RelayCommand]
     async Task ProductTapped(Product p)
     {
-        // ✅ FIX: دلوقتي أي منتج (سواء عنده اختيارات أو لأ) بيفتح شاشة التفاصيل
-        // (صورة + وصف + سعر + تحكم في الكمية) بدل ما يتضاف للسلة على طول من غير ما
-        // المستخدم يشوف حاجة.
-        var json = Uri.EscapeDataString(JsonSerializer.Serialize(p));
-        // ✅ FIX: نفس مشكلة LocationPickerViewModel — لازم InvariantCulture عشان الفاصلة
-        // العشرية تفضل "." مش "٫" لو اللغة عربي، وإلا الـ decimal QueryProperty
-        // في ProductOptionsPage بيفشل بـ FormatException.
-        var fee = (Restaurant?.DeliveryFee ?? 15m).ToString(CultureInfo.InvariantCulture);
-        await Shell.Current.GoToAsync(
-            $"ProductOptionsPage?product={json}&restaurantId={RestaurantId}&deliveryFee={fee}");
+        IsBusy = true;
+        await Task.Yield();
+        try
+        {
+            var json = Uri.EscapeDataString(JsonSerializer.Serialize(p));
+            var fee = (Restaurant?.DeliveryFee ?? 15m).ToString(CultureInfo.InvariantCulture);
+            await Shell.Current.GoToAsync(
+                $"ProductOptionsPage?product={json}&restaurantId={RestaurantId}&deliveryFee={fee}");
+        }
+        finally { IsBusy = false; }
     }
 
     [RelayCommand]
@@ -250,5 +254,11 @@ public partial class RestaurantViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    static Task OpenCart() => Shell.Current.GoToAsync("CartPage");
+    async Task OpenCart()
+    {
+        IsBusy = true;
+        await Task.Yield();
+        try { await Shell.Current.GoToAsync("CartPage"); }
+        finally { IsBusy = false; }
+    }
 }

@@ -232,21 +232,28 @@ public partial class HomeViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    static Task OpenRestaurant(Restaurant r)
-        => Shell.Current.GoToAsync($"RestaurantPage?id={r.Id}");
+    async Task OpenRestaurant(Restaurant r)
+    {
+        IsBusy = true;
+        await Task.Yield();
+        try { await Shell.Current.GoToAsync($"RestaurantPage?id={r.Id}"); }
+        finally { IsBusy = false; }
+    }
 
     /// <summary>
     /// لما المستخدم يدوس على البنر، بنفك ActionUrl اللي جاي من الأدمن
     /// (بصيغة "restaurant/5" أو "category/Pharmacy" أو رابط خارجي كامل) ونوديه المكان الصح
     /// </summary>
     [RelayCommand]
-    static async Task OpenBanner(Banner? banner)
+    async Task OpenBanner(Banner? banner)
     {
         try
         {
             var target = banner?.ActionUrl?.Trim();
             if (string.IsNullOrWhiteSpace(target)) return;
 
+            IsBusy = true;
+            await Task.Yield();
             // رابط خارجي كامل → افتحه في المتصفح
             if (target.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
@@ -277,14 +284,33 @@ public partial class HomeViewModel : BaseViewModel
             // أي مشكلة في رابط البنر (رابط غلط، معرّف مش موجود...) متكسرش التطبيق
             System.Diagnostics.Debug.WriteLine($"OpenBanner failed: {ex}");
         }
+        finally { IsBusy = false; }
     }
 
     [RelayCommand]
-    static Task OpenCart() => Shell.Current.GoToAsync("CartPage");
+    async Task OpenCart()
+    {
+        IsBusy = true;
+        await Task.Yield();
+        try { await Shell.Current.GoToAsync("CartPage"); }
+        finally { IsBusy = false; }
+    }
 
     [RelayCommand]
-    static Task OpenCoupons() => Shell.Current.GoToAsync(nameof(Views.CouponsPage));
+    async Task OpenCoupons()
+    {
+        IsBusy = true;
+        await Task.Yield();
+        try { await Shell.Current.GoToAsync(nameof(Views.CouponsPage)); }
+        finally { IsBusy = false; }
+    }
 
     [RelayCommand]
-    static Task OpenRewards() => Shell.Current.GoToAsync(nameof(Views.RewardsPage));
+    async Task OpenRewards()
+    {
+        IsBusy = true;
+        await Task.Yield();
+        try { await Shell.Current.GoToAsync(nameof(Views.RewardsPage)); }
+        finally { IsBusy = false; }
+    }
 }

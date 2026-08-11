@@ -312,7 +312,7 @@ public class Notification
         }
     }
 
-    public Color BackgroundColor => IsRead ? Colors.White : Color.FromArgb("#FFF3EF");
+    public Color BackgroundColor => IsRead ? Color.FromArgb("#FFF9F0") : Color.FromArgb("#FFF3EF");
 }
 
 // ─── Prescription Chat (روشتة قبل الأوردر) ────────────────────────────────────

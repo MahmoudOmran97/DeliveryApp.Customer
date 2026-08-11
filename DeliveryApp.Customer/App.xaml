@@ -1,24 +1,20 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
-
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-            xmlns:local="clr-namespace:DeliveryApp.Customer"
+             xmlns:local="clr-namespace:DeliveryApp.Customer"
              xmlns:converters="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:controls="clr-namespace:DeliveryApp.Customer.Controls"
+             xmlns:services="clr-namespace:DeliveryApp.Customer.Services"
              x:Class="DeliveryApp.Customer.App">
 
     <Application.Resources>
-
         <ResourceDictionary>
             <!-- Locale -->
             <converters:LocaleStrings x:Key="LocStrings" />
 
-          
             <!-- Bool converters -->
             <converters:InvertedBoolConverter     x:Key="InvertedBool" />
             <converters:BoolToColorConverter      x:Key="BoolToColorConverter" />
-
-           
 
             <!-- String converters -->
             <converters:NullOrEmptyToBoolConverter x:Key="StringNotEmpty" />
@@ -30,16 +26,27 @@
             <converters:IsReadToColorConverter    x:Key="IsReadColor" />
 
             <ResourceDictionary.MergedDictionaries>
-
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
-
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
-
             </ResourceDictionary.MergedDictionaries>
 
-        </ResourceDictionary>
+            <!-- Global Page Template with Loading Overlay -->
+            <!-- We set BackgroundColor="Transparent" to ensure it doesn't override page backgrounds -->
+            <ControlTemplate x:Key="GlobalPageTemplate">
+                <Grid BackgroundColor="Transparent">
+                    <ContentPresenter />
+                    <controls:AnimatedLoadingOverlay 
+                        IsLoading="{Binding IsBusy, Source={x:Static services:LoadingService.Instance}}" />
+                </Grid>
+            </ControlTemplate>
 
+            <!-- Apply Template to all ContentPages globally -->
+            <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+                <Setter Property="ControlTemplate" Value="{StaticResource GlobalPageTemplate}" />
+                <Setter Property="BackgroundColor" Value="White" />
+            </Style>
+
+        </ResourceDictionary>
     </Application.Resources>
 
 </Application>
-

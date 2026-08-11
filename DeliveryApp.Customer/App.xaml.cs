@@ -13,14 +13,12 @@ public partial class App : Application
     readonly SignalRService _signalR;
     readonly ApiService _api;
 
-    /// <summary>true لما التطبيق ظاهر قدام المستخدم — عشان نقرر نفتح CallPage ولا شاشة الرنين الخارجية.</summary>
     public static bool IsInForeground { get; private set; }
 
     public App(SplashPage splash, ChatNotificationService chatNotif, FcmTokenService fcmToken,
         AuthService auth, SignalRService signalR, ApiService api, IServiceProvider services)
     {
         InitializeComponent();
-        _ = chatNotif;
         _auth = auth;
         _signalR = signalR;
         _api = api;
@@ -36,9 +34,8 @@ public partial class App : Application
             MainThread.BeginInvokeOnMainThread(async () =>
             {
                 var loginPage = services.GetRequiredService<LoginPage>();
-                var nav = new NavigationPage(loginPage);
-                MainPage = nav;
-                await nav.DisplayAlert(
+                MainPage = new NavigationPage(loginPage);
+                await MainPage.DisplayAlert(
                     "الحساب موقوف",
                     "تم إيقاف حسابك من قبل الإدارة. تواصل مع الدعم لمزيد من التفاصيل.",
                     "حسنًا");
@@ -107,6 +104,9 @@ public partial class App : Application
         MainPage = splash;
     }
 
+    // Helper for SplashPage to set Shell/Login
+    public void SetMainPage(Page page) => MainPage = page;
+
     protected override void OnResume()
     {
         base.OnResume();
@@ -153,8 +153,6 @@ public partial class App : Application
         });
     }
 
-    // ✅ NAV FIX — لو المستخدم فتح التطبيق من نوتيفيكيشن عادي (مش مكالمة)، وجّهه
-    // للمكان المناسب حسب نوع النوتيفيكيشن بدل ما يفضل واقف على الهوم بس.
     void TryNavigatePendingNotification()
     {
         var pending = PendingNotificationNavigation.TakePending();
@@ -166,8 +164,6 @@ public partial class App : Application
         {
             try
             {
-                // لو الأدمن حدد وجهة صريحة (ActionUrl) وقت إرسال الإشعار، بتاخد الأولوية.
-                // لو مفيش، نرجع للسلوك القديم المعتمد على type/orderId.
                 await NotificationNavigationHelper.NavigateAsync(actionUrl, orderId);
             }
             catch (Exception ex)

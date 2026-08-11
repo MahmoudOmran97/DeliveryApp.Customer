@@ -64,7 +64,11 @@ public partial class StoreCategoryProductsViewModel : BaseViewModel
         DisplayedProducts.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasNoProducts));
     }
 
-    partial void OnRestaurantIdChanged(int value) => LoadCommand.Execute(null);
+    partial void OnRestaurantIdChanged(int value)
+    {
+        IsBusy = true;
+        LoadCommand.Execute(null);
+    }
 
     partial void OnSelectedCategoryChanged(Category? value)
     {
@@ -132,10 +136,16 @@ public partial class StoreCategoryProductsViewModel : BaseViewModel
     [RelayCommand]
     async Task ProductTapped(Product p)
     {
-        var json = Uri.EscapeDataString(JsonSerializer.Serialize(p));
-        var fee = _deliveryFee.ToString(CultureInfo.InvariantCulture);
-        await Shell.Current.GoToAsync(
-            $"ProductOptionsPage?product={json}&restaurantId={RestaurantId}&deliveryFee={fee}");
+        IsBusy = true;
+        await Task.Yield();
+        try
+        {
+            var json = Uri.EscapeDataString(JsonSerializer.Serialize(p));
+            var fee = _deliveryFee.ToString(CultureInfo.InvariantCulture);
+            await Shell.Current.GoToAsync(
+                $"ProductOptionsPage?product={json}&restaurantId={RestaurantId}&deliveryFee={fee}");
+        }
+        finally { IsBusy = false; }
     }
 
     [RelayCommand]
@@ -186,5 +196,11 @@ public partial class StoreCategoryProductsViewModel : BaseViewModel
 
     // ملاحظة: GoBackCommand موروث من BaseViewModel، مفيش داعي نعرّفه تاني هنا.
     [RelayCommand]
-    static Task OpenCart() => Shell.Current.GoToAsync("CartPage");
+    async Task OpenCart()
+    {
+        IsBusy = true;
+        await Task.Yield();
+        try { await Shell.Current.GoToAsync("CartPage"); }
+        finally { IsBusy = false; }
+    }
 }
