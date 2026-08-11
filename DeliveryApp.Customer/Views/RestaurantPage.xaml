@@ -146,7 +146,7 @@
                          السعر تحته يفضل مكانه ثابت ومايتزحزحش لأعلى/أسفل بين
                          الكروت، وميبقاش فيه فرصة إنه يتقص. -->
                     <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="12" MaxLines="2"
-                           LineBreakMode="TailTruncation" HeightRequest="32" VerticalTextAlignment="Start"/>
+                           LineBreakMode="TailTruncation" HeightRequest="40" VerticalTextAlignment="Start"/>
                     <Label Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="13" TextColor="#FF5722"/>
                 </VerticalStackLayout>
             </Border>
@@ -446,7 +446,7 @@
                         <Label Text="{loc:Loc Key=BestSellersTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
                         <CollectionView ItemsSource="{Binding BestSellers}" SelectionMode="None"
                                         ItemsLayout="HorizontalList" ItemTemplate="{StaticResource BestSellerTemplate}"
-                                        HeightRequest="225" Margin="0,0,0,4"/>
+                                        HeightRequest="233" Margin="0,0,0,4"/>
                     </VerticalStackLayout>
                     <BoxView HeightRequest="100" Color="Transparent"/>
                 </VerticalStackLayout>
@@ -597,7 +597,7 @@
                          الأكبر (صورة 96 + اسم منتج بسطرين + السعر). -->
                     <CollectionView ItemsSource="{Binding BestSellers}" SelectionMode="None"
                                     ItemsLayout="HorizontalList" ItemTemplate="{StaticResource BestSellerTemplate}"
-                                    HeightRequest="225" Margin="0,0,0,4"/>
+                                    HeightRequest="233" Margin="0,0,0,4"/>
                 </VerticalStackLayout>
 
                 <BoxView HeightRequest="100" Color="Transparent"/>
@@ -615,10 +615,8 @@
                 Margin="0,92,0,0"
                 BackgroundColor="White" Stroke="Transparent"
                 StrokeShape="Rectangle"
-                IsVisible="False">
-            <Border.Shadow>
-                <Shadow Brush="Black" Offset="0,2" Opacity="0.10" Radius="6"/>
-            </Border.Shadow>
+                IsVisible="False"
+                SizeChanged="OnStickyCategoriesBarSizeChanged">
             <VerticalStackLayout Spacing="0">
                 <Label Text="{Binding Restaurant.Name}" FontFamily="CairoBold" FontSize="15"
                        TextColor="#212121" Margin="16,10,16,0" MaxLines="1" LineBreakMode="TailTruncation"/>
@@ -627,6 +625,20 @@
                                 ItemTemplate="{StaticResource CategoryChipTemplate}"
                                 HeightRequest="86" Margin="0,4,0,0"/>
             </VerticalStackLayout>
+        </Border>
+
+        <!-- ✅ FEATURE: عنوان القسم الحالي وانت نازل جوه منتجاته — بنفس شكل عنوان
+             القسم العادي (CairoBold 17 + خلفية #F8F9FA) بالظبط زي "الأفضل مبيعًا"،
+             وبيفضل ملزّق فوق (تحت الشريط العايم/التولبار) طول ما لسه في نفس
+             القسم، وبيتغيّر لاسم القسم اللي بعده أول ما توصل له. -->
+        <Border x:Name="CurrentGroupBar"
+                Grid.Row="0" Grid.RowSpan="2"
+                VerticalOptions="Start" HorizontalOptions="Fill"
+                BackgroundColor="#F8F9FA" Stroke="Transparent"
+                StrokeShape="Rectangle"
+                IsVisible="False">
+            <Label x:Name="CurrentGroupNameLabel" FontFamily="CairoBold" FontSize="17"
+                   TextColor="#212121" Padding="16,10,16,10" MaxLines="1" LineBreakMode="TailTruncation"/>
         </Border>
 
         <!-- ✅ الشريط الثابت فوق (Overlay) — بيفضل موجود طول الوقت زي طلبات:
@@ -639,11 +651,7 @@
 
             <Border x:Name="ToolbarBackgroundFill" Opacity="0" InputTransparent="True"
                     BackgroundColor="#FF5722" Stroke="Transparent" StrokeShape="Rectangle"
-                    VerticalOptions="Start" Padding="0">
-                <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,2" Opacity="0.10" Radius="6"/>
-                </Border.Shadow>
-            </Border>
+                    VerticalOptions="Start" Padding="0"/>
 
             <!-- ✅ FIX: أيقونة الرجوع (icon_back.png) أصلاً تصميمها مربع بحواف
                  ناعمة وليها خلفية جوّاها، فلفّها جوه دايرة بيضا كان بيكرر
@@ -710,12 +718,9 @@
                  هامشه من فوق بيتحسب في الكود (ApplyTopSafeMargins) على أساس تحت صف
                  الأيقونات مباشرة (رجوع/بحث/سلة)، فبيفتح وينزل تحتهم بدل ما يغطيهم. -->
             <Border x:Name="SearchBarBorder" Opacity="0" Scale="0.92" InputTransparent="True"
-                    BackgroundColor="White" StrokeShape="RoundRectangle 14" Stroke="Transparent"
-                    Margin="16,93,16,0" Padding="14,0" HeightRequest="42"
+                    BackgroundColor="White" StrokeShape="Rectangle" Stroke="Transparent"
+                    Margin="0,93,0,0" Padding="16,0" HeightRequest="42"
                     HorizontalOptions="Fill" VerticalOptions="Start">
-                <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,2" Opacity="0.15" Radius="6"/>
-                </Border.Shadow>
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                     <Label Grid.Column="0" Text="🔍" FontSize="15" VerticalOptions="Center"/>
                     <Entry x:Name="SearchEntry" Grid.Column="1" Text="{Binding SearchQuery}"
