@@ -143,7 +143,7 @@ public partial class RestaurantViewModel : BaseViewModel
             BestSellers.Clear();
             foreach (var c in t2.Result ?? new())
                 Menu.Add(c);
-            IsSearchActive = false;
+            IsSearchActive = true;
             SearchQuery = "";
             ApplyMenuFilter();
 

@@ -88,7 +88,6 @@ public partial class RestaurantPage : ContentPage
 
         BackButtonImage.Margin = new Thickness(16, rowTop, 0, 0);
         CartIconGrid.Margin = new Thickness(0, rowTop, 16, 0);
-        SearchIconBorder.Margin = new Thickness(0, rowTop, 66, 0);
 
         _toolbarHeight = rowTop + IconSize + BottomPadding;
         if (!IsSearchCurrentlyActive())
@@ -267,80 +266,10 @@ public partial class RestaurantPage : ContentPage
     // (ToggleSearchCommand) اللي بيعمل التوجل الفعلي على IsSearchActive/SearchQuery.
     bool _isSearchAnimating;
 
-    async void OnSearchIconTapped(object? sender, TappedEventArgs e)
+    void OnSearchIconTapped(object? sender, TappedEventArgs e)
     {
-        if (_isSearchAnimating) return;
-        if (BindingContext is not RestaurantViewModel vm) return;
-
-        _isSearchAnimating = true;
-        try
-        {
-            var opening = !vm.IsSearchActive;
-
-            if (opening)
-            {
-                vm.ToggleSearchCommand.Execute(null);
-                SearchBarBorder.InputTransparent = false;
-                SearchBarBorder.IsVisible = true;
-
-                // ✅ FIX (تسريب نص من ورا شريط البحث لما يتفتح والصفحة متعمّلها
-                // اسكرول): النسخة العايمة من اسم المحل/الأقسام (StickyCategoriesBar)
-                // بتبدأ من نفس نقطة بداية شريط البحث تقريبًا، فكان شريط البحث
-                // (ارتفاعه 42 بس) بيغطي أول جزء منها بس والباقي (اسم المحل/
-                // الأقسام) كان بيبان "طالع" من تحته أو حواليه. دلوقتي بنخفيها
-                // تمامًا طول ما شريط البحث فاتح، وبنرجعها زي ما كانت لما يتقفل.
-                StickyCategoriesBar.IsVisible = false;
-                CurrentGroupBar.IsVisible = false;
-
-                // ✅ FEATURE: خلفية الشريط الثابت فوق تتمد لتحت عشان تحضن شريط
-                // البحث بالكامل (من تحت زرار الرجوع لحد تحت زرار السلة)، وتفضل
-                // ظاهرة بالكامل طول ما البحث فاتح مهما كان مكان السكرول.
-                ToolbarBackgroundFill.AbortAnimation("ToolbarHeightAnim");
-                var expandAnim = new Animation(v => ToolbarBackgroundFill.HeightRequest = v,
-                    ToolbarBackgroundFill.Height > 0 ? ToolbarBackgroundFill.Height : _toolbarHeight,
-                    _searchExpandedToolbarHeight);
-
-                await Task.WhenAll(
-                    SearchBarBorder.FadeTo(1, 180, Easing.CubicOut),
-                    SearchBarBorder.ScaleTo(1, 180, Easing.CubicOut),
-                    SearchIconBorder.FadeTo(0, 140, Easing.CubicOut),
-                    ToolbarBackgroundFill.FadeTo(1, 180, Easing.CubicOut),
-                    RunAnimation(expandAnim, "ToolbarHeightAnim", 180));
-
-                SearchIconBorder.InputTransparent = true;
-                SearchEntry.Focus();
-            }
-            else
-            {
-                SearchEntry.Unfocus();
-                SearchIconBorder.InputTransparent = false;
-
-                ToolbarBackgroundFill.AbortAnimation("ToolbarHeightAnim");
-                var collapseAnim = new Animation(v => ToolbarBackgroundFill.HeightRequest = v,
-                    ToolbarBackgroundFill.Height > 0 ? ToolbarBackgroundFill.Height : _searchExpandedToolbarHeight,
-                    _toolbarHeight);
-
-                await Task.WhenAll(
-                    SearchBarBorder.FadeTo(0, 150, Easing.CubicIn),
-                    SearchBarBorder.ScaleTo(0.92, 150, Easing.CubicIn),
-                    SearchIconBorder.FadeTo(1, 180, Easing.CubicOut),
-                    RunAnimation(collapseAnim, "ToolbarHeightAnim", 150));
-
-                SearchBarBorder.InputTransparent = true;
-                vm.ToggleSearchCommand.Execute(null);
-
-                // بعد ما شريط البحث يقفل، نرجّع خلفية الشريط الثابت فوق لشفافيتها
-                // الطبيعية على حسب مكان السكرول الحالي، ونرجّع النسخة العايمة
-                // تظهر تاني لو اليوزر كان أصلاً واصل لمكان الالتصاق (Sticky).
-                UpdateToolbarBackground(_lastScrollOffset);
-                StickyCategoriesBar.IsVisible = _isSticky || _isGroceryStuck;
-                UpdateCurrentGroupLabel(_lastFirstVisibleItemIndex);
-            }
-        }
-        finally
-        {
-            _isSearchAnimating = false;
-        }
+        // ✅ FIX: البحث مفتوح دايمًا، فمافيش داعي للتوجل، بس نركز على حقل الإدخال
+        SearchEntry.Focus();
     }
 
     // بيلف Animation.Commit (اللي بتاعته callback مش Task) في Task عشان يتظبط

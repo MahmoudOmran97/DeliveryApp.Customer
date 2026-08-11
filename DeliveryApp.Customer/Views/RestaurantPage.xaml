@@ -21,23 +21,20 @@
 
     <ContentPage.Resources>
         <DataTemplate x:Key="CategoryChipTemplate" x:DataType="m:Category">
-            <VerticalStackLayout Spacing="4" Padding="10,0" WidthRequest="66" HorizontalOptions="Center">
+            <VerticalStackLayout  Padding="0,0" WidthRequest="66" HorizontalOptions="Center">
 
                 <VerticalStackLayout.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnCategoryChipTapped" CommandParameter="{Binding .}"/>
                 </VerticalStackLayout.GestureRecognizers>
 
-                <!-- ✅ FIX (لمسة شكل حلوة): الأيقونة بقت دائرة كاملة بدل مربع
-                     بحواف ناعمة، وبرواز خفيف بلون العلامة التجارية — بيبقى شكله
-                     أقرب لأفاتار (Avatar) لطيف بدل كارت. -->
                 <Border BackgroundColor="#FFF3EC" StrokeShape="RoundRectangle 30"
                         Stroke="#FFD9C2" StrokeThickness="1" WidthRequest="60" HeightRequest="60"
                         HorizontalOptions="Center">
                     <Grid>
-                        <!-- Fallback -->
+                       
                         <Label Text="🍽️" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center"
                                IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
-                        <!-- Category image -->
+                       
                         <ff:CachedImage Source="{Binding FullImageUrl}"
                                Aspect="AspectFill"
                                CacheDuration="7"
@@ -54,10 +51,8 @@
             </VerticalStackLayout>
         </DataTemplate>
 
-        <!-- ✅ FEATURE: كارت قسم في شبكة الأقسام (سوبر ماركت/صيدلية) — الدوس عليه
-             يودّي لصفحة منتجات القسم ده لوحده -->
         <DataTemplate x:Key="CategoryGridTemplate" x:DataType="m:Category">
-            <Border Style="{StaticResource Card}" Margin="6" Padding="10" WidthRequest="100">
+            <Border Style="{StaticResource Card}" Margin="6" Padding="6" WidthRequest="130">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer
                         Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.GoToCategoryCommand}"
@@ -80,21 +75,7 @@
             </Border>
         </DataTemplate>
 
-        <!-- ✅ FEATURE + FIX (تصميم مختلف): كارت منتج في صف "الأفضل مبيعًا" —
-             دلوقتي بتصميم مميز عن كروت المنتجات العادية: خلفية متدرجة خفيفة، برواز
-             برتقالي، وشارة "🔥 الأفضل مبيعًا" فوق الصورة، عشان يبان واضح إن الصف ده
-             مختلف عن باقي المنتجات، مع إنه لسه بيتعرض بـ Scroll جانبي (HorizontalList). -->
-        <!-- ✅ FIX (تكبير الكارت): كان صغير أوي (128×160) وبيقص اسم المنتج على
-             سطر واحد بس، فلو الاسم طويل كان بيبان مقطوع "..." بسرعة. دلوقتي
-             الكارت أعرض وأطول (150×~195)، الصورة أكبر، واسم المنتج بقى بسطرين
-             (MaxLines=2) عشان الكلام الكتير يتقرا كامل من غير ما يتقص بسرعة. -->
-        <!-- ✅ FIX (تاني تكبير - السعر كان بيختفي لو اسم المنتج طويل): كانت
-             ارتفاع الكارت (195) مظبوطة تقريبًا بس مش كفاية فعليًا مع كل
-             الهوامش/المسافات، فلو اسم المنتج طويل واحتاج سطرين، سطر السعر كان
-             بيتقص/يختفي بره حدود الكارت (زي ما ظهر في اسكرين شوت المستخدم).
-             دلوقتي بقلّلنا حجم الصورة والـ Padding والمسافات شوية، وكبّرنا
-             ارتفاع الكارت (195 → 225) بهامش أمان أكبر، عشان سطرين الاسم +
-             السعر يبانوا كاملين مهما كان الاسم طويل. -->
+       
         <DataTemplate x:Key="BestSellerTemplate" x:DataType="m:Product">
             <Border BackgroundColor="#FFF8F3" StrokeShape="RoundRectangle 20" Stroke="#FFD9C2"
                     StrokeThickness="1.2" WidthRequest="150" Margin="0,4,10,4" Padding="9,8">
@@ -124,14 +105,12 @@
                             <Label Text="🔥" FontSize="10"/>
                         </Border>
 
-                        <!-- ✅ FIX: بدل علامة "+" النصية، استخدمنا أيقونة الإضافة
-                             الرسمية بتاعة التطبيق (icon_add.png) عشان تبقى متسقة
-                             مع باقي أزرار الإضافة في التطبيق بدل شكل عام/جينيريك. -->
+                      
                         <Border BackgroundColor="White" StrokeShape="RoundRectangle 13" Stroke="#EEEEEE"
                                 HorizontalOptions="End" VerticalOptions="End" Margin="0,0,-4,-4"
-                                WidthRequest="26" HeightRequest="26"
+                                WidthRequest="35" HeightRequest="35"
                                 IsVisible="{Binding HasVariants, Converter={StaticResource InvertBool}}">
-                            <Image Source="icon_add.png" WidthRequest="15" HeightRequest="15"
+                            <Image Source="icon_add.png" WidthRequest="25" HeightRequest="25"
                                    HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer
@@ -141,10 +120,7 @@
                             </Image>
                         </Border>
                     </Grid>
-                    <!-- ✅ FIX: ثابت الارتفاع (HeightRequest=32) عشان يحجز مكان
-                         سطرين دايمًا (حتى لو الاسم قصير وسطر واحد بس)، فسطر
-                         السعر تحته يفضل مكانه ثابت ومايتزحزحش لأعلى/أسفل بين
-                         الكروت، وميبقاش فيه فرصة إنه يتقص. -->
+                  
                     <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="12" MaxLines="2"
                            LineBreakMode="TailTruncation" HeightRequest="40" VerticalTextAlignment="Start"/>
                     <Label Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="13" TextColor="#FF5722"/>
@@ -153,38 +129,10 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <!-- ✅ FIX (جليتش الخلفية أثناء السكرول): مفيش BackgroundColor كان متحدد على
-         الـ Grid الرئيسية، فكانت بترجع للون خلفية الصفحة الافتراضي (ممكن يفرق عن
-         لون الكارت الأبيض)، وأثناء الـ overscroll/fling السريع كان بيبان "ومضة"
-         بلون مختلف تحت الغلاف قبل ما محتوى الكارت الأبيض يوصل مكانه. -->
+   
     <Grid RowDefinitions="Auto,*" BackgroundColor="White">
 
-        <!-- ✅ FIX (إعادة بناء بالكامل زي طلبات فعلاً): بعد ما شفت اسكرين شوتس
-             طلبات، اتضح إن الغلاف مش المفروض "يتقفل/يصغّر" — هو ببساطة أول عنصر
-             في الصفحة وبيعدي مع السكرول عادي زي أي عنصر تاني، والأيقونات (رجوع/
-             بحث/سلة) هي اللي ثابتة فوق دايمًا (Overlay مش جزء من الغلاف)، ولما
-             الغلاف يخلص ويوصل الاسكرول لبداية التابس، اسم المحل يبان جنب زرار
-             الرجوع وخلفية الشريط تتحول لأبيض. الغلاف نفسه بقى أبسط بكتير هنا
-             (مربع، بيسكرول عادي جوه الـ CollectionView.Header)، والأيقونات
-             اتنقلت لشريط ثابت مستقل (TopToolbarBar) تحت في الصفحة. -->
-
-        <!-- Content -->
-        <!-- ✅ FIX (جليتش التداخل مع الغلاف): كان المحتوى بيبدأ من Margin=185 مع إن
-             ارتفاع الغلاف 220 — يعني آخر 35px من الغلاف كانت بتتغطى بالكارت الأبيض،
-             وده كان بيعمل "تداخل" (glitch) وقت السكرول، لأن صورة الغلاف Cover بتتعرض
-             بمكتبة FFImageLoading (ff:CachedImage) اللي بترندر على Surface مستقل عن
-             شجرة الـ MAUI العادية على أندرويد، فمش دايمًا بتلتزم بترتيب الطبقات
-             (z-order) بتاع العناصر اللي فوقها، فبيظهر "تقطيع"/تداخل مش سموث بدل التراكب
-             الناعم المتوقع. الحل: خلينا المحتوى يبدأ بالظبط من نفس ارتفاع الغلاف
-             (220) من غير أي تراكب، فمفيش أي جزء من صورة الغلاف بيتغطى بحاجة تانية
-             خالص وقت السكرول. -->
-        <!-- ✅ FIX (performance): كان ده ScrollView لافّ جواه VerticalStackLayout فيها
-             BindableLayout بيولّد CollectionView منفصل لكل كاتيجوري. الـ CollectionView
-             جوه ScrollView بيلغي الـ virtualization بتاعته تمامًا، يعني كل المنتجات
-             (وكل صورها) في المطعم كله كانت بترندر وتتحمل مرة واحدة من أول ما الصفحة
-             تفتح حتى اللي مش ظاهر على الشاشة — وده كان أكبر سبب لتقل صفحة المحل.
-             دلوقتي فيه CollectionView واحد بس بـ IsGrouped، فبيعرض بس اللي ظاهر على
-             الشاشة وبيعيد استخدام الخلايا (recycling) زي أي تطبيق كبير. -->
+       
         <CollectionView x:Name="MenuCollectionView" Grid.Row="0" Grid.RowSpan="2"
                         ItemsSource="{Binding MenuGroups}" IsGrouped="True" SelectionMode="None"
                         IsVisible="{Binding IsGroceryStoreLayout, Converter={StaticResource InvertBool}}"
@@ -193,28 +141,21 @@
             <CollectionView.Header>
                 <VerticalStackLayout Spacing="0"   >
 
-                    <!-- ✅ Cover: بيسكرول عادي زي أي عنصر تاني — الأيقونات بقت في
-                     TopToolbarBar الثابت تحت في الصفحة (مش هنا). -->
-                    <Grid HeightRequest="220">
-                        <Grid.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#1F2A30" Offset="0.0"/>
-                                <GradientStop Color="#2E3A42" Offset="0.55"/>
-                                <GradientStop Color="#FF5722" Offset="1.0"/>
-                            </LinearGradientBrush>
-                        </Grid.Background>
-                        <Label Text="🍽️" FontSize="80" HorizontalOptions="Center" VerticalOptions="Center"
-                           IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}" />
-                        <ff:CachedImage Source="{Binding Restaurant.FullCoverImageUrl}"
-                           Aspect="AspectFill" CacheDuration="7" DownsampleToViewSize="True"
-                           IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}}" />
-                    </Grid>
+                    <!-- ✅ Cover: بحواف ناعمة وتصميم احترافي -->
+                    <Border StrokeShape="RoundRectangle 0,0,32,32"  HeightRequest="240" >
+                        <Grid>
+                           
+                            <Label Text="🖼️" FontSize="40" HorizontalOptions="Center" VerticalOptions="Center"
+                                   Opacity="0.3" IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                            <ff:CachedImage Source="{Binding Restaurant.FullCoverImageUrl}" Aspect="AspectFill"
+                                   CacheDuration="7" DownsampleToViewSize="True"
+                                   IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}}"/>
 
-                    <!-- ✅ FEATURE (لمسة شكل حلوة): بادچ التقييم الدائري عايم على خط
-                     التقاء الغلاف بالكارت الأبيض (نص فوق الصورة، نص فوق الكارت)
-                     — بدل ما التقييم يكون سطر نص عادي جوه الكارت زي أي حاجة
-                     تانية. الهامش السالب (Margin بالسالب فوق وتحت) هو اللي بيعمل
-                     التراكب من غير ما يضيف مسافة زيادة في التصميم. -->
+                            <!-- Overlay gradient for better text readability if needed -->
+                          
+                        </Grid>
+                    </Border>
+
                     <Border BackgroundColor="White" StrokeShape="RoundRectangle 32" Stroke="#FFD9C2"
                         StrokeThickness="1.5" WidthRequest="64" HeightRequest="64"
                         HorizontalOptions="End" Margin="0,-32,20,-32" ZIndex="1">
@@ -228,9 +169,7 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- Info Card -->
-                    <!-- ✅ FIX (انحناءة أكبر وأنعم): زاوية الكارت كانت 24، بقت 32
-                     عشان الانتقال من الغلاف للكارت يبقى أطرى وأحدث شكل. -->
+                  
 
                     <Border BackgroundColor="White" StrokeShape="RoundRectangle 32,32,0,0"
 
@@ -245,11 +184,6 @@
 
                                FontSize="13" TextColor="#757575"/>
 
-                            <!-- ✅ FIX (شكل أحلى بدل خط فاصل رفيع): بدل الأعمدة
-                             المفصولة بخط رمادي رفيع، كل معلومة بقت جوه "بيل"
-                             (Pill) بخلفية برتقالي فاتح دافئ، بيبقى شكلها متناسقة
-                             مع باقي أزرار التطبيق البيضاوية. التقييم اتنقل
-                             للبادچ العايم فوق فمش محتاجين نكرره هنا. -->
                             <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Margin="0,4,0,0">
                                 <HorizontalStackLayout Spacing="8">
 
@@ -285,13 +219,7 @@
                     <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
                                    Color="#FF5722" Margin="0,16"/>
 
-                    <!-- Categories quick-jump bar -->
-                    <!-- ✅ FIX (مسافة واحشة تحت الأقسام): الشريط ده كان ملزّق تقريبًا
-                     في الكارت اللي فوقه (من غير Padding جانبي) وملوش أي فاصل بصري
-                     واضح عن المحتوى اللي تحته (قايمة المنتجات)، فكانت المسافة
-                     حواليه حاسس إنها مش متظبطة. دلوقتي فيه مسافة سفلية واضحة
-                     وخط فاصل (Divider) رفيع تحته يفصله بشكل نضيف عن باقي الصفحة،
-                     بنفس الأسلوب اللي بيستخدمه معظم تطبيقات التوصيل الاحترافية. -->
+                  
                     <CollectionView x:Name="InlineCategoriesBar" 
                                 ItemsSource="{Binding Menu}" SelectionMode="None"
                                 IsVisible="{Binding Menu.Count, Converter={StaticResource IntToBool}}"
@@ -306,7 +234,7 @@
                          IsVisible="{Binding Menu.Count, Converter={StaticResource IntToBool}}"
                          Margin="16,4,16,0"/>
 
-                    <!-- Pharmacy: return to an already-open prescription chat -->
+                
                     <Border IsVisible="{Binding HasActivePrescriptionChat}" BackgroundColor="#FFF3E0"
                         StrokeShape="RoundRectangle 14" Stroke="#FFB74D" Margin="16,8,16,0"
                         Padding="16,14">
@@ -345,8 +273,7 @@
                 </VerticalStackLayout>
             </CollectionView.Header>
 
-            <!-- Menu Categories: كل عنصر جوه IsGrouped=True فبيتعرض بس وقت ما يظهر
-                 فعليًا على الشاشة (recycling)، مش كله مرة واحدة زي قبل كده -->
+           
             <CollectionView.GroupHeaderTemplate>
                 <DataTemplate>
                     <Label Text="{Binding Key.Name}" FontFamily="CairoBold" FontSize="17"
@@ -437,9 +364,7 @@
             </CollectionView.ItemTemplate>
 
             <CollectionView.Footer>
-                <!-- ✅ FEATURE: نفس صف "الأفضل مبيعًا" اللي في تصميم السوبر ماركت/
-                     الصيدلية، دلوقتي ظاهر كمان آخر حاجة في صفحات المطاعم/الأكسسوارات
-                     وأي نوع محل تاني بيستخدم التصميم ده (MenuGroups). -->
+              
                 <VerticalStackLayout Spacing="0">
                     <VerticalStackLayout Spacing="10" Margin="16,16,0,20"
                                           IsVisible="{Binding BestSellers.Count, Converter={StaticResource IntToBool}}">
@@ -454,34 +379,40 @@
 
         </CollectionView>
 
-        <!-- ✅ FEATURE: تصميم السوبر ماركت/الصيدلية — شبكة أقسام بدل القايمة الكاملة.
-             الدوس على أي قسم يودّي لصفحة منتجات القسم لوحده (فلترة/فرز + اقتراحات). -->
-        <!-- ✅ FIX: مضاف Scrolled عشان اسم المحل يعوم فوق (Sticky) لما نعمل اسكرول
-             هنا برضو بالظبط زي صفحة المطعم العادية — قبل كده مكنش فيه أي wiring
-             للسكرول في اللاي أوت ده فالشريط العايم كان بيفضل مختفي طول الوقت. -->
+       
         <ScrollView x:Name="GroceryScrollView" Grid.Row="0" Grid.RowSpan="2"
                     IsVisible="{Binding IsGroceryStoreLayout}" Scrolled="OnGroceryScrolled">
             <VerticalStackLayout Spacing="0">
 
-                <!-- ✅ Cover: نفس فكرة صفحة المطعم العادي — بيسكرول عادي، والأيقونات
-                     في TopToolbarBar الثابت. -->
-                <Grid HeightRequest="220">
-                    <Grid.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#1F2A30" Offset="0.0"/>
-                            <GradientStop Color="#2E3A42" Offset="0.55"/>
-                            <GradientStop Color="#FF5722" Offset="1.0"/>
-                        </LinearGradientBrush>
-                    </Grid.Background>
-                    <Label Text="🍽️" FontSize="80" HorizontalOptions="Center" VerticalOptions="Center"
-                           IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}" />
-                    <ff:CachedImage Source="{Binding Restaurant.FullCoverImageUrl}"
-                           Aspect="AspectFill" CacheDuration="7" DownsampleToViewSize="True"
-                           IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}}" />
-                </Grid>
+                <!-- ✅ Cover: بحواف ناعمة وتصميم احترافي (للسوبر ماركت/الصيدلية) -->
+                <Border StrokeShape="RoundRectangle 0,0,32,32" Stroke="Transparent" HeightRequest="240" Margin="0,0,0,-20">
+                    <Grid>
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#1F2A30" Offset="0.0"/>
+                                <GradientStop Color="#2E3A42" Offset="0.55"/>
+                                <GradientStop Color="#FF5722" Offset="1.0"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <Label Text="🍽️" FontSize="80" HorizontalOptions="Center" VerticalOptions="Center"
+                               IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}" />
+                        <ff:CachedImage Source="{Binding Restaurant.FullCoverImageUrl}"
+                               Aspect="AspectFill" CacheDuration="7" DownsampleToViewSize="True"
+                               IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}}" />
 
-                <!-- ✅ FEATURE (لمسة شكل حلوة): نفس بادچ التقييم العايم بتاع
-                     صفحة المطعم العادي. -->
+                        <!-- Overlay gradient -->
+                        <BoxView VerticalOptions="Fill" HorizontalOptions="Fill">
+                            <BoxView.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="Transparent" Offset="0.6"/>
+                                    <GradientStop Color="#40000000" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </BoxView.Background>
+                        </BoxView>
+                    </Grid>
+                </Border>
+
+               
                 <Border BackgroundColor="White" StrokeShape="RoundRectangle 32" Stroke="#FFD9C2"
                         StrokeThickness="1.5" WidthRequest="64" HeightRequest="64"
                         HorizontalOptions="End" Margin="0,-32,20,-32" ZIndex="1">
@@ -573,17 +504,10 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- ✅ FIX (ترتيب): شبكة الأقسام دلوقتي فوق، وتحتها على طول قسم
-                     "الأفضل مبيعًا" (كان قبل كده الأفضل مبيعًا فوق الأقسام). عدد الأقسام
-                     في المحل الواحد محدود، فـ FlexLayout بيتحجم تلقائيًا حسب المحتوى
-                     جوه الـ ScrollView من غير مشكلة الـ CollectionView اللي محتاجة
-                     HeightRequest ثابت (المشكلة دي بالظبط اللي خلتنا نتجنبها مع
-                     المنتجات في صفحة المطعم العادية). -->
+              
                 <VerticalStackLayout Spacing="10" Margin="16,10,16,4">
                     <Label Text="{loc:Loc Key=ShopByCategoryTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
-                    <!-- ✅ FIX: مربوطة دلوقتي بـ FilteredMenu مش Menu مباشرة، عشان
-                         زرار البحث فوق يشتغل هنا كمان (فلترة الأقسام بالاسم أو باسم
-                         أي منتج جواها). -->
+                 
                     <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Start"
                                 BindableLayout.ItemsSource="{Binding FilteredMenu}"
                                 BindableLayout.ItemTemplate="{StaticResource CategoryGridTemplate}"/>
@@ -593,8 +517,7 @@
                 <VerticalStackLayout Spacing="10" Margin="16,16,0,20"
                                       IsVisible="{Binding BestSellers.Count, Converter={StaticResource IntToBool}}">
                     <Label Text="{loc:Loc Key=BestSellersTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
-                    <!-- ✅ FIX: الارتفاع اتزود من 160 لـ 195 عشان يستوعب الكارت
-                         الأكبر (صورة 96 + اسم منتج بسطرين + السعر). -->
+                  
                     <CollectionView ItemsSource="{Binding BestSellers}" SelectionMode="None"
                                     ItemsLayout="HorizontalList" ItemTemplate="{StaticResource BestSellerTemplate}"
                                     HeightRequest="233" Margin="0,0,0,4"/>
@@ -605,10 +528,7 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <!-- نسخة عايمة (Sticky) من شريط الكاتوجريز — بتظهر بس لما اليوزر ينزل
-             وتوصل النسخة الأصلية لحافة الاسكرول، فبيبان كأنه لزق فوق.
-             ✅ FIX: مضاف اسم المحل هنا فوق شريط الأقسام، عشان لما يعمل اليوزر
-             اسكرول لتحت، اسم المحل يفضل ظاهر فوق بدل ما يختفي مع الغلاف. -->
+    
         <Border x:Name="StickyCategoriesBar"
                 Grid.Row="0" Grid.RowSpan="2"
                 VerticalOptions="Start" HorizontalOptions="Fill"
@@ -627,10 +547,7 @@
             </VerticalStackLayout>
         </Border>
 
-        <!-- ✅ FEATURE: عنوان القسم الحالي وانت نازل جوه منتجاته — بنفس شكل عنوان
-             القسم العادي (CairoBold 17 + خلفية #F8F9FA) بالظبط زي "الأفضل مبيعًا"،
-             وبيفضل ملزّق فوق (تحت الشريط العايم/التولبار) طول ما لسه في نفس
-             القسم، وبيتغيّر لاسم القسم اللي بعده أول ما توصل له. -->
+       
         <Border x:Name="CurrentGroupBar"
                 Grid.Row="0" Grid.RowSpan="2"
                 VerticalOptions="Start" HorizontalOptions="Fill"
@@ -641,24 +558,15 @@
                    TextColor="#212121" Padding="16,10,16,10" MaxLines="1" LineBreakMode="TailTruncation"/>
         </Border>
 
-        <!-- ✅ الشريط الثابت فوق (Overlay) — بيفضل موجود طول الوقت زي طلبات:
-             شفاف فوق الغلاف في الأول، وبيتحول للون البرتقالي (لون التطبيق)
-             تدريجيًا لما اليوزر ينزل اسكرول (بنفس لحظة ظهور اسم المحل/التابس
-             العايمة تحته)، وفيه الأيقونات (رجوع/بحث/سلة) وشريط البحث لما يتفتح.
-             ✅ FIX: كان بيتحول للون الأبيض، دلوقتي بيتحول للون البرتقالي
-             (#FF5722) بتاع هوية التطبيق بدل الأبيض. -->
+       
         <Grid x:Name="TopToolbarBar" Grid.Row="0" Grid.RowSpan="2" VerticalOptions="Start">
 
-            <Border x:Name="ToolbarBackgroundFill" Opacity="0" InputTransparent="True"
+            <!-- ✅ FIX: الشريط الثابت بلون التطبيق دايمًا (زي باقي الصفحات) -->
+            <Border x:Name="ToolbarBackgroundFill" Opacity="1" InputTransparent="True"
                     BackgroundColor="#FF5722" Stroke="Transparent" StrokeShape="Rectangle"
                     VerticalOptions="Start" Padding="0"/>
 
-            <!-- ✅ FIX: أيقونة الرجوع (icon_back.png) أصلاً تصميمها مربع بحواف
-                 ناعمة وليها خلفية جوّاها، فلفّها جوه دايرة بيضا كان بيكرر
-                 الخلفية مرتين. دلوقتي بترجع لحجمها الطبيعي من غير أي إطار زيادة.
-                 ✅ FIX (تصادم مع شريط الحالة): الهامش العلوي كان رقم ثابت (45)
-                 مش متبني على ارتفاع شريط الحالة الحقيقي. دلوقتي بيتظبط من الكود
-                 (ApplyTopSafeMargins) على قد شريط الحالة الفعلي لأي جهاز. -->
+            <!-- ✅ FIX: زرار الرجوع -->
             <Image x:Name="BackButtonImage" Source="icon_back.png" WidthRequest="42" HeightRequest="42"
                    Margin="16,45,0,0" HorizontalOptions="Start" VerticalOptions="Start">
                 <Image.GestureRecognizers>
@@ -666,27 +574,14 @@
                 </Image.GestureRecognizers>
             </Image>
 
-            <!-- ✅ FEATURE: زرار بحث داخل قائمة المحل — بيفلتر المنتجات المحمّلة
-                 بالاسم، بحث محلي فوري من غير أي API جديد. بنفس شكل زرار الرجوع
-                 (مربع بحواف ناعمة) عشان يبقى فيه اتساق شكلي.
-                 ✅ FIX: كان ظاهر بس لمحلات المطاعم العادية (IsGroceryStoreLayout
-                 بيخفيه)، فمحلات السوبر ماركت/الصيدلية كانت من غير زرار بحث خالص.
-                 دلوقتي ظاهر في كل أنواع المحلات — في السوبر ماركت/الصيدلية بيفلتر
-                 شبكة الأقسام (FilteredMenu) بدل MenuGroups. -->
-            <Border x:Name="SearchIconBorder" BackgroundColor="White" StrokeShape="RoundRectangle 21" Stroke="Transparent"
-                    WidthRequest="42" HeightRequest="42"
-                    Margin="0,45,66,0" HorizontalOptions="End" VerticalOptions="Start">
-                <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,2" Opacity="0.15" Radius="6"/>
-                </Border.Shadow>
-                <Label Text="🔍" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnSearchIconTapped"/>
-                    </Label.GestureRecognizers>
-                </Label>
-            </Border>
+            <!-- ✅ FEATURE: اسم المحل في النص بين الرجوع والسلة -->
+            <Label x:Name="RestaurantNameHeaderLabel"
+                   Text="{Binding Restaurant.Name}"
+                   FontFamily="CairoBold" FontSize="16" TextColor="White"
+                   HorizontalOptions="Center" VerticalOptions="Start"
+                   Margin="60,53,60,0" LineBreakMode="TailTruncation" MaxLines="1"/>
 
-            <!-- Cart -->
+            <!-- ✅ FIX: السلة -->
             <Grid x:Name="CartIconGrid" HorizontalOptions="End" VerticalOptions="Start" Margin="0,45,16,0">
                 <Border BackgroundColor="White" StrokeShape="RoundRectangle 21" Stroke="Transparent"
                         WidthRequest="42" HeightRequest="42">
@@ -707,31 +602,20 @@
                 </Border>
             </Grid>
 
-            <!-- ✅ FEATURE: شريط البحث نفسه — بيظهر لما تدوس على أيقونة 🔍، وبيفلتر
-                 MenuGroups (أو FilteredMenu في تصميم السوبر ماركت/الصيدلية) فورًا
-                 وأنت بتكتب (Two-way binding على SearchQuery).
-                 ✅ FIX (سلاسة الظهور): بدل ما يظهر/يختفي فجأة، بيتحكم فيه من الكود
-                 بحركة Fade+Scale سلسة (OnSearchIconTapped)، فمبقاش "قفشة" مفاجئة.
-                 ✅ FIX (كان بيغطي على زرار الرجوع والسلة): كان بنفس هامش صف
-                 الأيقونات بالظبط وHorizontalOptions="Fill"، يعني لما يفتح كان بيتمدد
-                 فوق الشاشة كلها ويغطي زراري الرجوع والسلة اللي في نفس الصف. دلوقتي
-                 هامشه من فوق بيتحسب في الكود (ApplyTopSafeMargins) على أساس تحت صف
-                 الأيقونات مباشرة (رجوع/بحث/سلة)، فبيفتح وينزل تحتهم بدل ما يغطيهم. -->
-            <Border x:Name="SearchBarBorder" Opacity="0" Scale="0.92" InputTransparent="True"
-                    BackgroundColor="White" StrokeShape="Rectangle" Stroke="Transparent"
-                    Margin="0,93,0,0" Padding="16,0" HeightRequest="42"
+            <!-- ✅ FEATURE: شريط البحث مفتوح دايمًا وموسطن -->
+            <Border x:Name="SearchBarBorder" Opacity="1" Scale="1" InputTransparent="False"
+                    BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="Transparent"
+                    Margin="16,93,16,0" Padding="12,0" HeightRequest="44"
                     HorizontalOptions="Fill" VerticalOptions="Start">
-                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-                    <Label Grid.Column="0" Text="🔍" FontSize="15" VerticalOptions="Center"/>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Opacity="0.1" Radius="4"/>
+                </Border.Shadow>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <Label Grid.Column="0" Text="🔍" FontSize="15" VerticalOptions="Center" TextColor="#757575"/>
                     <Entry x:Name="SearchEntry" Grid.Column="1" Text="{Binding SearchQuery}"
                            Placeholder="{loc:Loc Key=SearchInMenu}"
                            FontFamily="CairoRegular" FontSize="13" VerticalOptions="Center"
-                           BackgroundColor="Transparent"/>
-                    <Label Grid.Column="2" Text="✕" FontSize="14" TextColor="#9E9E9E" VerticalOptions="Center">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnSearchIconTapped"/>
-                        </Label.GestureRecognizers>
-                    </Label>
+                           BackgroundColor="Transparent" TextColor="#212121"/>
                 </Grid>
             </Border>
         </Grid>
