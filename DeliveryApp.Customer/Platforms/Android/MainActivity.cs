@@ -4,7 +4,9 @@ using Android.Content.PM;
 using Android.OS;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using AndroidX.Core.View;
 using DeliveryApp.Customer.Platforms.Android;
+using DeliveryApp.Customer.Services;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.Firebase.CloudMessaging.Platforms.Android.Extensions;
 
@@ -28,6 +30,32 @@ namespace DeliveryApp.Customer
             CreateNotificationChannel();
             SetupLocalNotificationAction();
             RequestNotificationPermissionIfNeeded();
+            ObserveSystemBarInsets();
+        }
+
+        // ✅ FIX: تسجيل ارتفاع شريط الحالة (status bar) الحقيقي وقت الرن بدل رقم
+        // ثابت في الـ XAML. Android 15+ بيرسم المحتوى edge-to-edge (تحت شريط
+        // الحالة) بشكل إجباري، فمن غير القياس ده كانت الأيقونات فوق الغلاف
+        // بتتلزّق في الساعة/الشحن/الشبكة على أجهزة كتير.
+        void ObserveSystemBarInsets()
+        {
+            var decorView = Window?.DecorView;
+            if (decorView == null) return;
+
+            ViewCompat.SetOnApplyWindowInsetsListener(decorView, new SystemBarInsetsListener());
+        }
+
+        sealed class SystemBarInsetsListener : Java.Lang.Object, IOnApplyWindowInsetsListener
+        {
+            public WindowInsetsCompat OnApplyWindowInsets(global::Android.Views.View v, WindowInsetsCompat insets)
+            {
+                var systemBars = insets.GetInsets(WindowInsetsCompat.Type.SystemBars());
+                var density = v.Resources?.DisplayMetrics?.Density ?? 1f;
+                if (density > 0)
+                    SafeAreaService.TopInset = systemBars.Top / density;
+
+                return insets;
+            }
         }
 
         protected override void OnNewIntent(Intent? intent)
