@@ -53,7 +53,7 @@ public partial class RestaurantViewModel : BaseViewModel
                 ? c.Products
                 : c.Products.Where(p => p.Name.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
             if (items.Count > 0)
-                MenuGroups.Add(new Grouping<Category, Product>(c, items));
+                MenuGroups.Add(new RestaurantMenuGroup(c, items));
         }
 
         // ✅ FEATURE: نفس البحث دلوقتي شغال لتصميم السوبر ماركت/الصيدلية (شبكة
@@ -94,7 +94,7 @@ public partial class RestaurantViewModel : BaseViewModel
     /// وده كان بيخلي كل المنتجات (وصورها) في المطعم كله تترندر مرة واحدة
     /// من أول ما الصفحة تفتح حتى لو مش ظاهرة على الشاشة، وده أكبر سبب للتقل.
     /// </summary>
-    public ObservableCollection<Grouping<Category, Product>> MenuGroups { get; } = new();
+    public ObservableCollection<RestaurantMenuGroup> MenuGroups { get; } = new();
 
     public RestaurantViewModel(ApiService api, CartService cart, LocationService location)
     {

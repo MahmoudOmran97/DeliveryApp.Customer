@@ -1,5 +1,4 @@
 using DeliveryApp.Customer.Models;
-using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.ViewModels;
 
 namespace DeliveryApp.Customer.Views;
@@ -23,40 +22,20 @@ public partial class RestaurantPage : ContentPage
         InitializeComponent();
         BindingContext = vm;
 
-        // ✅ FIX (تصادم الأيقونات مع الساعة/الشحن/الشبكة): نظبط هوامش الشريط
-        // الثابت فوق أول ما الصفحة تتحمّل بأي قيمة إنسيت متاحة وقتها، وبعدين
-        // نعيد الضبط تاني أوتوماتيك أول ما القياس الحقيقي من المنصة يوصل.
-        ApplyTopSafeMargins();
-        SafeAreaService.TopInsetChanged += OnSafeAreaInsetChanged;
+        ApplyHeaderLayout();
     }
 
-    void OnSafeAreaInsetChanged(object? sender, EventArgs e)
-        => Dispatcher.Dispatch(ApplyTopSafeMargins);
-
-    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
-    {
-        base.OnNavigatedFrom(args);
-        SafeAreaService.TopInsetChanged -= OnSafeAreaInsetChanged;
-    }
-
-    // ✅ FIX: بدل الهامش الثابت (45) اللي كان متخمّن على قد شريط حالة "متوسط"،
-    // بنبني هوامش الشريط الثابت فوق دلوقتي على أساس ارتفاع شريط الحالة الحقيقي
-    // لجهاز المستخدم (SafeAreaService.TopInset)، فمفيش أي أيقونة بتتلزّق في
-    // الساعة/الشحن/الشبكة أو بتبان بعيدة أوي عنهم على أي جهاز.
-    const double IconGap = 12;     // مسافة الأيقونات تحت شريط الحالة
-    const double IconSize = 42;
-    const double BottomPadding = 12; // مسافة تحت صف الأيقونات قبل ما شريط الكاتوجريز يبدأ
+    // هيدر بموقع ثابت مثل بقية الصفحات؛ لا يعتمد على Safe Area أو Window Insets.
+    const double HeaderContentTop = 24;
+    const double IconSize = 38;
+    const double BottomPadding = 4;
 
     double _toolbarHeight = 92;
 
-    // ✅ FIX: مسافة بسيطة بين صف الأيقونات (رجوع/بحث/سلة) وشريط البحث لما يفتح،
-    // عشان يبان واضح إنه "نازل تحتهم" مش ملزّق فيهم.
-    const double SearchBarGap = 6;
+    // هيدر مختصر: مسافات صغيرة بين صف الأيقونات والبحث، مع فصل بسيط قبل المحتوى.
+    const double SearchBarGap = 2;
     const double SearchBarHeight = 42;
-    // ✅ FEATURE: مسافة تحت شريط البحث لما الخلفية بتتمد لتحته، عشان مايبقاش
-    // ملزّق في المحتوى اللي تحته.
-    const double SearchBarBottomGap = 14;
-
+    const double SearchBarBottomGap = 6;
     // ارتفاع الخلفية الثابتة فوق وهي متمدة عشان تغطي شريط البحث لما يكون فاتح.
     double _searchExpandedToolbarHeight = 92;
 
@@ -75,39 +54,43 @@ public partial class RestaurantPage : ContentPage
 
     void RepositionCurrentGroupBar()
     {
-        // لما شريط الأقسام العايم (StickyCategoriesBar) ظاهر، عنوان القسم بيبان
-        // تحته. لو لسه مش ظاهر (يعني لسه في أول الصفحة)، بيبان تحت التولبار على طول.
-        var baseTop = StickyCategoriesBar.IsVisible ? _toolbarHeight + _stickyCategoriesBarHeight : _toolbarHeight;
+        // شريط الأقسام وعنوان القسم أصبحا في صف المحتوى أسفل الهيدر.
+        // لذلك لا نضيف ارتفاع الهيدر مرة أخرى إلى هوامشهما.
+        var baseTop = StickyCategoriesBar.IsVisible
+            ? _stickyCategoriesBarHeight
+            : 0;
         CurrentGroupBar.Margin = new Thickness(0, baseTop, 0, 0);
     }
 
-    void ApplyTopSafeMargins()
+    void ApplyHeaderLayout()
     {
-        var inset = SafeAreaService.TopInset;
-        var rowTop = inset + IconGap;
+        var rowTop = HeaderContentTop;
 
         BackButtonImage.Margin = new Thickness(16, rowTop, 0, 0);
         CartIconGrid.Margin = new Thickness(0, rowTop, 16, 0);
+        RestaurantNameHeaderLabel.Margin = new Thickness(60, rowTop + 10, 60, 0);
 
         _toolbarHeight = rowTop + IconSize + BottomPadding;
-        if (!IsSearchCurrentlyActive())
-            ToolbarBackgroundFill.HeightRequest = _toolbarHeight;
 
-        // ✅ FIX (كان بيغطي على زرار الرجوع/السلة): شريط البحث دلوقتي بيبدأ من
-        // تحت صف الأيقونات مباشرة (رجوع/بحث/سلة) بدل ما يكون في نفس ارتفاعهم،
-        // فلما يفتح بينزل تحتهم بدل ما يتراكب فوقهم.
-        // ✅ FIX: بيمتد بعرض الشاشة بالكامل (Margin أفقي = 0) بدل ما يكون فيه
-        // فراغ جانبي — بيبدأ بالظبط من تحت زرار الرجوع لحد تحت زرار السلة.
+        // شريط البحث جزء ثابت من الهيدر: يبدأ بعد صف الأيقونات ويحافظ على
+        // هامش جانبي واضح، فلا يلامس الشاشة ولا يتداخل مع الرجوع أو السلة.
         var searchBarTop = rowTop + IconSize + SearchBarGap;
-        SearchBarBorder.Margin = new Thickness(0, searchBarTop, 0, 0);
+        SearchBarBorder.Margin = new Thickness(16, searchBarTop, 16, 0);
 
         // ✅ FEATURE: لما شريط البحث يفتح، خلفية الشريط الثابت فوق (اللي بتغطي
         // من تحت زرار الرجوع لحد زرار السلة أفقيًا) لازم تتمد لتحت كمان عشان
         // تحضن شريط البحث بدل ما يفضل عايم من غير خلفية وراه.
         _searchExpandedToolbarHeight = searchBarTop + SearchBarHeight + SearchBarBottomGap;
 
-        // الشريط العايم (Sticky) لازم يبدأ بالظبط من تحت الشريط الثابت فوق.
-        StickyCategoriesBar.Margin = new Thickness(0, _toolbarHeight, 0, 0);
+        // تظل خلفية الهيدر مرئية أثناء كل التمرير، وتشمل الأيقونات والبحث معًا.
+        ToolbarBackgroundFill.HeightRequest = _searchExpandedToolbarHeight;
+        ToolbarBackgroundFill.Opacity = 1;
+
+        // الغلاف وشريط الأقسام داخل الصف الثاني؛ يبدأان تلقائيًا بعد الهيدر بلا
+        // Margin علوي أو تداخل معه.
+        RestaurantCover.Margin = new Thickness(0);
+        GroceryCover.Margin = new Thickness(0, 0, 0, -20);
+        StickyCategoriesBar.Margin = new Thickness(0);
     }
 
     bool IsSearchCurrentlyActive() => BindingContext is RestaurantViewModel vm && vm.IsSearchActive;
@@ -143,11 +126,8 @@ public partial class RestaurantPage : ContentPage
             {
                 _isSticky = shouldStick;
 
-                // ✅ FIX: لو شريط البحث فاتح، منسيبش سكرول الصفحة يظهر النسخة العايمة
-                // فوق شريط البحث (كانت هي سبب مشكلة التسريب البصري). بنسجّل الحالة
-                // بس (_isSticky) ونطبّقها فعليًا لما البحث يتقفل.
-                if (!IsSearchCurrentlyActive())
-                    StickyCategoriesBar.IsVisible = shouldStick;
+                // تظهر الأقسام فور الوصول لموضعها وتبقى أسفل الهيدر للعودة السريعة.
+                StickyCategoriesBar.IsVisible = shouldStick;
             }
         }
 
@@ -160,7 +140,8 @@ public partial class RestaurantPage : ContentPage
     void OnGroceryInfoCardSizeChanged(object? sender, EventArgs e)
     {
         if (sender is not VisualElement view) return;
-        if (view.Height > 0) _groceryStickyOffsetY = 220 + view.Height;
+        if (view.Height > 0)
+            _groceryStickyOffsetY = 220 + view.Height;
     }
 
     // ScrollView.Scrolled بيرجّع ScrolledEventArgs بتاعة الـ ScrollY (مش VerticalOffset
@@ -177,8 +158,7 @@ public partial class RestaurantPage : ContentPage
 
         _isGroceryStuck = shouldStick;
 
-        if (BindingContext is RestaurantViewModel vm && vm.IsSearchActive) return;
-
+        // تبقى الأقسام ثابتة أسفل الهيدر حتى مع وجود شريط البحث.
         StickyCategoriesBar.IsVisible = shouldStick;
     }
 
@@ -192,18 +172,10 @@ public partial class RestaurantPage : ContentPage
 
     void UpdateToolbarBackground(double offset)
     {
-        // ✅ FIX: لما شريط البحث فاتح، الخلفية لازم تفضل ظاهرة بالكامل (بتتحكم
-        // فيها OnSearchIconTapped)، فمنسيبش سكرول الخلفية اللي تحتها (لو حصل
-        // مصادفة) يغيّر شفافيتها.
-        if (IsSearchCurrentlyActive()) return;
-
-        var threshold = _categoryBarOffsetY > 0 ? _categoryBarOffsetY
-                       : _groceryStickyOffsetY > 0 ? _groceryStickyOffsetY
-                       : 220;
-
-        var fadeStart = Math.Max(0, threshold - ToolbarFadeDistance);
-        var t = Math.Clamp((offset - fadeStart) / ToolbarFadeDistance, 0, 1);
-        ToolbarBackgroundFill.Opacity = t * (2 - t); // ease-out بسيط لسلاسة بصرية أكتر
+        // الهيدر له خلفية ثابتة دائمًا؛ لا نجعله شفافًا أثناء التمرير حتى لا
+        // تبدو أيقونتا الرجوع والسلة ومربع البحث كأنها تتحرك فوق المحتوى بلا تنسيق.
+        ToolbarBackgroundFill.Opacity = 1;
+        ToolbarBackgroundFill.HeightRequest = _searchExpandedToolbarHeight;
     }
 
     // بنحدد اسم القسم (الكاتوجري) اللي منتجاته ظاهرة دلوقتي فوق الشاشة، عشان
@@ -215,32 +187,9 @@ public partial class RestaurantPage : ContentPage
     // طرح واحد من كل عداد قسم.
     void UpdateCurrentGroupLabel(int firstVisibleItemIndex)
     {
-        if (BindingContext is not RestaurantViewModel vm || vm.MenuGroups.Count == 0)
-        {
-            CurrentGroupBar.IsVisible = false;
-            return;
-        }
-
-        // ما نظهرش عنوان القسم لحد ما شريط الأقسام العايم نفسه يظهر (يعني اليوزر
-        // فعلاً نزل جوه قايمة المنتجات، مش لسه في الغلاف/الكارت اللي فوق).
-        if (!_isSticky || IsSearchCurrentlyActive() || firstVisibleItemIndex < 0)
-        {
-            CurrentGroupBar.IsVisible = false;
-            return;
-        }
-
-        var running = 0;
-        string? name = null;
-        foreach (var group in vm.MenuGroups)
-        {
-            running += group.Count;
-            if (firstVisibleItemIndex < running) { name = group.Key.Name; break; }
-        }
-        name ??= vm.MenuGroups[^1].Key.Name;
-
-        CurrentGroupNameLabel.Text = name;
-        RepositionCurrentGroupBar();
-        CurrentGroupBar.IsVisible = true;
+        // اسم القسم يظهر داخل قائمة المنتجات عبر GroupHeaderTemplate.
+        // لا نضيف شريط عنوان عائمًا آخر حتى لا يغطي المنتجات أو شريط الأقسام.
+        CurrentGroupBar.IsVisible = false;
     }
 
     // لما المستخدم يدوس على أيقونة القسم في الشريط العلوي (أي نسخة، الأصلية أو العايمة)،

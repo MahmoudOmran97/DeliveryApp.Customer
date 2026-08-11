@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using DeliveryApp.Customer.Models;
 
 namespace DeliveryApp.Customer.Helpers;
 
@@ -15,5 +16,19 @@ public class Grouping<TKey, TItem> : ObservableCollection<TItem>
     public Grouping(TKey key, IEnumerable<TItem> items) : base(items)
     {
         Key = key;
+    }
+}
+
+/// <summary>
+/// مجموعة منتجات صفحة المطعم مع اسم قسم صريح للربط في GroupHeaderTemplate.
+/// هذا يمنع ظهور شريط القسم فارغًا عند اختلاف سياق الـ Binding داخل CollectionView.
+/// </summary>
+public sealed class RestaurantMenuGroup : Grouping<Category, Product>
+{
+    public string SectionName => Key?.Name ?? string.Empty;
+
+    public RestaurantMenuGroup(Category category, IEnumerable<Product> products)
+        : base(category, products)
+    {
     }
 }

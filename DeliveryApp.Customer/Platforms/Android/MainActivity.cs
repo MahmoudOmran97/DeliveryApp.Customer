@@ -2,13 +2,14 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Graphics;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
 using AndroidX.Core.View;
 using DeliveryApp.Customer.Platforms.Android;
-using DeliveryApp.Customer.Services;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.Firebase.CloudMessaging.Platforms.Android.Extensions;
+using Color = Android.Graphics.Color;
 
 namespace DeliveryApp.Customer
 {
@@ -26,37 +27,23 @@ namespace DeliveryApp.Customer
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            // نلغي إطار النظام حول المحتوى: الخلفية ترسم حتى أعلى الشاشة خلف شريط
+            // الساعة والبطارية، وتُستخدم مواضع ثابتة لعناصر الهيدر داخل الصفحة.
+            if (Window != null)
+            {
+                // هاتان الدالتان مدعومتان في نسخة Android bindings بالمشروع.
+                // لا نعدّل SystemUiVisibility ولا contrast enforcement لأنهما غير متوافقين هنا.
+                WindowCompat.SetDecorFitsSystemWindows(Window, false);
+                Window.SetStatusBarColor(Color.Transparent);
+            }
+
             HandleIntent(Intent);
             CreateNotificationChannel();
             SetupLocalNotificationAction();
             RequestNotificationPermissionIfNeeded();
-            ObserveSystemBarInsets();
         }
 
-        // ✅ FIX: تسجيل ارتفاع شريط الحالة (status bar) الحقيقي وقت الرن بدل رقم
-        // ثابت في الـ XAML. Android 15+ بيرسم المحتوى edge-to-edge (تحت شريط
-        // الحالة) بشكل إجباري، فمن غير القياس ده كانت الأيقونات فوق الغلاف
-        // بتتلزّق في الساعة/الشحن/الشبكة على أجهزة كتير.
-        void ObserveSystemBarInsets()
-        {
-            var decorView = Window?.DecorView;
-            if (decorView == null) return;
-
-            ViewCompat.SetOnApplyWindowInsetsListener(decorView, new SystemBarInsetsListener());
-        }
-
-        sealed class SystemBarInsetsListener : Java.Lang.Object, IOnApplyWindowInsetsListener
-        {
-            public WindowInsetsCompat OnApplyWindowInsets(global::Android.Views.View v, WindowInsetsCompat insets)
-            {
-                var systemBars = insets.GetInsets(WindowInsetsCompat.Type.SystemBars());
-                var density = v.Resources?.DisplayMetrics?.Density ?? 1f;
-                if (density > 0)
-                    SafeAreaService.TopInset = systemBars.Top / density;
-
-                return insets;
-            }
-        }
 
         protected override void OnNewIntent(Intent? intent)
         {

@@ -9,6 +9,7 @@
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
 
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             xmlns:h="clr-namespace:DeliveryApp.Customer.Helpers"
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
 
              x:Class="DeliveryApp.Customer.Views.RestaurantPage"
@@ -31,10 +32,10 @@
                         Stroke="#FFD9C2" StrokeThickness="1" WidthRequest="60" HeightRequest="60"
                         HorizontalOptions="Center">
                     <Grid>
-                       
+
                         <Label Text="🍽️" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center"
                                IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
-                       
+
                         <ff:CachedImage Source="{Binding FullImageUrl}"
                                Aspect="AspectFill"
                                CacheDuration="7"
@@ -75,7 +76,7 @@
             </Border>
         </DataTemplate>
 
-       
+
         <DataTemplate x:Key="BestSellerTemplate" x:DataType="m:Product">
             <Border BackgroundColor="#FFF8F3" StrokeShape="RoundRectangle 20" Stroke="#FFD9C2"
                     StrokeThickness="1.2" WidthRequest="150" Margin="0,4,10,4" Padding="9,8">
@@ -105,7 +106,7 @@
                             <Label Text="🔥" FontSize="10"/>
                         </Border>
 
-                      
+
                         <Border BackgroundColor="White" StrokeShape="RoundRectangle 13" Stroke="#EEEEEE"
                                 HorizontalOptions="End" VerticalOptions="End" Margin="0,0,-4,-4"
                                 WidthRequest="35" HeightRequest="35"
@@ -120,7 +121,7 @@
                             </Image>
                         </Border>
                     </Grid>
-                  
+
                     <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="12" MaxLines="2"
                            LineBreakMode="TailTruncation" HeightRequest="40" VerticalTextAlignment="Start"/>
                     <Label Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="13" TextColor="#FF5722"/>
@@ -129,11 +130,12 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-   
-    <Grid RowDefinitions="Auto,*" BackgroundColor="White">
 
-       
-        <CollectionView x:Name="MenuCollectionView" Grid.Row="0" Grid.RowSpan="2"
+    <!-- في .NET MAUI 9 يجب إلغاء Safe Area على الـ Layout نفسه للوصول إلى edge-to-edge. -->
+    <Grid RowDefinitions="Auto,*" BackgroundColor="White" IgnoreSafeArea="True">
+
+
+        <CollectionView x:Name="MenuCollectionView" Grid.Row="1"
                         ItemsSource="{Binding MenuGroups}" IsGrouped="True" SelectionMode="None"
                         IsVisible="{Binding IsGroceryStoreLayout, Converter={StaticResource InvertBool}}"
                         Scrolled="OnContentScrolled">
@@ -142,9 +144,11 @@
                 <VerticalStackLayout Spacing="0"   >
 
                     <!-- ✅ Cover: بحواف ناعمة وتصميم احترافي -->
-                    <Border StrokeShape="RoundRectangle 0,0,32,32"  HeightRequest="240" >
+                    <!-- يبدأ الغلاف تحت الهيدر الثابت حتى لا تخفيه الخلفية -->
+                    <Border x:Name="RestaurantCover" StrokeShape="RoundRectangle 0,0,32,32"
+                            HeightRequest="240" Margin="0">
                         <Grid>
-                           
+
                             <Label Text="🖼️" FontSize="40" HorizontalOptions="Center" VerticalOptions="Center"
                                    Opacity="0.3" IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
                             <ff:CachedImage Source="{Binding Restaurant.FullCoverImageUrl}" Aspect="AspectFill"
@@ -152,7 +156,7 @@
                                    IsVisible="{Binding Restaurant.FullCoverImageUrl, Converter={StaticResource HasImage}}"/>
 
                             <!-- Overlay gradient for better text readability if needed -->
-                          
+
                         </Grid>
                     </Border>
 
@@ -169,7 +173,7 @@
                         </VerticalStackLayout>
                     </Border>
 
-                  
+
 
                     <Border BackgroundColor="White" StrokeShape="RoundRectangle 32,32,0,0"
 
@@ -219,7 +223,7 @@
                     <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
                                    Color="#FF5722" Margin="0,16"/>
 
-                  
+
                     <CollectionView x:Name="InlineCategoriesBar" 
                                 ItemsSource="{Binding Menu}" SelectionMode="None"
                                 IsVisible="{Binding Menu.Count, Converter={StaticResource IntToBool}}"
@@ -234,7 +238,7 @@
                          IsVisible="{Binding Menu.Count, Converter={StaticResource IntToBool}}"
                          Margin="16,4,16,0"/>
 
-                
+
                     <Border IsVisible="{Binding HasActivePrescriptionChat}" BackgroundColor="#FFF3E0"
                         StrokeShape="RoundRectangle 14" Stroke="#FFB74D" Margin="16,8,16,0"
                         Padding="16,14">
@@ -273,12 +277,15 @@
                 </VerticalStackLayout>
             </CollectionView.Header>
 
-           
+
             <CollectionView.GroupHeaderTemplate>
-                <DataTemplate>
-                    <Label Text="{Binding Key.Name}" FontFamily="CairoBold" FontSize="17"
-                           TextColor="#212121" BackgroundColor="#F8F9FA"
-                           Padding="16,18,16,2"/>
+                <DataTemplate x:DataType="h:RestaurantMenuGroup">
+                    <!-- شريط واضح باسم القسم داخل قائمة المنتجات قبل عناصره مباشرة -->
+                    <Border BackgroundColor="#FFF3EC" Stroke="#FFD9C2" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12" Margin="16,14,16,6" Padding="14,10">
+                        <Label Text="{Binding SectionName}" FontFamily="CairoBold" FontSize="16"
+                               TextColor="#212121" LineBreakMode="TailTruncation" MaxLines="1"/>
+                    </Border>
                 </DataTemplate>
             </CollectionView.GroupHeaderTemplate>
 
@@ -364,7 +371,7 @@
             </CollectionView.ItemTemplate>
 
             <CollectionView.Footer>
-              
+
                 <VerticalStackLayout Spacing="0">
                     <VerticalStackLayout Spacing="10" Margin="16,16,0,20"
                                           IsVisible="{Binding BestSellers.Count, Converter={StaticResource IntToBool}}">
@@ -379,13 +386,15 @@
 
         </CollectionView>
 
-       
-        <ScrollView x:Name="GroceryScrollView" Grid.Row="0" Grid.RowSpan="2"
+
+        <ScrollView x:Name="GroceryScrollView" Grid.Row="1"
                     IsVisible="{Binding IsGroceryStoreLayout}" Scrolled="OnGroceryScrolled">
             <VerticalStackLayout Spacing="0">
 
                 <!-- ✅ Cover: بحواف ناعمة وتصميم احترافي (للسوبر ماركت/الصيدلية) -->
-                <Border StrokeShape="RoundRectangle 0,0,32,32" Stroke="Transparent" HeightRequest="240" Margin="0,0,0,-20">
+                <!-- يبدأ الغلاف تحت الهيدر الثابت في تخطيط المتجر/الصيدلية أيضًا -->
+                <Border x:Name="GroceryCover" StrokeShape="RoundRectangle 0,0,32,32" Stroke="Transparent"
+                        HeightRequest="240" Margin="0,0,0,-20">
                     <Grid>
                         <Grid.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -412,7 +421,7 @@
                     </Grid>
                 </Border>
 
-               
+
                 <Border BackgroundColor="White" StrokeShape="RoundRectangle 32" Stroke="#FFD9C2"
                         StrokeThickness="1.5" WidthRequest="64" HeightRequest="64"
                         HorizontalOptions="End" Margin="0,-32,20,-32" ZIndex="1">
@@ -504,10 +513,10 @@
                     </VerticalStackLayout>
                 </Border>
 
-              
+
                 <VerticalStackLayout Spacing="10" Margin="16,10,16,4">
                     <Label Text="{loc:Loc Key=ShopByCategoryTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
-                 
+
                     <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Start"
                                 BindableLayout.ItemsSource="{Binding FilteredMenu}"
                                 BindableLayout.ItemTemplate="{StaticResource CategoryGridTemplate}"/>
@@ -517,7 +526,7 @@
                 <VerticalStackLayout Spacing="10" Margin="16,16,0,20"
                                       IsVisible="{Binding BestSellers.Count, Converter={StaticResource IntToBool}}">
                     <Label Text="{loc:Loc Key=BestSellersTitle}" FontFamily="CairoBold" FontSize="17" TextColor="#212121"/>
-                  
+
                     <CollectionView ItemsSource="{Binding BestSellers}" SelectionMode="None"
                                     ItemsLayout="HorizontalList" ItemTemplate="{StaticResource BestSellerTemplate}"
                                     HeightRequest="233" Margin="0,0,0,4"/>
@@ -528,28 +537,25 @@
             </VerticalStackLayout>
         </ScrollView>
 
-    
+
         <Border x:Name="StickyCategoriesBar"
-                Grid.Row="0" Grid.RowSpan="2"
+                Grid.Row="1"
                 VerticalOptions="Start" HorizontalOptions="Fill"
-                Margin="0,92,0,0"
+                Margin="0"
                 BackgroundColor="White" Stroke="Transparent"
                 StrokeShape="Rectangle"
                 IsVisible="False"
                 SizeChanged="OnStickyCategoriesBarSizeChanged">
-            <VerticalStackLayout Spacing="0">
-                <Label Text="{Binding Restaurant.Name}" FontFamily="CairoBold" FontSize="15"
-                       TextColor="#212121" Margin="16,10,16,0" MaxLines="1" LineBreakMode="TailTruncation"/>
-                <CollectionView ItemsSource="{Binding Menu}" SelectionMode="None"
-                                ItemsLayout="HorizontalList"
-                                ItemTemplate="{StaticResource CategoryChipTemplate}"
-                                HeightRequest="86" Margin="0,4,0,0"/>
-            </VerticalStackLayout>
+            <!-- يثبت هذا الشريط للأقسام فقط؛ اسم المطعم موجود في الهيدر بين الأيقونتين. -->
+            <CollectionView ItemsSource="{Binding Menu}" SelectionMode="None"
+                            ItemsLayout="HorizontalList"
+                            ItemTemplate="{StaticResource CategoryChipTemplate}"
+                            HeightRequest="82" Margin="0,2,0,2"/>
         </Border>
 
-       
+
         <Border x:Name="CurrentGroupBar"
-                Grid.Row="0" Grid.RowSpan="2"
+                Grid.Row="1"
                 VerticalOptions="Start" HorizontalOptions="Fill"
                 BackgroundColor="#F8F9FA" Stroke="Transparent"
                 StrokeShape="Rectangle"
@@ -558,33 +564,34 @@
                    TextColor="#212121" Padding="16,10,16,10" MaxLines="1" LineBreakMode="TailTruncation"/>
         </Border>
 
-       
-        <Grid x:Name="TopToolbarBar" Grid.Row="0" Grid.RowSpan="2" VerticalOptions="Start">
 
-            <!-- ✅ FIX: الشريط الثابت بلون التطبيق دايمًا (زي باقي الصفحات) -->
+        <!-- الهيدر صف مستقل يبدأ من أعلى الصفحة، وليس طبقة عائمة فوق المحتوى. -->
+        <Grid x:Name="TopToolbarBar" Grid.Row="0" VerticalOptions="Start" ZIndex="10">
+
+            <!-- خلفية هيدر كاملة الحواف مثل بقية الصفحات، من دون زوايا أو إطار. -->
             <Border x:Name="ToolbarBackgroundFill" Opacity="1" InputTransparent="True"
                     BackgroundColor="#FF5722" Stroke="Transparent" StrokeShape="Rectangle"
                     VerticalOptions="Start" Padding="0"/>
 
             <!-- ✅ FIX: زرار الرجوع -->
-            <Image x:Name="BackButtonImage" Source="icon_back.png" WidthRequest="42" HeightRequest="42"
+            <Image x:Name="BackButtonImage" Source="icon_back.png" WidthRequest="38" HeightRequest="38"
                    Margin="16,45,0,0" HorizontalOptions="Start" VerticalOptions="Start">
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
                 </Image.GestureRecognizers>
             </Image>
 
-            <!-- ✅ FEATURE: اسم المحل في النص بين الرجوع والسلة -->
+            <!-- اسم المطعم في منتصف الهيدر بين زر الرجوع والسلة -->
             <Label x:Name="RestaurantNameHeaderLabel"
                    Text="{Binding Restaurant.Name}"
-                   FontFamily="CairoBold" FontSize="16" TextColor="White"
+                   FontFamily="CairoBold" FontSize="14" TextColor="White"
                    HorizontalOptions="Center" VerticalOptions="Start"
-                   Margin="60,53,60,0" LineBreakMode="TailTruncation" MaxLines="1"/>
+                   Margin="60,8,60,0" LineBreakMode="TailTruncation" MaxLines="1"/>
 
-            <!-- ✅ FIX: السلة -->
+            <!-- أيقونة السلة -->
             <Grid x:Name="CartIconGrid" HorizontalOptions="End" VerticalOptions="Start" Margin="0,45,16,0">
-                <Border BackgroundColor="White" StrokeShape="RoundRectangle 21" Stroke="Transparent"
-                        WidthRequest="42" HeightRequest="42">
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 19" Stroke="Transparent"
+                        WidthRequest="38" HeightRequest="38">
                     <Border.Shadow>
                         <Shadow Brush="Black" Offset="0,2" Opacity="0.15" Radius="6"/>
                     </Border.Shadow>
@@ -602,10 +609,10 @@
                 </Border>
             </Grid>
 
-            <!-- ✅ FEATURE: شريط البحث مفتوح دايمًا وموسطن -->
+            <!-- شريط بحث ثابت داخل نفس الهيدر، مع هامش جانبي واضح -->
             <Border x:Name="SearchBarBorder" Opacity="1" Scale="1" InputTransparent="False"
                     BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="Transparent"
-                    Margin="16,93,16,0" Padding="12,0" HeightRequest="44"
+                    Margin="16,82,16,0" Padding="12,0" HeightRequest="42"
                     HorizontalOptions="Fill" VerticalOptions="Start">
                 <Border.Shadow>
                     <Shadow Brush="Black" Offset="0,2" Opacity="0.1" Radius="4"/>
