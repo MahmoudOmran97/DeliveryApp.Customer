@@ -43,8 +43,10 @@ public partial class RestaurantViewModel : BaseViewModel
 
     void ApplyMenuFilter()
     {
-        MenuGroups.Clear();
         var q = SearchQuery?.Trim();
+
+        // تصميم المطعم: بيفلتر MenuGroups (كاتيجوري + منتجاتها) زي ما كان
+        MenuGroups.Clear();
         foreach (var c in Menu)
         {
             var items = string.IsNullOrEmpty(q)
@@ -52,6 +54,19 @@ public partial class RestaurantViewModel : BaseViewModel
                 : c.Products.Where(p => p.Name.Contains(q, StringComparison.OrdinalIgnoreCase)).ToList();
             if (items.Count > 0)
                 MenuGroups.Add(new Grouping<Category, Product>(c, items));
+        }
+
+        // ✅ FEATURE: نفس البحث دلوقتي شغال لتصميم السوبر ماركت/الصيدلية (شبكة
+        // الأقسام) كمان — بيفلتر الأقسام اللي اسمها أو اسم أي منتج جواها بيطابق
+        // كلمة البحث، عشان اليوزر يقدر يدور على قسم أو منتج من غير ما يفتح كل قسم لوحده.
+        FilteredMenu.Clear();
+        foreach (var c in Menu)
+        {
+            var matches = string.IsNullOrEmpty(q)
+                || c.Name.Contains(q, StringComparison.OrdinalIgnoreCase)
+                || c.Products.Any(p => p.Name.Contains(q, StringComparison.OrdinalIgnoreCase));
+            if (matches)
+                FilteredMenu.Add(c);
         }
     }
 
@@ -66,6 +81,11 @@ public partial class RestaurantViewModel : BaseViewModel
     public ObservableCollection<Product> BestSellers { get; } = new();
 
     public ObservableCollection<Category> Menu { get; } = new();
+
+    /// <summary>نسخة مفلترة من Menu بتتفلتر بالبحث (اسم القسم أو اسم أي منتج جواه)
+    /// — دي اللي شبكة الأقسام بتاعة السوبر ماركت/الصيدلية بترتبط بيها بدل Menu
+    /// مباشرة، عشان زرار البحث يشتغل في التصميم ده كمان.</summary>
+    public ObservableCollection<Category> FilteredMenu { get; } = new();
 
     /// <summary>
     /// نفس الـ Menu بس متلفوفة كـ Grouping عشان CollectionView واحد بس
@@ -119,6 +139,7 @@ public partial class RestaurantViewModel : BaseViewModel
             IsPharmacy = Restaurant?.StoreType.Equals("Pharmacy", StringComparison.OrdinalIgnoreCase) == true;
             Menu.Clear();
             MenuGroups.Clear();
+            FilteredMenu.Clear();
             BestSellers.Clear();
             foreach (var c in t2.Result ?? new())
                 Menu.Add(c);
@@ -126,15 +147,14 @@ public partial class RestaurantViewModel : BaseViewModel
             SearchQuery = "";
             ApplyMenuFilter();
 
-            // صف "الأفضل مبيعًا" بيتعرض بس لمحلات السوبر ماركت/الصيدلية (شبكة الأقسام)
-            if (IsGroceryStoreLayout)
-            {
-                var top = Menu.SelectMany(c => c.Products)
-                    .Where(p => p.IsBestSeller)
-                    .OrderByDescending(p => p.SalesCount)
-                    .Take(10);
-                foreach (var p in top) BestSellers.Add(p);
-            }
+            // ✅ FIX: صف "الأفضل مبيعًا" كان بيتعرض بس لمحلات السوبر ماركت/الصيدلية.
+            // دلوقتي بيتعرض لأي نوع محل (مطاعم/أكسسوارات وغيرها) طالما فيه منتجات
+            // متعلّمة IsBestSeller — بيتحط آخر حاجة في نهاية صفحة المحل.
+            var top = Menu.SelectMany(c => c.Products)
+                .Where(p => p.IsBestSeller)
+                .OrderByDescending(p => p.SalesCount)
+                .Take(10);
+            foreach (var p in top) BestSellers.Add(p);
 
             UpdateActivePrescriptionChat();
         }

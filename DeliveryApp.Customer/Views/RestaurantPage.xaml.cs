@@ -49,6 +49,10 @@ public partial class RestaurantPage : ContentPage
 
     double _toolbarHeight = 92;
 
+    // ✅ FIX: مسافة بسيطة بين صف الأيقونات (رجوع/بحث/سلة) وشريط البحث لما يفتح،
+    // عشان يبان واضح إنه "نازل تحتهم" مش ملزّق فيهم.
+    const double SearchBarGap = 6;
+
     void ApplyTopSafeMargins()
     {
         var inset = SafeAreaService.TopInset;
@@ -57,10 +61,15 @@ public partial class RestaurantPage : ContentPage
         BackButtonImage.Margin = new Thickness(16, rowTop, 0, 0);
         CartIconGrid.Margin = new Thickness(0, rowTop, 16, 0);
         SearchIconBorder.Margin = new Thickness(0, rowTop, 66, 0);
-        SearchBarBorder.Margin = new Thickness(16, rowTop, 16, 0);
 
         _toolbarHeight = rowTop + IconSize + BottomPadding;
         ToolbarBackgroundFill.HeightRequest = _toolbarHeight;
+
+        // ✅ FIX (كان بيغطي على زرار الرجوع/السلة): شريط البحث دلوقتي بيبدأ من
+        // تحت صف الأيقونات مباشرة (رجوع/بحث/سلة) بدل ما يكون في نفس ارتفاعهم،
+        // فلما يفتح بينزل تحتهم بدل ما يتراكب فوقهم.
+        var searchBarTop = rowTop + IconSize + SearchBarGap;
+        SearchBarBorder.Margin = new Thickness(16, searchBarTop, 16, 0);
 
         // الشريط العايم (Sticky) لازم يبدأ بالظبط من تحت الشريط الثابت فوق.
         StickyCategoriesBar.Margin = new Thickness(0, _toolbarHeight, 0, 0);
@@ -88,6 +97,12 @@ public partial class RestaurantPage : ContentPage
         if (shouldStick == _isSticky) return;
 
         _isSticky = shouldStick;
+
+        // ✅ FIX: لو شريط البحث فاتح، منسيبش سكرول الصفحة يظهر النسخة العايمة
+        // فوق شريط البحث (كانت هي سبب مشكلة التسريب البصري). بنسجّل الحالة
+        // بس (_isSticky) ونطبّقها فعليًا لما البحث يتقفل.
+        if (BindingContext is RestaurantViewModel vm && vm.IsSearchActive) return;
+
         StickyCategoriesBar.IsVisible = shouldStick;
     }
 
@@ -112,6 +127,9 @@ public partial class RestaurantPage : ContentPage
         if (shouldStick == _isGroceryStuck) return;
 
         _isGroceryStuck = shouldStick;
+
+        if (BindingContext is RestaurantViewModel vm && vm.IsSearchActive) return;
+
         StickyCategoriesBar.IsVisible = shouldStick;
     }
 
@@ -173,6 +191,14 @@ public partial class RestaurantPage : ContentPage
                 SearchBarBorder.InputTransparent = false;
                 SearchBarBorder.IsVisible = true;
 
+                // ✅ FIX (تسريب نص من ورا شريط البحث لما يتفتح والصفحة متعمّلها
+                // اسكرول): النسخة العايمة من اسم المحل/الأقسام (StickyCategoriesBar)
+                // بتبدأ من نفس نقطة بداية شريط البحث تقريبًا، فكان شريط البحث
+                // (ارتفاعه 42 بس) بيغطي أول جزء منها بس والباقي (اسم المحل/
+                // الأقسام) كان بيبان "طالع" من تحته أو حواليه. دلوقتي بنخفيها
+                // تمامًا طول ما شريط البحث فاتح، وبنرجعها زي ما كانت لما يتقفل.
+                StickyCategoriesBar.IsVisible = false;
+
                 await Task.WhenAll(
                     SearchBarBorder.FadeTo(1, 180, Easing.CubicOut),
                     SearchBarBorder.ScaleTo(1, 180, Easing.CubicOut),
@@ -193,6 +219,10 @@ public partial class RestaurantPage : ContentPage
 
                 SearchBarBorder.InputTransparent = true;
                 vm.ToggleSearchCommand.Execute(null);
+
+                // بعد ما شريط البحث يقفل، نرجّع النسخة العايمة تظهر تاني لو
+                // اليوزر كان أصلاً واصل لمكان الالتصاق (Sticky) وقت ما فتح البحث.
+                StickyCategoriesBar.IsVisible = _isSticky || _isGroceryStuck;
             }
         }
         finally
