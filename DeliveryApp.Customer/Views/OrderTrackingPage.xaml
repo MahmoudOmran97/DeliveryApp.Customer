@@ -96,7 +96,7 @@
                                    FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                         <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center" Spacing="3">
-                            <Label Text="🍳" FontSize="18" HorizontalOptions="Center"/>
+                            <Label Text="📦" FontSize="18" HorizontalOptions="Center"/>
                             <Label Text="{loc:Loc Key=Step_Prepare}"
                                    FontFamily="CairoRegular" FontSize="10" TextColor="#757575" HorizontalOptions="Center"/>
                         </VerticalStackLayout>

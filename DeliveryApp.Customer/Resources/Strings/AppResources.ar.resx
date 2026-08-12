@@ -335,13 +335,13 @@
 		<value>وصل</value>
 	</data>
 	<data name="Status_Pending">
-		<value>في انتظار موافقة المطعم ⏳</value>
+		<value>في انتظار قبول المحل ⏳</value>
 	</data>
 	<data name="Status_Accepted">
-		<value>تم قبول طلبك من المطعم ✓</value>
+		<value>تم قبول طلبك من المحل ✓</value>
 	</data>
 	<data name="Status_Preparing">
-		<value>جاري تحضير طعامك 🍳</value>
+		<value>جاري تجهيز طلبك 📦</value>
 	</data>
 	<data name="Status_ReadyForPickup">
 		<value>جاهز — المندوب في الطريق 📦</value>
@@ -350,7 +350,7 @@
 		<value>المندوب في طريقه إليك! 🛵</value>
 	</data>
 	<data name="Status_Delivered">
-		<value>تم التوصيل! بالهناء والشفاء 🎉</value>
+		<value>تم التوصيل! نتمنى أن تستمتع بطلبك 🎉</value>
 	</data>
 
 	<!-- Notifications -->
@@ -430,13 +430,13 @@
 		<value>عن التطبيق</value>
 	</data>
 	<data name="Status_Pending">
-		<value>في انتظار قبول المطعم ⏳</value>
+		<value>في انتظار قبول المحل ⏳</value>
 	</data>
 	<data name="Status_Accepted">
-		<value>المطعم قبل طلبك ✓</value>
+		<value>المحل قبل طلبك ✓</value>
 	</data>
 	<data name="Status_Preparing">
-		<value>جاري تحضير طعامك 🍳</value>
+		<value>جاري تجهيز طلبك 📦</value>
 	</data>
 	<data name="Status_ReadyForPickup">
 		<value>جاهز — المندوب في الطريق 📦</value>
@@ -445,7 +445,7 @@
 		<value>المندوب في الطريق! 🛵</value>
 	</data>
 	<data name="Status_Delivered">
-		<value>تم التوصيل! بالهنا والشفا 🎉</value>
+		<value>تم التوصيل! نتمنى أن تستمتع بطلبك 🎉</value>
 	</data>
 	<!-- Tracking Page -->
 	<data name="ETA">
@@ -458,7 +458,7 @@
 		<value>أنت</value>
 	</data>
 	<data name="LegendRestaurant">
-		<value>المطعم</value>
+		<value>المحل</value>
 	</data>
 	<data name="LegendDelivery">
 		<value>المندوب</value>
@@ -470,7 +470,7 @@
 		<value>قُبل</value>
 	</data>
 	<data name="Step_Prepare">
-		<value>يُحضَّر</value>
+		<value>يُجهَّز</value>
 	</data>
 	<data name="Step_OnRoute">
 		<value>في الطريق</value>

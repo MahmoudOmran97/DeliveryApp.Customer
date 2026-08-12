@@ -13,6 +13,7 @@ public partial class ProfileViewModel : BaseViewModel
 {
     readonly ApiService _api;
     readonly AuthService _auth;
+    readonly CartService _cart;
     readonly LoginPage _loginPage;
 
     [ObservableProperty] User? _user;
@@ -21,9 +22,9 @@ public partial class ProfileViewModel : BaseViewModel
     [ObservableProperty] string _editPhone = string.Empty;
     [ObservableProperty] string _editAddress = string.Empty;
 
-    public ProfileViewModel(ApiService api, AuthService auth, LoginPage loginPage)
+    public ProfileViewModel(ApiService api, AuthService auth, CartService cart, LoginPage loginPage)
     {
-        _api = api; _auth = auth; _loginPage = loginPage;
+        _api = api; _auth = auth; _cart = cart; _loginPage = loginPage;
     }
 
     [RelayCommand]
@@ -79,6 +80,7 @@ public partial class ProfileViewModel : BaseViewModel
         if (!await Shell.Current.DisplayAlert(
             LocalizationService.Get("Logout"), confirm,
             LocalizationService.Get("Ok"), LocalizationService.Get("Cancel"))) return;
+        _cart.Clear();
         _auth.Logout();
         Application.Current!.MainPage = new NavigationPage(_loginPage);
     }

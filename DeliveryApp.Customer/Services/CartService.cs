@@ -4,14 +4,21 @@ namespace DeliveryApp.Customer.Services;
 
 public class CartService
 {
+    private const string PrescriptionImageKey = "cart_prescription_image";
+    private const string PrescriptionNotesKey = "cart_prescription_notes";
+    private const string PrescriptionRequestIdKey = "cart_prescription_request_id";
+    private const string PrescriptionAgreedPriceKey = "cart_prescription_agreed_price";
+    private const string PrescriptionRestaurantIdKey = "cart_prescription_restaurant_id";
+    private const string PrescriptionDeliveryFeeKey = "cart_prescription_delivery_fee";
+
     private readonly List<CartItem> _items = new();
     private int? _restaurantId;
     private decimal _restaurantDeliveryFee = 15m;
+
+    public CartService() => RestorePrescription();
+
     public string? PrescriptionImageUrl { get; private set; }
     public string? PrescriptionNotes { get; private set; }
-
-    // ✅ لما العميل وصاحب الصيدلية يتفقوا على السعر عبر الشات، بنقفلهم هنا
-    // عشان الـ Checkout يستخدمهم بدل ما يبعت أوردر بسعر مجهول.
     public int? PrescriptionRequestId { get; private set; }
     public decimal? PrescriptionAgreedPrice { get; private set; }
 
@@ -80,22 +87,22 @@ public class CartService
 
         PrescriptionImageUrl = imageUrl;
         PrescriptionNotes = notes;
+        PersistPrescription();
         CartChanged?.Invoke();
     }
 
-    // ✅ بيتسجل من ساعة ما الطلب اتعمل (قبل ما يتحدد السعر) عشان لو العميل رجع
-    // لصفحة الصيدلية نقدر نوريله زرار "ارجع للمحادثة" بدل ما يبدأ من الأول.
     public void SetPrescriptionRequestId(int prescriptionRequestId)
     {
         PrescriptionRequestId = prescriptionRequestId;
+        PersistPrescription();
         CartChanged?.Invoke();
     }
 
-    // ✅ بعد ما العميل يوافق على سعر الروشتة في شات الصيدلية
     public void SetPrescriptionAgreedPrice(int prescriptionRequestId, decimal price)
     {
         PrescriptionRequestId = prescriptionRequestId;
         PrescriptionAgreedPrice = price;
+        PersistPrescription();
         CartChanged?.Invoke();
     }
 
@@ -105,6 +112,7 @@ public class CartService
         PrescriptionNotes = null;
         PrescriptionRequestId = null;
         PrescriptionAgreedPrice = null;
+        RemovePersistedPrescription();
         CartChanged?.Invoke();
     }
 
@@ -141,6 +149,50 @@ public class CartService
         PrescriptionNotes = null;
         PrescriptionRequestId = null;
         PrescriptionAgreedPrice = null;
+        RemovePersistedPrescription();
         CartChanged?.Invoke();
+    }
+
+    private void RestorePrescription()
+    {
+        var imageUrl = Preferences.Get(PrescriptionImageKey, string.Empty);
+        if (string.IsNullOrWhiteSpace(imageUrl)) return;
+
+        PrescriptionImageUrl = imageUrl;
+        PrescriptionNotes = Preferences.Get(PrescriptionNotesKey, string.Empty);
+
+        var restaurantId = Preferences.Get(PrescriptionRestaurantIdKey, 0);
+        _restaurantId = restaurantId > 0 ? restaurantId : null;
+        _restaurantDeliveryFee = (decimal)Preferences.Get(PrescriptionDeliveryFeeKey, 15d);
+
+        var requestId = Preferences.Get(PrescriptionRequestIdKey, 0);
+        PrescriptionRequestId = requestId > 0 ? requestId : null;
+
+        var agreedPrice = Preferences.Get(PrescriptionAgreedPriceKey, -1d);
+        PrescriptionAgreedPrice = agreedPrice >= 0 ? (decimal)agreedPrice : null;
+    }
+
+    private void PersistPrescription()
+    {
+        if (string.IsNullOrWhiteSpace(PrescriptionImageUrl)) return;
+
+        Preferences.Set(PrescriptionImageKey, PrescriptionImageUrl);
+        Preferences.Set(PrescriptionNotesKey, PrescriptionNotes ?? string.Empty);
+        Preferences.Set(PrescriptionRestaurantIdKey, _restaurantId ?? 0);
+        Preferences.Set(PrescriptionDeliveryFeeKey, (double)_restaurantDeliveryFee);
+        Preferences.Set(PrescriptionRequestIdKey, PrescriptionRequestId ?? 0);
+        Preferences.Set(PrescriptionAgreedPriceKey, PrescriptionAgreedPrice.HasValue
+            ? (double)PrescriptionAgreedPrice.Value
+            : -1d);
+    }
+
+    private static void RemovePersistedPrescription()
+    {
+        Preferences.Remove(PrescriptionImageKey);
+        Preferences.Remove(PrescriptionNotesKey);
+        Preferences.Remove(PrescriptionRequestIdKey);
+        Preferences.Remove(PrescriptionAgreedPriceKey);
+        Preferences.Remove(PrescriptionRestaurantIdKey);
+        Preferences.Remove(PrescriptionDeliveryFeeKey);
     }
 }
