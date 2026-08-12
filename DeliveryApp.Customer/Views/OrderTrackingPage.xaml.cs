@@ -239,6 +239,8 @@ public partial class OrderTrackingPage : ContentPage
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
+                    if (layerName == "DriverRouteLayer")
+                        _vm.UpdateDeliveryEta(durationS);
                     bool isAr = Services.LocalizationService.Current.TwoLetterISOLanguageName == "ar";
 
                     // ── المسافة ───────────────────────────────────────────────

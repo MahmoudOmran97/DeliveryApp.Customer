@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.Services;
+using Microsoft.Maui.ApplicationModel;
 
 namespace DeliveryApp.Customer.ViewModels;
 
@@ -17,6 +18,12 @@ public partial class OrderTrackingViewModel : BaseViewModel
     readonly ChatNotificationService _chatNotif;
 
     System.Timers.Timer? _timer;
+    System.Timers.Timer? _countdownTimer;
+    DateTime? _prepStartUtc;
+    DateTime? _prepTargetUtc;
+    DateTime? _deliveryStartUtc;
+    DateTime? _deliveryTargetUtc;
+    double _deliveryEstimateSeconds = 25 * 60;
 
     [ObservableProperty] int _orderId;
     [ObservableProperty] Order? _order;
@@ -25,6 +32,23 @@ public partial class OrderTrackingViewModel : BaseViewModel
     [ObservableProperty] double _driverLat;
     [ObservableProperty] double _driverLng;
     [ObservableProperty] bool _hasDriver;
+
+    [ObservableProperty] bool _isPrepTimerVisible;
+    [ObservableProperty] bool _isDeliveryTimerVisible;
+    [ObservableProperty] bool _isWaitingDriverVisible;
+    [ObservableProperty] string _prepCountdownText = "00:00";
+    [ObservableProperty] string _deliveryCountdownText = "00:00";
+    [ObservableProperty] string _prepTimerHint = string.Empty;
+    [ObservableProperty] string _deliveryTimerHint = string.Empty;
+    [ObservableProperty] string _waitingDriverText = string.Empty;
+    [ObservableProperty] double _prepTimerProgress;
+    [ObservableProperty] double _deliveryTimerProgress;
+
+    public bool HasCountdownPanel => IsPrepTimerVisible || IsDeliveryTimerVisible || IsWaitingDriverVisible;
+
+    partial void OnIsPrepTimerVisibleChanged(bool value) => OnPropertyChanged(nameof(HasCountdownPanel));
+    partial void OnIsDeliveryTimerVisibleChanged(bool value) => OnPropertyChanged(nameof(HasCountdownPanel));
+    partial void OnIsWaitingDriverVisibleChanged(bool value) => OnPropertyChanged(nameof(HasCountdownPanel));
 
     [ObservableProperty] double _customerLat;
     [ObservableProperty] double _customerLng;
@@ -76,6 +100,10 @@ public partial class OrderTrackingViewModel : BaseViewModel
         _timer = new System.Timers.Timer(10_000);
         _timer.Elapsed += (_, _) => _ = LoadAsync();
         _timer.Start();
+
+        _countdownTimer = new System.Timers.Timer(1_000);
+        _countdownTimer.Elapsed += (_, _) => MainThread.BeginInvokeOnMainThread(UpdateCountdowns);
+        _countdownTimer.Start();
     }
 
     [RelayCommand]
@@ -85,6 +113,8 @@ public partial class OrderTrackingViewModel : BaseViewModel
         if (Order == null) return;
 
         RefreshStatus();
+        ConfigureCountdown();
+        UpdateCountdowns();
 
         if (Order.DeliveryLatitude != 0 && Order.DeliveryLongitude != 0)
         {
@@ -178,10 +208,90 @@ public partial class OrderTrackingViewModel : BaseViewModel
         _                => (Order?.StatusText ?? "", 0.00)
     };
 
+    void ConfigureCountdown()
+    {
+        IsPrepTimerVisible = false;
+        IsDeliveryTimerVisible = false;
+        IsWaitingDriverVisible = false;
+
+        if (Order == null) return;
+
+        switch (Order.Status)
+        {
+            case "Accepted":
+            case "Preparing":
+                _prepStartUtc = Order.AcceptedAt ?? Order.CreatedAt;
+                var prepMinutes = Math.Clamp(Order.EstimatedDelivery ?? 25, 10, 90);
+                _prepTargetUtc = _prepStartUtc.Value.AddMinutes(prepMinutes);
+                PrepTimerHint = LocalizationService.Get("Timer_PreparingHint");
+                IsPrepTimerVisible = true;
+                break;
+
+            case "ReadyForPickup":
+                WaitingDriverText = LocalizationService.Get("Timer_WaitingDriver");
+                IsWaitingDriverVisible = true;
+                break;
+
+            case "OnTheWay":
+                _deliveryStartUtc ??= Order.PickedUpAt ?? DateTime.UtcNow;
+                _deliveryEstimateSeconds = Math.Max(10 * 60, (Order.EstimatedDelivery ?? 25) * 60);
+                _deliveryTargetUtc ??= _deliveryStartUtc.Value.AddSeconds(_deliveryEstimateSeconds);
+                DeliveryTimerHint = LocalizationService.Get("Timer_DeliveryHint");
+                IsDeliveryTimerVisible = true;
+                break;
+        }
+    }
+
+    void UpdateCountdowns()
+    {
+        if (Order == null) return;
+
+        var now = DateTime.UtcNow;
+        if (IsPrepTimerVisible && _prepStartUtc.HasValue && _prepTargetUtc.HasValue)
+        {
+            var total = Math.Max(1, (_prepTargetUtc.Value - _prepStartUtc.Value).TotalSeconds);
+            var remaining = Math.Max(0, (_prepTargetUtc.Value - now).TotalSeconds);
+            PrepCountdownText = FormatCountdown(remaining);
+            PrepTimerProgress = Math.Clamp(1 - remaining / total, 0, 1);
+        }
+
+        if (IsDeliveryTimerVisible && _deliveryTargetUtc.HasValue)
+        {
+            var start = _deliveryStartUtc ?? now;
+            var total = Math.Max(1, (_deliveryTargetUtc.Value - start).TotalSeconds);
+            var remaining = Math.Max(0, (_deliveryTargetUtc.Value - now).TotalSeconds);
+            DeliveryCountdownText = FormatCountdown(remaining);
+            DeliveryTimerProgress = Math.Clamp(1 - remaining / total, 0, 1);
+        }
+    }
+
+    public void UpdateDeliveryEta(double durationSeconds)
+    {
+        if (durationSeconds <= 0 || Order?.Status != "OnTheWay") return;
+
+        _deliveryEstimateSeconds = Math.Max(60, durationSeconds);
+        _deliveryStartUtc ??= Order.PickedUpAt ?? DateTime.UtcNow;
+        _deliveryTargetUtc = _deliveryStartUtc.Value.AddSeconds(_deliveryEstimateSeconds);
+        MainThread.BeginInvokeOnMainThread(UpdateCountdowns);
+    }
+
+    static string FormatCountdown(double seconds)
+    {
+        var total = Math.Max(0, (int)Math.Ceiling(seconds));
+        var hours = total / 3600;
+        var minutes = (total % 3600) / 60;
+        var secs = total % 60;
+        return hours > 0
+            ? $"{hours:00}:{minutes:00}:{secs:00}"
+            : $"{minutes:00}:{secs:00}";
+    }
+
     public void Cleanup()
     {
         _timer?.Stop();
         _timer?.Dispose();
+        _countdownTimer?.Stop();
+        _countdownTimer?.Dispose();
         _chatNotif.UnregisterOrder(OrderId);
     }
 }

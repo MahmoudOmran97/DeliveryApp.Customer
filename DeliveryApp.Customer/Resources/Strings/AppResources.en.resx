@@ -457,6 +457,29 @@
 	<data name="AiPowered">
 		<value>AI-powered · Always online</value>
 	</data>
+	<!-- Countdown Timer -->
+	<data name="Timer_PreparingTitle">
+		<value>Order preparation time</value>
+	</data>
+	<data name="Timer_DeliveryTitle">
+		<value>Driver arrival time</value>
+	</data>
+	<data name="Timer_WaitingTitle">
+		<value>Order ready for pickup</value>
+	</data>
+	<data name="Timer_PreparingHint">
+		<value>The store is preparing your order</value>
+	</data>
+	<data name="Timer_DeliveryHint">
+		<value>Estimated time to your address</value>
+	</data>
+	<data name="Timer_WaitingDriver">
+		<value>The countdown starts when the driver picks it up</value>
+	</data>
+	<data name="Timer_CountdownHint">
+		<value>Estimate updates automatically with order status</value>
+	</data>
+
 	<!-- Tracking Page -->
 	<data name="ETA">
 		<value>ETA</value>

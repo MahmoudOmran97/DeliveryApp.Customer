@@ -478,6 +478,29 @@
 	<data name="Step_Arrived">
 		<value>وصل</value>
 	</data>
+	<!-- Countdown Timer -->
+	<data name="Timer_PreparingTitle">
+		<value>وقت تجهيز الطلب</value>
+	</data>
+	<data name="Timer_DeliveryTitle">
+		<value>وقت وصول المندوب</value>
+	</data>
+	<data name="Timer_WaitingTitle">
+		<value>الطلب جاهز للاستلام</value>
+	</data>
+	<data name="Timer_PreparingHint">
+		<value>المحل يجهز طلبك الآن</value>
+	</data>
+	<data name="Timer_DeliveryHint">
+		<value>الوقت المتوقع حتى عنوانك</value>
+	</data>
+	<data name="Timer_WaitingDriver">
+		<value>سيبدأ العد عند استلام المندوب للطلب</value>
+	</data>
+	<data name="Timer_CountdownHint">
+		<value>الوقت تقديري ويتحدث تلقائياً مع حالة الطلب</value>
+	</data>
+
 	<!-- Support Chat -->
 	<data name="SupportChat">
 		<value>دردشة الدعم</value>
