@@ -132,7 +132,7 @@
 
 
     <!-- في .NET MAUI 9 يجب إلغاء Safe Area على الـ Layout نفسه للوصول إلى edge-to-edge. -->
-    <Grid RowDefinitions="Auto,*" BackgroundColor="White" IgnoreSafeArea="True">
+    <Grid RowDefinitions="Auto,*" BackgroundColor="{StaticResource Background}" IgnoreSafeArea="True">
 
 
         <CollectionView x:Name="MenuCollectionView" Grid.Row="1"
@@ -145,7 +145,7 @@
 
                     <!-- ✅ Cover: بحواف ناعمة وتصميم احترافي -->
                     <!-- يبدأ الغلاف تحت الهيدر الثابت حتى لا تخفيه الخلفية -->
-                    <Border x:Name="RestaurantCover" StrokeShape="RoundRectangle 0,0,32,32" Stroke="Black"
+                    <Border x:Name="RestaurantCover" StrokeShape="RoundRectangle 0,0,32,32" Stroke="Transparent"
                             HeightRequest="240" Margin="0" VerticalOptions="Start" >
                         <Grid>
 
@@ -393,7 +393,7 @@
 
                 <!-- ✅ Cover: بحواف ناعمة وتصميم احترافي (للسوبر ماركت/الصيدلية) -->
                 <!-- يبدأ الغلاف تحت الهيدر الثابت في تخطيط المتجر/الصيدلية أيضًا -->
-                <Border x:Name="GroceryCover" StrokeShape="RoundRectangle 0,0,32,32" Stroke="Black"
+                <Border x:Name="GroceryCover" StrokeShape="RoundRectangle 0,0,32,32" Stroke="Transparent"
                         HeightRequest="240" Margin="0,0,0,-20">
                     <Grid>
                         <Grid.Background>
@@ -557,7 +557,7 @@
         <Border x:Name="CurrentGroupBar"
                 Grid.Row="1"
                 VerticalOptions="Start" HorizontalOptions="Fill"
-                BackgroundColor="#F8F9FA" Stroke="Black"
+                BackgroundColor="#F8F9FA" Stroke="#E0E0E0"
                 StrokeShape="Rectangle"
                 IsVisible="False">
             <Label x:Name="CurrentGroupNameLabel" FontFamily="CairoBold" FontSize="17"
@@ -565,18 +565,11 @@
         </Border>
 
 
-        <!-- الهيدر صف مستقل يبدأ من أعلى الصفحة، وليس طبقة عائمة فوق المحتوى. -->
-        <!-- HeightRequest ثابت (140) عشان الخلفية والعناصر تتساوى بالظبط ومفيش أي فراغ أبيض حوالين الهيدر. -->
+        <!-- الهيدر مطابق لباقي صفحات التطبيق: خلفية صلبة بدون أي حدود أو بوردرات جانبية -->
         <Grid x:Name="TopToolbarBar" Grid.Row="0" 
-              HorizontalOptions="Fill" VerticalOptions="Start"  ZIndex="10">
-
-            <!-- خلفية هيدر كاملة الحواف مثل بقية الصفحات، من دون زوايا أو إطار. -->
-            <!-- ✅ FIX: كانت VerticalOptions="Start" من غير HeightRequest ولا محتوى، فكانت بترتفع لصفر
-                 وتسيب فراغ أبيض شكله زي بردر/استروك حوالين زر الرجوع والسيرش والسلة.
-                 دلوقتي بتتمدد Fill/Fill عشان تاخد كل مساحة الهيدر وتلتصق فوق، يمين، وشمال بدون أي حواف بيضا. -->
-            <Border x:Name="ToolbarBackgroundFill" InputTransparent="True"
-                    BackgroundColor="#FF5722"  StrokeShape="Rectangle"
-                    HorizontalOptions="Fill" VerticalOptions="Start" Margin="0" Padding="0"/>
+              BackgroundColor="#FF5722"
+              HorizontalOptions="Fill" VerticalOptions="Start"
+              Padding="0,0,0,16" ZIndex="10">
 
             <!-- ✅ FIX: زرار الرجوع -->
             <Image x:Name="BackButtonImage" Source="icon_back.png" WidthRequest="38" HeightRequest="38"
@@ -595,7 +588,7 @@
 
             <!-- أيقونة السلة -->
             <Grid x:Name="CartIconGrid" HorizontalOptions="End" VerticalOptions="Start" Margin="0,45,16,0">
-                <Border BackgroundColor="White" StrokeShape="RoundRectangle 19" Stroke="Black"
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 19" Stroke="{StaticResource Primary}" StrokeThickness="1.5"
                         WidthRequest="40" HeightRequest="40">
                     <Border.Shadow>
                         <Shadow Brush="Black" Offset="0,2" Opacity="0.15" Radius="6"/>
@@ -606,7 +599,7 @@
                         </Label.GestureRecognizers>
                     </Label>
                 </Border>
-                <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10" Stroke="Black"
+                <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10" Stroke="White"
                         IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
                         WidthRequest="18" HeightRequest="18" HorizontalOptions="End" VerticalOptions="Start">
                     <Label Text="{Binding CartCount}" FontSize="9" FontFamily="CairoBold"
@@ -616,7 +609,7 @@
 
             <!-- شريط بحث ثابت داخل نفس الهيدر، مع هامش جانبي واضح -->
             <Border x:Name="SearchBarBorder" Opacity="1" Scale="1" InputTransparent="False"
-                    BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="Black"
+                    BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E0E0E0"
                     Margin="16,82,16,0" Padding="12,0" HeightRequest="42"
                     HorizontalOptions="Fill" VerticalOptions="Start">
                 <Border.Shadow>

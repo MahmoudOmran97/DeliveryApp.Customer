@@ -16,9 +16,9 @@
 
     <Color x:Key="TextSecondary">#757575</Color>
 
-    <Color x:Key="Background">#F2F2F2</Color>
+    <Color x:Key="Background">#F5F5F5</Color>
 
-    <Color x:Key="CardBg">#F8F9FA</Color> <!-- Cream/Off-white for cards -->
+    <Color x:Key="CardBg">#FFFFFF</Color> <!-- White matching settings cards -->
 
     <Color x:Key="Divider">#E0E0E0</Color>
 

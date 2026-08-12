@@ -100,7 +100,8 @@
 
         <Setter Property="StrokeShape"     Value="RoundRectangle 16" />
 
-        <Setter Property="Stroke"          Value="Transparent" />
+        <Setter Property="Stroke"          Value="#E0E0E0" />
+        <Setter Property="StrokeThickness" Value="1" />
 
         <Setter Property="Padding"         Value="16" />
 

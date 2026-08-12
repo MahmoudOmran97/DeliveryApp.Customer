@@ -8,7 +8,7 @@
              x:Class="DeliveryApp.Customer.Views.CartPage"
              x:DataType="vm:CartViewModel"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="White">
+             BackgroundColor="{StaticResource Background}">
 
     <Grid RowDefinitions="Auto,*,Auto">
 

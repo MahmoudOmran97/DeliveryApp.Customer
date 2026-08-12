@@ -6,7 +6,7 @@
              x:Class="DeliveryApp.Customer.Views.AboutPage"
              x:DataType="vm:AboutViewModel"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="White">
+             BackgroundColor="{StaticResource Background}">
 
     <Grid RowDefinitions="Auto,*">
 

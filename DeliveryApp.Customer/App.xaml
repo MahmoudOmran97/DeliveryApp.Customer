@@ -40,10 +40,10 @@
             </ControlTemplate>
 
             <!-- Apply Template to all ContentPages globally -->
-            <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
-                <Setter Property="ControlTemplate" Value="{StaticResource GlobalPageTemplate}" />
-                <Setter Property="BackgroundColor" Value="White" />
-            </Style>
+    <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+        <Setter Property="ControlTemplate" Value="{StaticResource GlobalPageTemplate}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource Background}" />
+    </Style>
 
         </ResourceDictionary>
     </Application.Resources>

@@ -10,9 +10,9 @@
              x:Class="DeliveryApp.Customer.Views.CategoryPage"
              x:DataType="vm:CategoryViewModel"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="White">
+             BackgroundColor="{StaticResource Background}">
 
-    <Grid RowDefinitions="Auto,*" BackgroundColor="White">
+    <Grid RowDefinitions="Auto,*" BackgroundColor="{StaticResource Background}">
 
         <!-- ══════════════════════════════════════════════
              HEADER  (رجوع + عنوان + سيرش — نفس أسلوب الرئيسية)
@@ -34,7 +34,7 @@
 
             <!-- Row 2: مربع السيرش — نفس تصميم الرئيسية بالظبط -->
             <Border Grid.Row="2" BackgroundColor="White"
-                    StrokeShape="RoundRectangle 12" Stroke="Black" Padding="4,0">
+                    StrokeShape="RoundRectangle 12" Stroke="#E0E0E0" StrokeThickness="1" Padding="4,0">
                 <SearchBar Placeholder="{Binding SearchHint}"
                            Text="{Binding SearchText}"
                            SearchCommand="{Binding SearchCommand}"

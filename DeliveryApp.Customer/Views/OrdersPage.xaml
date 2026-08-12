@@ -8,7 +8,7 @@
              x:Class="DeliveryApp.Customer.Views.OrdersPage"
              x:DataType="vm:OrdersViewModel"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="White">
+             BackgroundColor="{StaticResource Background}">
 
     <Grid RowDefinitions="Auto,*,Auto">
 

@@ -11,7 +11,7 @@
              x:DataType="vm:HomeViewModel"
              Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="White">
+    <Grid RowDefinitions="Auto,*,Auto" BackgroundColor="{StaticResource Background}">
 
         <!-- ══════════════════════════════════════════════
              HEADER  (بسيط — موقع + سيرش فقط، مفيش chips)
@@ -73,7 +73,7 @@
                 <!-- Cart -->
                 <Grid Grid.Column="1" WidthRequest="44" HeightRequest="44">
                     <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
-                            Stroke="Black" WidthRequest="44" HeightRequest="44">
+                            Stroke="{StaticResource Primary}" StrokeThickness="1.5" WidthRequest="44" HeightRequest="44">
                         <Label Text="🛒" FontSize="22"
                                HorizontalOptions="Center" VerticalOptions="Center">
                             <Label.GestureRecognizers>
@@ -82,7 +82,7 @@
                         </Label>
                     </Border>
                     <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10"
-                            Stroke="Black"
+                            Stroke="White" StrokeThickness="1"
                             IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
                             WidthRequest="20" HeightRequest="20"
                             HorizontalOptions="End" VerticalOptions="Start">
@@ -95,7 +95,7 @@
 
             <!-- Search -->
             <Border Grid.Row="2" BackgroundColor="White"
-                    StrokeShape="RoundRectangle 12" Stroke="Black" Padding="4,0">
+                    StrokeShape="RoundRectangle 12" Stroke="#E0E0E0" StrokeThickness="1" Padding="4,0">
                 <SearchBar Placeholder="{Binding SearchHint}"
                            Text="{Binding SearchText}"
                            SearchCommand="{Binding SearchCommand}"

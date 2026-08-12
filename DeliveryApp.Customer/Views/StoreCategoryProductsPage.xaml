@@ -10,7 +10,7 @@
              x:Name="RootPage"
              x:DataType="vm:StoreCategoryProductsViewModel"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="White">
+             BackgroundColor="{StaticResource Background}">
 
     <ContentPage.Resources>
 
@@ -39,7 +39,7 @@
                 <Grid RowDefinitions="110,Auto,Auto,Auto" Padding="8">
 
                     <Grid Grid.Row="0">
-                        <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 10" Stroke="Black">
+                        <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 10" Stroke="#E0E0E0">
                             <Grid>
                                 <Label Text="🛒" FontSize="34" HorizontalOptions="Center" VerticalOptions="Center"
                                        IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
@@ -101,7 +101,7 @@
             <Label Grid.Column="1" Text="{Binding SelectedCategory.Name}" FontFamily="CairoBold" FontSize="18"
                    TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
             <Grid Grid.Column="2" VerticalOptions="Center">
-                <Border BackgroundColor="White" StrokeShape="RoundRectangle 20" Stroke="Black"
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 20" Stroke="{StaticResource Primary}" StrokeThickness="1.5"
                         WidthRequest="38" HeightRequest="38">
                     <Label Text="🛒" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center">
                         <Label.GestureRecognizers>
@@ -227,7 +227,7 @@
                                 <Border Style="{StaticResource Card}" WidthRequest="118" Margin="0,0,10,4" Padding="8">
                                     <VerticalStackLayout Spacing="4">
                                         <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 8"
-                                                Stroke="Black" HeightRequest="70">
+                                                Stroke="#E0E0E0" HeightRequest="70">
                                             <Grid>
                                                 <Label Text="🛒" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center"
                                                        IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>

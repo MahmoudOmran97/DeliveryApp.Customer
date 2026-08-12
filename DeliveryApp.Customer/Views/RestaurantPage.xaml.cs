@@ -83,8 +83,8 @@ public partial class RestaurantPage : ContentPage
         _searchExpandedToolbarHeight = searchBarTop + SearchBarHeight + SearchBarBottomGap;
 
         // تظل خلفية الهيدر مرئية أثناء كل التمرير، وتشمل الأيقونات والبحث معًا.
-        ToolbarBackgroundFill.HeightRequest = _searchExpandedToolbarHeight;
-        ToolbarBackgroundFill.Opacity = 1;
+        TopToolbarBar.HeightRequest = _searchExpandedToolbarHeight;
+        TopToolbarBar.Opacity = 1;
 
         // الغلاف وشريط الأقسام داخل الصف الثاني؛ يبدأان تلقائيًا بعد الهيدر بلا
         // Margin علوي أو تداخل معه.
@@ -174,8 +174,8 @@ public partial class RestaurantPage : ContentPage
     {
         // الهيدر له خلفية ثابتة دائمًا؛ لا نجعله شفافًا أثناء التمرير حتى لا
         // تبدو أيقونتا الرجوع والسلة ومربع البحث كأنها تتحرك فوق المحتوى بلا تنسيق.
-        ToolbarBackgroundFill.Opacity = 1;
-        ToolbarBackgroundFill.HeightRequest = _searchExpandedToolbarHeight;
+        TopToolbarBar.Opacity = 1;
+        TopToolbarBar.HeightRequest = _searchExpandedToolbarHeight;
     }
 
     // بنحدد اسم القسم (الكاتوجري) اللي منتجاته ظاهرة دلوقتي فوق الشاشة، عشان
