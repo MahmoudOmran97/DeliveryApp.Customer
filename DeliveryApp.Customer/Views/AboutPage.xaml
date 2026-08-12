@@ -64,28 +64,52 @@
                     </Border>
                 </VerticalStackLayout>
 
-                <!-- Connect Section -->
+                <!-- Website & social links loaded from the API -->
                 <VerticalStackLayout Spacing="15">
                     <Label Text="{loc:Loc Key=About_Connect}" FontFamily="CairoBold" FontSize="18" TextColor="#212121"/>
-                    
-                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="15">
-                        <Border Grid.Column="0" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="10">
+
+                    <Border BackgroundColor="#FFF3EC" Stroke="#FFE0D1" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16" Padding="14,10">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="{Binding WebsiteUrl}"/>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Border WidthRequest="38" HeightRequest="38" BackgroundColor="#FF5722"
+                                    StrokeShape="RoundRectangle 12" Stroke="Transparent">
+                                <Label Text="↗" FontSize="22" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                <Label Text="{loc:Loc Key=About_Website}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+                                <Label Text="{Binding WebsiteUrl}" FontFamily="CairoRegular" FontSize="11" TextColor="#757575" MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="26" TextColor="#FF5722" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                        <Border Grid.Column="0" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://facebook.com/Taly"/>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="{Binding FacebookUrl}"/>
                             </Border.GestureRecognizers>
-                            <Label Text="FB" FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center" TextColor="#1877F2"/>
+                            <Label Text="FB" FontFamily="CairoBold" FontSize="15" HorizontalOptions="Center" TextColor="#1877F2"/>
                         </Border>
-                        <Border Grid.Column="1" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="10">
+                        <Border Grid.Column="1" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://instagram.com/Taly"/>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="{Binding InstagramUrl}"/>
                             </Border.GestureRecognizers>
-                            <Label Text="IG" FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center" TextColor="#E4405F"/>
+                            <Label Text="IG" FontFamily="CairoBold" FontSize="15" HorizontalOptions="Center" TextColor="#E4405F"/>
                         </Border>
-                        <Border Grid.Column="2" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="10">
+                        <Border Grid.Column="2" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://twitter.com/Taly"/>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="{Binding XUrl}"/>
                             </Border.GestureRecognizers>
-                            <Label Text="X" FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center" TextColor="Black"/>
+                            <Label Text="X" FontFamily="CairoBold" FontSize="15" HorizontalOptions="Center" TextColor="#111111"/>
+                        </Border>
+                        <Border Grid.Column="3" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="{Binding TikTokUrl}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="TT" FontFamily="CairoBold" FontSize="15" HorizontalOptions="Center" TextColor="#111111"/>
                         </Border>
                     </Grid>
                 </VerticalStackLayout>

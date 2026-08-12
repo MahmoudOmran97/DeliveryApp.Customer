@@ -86,19 +86,19 @@
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                     <HorizontalStackLayout Grid.Column="0" Spacing="12" VerticalOptions="Center">
                         <Border BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 8" Padding="12,6">
-                            <Label Text="−" FontSize="18">
-                                <Label.GestureRecognizers>
+                            <Image Source="icon_minus.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit">
+                                <Image.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding DecreaseQtyCommand}"/>
-                                </Label.GestureRecognizers>
-                            </Label>
+                                </Image.GestureRecognizers>
+                            </Image>
                         </Border>
                         <Label Text="{Binding Quantity}" FontFamily="CairoBold" FontSize="18" VerticalOptions="Center"/>
-                        <Border BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 8" Padding="12,6">
-                            <Label Text="+" FontSize="18">
-                                <Label.GestureRecognizers>
+                        <Border BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 8" Padding="8">
+                            <Image Source="icon_plus.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit">
+                                <Image.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding IncreaseQtyCommand}"/>
-                                </Label.GestureRecognizers>
-                            </Label>
+                                </Image.GestureRecognizers>
+                            </Image>
                         </Border>
                     </HorizontalStackLayout>
 

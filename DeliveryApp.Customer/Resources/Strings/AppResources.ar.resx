@@ -299,9 +299,9 @@
 	<data name="RateOrder">
 		<value>قيّم طلبك</value>
 	</data>
-	<data name="RateRestaurant">
-		<value>المطعم (1 – 5)</value>
-	</data>
+		<data name="RateRestaurant">
+			<value>المحل (1 – 5)</value>
+		</data>
 	<data name="RateDriver">
 		<value>المندوب (1 – 5)</value>
 	</data>
@@ -979,6 +979,9 @@
 	<data name="About_Connect">
 		<value>تواصل معنا</value>
 	</data>
+	<data name="About_Website">
+		<value>موقعنا الإلكتروني</value>
+	</data>
 	<data name="About_FollowUs">
 		<value>تابعنا على منصات التواصل</value>
 	</data>
@@ -992,6 +995,6 @@
 		<value>الشروط والأحكام</value>
 	</data>
 	<data name="About_Developer">
-		<value>تم التطوير بواسطة فريق تالى</value>
+		<value>تم التطوير بواسطة فريق انجين كود</value>
 	</data>
 </root>

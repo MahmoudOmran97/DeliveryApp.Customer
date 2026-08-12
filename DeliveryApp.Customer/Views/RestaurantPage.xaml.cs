@@ -203,8 +203,11 @@ public partial class RestaurantPage : ContentPage
 
     // لما المستخدم يدوس على أيقونة القسم في الشريط العلوي (أي نسخة، الأصلية أو العايمة)،
     // بننزله لصف عنوان القسم نفسه داخل القائمة المسطحة، وليس لأول منتج في المجموعة.
-    void OnCategoryChipTapped(object? sender, TappedEventArgs e)
+    bool _isCategoryScrollRunning;
+
+    async void OnCategoryChipTapped(object? sender, TappedEventArgs e)
     {
+        if (_isCategoryScrollRunning) return;
         if (e.Parameter is not Category category) return;
         if (BindingContext is not RestaurantViewModel vm) return;
 
@@ -219,8 +222,26 @@ public partial class RestaurantPage : ContentPage
         }
         if (rowIndex < 0) return;
 
-        MenuCollectionView.ScrollTo(rowIndex, position: ScrollToPosition.Start, animate: true);
+        _isCategoryScrollRunning = true;
+        var chip = sender as VisualElement;
+        try
+        {
+            // تأثير ضغط خفيف يعطي إحساساً فورياً للنقرة قبل بدء انتقال القائمة.
+            if (chip != null)
+                await chip.ScaleTo(0.94, 70, Easing.CubicOut);
 
+            // نترك دورة الواجهة ترسم حالة الضغط أولاً، ثم نستخدم التمرير الأصلي
+            // المتحرك في CollectionView بدلاً من القفز المباشر.
+            await Task.Delay(45);
+            MenuCollectionView.ScrollTo(rowIndex, position: ScrollToPosition.Start, animate: true);
+            await Task.Delay(90);
+        }
+        finally
+        {
+            if (chip != null)
+                await chip.ScaleTo(1, 120, Easing.CubicOut);
+            _isCategoryScrollRunning = false;
+        }
     }
 
     // ✅ FIX (زرار البحث مش سلس): كان بيتحكم فيه بس بـ IsVisible Binding — يعني

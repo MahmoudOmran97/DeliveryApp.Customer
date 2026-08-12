@@ -300,9 +300,9 @@
 	<data name="RateOrder">
 		<value>Rate Your Order</value>
 	</data>
-	<data name="RateRestaurant">
-		<value>Restaurant (1 – 5)</value>
-	</data>
+		<data name="RateRestaurant">
+			<value>Store (1 – 5)</value>
+		</data>
 	<data name="RateDriver">
 		<value>Driver (1 – 5)</value>
 	</data>
@@ -1027,7 +1027,11 @@
 	<data name="About_Connect">
 		<value>Connect with Us</value>
 	</data>
-	<data name="About_FollowUs">
+			<data name="About_Website">
+			<value>Our Website</value>
+		</data>
+		<data name="About_FollowUs">
+
 		<value>Follow Us on Social Media</value>
 	</data>
 	<data name="About_VersionText">
@@ -1040,6 +1044,6 @@
 		<value>Terms and Conditions</value>
 	</data>
 	<data name="About_Developer">
-		<value>Developed by Taly Team</value>
+		<value>Developed by EngineeCode Team</value>
 	</data>
 </root>

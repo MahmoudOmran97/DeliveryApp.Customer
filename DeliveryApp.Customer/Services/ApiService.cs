@@ -189,6 +189,11 @@ public class ApiService
     public async Task ResetPasswordAsync(string email, string code, string newPassword)
         => await PostAsync<object>("auth/reset-password", new { Email = email, Code = code, NewPassword = newPassword });
 
+    // ─── Website & social links ───────────────────────────────────────────────
+
+    public Task<List<SiteLink>?> GetSiteLinksAsync()
+        => GetAsync<List<SiteLink>>("site-links");
+
     // ─── Restaurants ─────────────────────────────────────────────────────────
 
     /// <summary>
