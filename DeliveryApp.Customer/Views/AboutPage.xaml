@@ -87,29 +87,29 @@
                     </Border>
 
                     <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
-                        <Border Grid.Column="0" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8">
+                        <Border Grid.Column="0" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8" HeightRequest="46">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="{Binding FacebookUrl}"/>
                             </Border.GestureRecognizers>
-                            <Label Text="FB" FontFamily="CairoBold" FontSize="15" HorizontalOptions="Center" TextColor="#1877F2"/>
+                            <Image Source="icon_facebook.png" WidthRequest="28" HeightRequest="28" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
-                        <Border Grid.Column="1" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8">
+                        <Border Grid.Column="1" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8" HeightRequest="46">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="{Binding InstagramUrl}"/>
                             </Border.GestureRecognizers>
-                            <Label Text="IG" FontFamily="CairoBold" FontSize="15" HorizontalOptions="Center" TextColor="#E4405F"/>
+                            <Image Source="icon_instagram.png" WidthRequest="28" HeightRequest="28" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
-                        <Border Grid.Column="2" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8">
+                        <Border Grid.Column="2" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8" HeightRequest="46">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="{Binding XUrl}"/>
                             </Border.GestureRecognizers>
-                            <Label Text="X" FontFamily="CairoBold" FontSize="15" HorizontalOptions="Center" TextColor="#111111"/>
+                            <Image Source="icon_x.png" WidthRequest="28" HeightRequest="28" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
-                        <Border Grid.Column="3" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8">
+                        <Border Grid.Column="3" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="8" HeightRequest="46">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="{Binding TikTokUrl}"/>
                             </Border.GestureRecognizers>
-                            <Label Text="TT" FontFamily="CairoBold" FontSize="15" HorizontalOptions="Center" TextColor="#111111"/>
+                            <Image Source="icon_tiktok.png" WidthRequest="28" HeightRequest="28" Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
                     </Grid>
                 </VerticalStackLayout>

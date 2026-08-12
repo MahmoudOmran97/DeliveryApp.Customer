@@ -95,8 +95,8 @@ public partial class AboutViewModel : BaseViewModel
 
         var url = type switch
         {
-            "privacy" => $"{website}/privacy",
-            "terms" => $"{website}/terms",
+            "privacy" => $"{website}/Home/Privacy",
+            "terms" => $"{website}/Home/Terms",
             _ => website
         };
 
