@@ -9,6 +9,11 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
             <!-- Locale -->
             <converters:LocaleStrings x:Key="LocStrings" />
 
@@ -25,13 +30,7 @@
             <converters:IsOpenToColorConverter    x:Key="IsOpenColor" />
             <converters:IsReadToColorConverter    x:Key="IsReadColor" />
 
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
-                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-
             <!-- Global Page Template with Loading Overlay -->
-            <!-- We set BackgroundColor="Transparent" to ensure it doesn't override page backgrounds -->
             <ControlTemplate x:Key="GlobalPageTemplate">
                 <Grid BackgroundColor="Transparent">
                     <ContentPresenter />

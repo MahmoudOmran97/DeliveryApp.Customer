@@ -151,6 +151,9 @@
                 <!-- About Section -->
                 <Border BackgroundColor="White" StrokeShape="RoundRectangle 14"
                         Stroke="#E0E0E0" StrokeThickness="1" Padding="16,16">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenAboutCommand}"/>
+                    </Border.GestureRecognizers>
                     <HorizontalStackLayout Spacing="14">
                         <Border BackgroundColor="#FFF3EF" StrokeShape="RoundRectangle 10"
                                 Stroke="Transparent" WidthRequest="42" HeightRequest="42">
@@ -161,7 +164,7 @@
                                              HorizontalOptions="StartAndExpand">
                             <Label Text="{loc:Loc Key=AboutApp}" FontFamily="CairoBold"
                                    FontSize="14" TextColor="#212121"/>
-                            <Label Text="Version 1.0.0" FontFamily="CairoRegular"
+                            <Label Text="{loc:Loc Key=About_VersionText}" FontFamily="CairoRegular"
                                    FontSize="12" TextColor="#757575"/>
                         </VerticalStackLayout>
                         <Label Text="›" FontFamily="CairoBold" FontSize="24"

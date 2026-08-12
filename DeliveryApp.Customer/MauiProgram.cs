@@ -112,6 +112,7 @@ public static class MauiProgram
         builder.Services.AddTransient<CategoryViewModel>();
         builder.Services.AddTransient<StoreCategoryProductsViewModel>();
         builder.Services.AddTransient<CallViewModel>();
+        builder.Services.AddTransient<AboutViewModel>();
         // builder.Services.AddTransient<CallAudioService>();
 #if ANDROID
         builder.Services.AddSingleton<Services.Call.IAgoraCallService, Platforms.Android.AgoraCallServiceAndroid>();
@@ -154,6 +155,7 @@ builder.Services.AddSingleton<Services.Call.IAgoraCallService, Platforms.iOS.Ago
         builder.Services.AddTransient<CategoryPage>();
         builder.Services.AddTransient<StoreCategoryProductsPage>();
         builder.Services.AddTransient<CallPage>();
+        builder.Services.AddTransient<AboutPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

@@ -933,4 +933,41 @@
 	<data name="NoProductsFound">
 		<value>مفيش منتجات في القسم ده دلوقتي</value>
 	</data>
+	<!-- About App -->
+	<data name="Features">
+		<value>المميزات</value>
+	</data>
+	<data name="About_Desc">
+		<value>تطبيق "توصيلة" هو شريكك الأمثل لطلب الطعام والمستلزمات اليومية بأسرع وقت وأقل مجهود. نحن نربطك بأفضل المطاعم والمتاجر في منطقتك لضمان تجربة تسوق فريدة.</value>
+	</data>
+	<data name="About_Feature1">
+		<value>⚡ توصيل فائق السرعة لضمان وصول طلبك طازجاً.</value>
+	</data>
+	<data name="About_Feature2">
+		<value>🍔 تنوع هائل في المطاعم والمتاجر لتلبية كافة احتياجاتك.</value>
+	</data>
+	<data name="About_Feature3">
+		<value>💳 طرق دفع آمنة وسهلة تناسب الجميع.</value>
+	</data>
+	<data name="About_Feature4">
+		<value>📍 تتبع مباشر لطلبك من لحظة الخروج وحتى باب منزلك.</value>
+	</data>
+	<data name="About_Connect">
+		<value>تواصل معنا</value>
+	</data>
+	<data name="About_FollowUs">
+		<value>تابعنا على منصات التواصل</value>
+	</data>
+	<data name="About_VersionText">
+		<value>الإصدار 1.0.0</value>
+	</data>
+	<data name="About_PrivacyPolicy">
+		<value>سياسة الخصوصية</value>
+	</data>
+	<data name="About_Terms">
+		<value>الشروط والأحكام</value>
+	</data>
+	<data name="About_Developer">
+		<value>تم التطوير بواسطة فريق توصيلة</value>
+	</data>
 </root>

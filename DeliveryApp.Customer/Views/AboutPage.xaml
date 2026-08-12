@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             x:Class="DeliveryApp.Customer.Views.AboutPage"
+             x:DataType="vm:AboutViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Padding="16,52,16,12" ColumnDefinitions="44,*">
+            <ImageButton Grid.Column="0"
+                         Source="icon_back.png"
+                         WidthRequest="38" HeightRequest="38"
+                         BackgroundColor="Transparent"
+                         VerticalOptions="Center"
+                         Command="{Binding GoBackCommand}"/>
+            <Label Grid.Column="1" 
+                   Text="{loc:Loc Key=AboutApp}" 
+                   FontFamily="CairoBold" FontSize="22"
+                   TextColor="#212121" 
+                   HorizontalOptions="Center" VerticalOptions="Center"
+                   Margin="0,0,44,0"/>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20,10,20,30" Spacing="24">
+
+                <!-- App Logo & Version -->
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Border BackgroundColor="#FF5722" StrokeShape="RoundRectangle 30"
+                            WidthRequest="100" HeightRequest="100" Padding="15">
+                        <Image Source="logo_en.png" Aspect="AspectFit"/>
+                    </Border>
+                    <Label Text="{loc:Loc Key=AppName}" FontFamily="CairoBold" FontSize="24" 
+                           TextColor="#FF5722" HorizontalOptions="Center"/>
+                    <Label Text="{loc:Loc Key=About_VersionText}" FontFamily="CairoRegular" FontSize="14" 
+                           TextColor="#757575" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <!-- Description -->
+                <Label Text="{loc:Loc Key=About_Desc}" 
+                       FontFamily="CairoRegular" FontSize="15" 
+                       TextColor="#424242" LineHeight="1.6"
+                       HorizontalTextAlignment="Center"/>
+
+                <!-- Features -->
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="{loc:Loc Key=Features}" FontFamily="CairoBold" FontSize="18" TextColor="#212121"/>
+                    
+                    <Border BackgroundColor="#FFF9F0" Padding="16" StrokeShape="RoundRectangle 16" Stroke="Transparent">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="{loc:Loc Key=About_Feature1}" FontFamily="CairoRegular" FontSize="14" TextColor="#424242"/>
+                            <BoxView Color="#E0E0E0" HeightRequest="1" Opacity="0.5"/>
+                            <Label Text="{loc:Loc Key=About_Feature2}" FontFamily="CairoRegular" FontSize="14" TextColor="#424242"/>
+                            <BoxView Color="#E0E0E0" HeightRequest="1" Opacity="0.5"/>
+                            <Label Text="{loc:Loc Key=About_Feature3}" FontFamily="CairoRegular" FontSize="14" TextColor="#424242"/>
+                            <BoxView Color="#E0E0E0" HeightRequest="1" Opacity="0.5"/>
+                            <Label Text="{loc:Loc Key=About_Feature4}" FontFamily="CairoRegular" FontSize="14" TextColor="#424242"/>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Connect Section -->
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="{loc:Loc Key=About_Connect}" FontFamily="CairoBold" FontSize="18" TextColor="#212121"/>
+                    
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="15">
+                        <Border Grid.Column="0" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://facebook.com/tawseela"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="FB" FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center" TextColor="#1877F2"/>
+                        </Border>
+                        <Border Grid.Column="1" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://instagram.com/tawseela"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="IG" FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center" TextColor="#E4405F"/>
+                        </Border>
+                        <Border Grid.Column="2" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://twitter.com/tawseela"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="X" FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center" TextColor="Black"/>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+
+                <!-- Legal Links -->
+                <HorizontalStackLayout Spacing="20" HorizontalOptions="Center" Margin="0,10,0,0">
+                    <Label Text="{loc:Loc Key=About_PrivacyPolicy}" TextColor="#FF5722" FontFamily="CairoBold" FontSize="13" TextDecorations="Underline">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenLegalCommand}" CommandParameter="privacy"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label Text="|" TextColor="#E0E0E0"/>
+                    <Label Text="{loc:Loc Key=About_Terms}" TextColor="#FF5722" FontFamily="CairoBold" FontSize="13" TextDecorations="Underline">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenLegalCommand}" CommandParameter="terms"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+
+                <!-- Footer -->
+                <Label Text="{loc:Loc Key=About_Developer}" 
+                       FontFamily="CairoRegular" FontSize="12" 
+                       TextColor="#BDBDBD" HorizontalOptions="Center" Margin="0,10,0,0"/>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

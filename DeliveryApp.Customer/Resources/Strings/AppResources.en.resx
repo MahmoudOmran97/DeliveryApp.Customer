@@ -981,4 +981,41 @@
 	<data name="NoProductsFound">
 		<value>No products in this category right now</value>
 	</data>
+	<!-- About App -->
+	<data name="Features">
+		<value>Features</value>
+	</data>
+	<data name="About_Desc">
+		<value>"Tawseela" is your ultimate partner for ordering food and daily essentials with maximum speed and minimum effort. We connect you with the best restaurants and stores in your area to ensure a unique shopping experience.</value>
+	</data>
+	<data name="About_Feature1">
+		<value>⚡ Ultra-fast delivery to ensure your order arrives fresh.</value>
+	</data>
+	<data name="About_Feature2">
+		<value>🍔 Huge variety of restaurants and stores to meet all your needs.</value>
+	</data>
+	<data name="About_Feature3">
+		<value>💳 Secure and easy payment methods for everyone.</value>
+	</data>
+	<data name="About_Feature4">
+		<value>📍 Live tracking of your order from pickup to your doorstep.</value>
+	</data>
+	<data name="About_Connect">
+		<value>Connect with Us</value>
+	</data>
+	<data name="About_FollowUs">
+		<value>Follow Us on Social Media</value>
+	</data>
+	<data name="About_VersionText">
+		<value>Version 1.0.0</value>
+	</data>
+	<data name="About_PrivacyPolicy">
+		<value>Privacy Policy</value>
+	</data>
+	<data name="About_Terms">
+		<value>Terms and Conditions</value>
+	</data>
+	<data name="About_Developer">
+		<value>Developed by Tawseela Team</value>
+	</data>
 </root>

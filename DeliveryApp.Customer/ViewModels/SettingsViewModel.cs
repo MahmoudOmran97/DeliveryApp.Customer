@@ -75,4 +75,13 @@ public partial class SettingsViewModel : BaseViewModel
     {
         await Shell.Current.GoToAsync(nameof(ComplaintsPage));
     }
+
+    [RelayCommand]
+    async Task OpenAbout()
+    {
+        IsBusy = true;
+        await Task.Yield();
+        try { await Shell.Current.GoToAsync(nameof(AboutPage)); }
+        finally { IsBusy = false; }
+    }
 }
