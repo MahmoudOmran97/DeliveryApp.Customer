@@ -1,5 +1,6 @@
 using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.ViewModels;
+using Microsoft.Maui.Platform;
 
 namespace DeliveryApp.Customer.Views;
 
@@ -35,7 +36,7 @@ public partial class RestaurantPage : ContentPage
     // هيدر مختصر: مسافات صغيرة بين صف الأيقونات والبحث، مع فصل بسيط قبل المحتوى.
     const double SearchBarGap = 2;
     const double SearchBarHeight = 42;
-    const double SearchBarBottomGap = 6;
+    const double SearchBarBottomGap = 0;
     // ارتفاع الخلفية الثابتة فوق وهي متمدة عشان تغطي شريط البحث لما يكون فاتح.
     double _searchExpandedToolbarHeight = 92;
 
@@ -56,15 +57,20 @@ public partial class RestaurantPage : ContentPage
     {
         // شريط الأقسام وعنوان القسم أصبحا في صف المحتوى أسفل الهيدر.
         // لذلك لا نضيف ارتفاع الهيدر مرة أخرى إلى هوامشهما.
+        // تم استخدام الهامش السالب لرفع الشريط تحت البانر مع تعويض المساحة داخليًا بالـ Padding.
+        const double overlap = 24;
         var baseTop = StickyCategoriesBar.IsVisible
             ? _stickyCategoriesBarHeight
             : 0;
-        CurrentGroupBar.Margin = new Thickness(0, baseTop, 0, 0);
+
+        StickyCategoriesBar.Margin = new Thickness(0, -overlap, 0, 0);
+        CurrentGroupBar.Margin = new Thickness(0, baseTop - overlap, 0, 0);
     }
 
     void ApplyHeaderLayout()
     {
         var rowTop = HeaderContentTop;
+        const double overlap = 24; // مقدار التداخل بين البانر والغلاف
 
         BackButtonImage.Margin = new Thickness(16, rowTop, 0, 0);
         CartIconGrid.Margin = new Thickness(0, rowTop, 16, 0);
@@ -80,14 +86,17 @@ public partial class RestaurantPage : ContentPage
         // ✅ FEATURE: لما شريط البحث يفتح، خلفية الشريط الثابت فوق (اللي بتغطي
         // من تحت زرار الرجوع لحد زرار السلة أفقيًا) لازم تتمد لتحت كمان عشان
         // تحضن شريط البحث بدل ما يفضل عايم من غير خلفية وراه.
-        _searchExpandedToolbarHeight = searchBarTop + SearchBarHeight + SearchBarBottomGap;
+        // تم إضافة overlap هنا لتطويل البانر ليغطي جزء من الغلاف.
+        _searchExpandedToolbarHeight = searchBarTop + SearchBarHeight + SearchBarBottomGap + overlap;
 
         // تظل خلفية الهيدر مرئية أثناء كل التمرير، وتشمل الأيقونات والبحث معًا.
         TopToolbarBar.HeightRequest = _searchExpandedToolbarHeight;
         TopToolbarBar.Opacity = 1;
 
-        // الغلاف وشريط الأقسام داخل الصف الثاني؛ يبدأان تلقائيًا بعد الهيدر بلا
-        // Margin علوي أو تداخل معه.
+        // الغلاف وشريط الأقسام داخل الصف الثاني؛ تم استخدام هامش سالب لرفعهم تحت البانر.
+        MenuCollectionView.Margin = new Thickness(0, -overlap, 0, 0);
+        GroceryScrollView.Margin = new Thickness(0, -overlap, 0, 0);
+
         RestaurantCover.Margin = new Thickness(0);
         GroceryCover.Margin = new Thickness(0, 0, 0, -20);
         StickyCategoriesBar.Margin = new Thickness(0);

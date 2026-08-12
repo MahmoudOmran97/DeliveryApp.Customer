@@ -28,8 +28,8 @@
                     <TapGestureRecognizer Tapped="OnCategoryChipTapped" CommandParameter="{Binding .}"/>
                 </VerticalStackLayout.GestureRecognizers>
 
-                <Border BackgroundColor="#FFF3EC" StrokeShape="RoundRectangle 30"
-                        Stroke="#FFD9C2" StrokeThickness="1" WidthRequest="60" HeightRequest="60"
+                <Border BackgroundColor="#FFF3EC" StrokeShape="RoundRectangle 14"
+                        Stroke="#EBD8C2" StrokeThickness="1.5" WidthRequest="60" HeightRequest="60"
                         HorizontalOptions="Center">
                     <Grid>
 
@@ -224,15 +224,24 @@
                                    Color="#FF5722" Margin="0,16"/>
 
 
-                    <CollectionView x:Name="InlineCategoriesBar" 
-                                ItemsSource="{Binding Menu}" SelectionMode="None"
-                                IsVisible="{Binding Menu.Count, Converter={StaticResource IntToBool}}"
-                                ItemsLayout="HorizontalList"
-                                ItemTemplate="{StaticResource CategoryChipTemplate}"
-                                HeightRequest="85" Margin="0,12,0,4"
-                             
-                                BackgroundColor="White" 
-                                SizeChanged="OnInlineCategoriesBarSizeChanged"/>
+                    <Border BackgroundColor="White" Stroke="Transparent" HeightRequest="150" Margin="0,15,0,10" Padding="0,35,0,0"
+                            IsVisible="{Binding Menu.Count, Converter={StaticResource IntToBool}}"
+                            SizeChanged="OnInlineCategoriesBarSizeChanged">
+                        <CollectionView x:Name="InlineCategoriesBar" 
+                                    ItemsSource="{Binding Menu}" SelectionMode="None"
+                                    ItemTemplate="{StaticResource CategoryChipTemplate}"
+                                    HeightRequest="110">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="0" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.Header>
+                                <BoxView WidthRequest="16" Color="Transparent"/>
+                            </CollectionView.Header>
+                            <CollectionView.Footer>
+                                <BoxView WidthRequest="16" Color="Transparent"/>
+                            </CollectionView.Footer>
+                        </CollectionView>
+                    </Border>
 
                     <BoxView HeightRequest="1" Color="#F0F0F0"
                          IsVisible="{Binding Menu.Count, Converter={StaticResource IntToBool}}"
@@ -544,13 +553,24 @@
                 Margin="0"
                 BackgroundColor="White" Stroke="Transparent"
                 StrokeShape="Rectangle"
+                HeightRequest="150"
+                Padding="0,35,0,0"
                 IsVisible="False"
                 SizeChanged="OnStickyCategoriesBarSizeChanged">
             <!-- يثبت هذا الشريط للأقسام فقط؛ اسم المطعم موجود في الهيدر بين الأيقونتين. -->
             <CollectionView ItemsSource="{Binding Menu}" SelectionMode="None"
-                            ItemsLayout="HorizontalList"
                             ItemTemplate="{StaticResource CategoryChipTemplate}"
-                            HeightRequest="82" Margin="0,2,0,2"/>
+                            HeightRequest="115" Margin="0">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="0" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.Header>
+                    <BoxView WidthRequest="16" Color="Transparent"/>
+                </CollectionView.Header>
+                <CollectionView.Footer>
+                    <BoxView WidthRequest="16" Color="Transparent"/>
+                </CollectionView.Footer>
+            </CollectionView>
         </Border>
 
 
@@ -569,7 +589,7 @@
         <Grid x:Name="TopToolbarBar" Grid.Row="0" 
               BackgroundColor="#FF5722"
               HorizontalOptions="Fill" VerticalOptions="Start"
-              Padding="0,0,0,16" ZIndex="10">
+              Padding="0" ZIndex="10">
 
             <!-- ✅ FIX: زرار الرجوع -->
             <Image x:Name="BackButtonImage" Source="icon_back.png" WidthRequest="38" HeightRequest="38"

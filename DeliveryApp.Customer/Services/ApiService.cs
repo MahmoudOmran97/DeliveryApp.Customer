@@ -370,6 +370,9 @@ public class ApiService
     public Task<Product?> GetProductAsync(int id)
         => GetAsync<Product>($"products/{id}");
 
+    public Task<List<Product>?> GetBestSellersAsync()
+        => GetAsync<List<Product>>("products/bestsellers");
+
     public async Task<RedeemPointsResult?> RedeemPointsAsync(int points)
     {
         try

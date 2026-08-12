@@ -83,6 +83,8 @@ public partial class HomeViewModel : BaseViewModel
     public bool IsCatAccessories => SelectedCategory == "Accessories";
 
     public ObservableCollection<Restaurant> Restaurants { get; } = new();
+    public ObservableCollection<Product> BestSellers { get; } = new();
+    public ObservableCollection<Deal> Deals { get; } = new();
 
     /// <summary>True when location is set but list is empty (after load)</summary>
     public bool HasNoResults => !IsBusy && HasLocation && Restaurants.Count == 0;
@@ -209,6 +211,17 @@ public partial class HomeViewModel : BaseViewModel
 
             Restaurants.Clear();
             foreach (var x in restaurantsTask.Result?.Data ?? new()) Restaurants.Add(x);
+
+            // Fetch Deals and Best Sellers for Home
+            var dealsTask = _api.GetDealsAsync();
+            var bestSellersTask = _api.GetBestSellersAsync(); // Or fetch top products if available
+            await Task.WhenAll(dealsTask, bestSellersTask);
+
+            Deals.Clear();
+            foreach (var d in dealsTask.Result ?? new()) Deals.Add(d);
+
+            BestSellers.Clear();
+            foreach (var p in bestSellersTask.Result ?? new()) BestSellers.Add(p);
         }
         finally { if (!silent) IsBusy = false; IsRefreshing = false; OnPropertyChanged(nameof(HasNoResults)); }
     }
@@ -311,6 +324,61 @@ public partial class HomeViewModel : BaseViewModel
         IsBusy = true;
         await Task.Yield();
         try { await Shell.Current.GoToAsync(nameof(Views.RewardsPage)); }
+        finally { IsBusy = false; }
+    }
+
+    [RelayCommand]
+    async Task AddDealToCart(Deal deal)
+    {
+        if (deal == null) return;
+        IsBusy = true;
+        try
+        {
+            if (deal.ProductId.HasValue && deal.RestaurantId.HasValue)
+            {
+                var product = await _api.GetProductAsync(deal.ProductId.Value);
+                if (product != null)
+                {
+                    if (product.HasVariants)
+                    {
+                        var json = Uri.EscapeDataString(System.Text.Json.JsonSerializer.Serialize(product));
+                        await Shell.Current.GoToAsync($"{nameof(Views.ProductOptionsPage)}?product={json}&restaurantId={deal.RestaurantId.Value}");
+                        return;
+                    }
+
+                    _cart.AddItem(
+                        restaurantId: deal.RestaurantId.Value,
+                        product: product,
+                        qty: 1,
+                        notes: deal.Title,
+                        unitPrice: deal.DiscountedPrice,
+                        dealId: deal.Id
+                    );
+                    await Shell.Current.GoToAsync("CartPage");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"AddDealToCart failed: {ex}");
+        }
+        finally { IsBusy = false; }
+    }
+
+    [RelayCommand]
+    async Task OpenProduct(Product product)
+    {
+        if (product == null) return;
+        IsBusy = true;
+        try
+        {
+            var json = Uri.EscapeDataString(System.Text.Json.JsonSerializer.Serialize(product));
+            await Shell.Current.GoToAsync($"{nameof(Views.ProductOptionsPage)}?product={json}&restaurantId={product.RestaurantId}");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"OpenProduct failed: {ex}");
+        }
         finally { IsBusy = false; }
     }
 }

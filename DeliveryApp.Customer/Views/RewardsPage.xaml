@@ -179,7 +179,7 @@
                     </CollectionView>
 
                     <!-- Flat deals list -->
-                    <Label Text="{loc:Loc Key=RestaurantDeals}"
+                    <Label Text="{loc:Loc Key=Offers}"
                            FontFamily="CairoBold" FontSize="16"
                            TextColor="#212121"
                            IsVisible="{Binding Deals.Count, Converter={StaticResource IntToBool}}"/>

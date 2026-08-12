@@ -706,8 +706,8 @@
 	<data name="FollowUsForDeals">
 		<value>Follow us for the latest deals and discounts</value>
 	</data>
-	<data name="RestaurantDeals">
-		<value>Restaurant Deals</value>
+	<data name="Offers">
+		<value>Offers</value>
 	</data>
 
 	<!-- New keys added for full localization -->

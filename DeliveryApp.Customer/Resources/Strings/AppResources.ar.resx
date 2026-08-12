@@ -658,8 +658,8 @@
 	<data name="FollowUsForDeals">
 		<value>تابعنا لمعرفة أحدث عروض وتخفيضات المطاعم</value>
 	</data>
-	<data name="RestaurantDeals">
-		<value>عروض المطاعم</value>
+	<data name="Offers">
+		<value>العروض</value>
 	</data>
 
 	<!-- مفاتيح جديدة للترجمة الكاملة -->

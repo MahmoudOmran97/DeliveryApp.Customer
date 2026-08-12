@@ -455,6 +455,73 @@
                         </Border>
                     </Grid>
 
+                    <!-- ── Best Sellers Horizontal Scroll ── -->
+                    <VerticalStackLayout Spacing="8" Margin="0,18,0,0" IsVisible="{Binding BestSellers.Count, Converter={StaticResource IntToBool}}">
+                        <Label Text="{loc:Loc Key=BestSellers}" FontFamily="CairoBold" FontSize="16" TextColor="#212121" Margin="16,0,16,0"/>
+                        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="16,0">
+                            <HorizontalStackLayout BindableLayout.ItemsSource="{Binding BestSellers}" Spacing="12">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="m:Product">
+                                        <Border BackgroundColor="White" StrokeShape="RoundRectangle 14" Stroke="#E0E0E0" StrokeThickness="1" WidthRequest="130" Padding="10">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=OpenProductCommand}" CommandParameter="{Binding .}"/>
+                                            </Border.GestureRecognizers>
+                                            <VerticalStackLayout Spacing="6">
+                                                <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 10" Stroke="Transparent" HeightRequest="70" WidthRequest="110">
+                                                    <Label Text="🍔" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                                </Border>
+                                                <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="12" MaxLines="1" LineBreakMode="TailTruncation" TextColor="#212121"/>
+                                                <Label Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="13" TextColor="#FF5722"/>
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </HorizontalStackLayout>
+                        </ScrollView>
+                    </VerticalStackLayout>
+
+                    <!-- ── Rewards / Deals Horizontal Scroll ── -->
+                    <VerticalStackLayout Spacing="8" Margin="0,18,0,0" IsVisible="{Binding Deals.Count, Converter={StaticResource IntToBool}}">
+                        <Label Text="{loc:Loc Key=Offers}" FontFamily="CairoBold" FontSize="16" TextColor="#212121" Margin="16,0,16,0"/>
+                        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" Padding="16,0">
+                            <HorizontalStackLayout BindableLayout.ItemsSource="{Binding Deals}" Spacing="12">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="m:Deal">
+                                        <Border BackgroundColor="#FFF3EC" StrokeShape="RoundRectangle 14" Stroke="#FFD9C2" StrokeThickness="1" WidthRequest="160" Padding="0">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=AddDealToCartCommand}" CommandParameter="{Binding .}"/>
+                                            </Border.GestureRecognizers>
+                                            <Grid RowDefinitions="100,Auto">
+                                                <Grid Grid.Row="0">
+                                                    <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 14,14,0,0" Stroke="Transparent">
+                                                        <Label Text="🍽️" FontSize="36" HorizontalOptions="Center" VerticalOptions="Center"
+                                                               IsVisible="{Binding ImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                                                    </Border>
+                                                    <ff:CachedImage Source="{Binding ImageUrl}" Aspect="AspectFill" HeightRequest="100" DownsampleHeight="200" CacheDuration="7"
+                                                                   IsVisible="{Binding ImageUrl, Converter={StaticResource HasImage}}"/>
+                                                    <Border BackgroundColor="{Binding BadgeColorValue}" StrokeShape="RoundRectangle 6" Stroke="Transparent" Padding="6,2"
+                                                            HorizontalOptions="Start" VerticalOptions="Start" Margin="6"
+                                                            IsVisible="{Binding BadgeText, Converter={StaticResource HasImage}}">
+                                                        <Label Text="{Binding BadgeText}" FontFamily="CairoBold" FontSize="10" TextColor="White"/>
+                                                    </Border>
+                                                </Grid>
+                                                <VerticalStackLayout Grid.Row="1" Padding="10,8" Spacing="4">
+                                                    <Label Text="{Binding Title}" FontFamily="CairoBold" FontSize="12" MaxLines="2" LineBreakMode="WordWrap" TextColor="#212121"/>
+                                                    <Label Text="{Binding RestaurantName}" FontFamily="CairoRegular" FontSize="10" TextColor="#757575" MaxLines="1" LineBreakMode="TailTruncation"/>
+                                                    <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding HasDiscount}">
+                                                        <Label Grid.Column="0" Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="13" TextColor="#FF5722"/>
+                                                        <Label Grid.Column="1" Text="{Binding OriginalPriceText}" FontFamily="CairoRegular" FontSize="10" TextColor="#BDBDBD" TextDecorations="Strikethrough" VerticalOptions="Center"/>
+                                                    </Grid>
+                                                    <Label Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="13" TextColor="#FF5722" IsVisible="{Binding HasDiscount, Converter={StaticResource InvertBool}}"/>
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </HorizontalStackLayout>
+                        </ScrollView>
+                    </VerticalStackLayout>
+
                     <!-- ── No Location Banner ── -->
                     <Border BackgroundColor="#FFF8E1"
                             StrokeShape="RoundRectangle 14"
@@ -547,38 +614,29 @@
                                                  وصف تاني فيه رسوم التوصيل والمسافة، كل عنصرين في عمود
                                                  عريضه ثابت (Grid بعمودين)، فالشكل بيبقى متسق ومرتب دايمًا
                                                  مهما كان طول النص، بدل ما يعتمد على مساحة فاضية بالصدفة. -->
-                                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto"
-                                                  ColumnSpacing="10" RowSpacing="4">
-                                                <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Spacing="3">
-                                                    <Label Text="⭐" FontSize="12" VerticalOptions="Center"/>
-                                                    <Label Text="{Binding RatingText}"
-                                                           FontFamily="CairoBold" FontSize="12"
-                                                           TextColor="#212121" VerticalOptions="Center"/>
+                                            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="6" VerticalOptions="Center">
+                                                <HorizontalStackLayout Grid.Column="0" Spacing="2">
+                                                    <Label Text="⭐" FontSize="11" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding RatingText}" FontFamily="CairoBold" FontSize="11" TextColor="#212121" VerticalOptions="Center"/>
                                                 </HorizontalStackLayout>
-                                                <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Spacing="3">
-                                                    <Label Text="🕐" FontSize="12" VerticalOptions="Center"/>
-                                                    <Label Text="{Binding EstimatedTimeText}"
-                                                           FontFamily="CairoRegular" FontSize="12"
-                                                           TextColor="#757575" VerticalOptions="Center"/>
+
+                                                <BoxView Grid.Column="1" WidthRequest="1" HeightRequest="10" Color="#E0E0E0" VerticalOptions="Center"/>
+
+                                                <Label Grid.Column="2" Text="{Binding DeliveryFeeText}" FontFamily="CairoBold" FontSize="11" TextColor="#FF5722" VerticalOptions="Center"/>
+
+                                                <BoxView Grid.Column="3" WidthRequest="1" HeightRequest="10" Color="#E0E0E0" VerticalOptions="Center"/>
+
+                                                <HorizontalStackLayout Grid.Column="4" Spacing="2">
+                                                    <Label Text="🕐" FontSize="11" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding EstimatedTimeText}" FontFamily="CairoRegular" FontSize="11" TextColor="#757575" VerticalOptions="Center"/>
                                                 </HorizontalStackLayout>
-                                                <Label Grid.Row="1" Grid.Column="0" Text="{Binding DeliveryFeeText}"
-                                                       FontFamily="CairoBold" FontSize="12"
-                                                       TextColor="#FF5722" VerticalOptions="Center"/>
-                                                <Border Grid.Row="1" Grid.Column="1" BackgroundColor="#F5F5F5"
-                                                        StrokeShape="RoundRectangle 6"
-                                                        Stroke="Transparent" Padding="6,2"
-                                                        HorizontalOptions="Start"
-                                                        IsVisible="{Binding DistanceKm, Converter={StaticResource IntToBool}}">
-                                                    <Label FontFamily="CairoRegular" FontSize="11"
-                                                           TextColor="#757575">
-                                                        <Label.FormattedText>
-                                                            <FormattedString>
-                                                                <Span Text="📍 "/>
-                                                                <Span Text="{Binding DistanceKm, StringFormat='{0:F1} km'}"/>
-                                                            </FormattedString>
-                                                        </Label.FormattedText>
-                                                    </Label>
-                                                </Border>
+
+                                                <BoxView Grid.Column="5" WidthRequest="1" HeightRequest="10" Color="#E0E0E0" VerticalOptions="Center" IsVisible="{Binding DistanceKm, Converter={StaticResource IntToBool}}"/>
+
+                                                <HorizontalStackLayout Grid.Column="6" Spacing="2" IsVisible="{Binding DistanceKm, Converter={StaticResource IntToBool}}">
+                                                    <Label Text="📍" FontSize="11" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding DistanceKm, StringFormat='{0:F1}km'}" FontFamily="CairoRegular" FontSize="11" TextColor="#757575" VerticalOptions="Center"/>
+                                                </HorizontalStackLayout>
                                             </Grid>
                                         </VerticalStackLayout>
                                     </Grid>
