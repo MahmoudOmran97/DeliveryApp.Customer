@@ -202,20 +202,25 @@ public partial class RestaurantPage : ContentPage
     }
 
     // لما المستخدم يدوس على أيقونة القسم في الشريط العلوي (أي نسخة، الأصلية أو العايمة)،
-    // بننزله لبداية نفس المجموعة (Group) جوه الـ CollectionView الرئيسي بحركة سموث.
+    // بننزله لصف عنوان القسم نفسه داخل القائمة المسطحة، وليس لأول منتج في المجموعة.
     void OnCategoryChipTapped(object? sender, TappedEventArgs e)
     {
         if (e.Parameter is not Category category) return;
         if (BindingContext is not RestaurantViewModel vm) return;
 
-        var groupIndex = -1;
-        for (var i = 0; i < vm.MenuGroups.Count; i++)
+        var rowIndex = -1;
+        for (var i = 0; i < vm.MenuRows.Count; i++)
         {
-            if (vm.MenuGroups[i].Key.Id == category.Id) { groupIndex = i; break; }
+            if (vm.MenuRows[i].Category?.Id == category.Id)
+            {
+                rowIndex = i;
+                break;
+            }
         }
-        if (groupIndex < 0) return;
+        if (rowIndex < 0) return;
 
-        MenuCollectionView.ScrollTo(0, groupIndex, ScrollToPosition.Start, true);
+        MenuCollectionView.ScrollTo(rowIndex, position: ScrollToPosition.Start, animate: true);
+
     }
 
     // ✅ FIX (زرار البحث مش سلس): كان بيتحكم فيه بس بـ IsVisible Binding — يعني

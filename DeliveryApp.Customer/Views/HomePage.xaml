@@ -37,8 +37,8 @@
                        Aspect="AspectFit" HorizontalOptions="Fill" VerticalOptions="Fill"/>
             </Grid>
 
-            <!-- Row 0: Greeting + Cart -->
-            <Grid Grid.Row="0" ColumnDefinitions="*,44">
+            <!-- Row 0: Greeting + Notifications + Cart -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,96">
                 <VerticalStackLayout Grid.Column="0" Spacing="3">
 
                     <!-- Location Bar (Tappable) -->
@@ -70,27 +70,49 @@
                     </Label>
                 </VerticalStackLayout>
 
-                <!-- Cart -->
-                <Grid Grid.Column="1" WidthRequest="44" HeightRequest="44">
-                    <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
-                            Stroke="{StaticResource Primary}" StrokeThickness="1.5" WidthRequest="44" HeightRequest="44">
-                        <Label Text="🛒" FontSize="22"
-                               HorizontalOptions="Center" VerticalOptions="Center">
-                            <Label.GestureRecognizers>
+                <!-- Notifications + Cart -->
+                <HorizontalStackLayout Grid.Column="1" Spacing="8" HorizontalOptions="End"
+                                       VerticalOptions="Start">
+                    <Grid WidthRequest="44" HeightRequest="44">
+                        <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
+                                Stroke="{StaticResource Primary}" StrokeThickness="1.5" WidthRequest="44" HeightRequest="44">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenNotificationsCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="🔔" FontSize="21"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10"
+                                Stroke="White" StrokeThickness="1"
+                                IsVisible="{Binding HasUnreadNotifications}"
+                                WidthRequest="20" HeightRequest="20"
+                                HorizontalOptions="End" VerticalOptions="Start">
+                            <Label Text="{Binding UnreadNotificationsCount}" FontFamily="CairoBold" FontSize="10"
+                                   TextColor="White"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <Grid WidthRequest="44" HeightRequest="44">
+                        <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
+                                Stroke="{StaticResource Primary}" StrokeThickness="1.5" WidthRequest="44" HeightRequest="44">
+                            <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding OpenCartCommand}"/>
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </Border>
-                    <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10"
-                            Stroke="White" StrokeThickness="1"
-                            IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
-                            WidthRequest="20" HeightRequest="20"
-                            HorizontalOptions="End" VerticalOptions="Start">
-                        <Label Text="{Binding CartCount}" FontFamily="CairoBold" FontSize="10"
-                               TextColor="White"
-                               HorizontalOptions="Center" VerticalOptions="Center"/>
-                    </Border>
-                </Grid>
+                            </Border.GestureRecognizers>
+                            <Label Text="🛒" FontSize="22"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10"
+                                Stroke="White" StrokeThickness="1"
+                                IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
+                                WidthRequest="20" HeightRequest="20"
+                                HorizontalOptions="End" VerticalOptions="Start">
+                            <Label Text="{Binding CartCount}" FontFamily="CairoBold" FontSize="10"
+                                   TextColor="White"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                    </Grid>
+                </HorizontalStackLayout>
             </Grid>
 
             <!-- Search -->

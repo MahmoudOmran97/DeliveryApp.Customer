@@ -412,6 +412,12 @@ public class ApiService
 
         => GetAsync<PagedResult<Notification>>($"notifications?page={page}");
 
+    public async Task<int> GetUnreadNotificationsCountAsync()
+    {
+        var result = await GetAsync<NotificationUnreadCount>("notifications/unread-count");
+        return Math.Max(0, result?.Count ?? 0);
+    }
+
     public Task<bool> MarkNotificationReadAsync(int id) => PutAsync($"notifications/{id}/read");
 
     public Task<bool> MarkAllReadAsync() => PutAsync("notifications/read-all");

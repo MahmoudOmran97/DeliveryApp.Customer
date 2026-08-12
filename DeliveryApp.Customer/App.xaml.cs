@@ -1,6 +1,7 @@
 ﻿using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.Views;
 using DeliveryApp.Customer.Models;
+using DeliveryApp.Customer.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DeliveryApp.Customer;
@@ -121,6 +122,19 @@ public partial class App : Application
                 await Task.Delay(500);
                 await _signalR.ConnectAsync(_auth.GetToken());
                 await JoinActiveOrderGroupsAsync();
+
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    try
+                    {
+                        if (Shell.Current?.CurrentPage?.BindingContext is HomeViewModel homeVm)
+                            await homeVm.RefreshNotificationsCountAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[Notifications] Resume refresh failed: {ex.Message}");
+                    }
+                });
             });
         }
     }

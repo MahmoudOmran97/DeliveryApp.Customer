@@ -409,6 +409,11 @@ public class PagedResult<T>
     public List<T> Data { get; set; } = new();
 }
 
+public class NotificationUnreadCount
+{
+    public int Count { get; set; }
+}
+
 // ─── Support Chat (AI) ───────────────────────────────────────────────────────
 
 public class ChatMessage

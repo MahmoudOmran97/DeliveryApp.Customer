@@ -19,6 +19,7 @@ public partial class HomeViewModel : BaseViewModel
     readonly ApiService _api;
     readonly CartService _cart;
     readonly LocationService _location;
+    readonly SignalRService _signalR;
 
     // ── State ──────────────────────────────────────────────────
     [ObservableProperty] string _searchText = string.Empty;
@@ -26,6 +27,12 @@ public partial class HomeViewModel : BaseViewModel
     [ObservableProperty] string _userName = string.Empty;
     [ObservableProperty] int _cartCount;
     [ObservableProperty] int _currentBannerIndex;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasUnreadNotifications))]
+    int _unreadNotificationsCount;
+
+    public bool HasUnreadNotifications => UnreadNotificationsCount > 0;
 
     /// <summary>Category currently selected – null means "All"</summary>
     [ObservableProperty]
@@ -107,14 +114,17 @@ public partial class HomeViewModel : BaseViewModel
     };
 
     // ── DI ────────────────────────────────────────────────────
-    public HomeViewModel(ApiService api, AuthService auth, CartService cart, LocationService location)
+    public HomeViewModel(ApiService api, AuthService auth, CartService cart, LocationService location,
+        SignalRService signalR)
     {
         _api = api;
         _cart = cart;
         _location = location;
+        _signalR = signalR;
 
         UserName = auth.GetUserName().Split(' ')[0];
         _cart.CartChanged += () => CartCount = _cart.TotalCount;
+        _signalR.NewNotificationReceived += OnNewNotificationReceived;
 
         // Notify HasNoResults when list or busy-state changes
         Restaurants.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasNoResults));
@@ -143,7 +153,27 @@ public partial class HomeViewModel : BaseViewModel
         });
     }
 
+    void OnNewNotificationReceived() => _ = RefreshNotificationsCountAsync();
+
+    public async Task RefreshNotificationsCountAsync()
+    {
+        try
+        {
+            UnreadNotificationsCount = await _api.GetUnreadNotificationsCountAsync();
+        }
+        catch
+        {
+            // عداد الجرس لا يجب أن يمنع الصفحة الرئيسية من العمل إذا تعذر الطلب.
+        }
+    }
+
     // ── Commands ──────────────────────────────────────────────
+
+    [RelayCommand]
+    async Task OpenNotifications()
+    {
+        await Shell.Current.GoToAsync("//NotificationsPage");
+    }
 
     [RelayCommand]
     async Task OpenLocationPicker()
@@ -184,6 +214,7 @@ public partial class HomeViewModel : BaseViewModel
         {
             // Banners (no location filter)
             var bannersTask = _api.GetBannersAsync();
+            var unreadNotificationsTask = _api.GetUnreadNotificationsCountAsync();
 
             // Restaurants: location + category + top-rated (≥4 stars, max 5)
             double? lat = _location.HasLocation ? _location.Latitude : null;
@@ -200,7 +231,8 @@ public partial class HomeViewModel : BaseViewModel
                 minRating: 4.0,
                 pageSize: 5);
 
-            await Task.WhenAll(bannersTask, restaurantsTask);
+            await Task.WhenAll(bannersTask, restaurantsTask, unreadNotificationsTask);
+            UnreadNotificationsCount = unreadNotificationsTask.Result;
 
             Banners.Clear();
             foreach (var b in bannersTask.Result ?? new()) Banners.Add(b);

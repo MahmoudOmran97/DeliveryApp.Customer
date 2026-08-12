@@ -128,6 +128,71 @@
                 </VerticalStackLayout>
             </Border>
         </DataTemplate>
+
+        <!-- عنوان القسم والمنتج في صف واحد مسطّح؛ وجود العنوان كعنصر مستقل
+             يجعل ScrollTo يقف عند عنوان القسم نفسه. -->
+        <DataTemplate x:Key="MenuRowTemplate" x:DataType="h:RestaurantMenuRow">
+            <VerticalStackLayout Spacing="0">
+                <Border BackgroundColor="#FFF3EC" Stroke="#FFD9C2" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12" Margin="16,14,16,6" Padding="14,10"
+                        IsVisible="{Binding IsSectionHeader}">
+                    <Label Text="{Binding SectionName}" FontFamily="CairoBold" FontSize="16"
+                           TextColor="#212121" LineBreakMode="TailTruncation" MaxLines="1"/>
+                </Border>
+
+                <Border Style="{StaticResource Card}" Margin="16,0,16,10"
+                        IsVisible="{Binding IsProduct}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.ProductTappedCommand}"
+                            CommandParameter="{Binding Product}"/>
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="*,84" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
+                            <Label Text="{Binding Product.Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+                            <Label Text="{Binding Product.Description}" FontFamily="CairoRegular"
+                                   FontSize="12" TextColor="#757575" MaxLines="2" LineBreakMode="TailTruncation"/>
+                            <HorizontalStackLayout Spacing="8">
+                                <Label Text="{Binding Product.PriceText}" FontFamily="CairoBold"
+                                       FontSize="15" TextColor="#FF5722"/>
+                                <Label Text="{Binding Product.OriginalPriceText}" FontFamily="CairoRegular"
+                                       FontSize="12" TextColor="#BDBDBD"
+                                       IsVisible="{Binding Product.HasDiscount}"
+                                       TextDecorations="Strikethrough"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+
+                        <Grid Grid.Column="1">
+                            <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 10"
+                                    Stroke="Transparent" HeightRequest="84">
+                                <Grid>
+                                    <Label Text="🍛" FontSize="36"
+                                           HorizontalOptions="Center" VerticalOptions="Center"
+                                           IsVisible="{Binding Product.FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}" />
+                                    <ff:CachedImage Source="{Binding Product.FullImageUrl}"
+                                           Aspect="AspectFill" HeightRequest="84" WidthRequest="84"
+                                           CacheDuration="7" DownsampleToViewSize="True"
+                                           IsVisible="{Binding Product.FullImageUrl, Converter={StaticResource HasImage}}" />
+                                </Grid>
+                            </Border>
+
+                            <Image Source="icon_plus.png" WidthRequest="34" HeightRequest="34"
+                                   HorizontalOptions="End" VerticalOptions="End"
+                                   IsVisible="{Binding Product.HasVariants, Converter={StaticResource InvertBool}}">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.AddToCartCommand}"
+                                        CommandParameter="{Binding Product}"/>
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Label Text="›" FontSize="28" TextColor="#FF5722"
+                                   HorizontalOptions="End" VerticalOptions="End"
+                                   IsVisible="{Binding Product.HasVariants}"/>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+        </DataTemplate>
     </ContentPage.Resources>
 
 
@@ -136,7 +201,7 @@
 
 
         <CollectionView x:Name="MenuCollectionView" Grid.Row="1"
-                        ItemsSource="{Binding MenuGroups}" IsGrouped="True" SelectionMode="None"
+                        ItemsSource="{Binding MenuRows}" ItemTemplate="{StaticResource MenuRowTemplate}" SelectionMode="None"
                         IsVisible="{Binding IsGroceryStoreLayout, Converter={StaticResource InvertBool}}"
                         Scrolled="OnContentScrolled">
 
@@ -286,98 +351,6 @@
                 </VerticalStackLayout>
             </CollectionView.Header>
 
-
-            <CollectionView.GroupHeaderTemplate>
-                <DataTemplate x:DataType="h:RestaurantMenuGroup">
-                    <!-- شريط واضح باسم القسم داخل قائمة المنتجات قبل عناصره مباشرة -->
-                    <Border BackgroundColor="#FFF3EC" Stroke="#FFD9C2" StrokeThickness="1"
-                            StrokeShape="RoundRectangle 12" Margin="16,14,16,6" Padding="14,10">
-                        <Label Text="{Binding SectionName}" FontFamily="CairoBold" FontSize="16"
-                               TextColor="#212121" LineBreakMode="TailTruncation" MaxLines="1"/>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.GroupHeaderTemplate>
-
-            <CollectionView.ItemTemplate>
-
-                <DataTemplate x:DataType="m:Product">
-
-                    <Border Style="{StaticResource Card}" Margin="16,0,16,10">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer
-                                                        Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.ProductTappedCommand}"
-                                                        CommandParameter="{Binding .}"/>
-                        </Border.GestureRecognizers>
-                        <Grid ColumnDefinitions="*,84" ColumnSpacing="12">
-
-                            <VerticalStackLayout Grid.Column="0" Spacing="5" VerticalOptions="Center">
-
-                                <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
-
-                                <Label Text="{Binding Description}" FontFamily="CairoRegular"
-
-                                                               FontSize="12" TextColor="#757575" MaxLines="2" LineBreakMode="TailTruncation"/>
-
-                                <HorizontalStackLayout Spacing="8">
-
-                                    <Label Text="{Binding PriceText}" FontFamily="CairoBold"
-
-                                                                   FontSize="15" TextColor="#FF5722"/>
-
-                                    <Label Text="{Binding OriginalPriceText}" FontFamily="CairoRegular"
-
-                                                                   FontSize="12" TextColor="#BDBDBD"
-
-                                                                   IsVisible="{Binding HasDiscount}"
-
-                                                                   TextDecorations="Strikethrough"/>
-
-                                </HorizontalStackLayout>
-
-                            </VerticalStackLayout>
-
-                            <Grid Grid.Column="1">
-
-                                <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 10"
-                                                                Stroke="Transparent" HeightRequest="84">
-                                    <Grid>
-                                        <!-- Placeholder emoji -->
-                                        <Label Text="🍛" FontSize="36"
-                                                                       HorizontalOptions="Center" VerticalOptions="Center"
-                                                                       IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}" />
-                                        <!-- Actual product image -->
-                                        <ff:CachedImage Source="{Binding FullImageUrl}"
-                                                                       Aspect="AspectFill"
-                                                                       HeightRequest="84" WidthRequest="84"
-                                                                       CacheDuration="7"
-                                                                       DownsampleToViewSize="True"
-                                                                       IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}" />
-                                    </Grid>
-                                </Border>
-
-                                <!-- Add / customize -->
-                                <Image Source="icon_plus.png" WidthRequest="34" HeightRequest="34"
-                                                               HorizontalOptions="End" VerticalOptions="End"
-                                                               IsVisible="{Binding HasVariants, Converter={StaticResource InvertBool}}">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                                                    Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.AddToCartCommand}"
-                                                                    CommandParameter="{Binding .}"/>
-                                    </Image.GestureRecognizers>
-                                </Image>
-                                <Label Text="›" FontSize="28" TextColor="#FF5722"
-                                                               HorizontalOptions="End" VerticalOptions="End"
-                                                               IsVisible="{Binding HasVariants}"/>
-
-                            </Grid>
-
-                        </Grid>
-
-                    </Border>
-
-                </DataTemplate>
-
-            </CollectionView.ItemTemplate>
 
             <CollectionView.Footer>
 

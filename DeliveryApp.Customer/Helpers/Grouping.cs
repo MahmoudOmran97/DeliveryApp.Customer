@@ -32,3 +32,25 @@ public sealed class RestaurantMenuGroup : Grouping<Category, Product>
     {
     }
 }
+
+/// <summary>
+/// صف مسطّح داخل قائمة المطعم. عنوان القسم نفسه يصبح عنصراً قابلاً للتمرير
+/// إليه، لذلك يصل المستخدم إلى بداية القسم لا إلى أول منتج داخله.
+/// </summary>
+public sealed class RestaurantMenuRow
+{
+    public Category? Category { get; }
+    public Product? Product { get; }
+    public bool IsSectionHeader => Category != null;
+    public bool IsProduct => Product != null;
+    public string SectionName => Category?.Name ?? string.Empty;
+
+    private RestaurantMenuRow(Category? category, Product? product)
+    {
+        Category = category;
+        Product = product;
+    }
+
+    public static RestaurantMenuRow Header(Category category) => new(category, null);
+    public static RestaurantMenuRow Item(Product product) => new(null, product);
+}

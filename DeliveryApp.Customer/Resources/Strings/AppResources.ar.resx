@@ -148,9 +148,10 @@
 	<data name="Tab_Profile">
 		<value>حسابي</value>
 	</data>
-	<data name="SearchPlaceholder">
-		<value>ابحث عن مطعم أو طعام…</value>
-	</data>
+		<data name="SearchPlaceholder">
+			<value>ابحث عن مطعم أو صيدلية أو سوبر ماركت</value>
+		</data>
+
 	<data name="SearchResults">
 		<value>نتائج البحث</value>
 	</data>

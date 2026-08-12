@@ -25,6 +25,9 @@ public class SignalRService
     // ✅ بيتبعت لما الأدمن يوقف حساب العميل — لازم الأبليكيشن يعمل logout فوري
     public event Action? AccountDeactivated;
 
+    // إشعار جديد للمستخدم؛ لا نحتاج payload هنا لأن العداد سيُعاد حسابه من الـ API.
+    public event Action? NewNotificationReceived;
+
     // بعد AutomaticReconnect الجروبات بتتفقد — ننبّه App ترجع تنضم للأوردرات النشطة
     public event Action? Reconnected;
 
@@ -115,6 +118,12 @@ public class SignalRService
             var orderId = el.GetProperty("orderId").GetInt32();
             var byUserId = el.GetProperty("byUserId").GetInt32();
             MainThread.BeginInvokeOnMainThread(() => VoiceCallEnded?.Invoke(orderId, byUserId));
+        });
+
+        // ✅ تحديث جرس الإشعارات لحظياً عند وصول إشعار محفوظ في السيرفر.
+        _hub.On<JsonElement>("NewNotification", _ =>
+        {
+            MainThread.BeginInvokeOnMainThread(() => NewNotificationReceived?.Invoke());
         });
 
         // ✅ لما الأدمن يوقف/يفعّل الحساب، السيرفر بيبعت الحالة الجديدة فوراً

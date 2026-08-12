@@ -56,6 +56,16 @@ public partial class RestaurantViewModel : BaseViewModel
                 MenuGroups.Add(new RestaurantMenuGroup(c, items));
         }
 
+        // عنوان القسم عنصر مستقل داخل القائمة؛ ده يخلّي ScrollTo يوصله
+        // مباشرة بدل ما يقفز لأول منتج في منتصف القسم.
+        MenuRows.Clear();
+        foreach (var group in MenuGroups)
+        {
+            MenuRows.Add(RestaurantMenuRow.Header(group.Key));
+            foreach (var product in group)
+                MenuRows.Add(RestaurantMenuRow.Item(product));
+        }
+
         // ✅ FEATURE: نفس البحث دلوقتي شغال لتصميم السوبر ماركت/الصيدلية (شبكة
         // الأقسام) كمان — بيفلتر الأقسام اللي اسمها أو اسم أي منتج جواها بيطابق
         // كلمة البحث، عشان اليوزر يقدر يدور على قسم أو منتج من غير ما يفتح كل قسم لوحده.
@@ -95,6 +105,11 @@ public partial class RestaurantViewModel : BaseViewModel
     /// من أول ما الصفحة تفتح حتى لو مش ظاهرة على الشاشة، وده أكبر سبب للتقل.
     /// </summary>
     public ObservableCollection<RestaurantMenuGroup> MenuGroups { get; } = new();
+
+    /// <summary>
+    /// مصدر قائمة المطاعم العادية: كل عنوان قسم يسبق منتجاته كصف مستقل.
+    /// </summary>
+    public ObservableCollection<RestaurantMenuRow> MenuRows { get; } = new();
 
     public RestaurantViewModel(ApiService api, CartService cart, LocationService location)
     {
@@ -143,6 +158,7 @@ public partial class RestaurantViewModel : BaseViewModel
             IsPharmacy = Restaurant?.StoreType.Equals("Pharmacy", StringComparison.OrdinalIgnoreCase) == true;
             Menu.Clear();
             MenuGroups.Clear();
+            MenuRows.Clear();
             FilteredMenu.Clear();
             BestSellers.Clear();
             foreach (var c in t2.Result ?? new())
