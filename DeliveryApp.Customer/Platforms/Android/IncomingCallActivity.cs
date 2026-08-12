@@ -193,9 +193,9 @@ public class IncomingCallActivity : Activity
         if (launch != null)
         {
             launch.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop | ActivityFlags.SingleTop);
-            launch.PutExtra("tawseela_call_action", "accept");
-            launch.PutExtra("tawseela_order_id", _orderId);
-            launch.PutExtra("tawseela_caller_name", _callerName);
+            launch.PutExtra("Taly_call_action", "accept");
+            launch.PutExtra("Taly_order_id", _orderId);
+            launch.PutExtra("Taly_caller_name", _callerName);
             StartActivity(launch);
         }
         Finish();

@@ -21,7 +21,7 @@
 
 	<!-- General -->
 	<data name="AppName">
-		<value>Tawseela</value>
+		<value>Taly</value>
 	</data>
 	<data name="Ok">
 		<value>OK</value>
@@ -986,7 +986,7 @@
 		<value>Features</value>
 	</data>
 	<data name="About_Desc">
-		<value>"Tawseela" is your ultimate partner for ordering food and daily essentials with maximum speed and minimum effort. We connect you with the best restaurants and stores in your area to ensure a unique shopping experience.</value>
+		<value>"Taly" is your ultimate partner for ordering food and daily essentials with maximum speed and minimum effort. We connect you with the best restaurants and stores in your area to ensure a unique shopping experience.</value>
 	</data>
 	<data name="About_Feature1">
 		<value>⚡ Ultra-fast delivery to ensure your order arrives fresh.</value>
@@ -1016,6 +1016,6 @@
 		<value>Terms and Conditions</value>
 	</data>
 	<data name="About_Developer">
-		<value>Developed by Tawseela Team</value>
+		<value>Developed by Taly Team</value>
 	</data>
 </root>

@@ -71,19 +71,19 @@
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="15">
                         <Border Grid.Column="0" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="10">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://facebook.com/tawseela"/>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://facebook.com/Taly"/>
                             </Border.GestureRecognizers>
                             <Label Text="FB" FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center" TextColor="#1877F2"/>
                         </Border>
                         <Border Grid.Column="1" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="10">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://instagram.com/tawseela"/>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://instagram.com/Taly"/>
                             </Border.GestureRecognizers>
                             <Label Text="IG" FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center" TextColor="#E4405F"/>
                         </Border>
                         <Border Grid.Column="2" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 12" Padding="10">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://twitter.com/tawseela"/>
+                                <TapGestureRecognizer Command="{Binding OpenSocialLinkCommand}" CommandParameter="https://twitter.com/Taly"/>
                             </Border.GestureRecognizers>
                             <Label Text="X" FontFamily="CairoBold" FontSize="16" HorizontalOptions="Center" TextColor="Black"/>
                         </Border>

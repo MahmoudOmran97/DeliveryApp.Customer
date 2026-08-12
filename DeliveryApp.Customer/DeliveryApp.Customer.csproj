@@ -22,7 +22,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>Tawseela</ApplicationTitle>
+		<ApplicationTitle>Taly</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.deliveryapp.customer</ApplicationId>

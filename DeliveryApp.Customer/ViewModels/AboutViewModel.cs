@@ -24,9 +24,9 @@ public partial class AboutViewModel : BaseViewModel
         // Placeholder for legal pages or external links
         string url = type switch
         {
-            "privacy" => "https://tawseela-app.com/privacy",
-            "terms" => "https://tawseela-app.com/terms",
-            _ => "https://tawseela-app.com"
+            "privacy" => "https://Taly-app.com/privacy",
+            "terms" => "https://Taly-app.com/terms",
+            _ => "https://Taly-app.com"
         };
         await OpenSocialLink(url);
     }

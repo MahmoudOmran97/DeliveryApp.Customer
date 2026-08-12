@@ -61,11 +61,11 @@ namespace DeliveryApp.Customer
             // ✅ لو التطبيق اتفتح من نوتيفيكيشن المكالمة الواردة:
             // - accept = زرار قبول → افتح المكالمة مع قبول تلقائي
             // - incoming = full-screen / جسم النوتيفيكيشن → افتح شاشة الرنين بس
-            var callAction = intent.GetStringExtra("tawseela_call_action");
+            var callAction = intent.GetStringExtra("Taly_call_action");
             if (callAction is "accept" or "incoming")
             {
-                var orderId = intent.GetIntExtra("tawseela_order_id", 0);
-                var callerName = intent.GetStringExtra("tawseela_caller_name") ?? "";
+                var orderId = intent.GetIntExtra("Taly_order_id", 0);
+                var callerName = intent.GetStringExtra("Taly_caller_name") ?? "";
                 if (orderId != 0)
                 {
                     DeliveryApp.Customer.Services.PendingCallNavigation.OrderId = orderId;
@@ -77,9 +77,9 @@ namespace DeliveryApp.Customer
 
             // ✅ NAV FIX — نوتيفيكيشن عادي (مش مكالمة) اتضغط عليها — نسجل type/orderId/actionUrl
             // عشان App.xaml.cs يوجّه المستخدم للمكان الصح بمجرد ما التطبيق يفتح.
-            var notifType = intent.GetStringExtra("tawseela_notif_type");
-            var notifOrderIdStr = intent.GetStringExtra("tawseela_notif_order_id");
-            var notifActionUrl = intent.GetStringExtra("tawseela_notif_action_url");
+            var notifType = intent.GetStringExtra("Taly_notif_type");
+            var notifOrderIdStr = intent.GetStringExtra("Taly_notif_order_id");
+            var notifActionUrl = intent.GetStringExtra("Taly_notif_action_url");
             if (!string.IsNullOrEmpty(notifType) || !string.IsNullOrEmpty(notifOrderIdStr) || !string.IsNullOrEmpty(notifActionUrl))
             {
                 DeliveryApp.Customer.Services.PendingNotificationNavigation.Type = notifType;
@@ -147,11 +147,11 @@ namespace DeliveryApp.Customer
                         if (data != null)
                         {
                             if (data.TryGetValue("type", out var notifType) && !string.IsNullOrEmpty(notifType))
-                                intent.PutExtra("tawseela_notif_type", notifType);
+                                intent.PutExtra("Taly_notif_type", notifType);
                             if (data.TryGetValue("orderId", out var notifOrderId) && !string.IsNullOrEmpty(notifOrderId))
-                                intent.PutExtra("tawseela_notif_order_id", notifOrderId);
+                                intent.PutExtra("Taly_notif_order_id", notifOrderId);
                             if (data.TryGetValue("actionUrl", out var notifActionUrl) && !string.IsNullOrEmpty(notifActionUrl))
-                                intent.PutExtra("tawseela_notif_action_url", notifActionUrl);
+                                intent.PutExtra("Taly_notif_action_url", notifActionUrl);
                         }
                     }
 

@@ -5,7 +5,7 @@ using System.Net.Http;
 
 namespace DeliveryApp.Customer.Platforms.Android;
 
-[BroadcastReceiver(Enabled = true, Exported = false, Label = "Tawseela Call Actions")]
+[BroadcastReceiver(Enabled = true, Exported = false, Label = "Taly Call Actions")]
 [IntentFilter(new[] { IncomingCallNotificationHelper.ActionAccept, IncomingCallNotificationHelper.ActionReject })]
 public class CallActionReceiver : BroadcastReceiver
 {
@@ -29,9 +29,9 @@ public class CallActionReceiver : BroadcastReceiver
             if (launch != null)
             {
                 launch.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
-                launch.PutExtra("tawseela_call_action", "accept");
-                launch.PutExtra("tawseela_order_id", orderId);
-                launch.PutExtra("tawseela_caller_name", callerName);
+                launch.PutExtra("Taly_call_action", "accept");
+                launch.PutExtra("Taly_order_id", orderId);
+                launch.PutExtra("Taly_caller_name", callerName);
                 context.StartActivity(launch);
             }
         }
