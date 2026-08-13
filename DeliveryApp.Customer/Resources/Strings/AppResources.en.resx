@@ -470,6 +470,9 @@
 	<data name="Timer_PreparingHint">
 		<value>The store is preparing your order</value>
 	</data>
+	<data name="Timer_PreparingRangeHint">
+		<value>Estimated {0}-{1} min based on the store and your order</value>
+	</data>
 	<data name="Timer_DeliveryHint">
 		<value>Estimated time to your address</value>
 	</data>

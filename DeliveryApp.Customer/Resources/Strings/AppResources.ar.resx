@@ -491,6 +491,9 @@
 	<data name="Timer_PreparingHint">
 		<value>المحل يجهز طلبك الآن</value>
 	</data>
+	<data name="Timer_PreparingRangeHint">
+		<value>الوقت المتوقع {0}-{1} دقيقة حسب المحل ومنتجات طلبك</value>
+	</data>
 	<data name="Timer_DeliveryHint">
 		<value>الوقت المتوقع حتى عنوانك</value>
 	</data>

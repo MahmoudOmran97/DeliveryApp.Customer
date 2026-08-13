@@ -202,6 +202,8 @@ public class Order
     public string PaymentMethod { get; set; } = string.Empty;
     public string PaymentStatus { get; set; } = string.Empty;
     public int? EstimatedDelivery { get; set; }
+    public int? EstimatedDeliveryMin { get; set; }
+    public int? EstimatedDeliveryMax { get; set; }
     public string? CancellationReason { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? AcceptedAt { get; set; }

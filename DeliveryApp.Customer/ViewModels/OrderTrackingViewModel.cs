@@ -221,9 +221,17 @@ public partial class OrderTrackingViewModel : BaseViewModel
             case "Accepted":
             case "Preparing":
                 _prepStartUtc = Order.AcceptedAt ?? Order.CreatedAt;
-                var prepMinutes = Math.Clamp(Order.EstimatedDelivery ?? 25, 10, 90);
+                // الأولوية لـ EstimatedDeliveryMax (بيتحسب من وقت المحل + أطول منتج في الأوردر
+                // وقت القبول)، ولو مش موجودة (طلب قديم قبل التحديث) نرجع للـ fallback الثابت.
+                var prepMinutes = Math.Clamp(Order.EstimatedDeliveryMax ?? Order.EstimatedDelivery ?? 25, 10, 90);
                 _prepTargetUtc = _prepStartUtc.Value.AddMinutes(prepMinutes);
-                PrepTimerHint = LocalizationService.Get("Timer_PreparingHint");
+
+                PrepTimerHint = (Order.EstimatedDeliveryMin.HasValue && Order.EstimatedDeliveryMax.HasValue
+                                  && Order.EstimatedDeliveryMax > Order.EstimatedDeliveryMin)
+                    ? string.Format(LocalizationService.Get("Timer_PreparingRangeHint"),
+                                     Order.EstimatedDeliveryMin, Order.EstimatedDeliveryMax)
+                    : LocalizationService.Get("Timer_PreparingHint");
+
                 IsPrepTimerVisible = true;
                 break;
 
@@ -234,7 +242,7 @@ public partial class OrderTrackingViewModel : BaseViewModel
 
             case "OnTheWay":
                 _deliveryStartUtc ??= Order.PickedUpAt ?? DateTime.UtcNow;
-                _deliveryEstimateSeconds = Math.Max(10 * 60, (Order.EstimatedDelivery ?? 25) * 60);
+                _deliveryEstimateSeconds = Math.Max(10 * 60, (Order.EstimatedDeliveryMax ?? Order.EstimatedDelivery ?? 25) * 60);
                 _deliveryTargetUtc ??= _deliveryStartUtc.Value.AddSeconds(_deliveryEstimateSeconds);
                 DeliveryTimerHint = LocalizationService.Get("Timer_DeliveryHint");
                 IsDeliveryTimerVisible = true;
