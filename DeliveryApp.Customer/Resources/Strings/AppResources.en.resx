@@ -381,6 +381,21 @@
 	<data name="LogoutConfirm">
 		<value>Are you sure you want to logout?</value>
 	</data>
+	<data name="DeleteAccount">
+		<value>Delete Account</value>
+	</data>
+	<data name="DeleteAccountConfirm">
+		<value>Are you sure you want to delete your account? This action cannot be undone.</value>
+	</data>
+	<data name="DeleteAccountWarning">
+		<value>Your account and all your notifications will be permanently deleted. Please enter your password to confirm.</value>
+	</data>
+	<data name="DeleteAccountFailed">
+		<value>Could not delete your account. Please check your password and try again.</value>
+	</data>
+	<data name="PasswordRequired">
+		<value>Please enter your password</value>
+	</data>
 	<data name="ChangeLanguage">
 		<value>Change Language</value>
 	</data>

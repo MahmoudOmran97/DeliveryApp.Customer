@@ -163,6 +163,29 @@ public class ApiService
 
     }
 
+    private async Task<bool> DeleteAsync(string path, object? payload = null)
+    {
+        SetAuth();
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{Base}/{path}");
+            if (payload != null)
+                request.Content = JsonContent.Create(payload);
+
+            var r = await _http.SendAsync(request);
+
+            if (!r.IsSuccessStatusCode)
+            {
+                var errorBody = await r.Content.ReadAsStringAsync();
+                CheckAccountDeactivated(r.StatusCode, errorBody);
+            }
+
+            return r.IsSuccessStatusCode;
+        }
+        catch (Exception ex) { Debug(ex, path); }
+        return false;
+    }
+
     // ─── Auth ────────────────────────────────────────────────────────────────
 
     public Task<LoginResponse?> LoginAsync(string email, string password)
@@ -434,6 +457,12 @@ public class ApiService
     public Task<bool> UpdateProfileAsync(string? name, string? phone, string? address)
 
         => PutAsync("user/me", new { FullName = name, Phone = phone, Address = address });
+
+    // ✅ حذف الحساب — بيتطلب تأكيد بكلمة السر، والـ API بيمسح كل إشعارات
+    // اليوزر ويوقف الحساب (soft delete) من ناحيته
+    public Task<bool> DeleteAccountAsync(string password)
+
+        => DeleteAsync("user/me", new { Password = password });
 
     // ─── Ratings ─────────────────────────────────────────────────────────────
 

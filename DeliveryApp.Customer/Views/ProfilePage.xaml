@@ -118,6 +118,47 @@
                         FontFamily="CairoBold" FontSize="16"
                         CornerRadius="14" HeightRequest="52"/>
 
+                <!-- Delete Account — trigger -->
+                <Button Text="{loc:Loc Key=DeleteAccount}"
+                        Command="{Binding StartDeleteAccountCommand}"
+                        IsVisible="{Binding IsDeletingAccount, Converter={StaticResource InvertBool}}"
+                        BackgroundColor="Transparent" TextColor="#F44336"
+                        BorderColor="#F44336" BorderWidth="1"
+                        FontFamily="CairoRegular" FontSize="14"
+                        CornerRadius="14" HeightRequest="48"/>
+
+                <!-- Delete Account — password confirmation -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding IsDeletingAccount}">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="{loc:Loc Key=DeleteAccount}" FontFamily="CairoBold"
+                               FontSize="16" TextColor="#F44336"/>
+                        <BoxView Color="#E0E0E0" HeightRequest="1"/>
+                        <Label Text="{loc:Loc Key=DeleteAccountWarning}" FontFamily="CairoRegular"
+                               FontSize="13" TextColor="#757575"/>
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="{loc:Loc Key=Password}" FontFamily="CairoRegular"
+                                   FontSize="12" TextColor="#757575"/>
+                            <Border Style="{StaticResource InputBorder}">
+                                <Entry Text="{Binding DeletePassword}" IsPassword="True"
+                                       HeightRequest="50" BackgroundColor="Transparent"
+                                       FontFamily="CairoRegular" FontSize="14"
+                                       TextColor="#212121"/>
+                            </Border>
+                        </VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <Button Grid.Column="0" Text="{loc:Loc Key=Cancel}"
+                                    Command="{Binding CancelDeleteAccountCommand}"
+                                    Style="{StaticResource OutlineBtn}"/>
+                            <Button Grid.Column="1" Text="{loc:Loc Key=DeleteAccount}"
+                                    Command="{Binding ConfirmDeleteAccountCommand}"
+                                    IsEnabled="{Binding IsNotBusy}"
+                                    BackgroundColor="#F44336" TextColor="White"
+                                    FontFamily="CairoBold" FontSize="15"
+                                    CornerRadius="14" HeightRequest="52"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
                 <BoxView HeightRequest="40" Color="Transparent"/>
 
             </VerticalStackLayout>

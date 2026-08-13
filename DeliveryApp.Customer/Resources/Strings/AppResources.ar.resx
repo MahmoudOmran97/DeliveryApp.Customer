@@ -380,6 +380,21 @@
 	<data name="LogoutConfirm">
 		<value>هل أنت متأكد من تسجيل الخروج؟</value>
 	</data>
+	<data name="DeleteAccount">
+		<value>حذف الحساب</value>
+	</data>
+	<data name="DeleteAccountConfirm">
+		<value>هل أنت متأكد من حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه.</value>
+	</data>
+	<data name="DeleteAccountWarning">
+		<value>سيتم حذف حسابك وكل إشعاراتك نهائيًا. من فضلك أدخل كلمة السر للتأكيد.</value>
+	</data>
+	<data name="DeleteAccountFailed">
+		<value>تعذر حذف الحساب. تأكد من كلمة السر وحاول مرة أخرى.</value>
+	</data>
+	<data name="PasswordRequired">
+		<value>من فضلك أدخل كلمة السر</value>
+	</data>
 	<data name="ChangeLanguage">
 		<value>تغيير اللغة</value>
 	</data>
