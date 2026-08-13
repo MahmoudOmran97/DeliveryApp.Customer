@@ -375,13 +375,13 @@
 		<value>تعديل الملف الشخصي</value>
 	</data>
 	<data name="Logout">
-		<value>تسجيل الخروج</value>
+		<value>🚪 تسجيل الخروج</value>
 	</data>
 	<data name="LogoutConfirm">
 		<value>هل أنت متأكد من تسجيل الخروج؟</value>
 	</data>
 	<data name="DeleteAccount">
-		<value>حذف الحساب</value>
+		<value>🗑️ حذف الحساب</value>
 	</data>
 	<data name="DeleteAccountConfirm">
 		<value>هل أنت متأكد من حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه.</value>
@@ -832,7 +832,7 @@
 		<value>أضف للسلة</value>
 	</data>
 	<data name="CompleteSelections">
-		<value>أكمل الاختيارات للإضافة للسلة</value>
+		<value>أكمل الاختيارات  </value>
 	</data>
 	<data name="UploadPrescription">
 		<value>ارفع الروشتة</value>

@@ -115,16 +115,17 @@
                 <!-- Logout -->
                 <Button Text="{loc:Loc Key=Logout}" Command="{Binding LogoutCommand}"
                         BackgroundColor="#FFF3EF" TextColor="#F44336"
-                        FontFamily="CairoBold" FontSize="16"
-                        CornerRadius="14" HeightRequest="52"/>
+                        FontFamily="CairoBold" FontSize="14" BorderColor="#FF5722"
+                        CornerRadius="14" HeightRequest="48"/>
 
                 <!-- Delete Account — trigger -->
                 <Button Text="{loc:Loc Key=DeleteAccount}"
+                        
                         Command="{Binding StartDeleteAccountCommand}"
                         IsVisible="{Binding IsDeletingAccount, Converter={StaticResource InvertBool}}"
-                        BackgroundColor="Transparent" TextColor="#F44336"
+                        BackgroundColor="#FFF3EF" TextColor="#F44336"
                         BorderColor="#F44336" BorderWidth="1"
-                        FontFamily="CairoRegular" FontSize="14"
+                        FontFamily="CairoBold" FontSize="14"
                         CornerRadius="14" HeightRequest="48"/>
 
                 <!-- Delete Account — password confirmation -->

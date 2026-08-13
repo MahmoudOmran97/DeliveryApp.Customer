@@ -23,7 +23,7 @@
             <VerticalStackLayout Spacing="16">
                 <!-- ✅ FIX: صورة المنتج مكنتش ظاهرة في شاشة التفاصيل خالص -->
                 <!-- ✅ FIX: دلوقتي تقدر تدوس على الصورة تفتحلك بحجمها الكامل مع إمكانية الزوم -->
-                <Border StrokeShape="RoundRectangle 16" HeightRequest="180"
+                <Border StrokeShape="RoundRectangle 16" HeightRequest="180"  Stroke="#FF5722"
                         IsVisible="{Binding Product.FullImageUrl, Converter={StaticResource HasImage}}">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding OpenImageCommand}"/>
@@ -85,7 +85,7 @@
 
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                     <HorizontalStackLayout Grid.Column="0" Spacing="12" VerticalOptions="Center">
-                        <Border BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 8" Padding="12,6">
+                        <Border BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 8" Padding="8">
                             <Image Source="icon_minus.png" WidthRequest="30" HeightRequest="30" Aspect="AspectFit">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding DecreaseQtyCommand}"/>

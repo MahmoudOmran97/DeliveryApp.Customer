@@ -376,13 +376,13 @@
 		<value>Edit Profile</value>
 	</data>
 	<data name="Logout">
-		<value>Logout</value>
+		<value>Logout 🚪</value>
 	</data>
 	<data name="LogoutConfirm">
 		<value>Are you sure you want to logout?</value>
 	</data>
 	<data name="DeleteAccount">
-		<value>Delete Account</value>
+		<value>Delete Account 🗑️</value>
 	</data>
 	<data name="DeleteAccountConfirm">
 		<value>Are you sure you want to delete your account? This action cannot be undone.</value>
