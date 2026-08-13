@@ -41,22 +41,32 @@
             <Grid Grid.Row="0" ColumnDefinitions="*,96">
                 <VerticalStackLayout Grid.Column="0" Spacing="3">
 
-                    <!-- Location Bar (Tappable) -->
-                    <Grid ColumnDefinitions="Auto,*">
-                        <Grid.GestureRecognizers>
+                    <!-- ✅ FIX: زر الموقع كان Label بخط صغير من غير أي حدود
+                         أو خلفية، فبعض العملاء ماكانوش حاسين إنه زرار أصلًا.
+                         اتحول لـ Border ليه Stroke وBackground خفيف + سهم صغير
+                         عشان يبان بصريًا إنه عنصر قابل للضغط زي أي زرار تاني
+                         في التطبيق. -->
+                    <Border HorizontalOptions="Start" Padding="8,4"
+                            StrokeShape="RoundRectangle 12"
+                            Stroke="#FFCCBC" StrokeThickness="1"
+                            BackgroundColor="#33FFFFFF">
+                        <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding OpenLocationPickerCommand}"/>
-                        </Grid.GestureRecognizers>
-                        <Label Grid.Column="0" Text="📍" FontSize="15"
-                               TextColor="#FFCCBC" VerticalOptions="Center"/>
-                        <!-- اسم المدينة / الحي مش الإحداثيات -->
-                        <Label Grid.Column="1"
-                               Text="{Binding LocationLabel}"
-                               FontFamily="CairoRegular" FontSize="15"
-                               TextColor="#FFCCBC" VerticalOptions="Center"
-                               LineBreakMode="TailTruncation" MaxLines="1"
-                               Margin="4,0,4,0"/>
-
-                    </Grid>
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="4">
+                            <Label Grid.Column="0" Text="📍" FontSize="14"
+                                   TextColor="White" VerticalOptions="Center"/>
+                            <!-- اسم المدينة / الحي مش الإحداثيات -->
+                            <Label Grid.Column="1"
+                                   Text="{Binding LocationLabel}"
+                                   FontFamily="CairoBold" FontSize="14"
+                                   TextColor="White" VerticalOptions="Center"
+                                   LineBreakMode="TailTruncation" MaxLines="1"
+                                   WidthRequest="140"/>
+                            <Label Grid.Column="2" Text="▾" FontSize="12"
+                                   TextColor="White" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
 
                     <!-- Greeting -->
                     <Label FontFamily="CairoBold" FontSize="20" TextColor="White">

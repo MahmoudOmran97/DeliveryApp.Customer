@@ -14,19 +14,43 @@
 
     <ContentPage.Resources>
 
-        <!-- شريط الأقسام العلوي -->
+        <!-- ✅ FIX: شريط الأقسام كان عبارة عن Pill بالاسم بس من غير صورة، وده
+             مختلف عن تصميم شريط الأقسام في باقي الصفحات (زي CategoryChipTemplate
+             بتاعة RestaurantPage) اللي بتعرض صورة/أيقونة القسم جوه دائرة فوق
+             الاسم. اتظبط هنا بنفس التصميم بالظبط (دائرة 60x60 + صورة/إيموجي
+             بديل + الاسم تحت) مع فرق واحد بسيط: هنا القسم "المختار" بيتلوّن
+             بالبرتقالي عشان يبين إنه ده الفلتر الشغال دلوقتي (الصفحة دي فيها
+             فلترة بالقسم، على عكس RestaurantPage اللي بس بتنقل لصفحة تانية). -->
         <DataTemplate x:Key="CategoryChipTemplate" x:DataType="m:Category">
-            <Border BackgroundColor="{Binding IsSelectedForChip, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
-                    StrokeShape="RoundRectangle 20" Stroke="Transparent"
-                    Padding="16,9" Margin="4,0">
-                <Border.GestureRecognizers>
+            <VerticalStackLayout Padding="0" WidthRequest="66" HorizontalOptions="Center">
+                <VerticalStackLayout.GestureRecognizers>
                     <TapGestureRecognizer
                         Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SelectCategoryCommand}"
                         CommandParameter="{Binding .}"/>
-                </Border.GestureRecognizers>
-                <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="13"
-                       TextColor="{Binding IsSelectedForChip, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#424242'}"/>
-            </Border>
+                </VerticalStackLayout.GestureRecognizers>
+
+                <Border BackgroundColor="{Binding IsSelectedForChip, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#FFF3EC'}"
+                        StrokeShape="RoundRectangle 14"
+                        Stroke="{Binding IsSelectedForChip, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#EBD8C2'}"
+                        StrokeThickness="1.5" WidthRequest="60" HeightRequest="60"
+                        HorizontalOptions="Center">
+                    <Grid>
+                        <Label Text="🛒" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center"
+                               IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                        <ff:CachedImage Source="{Binding FullImageUrl}"
+                               Aspect="AspectFill"
+                               CacheDuration="7"
+                               DownsampleToViewSize="True"
+                               HeightRequest="60" WidthRequest="60"
+                               IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
+                    </Grid>
+                </Border>
+
+                <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="11"
+                       TextColor="{Binding IsSelectedForChip, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#212121'}"
+                       HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" MaxLines="1"
+                       Margin="0,3,0,0"/>
+            </VerticalStackLayout>
         </DataTemplate>
 
         <DataTemplate x:Key="ProductGridTemplate" x:DataType="m:Product">
@@ -62,7 +86,7 @@
                                    FontSize="9" TextColor="White"/>
                         </Border>
 
-                            <ImageButton Source="icon_plus.png" Aspect="AspectFit"
+                        <ImageButton Source="icon_plus.png" Aspect="AspectFit"
                                  WidthRequest="50" HeightRequest="50"
                                 CornerRadius="20" Padding="3" HorizontalOptions="End" VerticalOptions="End"
                                 Margin="0,0,10,-8"
@@ -99,37 +123,40 @@
          دايمًا بيتقاس صح في أول Layout pass (خصوصًا قبل ما العناصر تتحمل)،
          فكان أحيانًا بيتحسب بارتفاع أصغر من المفروض وبالتالي الصف اللي بعده
          (الفلاتر) بيتحرك لفوق ويتراكب/يتقطع فوق شريط الأقسام. الحل: ارتفاع
-         ثابت للصفين بدل Auto، بقيمة أكبر شوية من المحتوى الفعلي (52 و ~46)
-         عشان تضمن مساحة كافية دايمًا. -->
-    <Grid RowDefinitions="Auto,76,62,*">
+         ثابت للصفين بدل Auto، بقيمة أكبر شوية من المحتوى الفعلي (98 بعد ما
+         بقى شريط الأقسام فيه صورة زي باقي الصفحات، و62) عشان تضمن مساحة
+         كافية دايمًا. -->
+    <Grid RowDefinitions="Auto,98,62,*">
 
-        <!-- Header -->
-        <Border Grid.Row="0" BackgroundColor="#FF5722" Stroke="Transparent"
-                StrokeShape="RoundRectangle 0,0,0,24" Padding="20,52,20,14">
-            <Grid ColumnDefinitions="Auto,*,Auto">
-                <ImageButton Grid.Column="0" Source="icon_back.png" WidthRequest="38" HeightRequest="38"
-                             BackgroundColor="Transparent" VerticalOptions="Center" Command="{Binding GoBackCommand}"/>
-                <Label Grid.Column="1" Text="{Binding SelectedCategory.Name}" FontFamily="CairoBold" FontSize="19"
-                       TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
-                <Grid Grid.Column="2" WidthRequest="44" HeightRequest="44" VerticalOptions="Center">
-                    <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
-                            Stroke="Transparent" WidthRequest="44" HeightRequest="44">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding OpenCartCommand}"/>
-                        </Border.GestureRecognizers>
-                        <Label Text="🛒" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
-                    </Border>
-                    <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10"
-                            Stroke="White" StrokeThickness="1" IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
-                            WidthRequest="20" HeightRequest="20" HorizontalOptions="End" VerticalOptions="Start">
-                        <Label Text="{Binding CartCount}" FontSize="10" FontFamily="CairoBold"
-                               TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
-                    </Border>
-                </Grid>
+        <!-- ✅ FIX (الهيدر كان شكله مختلف عن باقي الصفحات): كان Border بزوايا
+             سفلية مدوّرة (RoundRectangle 0,0,0,24) بيدّي شكل "كارت" مختلف عن
+             هيدر Home/Category (Grid مستطيل عادي). اتشال الاستدارة السفلية
+             ووحّدنا Padding العلوي (52) بنفس الأسلوب المستخدم في كل الصفحات
+             التانية عشان الجزء البرتقالي فوق يبقى بنفس شكل باقي التطبيق. -->
+        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="20,52,20,14"
+              ColumnDefinitions="Auto,*,Auto">
+            <ImageButton Grid.Column="0" Source="icon_back.png" WidthRequest="38" HeightRequest="38"
+                         BackgroundColor="Transparent" VerticalOptions="Center" Command="{Binding GoBackCommand}"/>
+            <Label Grid.Column="1" Text="{Binding SelectedCategory.Name}" FontFamily="CairoBold" FontSize="19"
+                   TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
+            <Grid Grid.Column="2" WidthRequest="44" HeightRequest="44" VerticalOptions="Center">
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 22"
+                        Stroke="Transparent" WidthRequest="44" HeightRequest="44">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenCartCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="🛒" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+                <Border BackgroundColor="#F44336" StrokeShape="RoundRectangle 10"
+                        Stroke="White" StrokeThickness="1" IsVisible="{Binding CartCount, Converter={StaticResource IntToBool}}"
+                        WidthRequest="20" HeightRequest="20" HorizontalOptions="End" VerticalOptions="Start">
+                    <Label Text="{Binding CartCount}" FontSize="10" FontFamily="CairoBold"
+                           TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
             </Grid>
-        </Border>
+        </Grid>
 
-        <!-- شريط الأقسام العصري -->
+        <!-- شريط الأقسام (نفس تصميم شريط الأقسام في باقي الصفحات - صورة/أيقونة + اسم) -->
         <Border Grid.Row="1" Margin="12,10,12,4" Padding="4,6" BackgroundColor="White"
                 Stroke="#ECEEF2" StrokeThickness="1" StrokeShape="RoundRectangle 18">
             <Border.Shadow>
@@ -137,52 +164,52 @@
             </Border.Shadow>
             <CollectionView ItemsSource="{Binding Categories}" SelectionMode="None"
                             ItemsLayout="HorizontalList" ItemTemplate="{StaticResource CategoryChipTemplate}"
-                            HeightRequest="58" BackgroundColor="Transparent"/>
+                            HeightRequest="84" BackgroundColor="Transparent"/>
         </Border>
 
         <!-- شريط الفرز والفلترة العصري والقابل للتمرير -->
         <Border Grid.Row="2" Margin="12,4,12,6" Padding="4,3" BackgroundColor="White"
                 Stroke="#ECEEF2" StrokeThickness="1" StrokeShape="RoundRectangle 16">
             <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-            <HorizontalStackLayout Spacing="8">
+                <HorizontalStackLayout Spacing="8">
 
-            <Border BackgroundColor="{Binding IsSortBest, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
+                    <Border BackgroundColor="{Binding IsSortBest, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
                     StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="12,7">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SetSortCommand}" CommandParameter="best"/>
-                </Border.GestureRecognizers>
-                <Label Text="{loc:Loc Key=SortBestSeller}" FontFamily="CairoBold" FontSize="12"
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SetSortCommand}" CommandParameter="best"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="{loc:Loc Key=SortBestSeller}" FontFamily="CairoBold" FontSize="12"
                        TextColor="{Binding IsSortBest, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#424242'}"/>
-            </Border>
+                    </Border>
 
-            <Border BackgroundColor="{Binding IsSortPriceAsc, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
+                    <Border BackgroundColor="{Binding IsSortPriceAsc, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
                     StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="12,7">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SetSortCommand}" CommandParameter="priceAsc"/>
-                </Border.GestureRecognizers>
-                <Label Text="{loc:Loc Key=SortPriceAsc}" FontFamily="CairoBold" FontSize="12"
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SetSortCommand}" CommandParameter="priceAsc"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="{loc:Loc Key=SortPriceAsc}" FontFamily="CairoBold" FontSize="12"
                        TextColor="{Binding IsSortPriceAsc, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#424242'}"/>
-            </Border>
+                    </Border>
 
-            <Border BackgroundColor="{Binding IsSortPriceDesc, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
+                    <Border BackgroundColor="{Binding IsSortPriceDesc, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
                     StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="12,7">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SetSortCommand}" CommandParameter="priceDesc"/>
-                </Border.GestureRecognizers>
-                <Label Text="{loc:Loc Key=SortPriceDesc}" FontFamily="CairoBold" FontSize="12"
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SetSortCommand}" CommandParameter="priceDesc"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="{loc:Loc Key=SortPriceDesc}" FontFamily="CairoBold" FontSize="12"
                        TextColor="{Binding IsSortPriceDesc, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#424242'}"/>
-            </Border>
+                    </Border>
 
-            <Border BackgroundColor="{Binding DiscountOnly, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
+                    <Border BackgroundColor="{Binding DiscountOnly, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
                     StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="12,7">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ToggleDiscountOnlyCommand}"/>
-                </Border.GestureRecognizers>
-                <Label Text="{loc:Loc Key=DiscountOnly}" FontFamily="CairoBold" FontSize="12"
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleDiscountOnlyCommand}"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="{loc:Loc Key=DiscountOnly}" FontFamily="CairoBold" FontSize="12"
                        TextColor="{Binding DiscountOnly, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#424242'}"/>
-            </Border>
+                    </Border>
 
-            </HorizontalStackLayout>
+                </HorizontalStackLayout>
             </ScrollView>
         </Border>
 

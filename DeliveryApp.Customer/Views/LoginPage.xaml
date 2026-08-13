@@ -5,16 +5,30 @@
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.LoginPage"
              x:DataType="vm:LoginViewModel"
-             NavigationPage.HasNavigationBar="False">
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#FF5722">
+
+    <!-- ✅ FIX (تغطية شريط الساعة فوق + مفيش سكرول فبيتغطى آخر عناصر الفورم تحت):
+         الصفحة القديمة كانت Grid RowDefinitions="280,*" جوه ScrollView.
+         الصف "*" جوه ScrollView بياخد ارتفاع صفر لأن الـ ScrollView بيدّي المحتوى
+         ارتفاع لا نهائي وقت القياس، فالكارت الأبيض (اللي كان VerticalOptions="End"
+         و RowSpan="2") كان بيتحسب على أساس ارتفاع الصف الأول بس (280px) وأي حاجة
+         زيادة فايضة برة حدود الـ ScrollView من غير Scrollbar ومن غير ما اليوزر
+         يقدر يوصلها = زرار الدخول ورابط "مفيش حساب؟ سجل" بيتقصوا/يتغطوا بشريط
+         الأزرار السفلي للموبايل. وكمان مكانش فيه Padding علوي يراعي شريط الساعة
+         (الصفحات التانية زي Home/Category بتستخدم Padding علوي 52 لنفس السبب).
+         الحل: Grid عادي بارتفاع Auto بدل الـ RowDefinitions Star، جوه
+         VerticalStackLayout (بيتقاس صح جوه ScrollView)، + Padding علوي 52
+         + Padding سفلي كافي في الكارت الأبيض. -->
     <ScrollView>
-        <Grid RowDefinitions="280,*">
+        <VerticalStackLayout Spacing="0">
 
             <!-- Orange top section -->
-            <Grid Grid.Row="0" BackgroundColor="#FF5722">
+            <Grid Padding="20,52,20,36" RowDefinitions="Auto,Auto">
 
                 <!-- Language toggle -->
-                <Border HorizontalOptions="End" VerticalOptions="Start"
-                        Margin="0,16,16,0" Padding="12,6"
+                <Border Grid.Row="0" HorizontalOptions="End" VerticalOptions="Start"
+                        Padding="12,6"
                         StrokeShape="RoundRectangle 16"
                         Stroke="#FFCCBC"
                         BackgroundColor="Transparent">
@@ -25,14 +39,14 @@
                            FontFamily="CairoRegular" FontSize="13" TextColor="White"/>
                 </Border>
 
-                <VerticalStackLayout VerticalOptions="End" HorizontalOptions="Center"
-                                     Padding="0,0,0,36" Spacing="10">
+                <VerticalStackLayout Grid.Row="1" HorizontalOptions="Center"
+                                     Padding="0,24,0,0" Spacing="10">
                     <Image x:Name="imgLogo"
-Aspect="AspectFill"
-HeightRequest="110"
-WidthRequest="110"
-HorizontalOptions="Center"
-VerticalOptions="Center"/>
+                           Aspect="AspectFill"
+                           HeightRequest="110"
+                           WidthRequest="110"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
                     <Label Text="{loc:Loc Key=WelcomeBack}"
                            FontFamily="CairoBold" FontSize="30" TextColor="White" HorizontalOptions="Center"/>
                     <Label Text="{loc:Loc Key=SignInToContinue}"
@@ -41,12 +55,11 @@ VerticalOptions="Center"/>
             </Grid>
 
             <!-- White card -->
-            <Border Grid.Row="0" Grid.RowSpan="2"
-                    BackgroundColor="#F8F9FA"
+            <Border BackgroundColor="#F8F9FA"
                     StrokeShape="RoundRectangle 32,32,0,0"
                     Stroke="Transparent"
-                    VerticalOptions="End"
-                    Padding="28,32,28,40">
+                    Margin="0,-24,0,0"
+                    Padding="28,32,28,48">
                 <VerticalStackLayout Spacing="18">
 
                     <Label Text="{loc:Loc Key=Login}"
@@ -110,6 +123,6 @@ VerticalOptions="Center"/>
                 </VerticalStackLayout>
             </Border>
 
-        </Grid>
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

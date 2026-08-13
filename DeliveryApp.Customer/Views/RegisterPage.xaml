@@ -7,8 +7,13 @@
              x:DataType="vm:RegisterViewModel"
              NavigationPage.HasNavigationBar="False">
 
+    <!-- ✅ FIX (تغطية شريط الساعة فوق + آخر عناصر الصفحة بتتغطى بشريط الأزرار
+         السفلي للموبايل): الـ Padding العلوي اتظبط على 52 بالظبط زي باقي
+         صفحات التطبيق (Home/Category/...)، والـ Padding السفلي اتزود عشان
+         رابط "عندك حساب بالفعل؟ سجل دخول" ميلزقش في حافة الشاشة/الـ Home
+         indicator أو أزرار النافيجيشن في أندرويد. -->
     <ScrollView>
-        <VerticalStackLayout Padding="28,56,28,40" Spacing="16">
+        <VerticalStackLayout Padding="28,52,28,56" Spacing="16">
 
             <HorizontalStackLayout>
                 <Image Source="icon_back.png" WidthRequest="38" HeightRequest="38" VerticalOptions="Center">
