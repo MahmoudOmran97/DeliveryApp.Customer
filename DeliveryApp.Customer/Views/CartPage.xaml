@@ -22,13 +22,18 @@
                          Command="{Binding GoBackCommand}"/>
             <Label Grid.Column="1" Text="{loc:Loc Key=MyCart}" FontFamily="CairoBold" FontSize="22"
                    TextColor="#212121" HorizontalOptions="Center" VerticalOptions="Center"/>
-            <Label Grid.Column="2" Text="{loc:Loc Key=ClearAll}" FontFamily="CairoRegular" FontSize="13"
-                   TextColor="#F44336" VerticalOptions="Center"
-                   IsVisible="{Binding IsEmpty, Converter={StaticResource InvertBool}}">
-                <Label.GestureRecognizers>
+            <Border Grid.Column="2" Padding="10,6"
+          StrokeShape="RoundRectangle 12"
+          Stroke="#FFCCBC" StrokeThickness="1"
+          BackgroundColor="#33FFFFFF"
+          VerticalOptions="Center">
+                <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding ClearCommand}"/>
-                </Label.GestureRecognizers>
-            </Label>
+                </Border.GestureRecognizers>
+                <Label Text="{loc:Loc Key=ClearAll}" FontFamily="CairoBold" FontSize="15"
+             TextColor="#FF5722" VerticalOptions="Center"/>
+            </Border>
+           
         </Grid>
 
         <!-- Empty state -->
