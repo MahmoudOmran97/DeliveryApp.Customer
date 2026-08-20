@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 
 using System.Text.Json;
 
+using DeliveryApp.Customer.Converters;
 using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.ViewModels;
 
@@ -15,7 +16,13 @@ public class ApiService
 
     private readonly AuthService _auth;
 
-    private readonly JsonSerializerOptions _json = new() { PropertyNameCaseInsensitive = true };
+    // ✅ إضافة UtcDateTimeConverter: أي DateTime جاي من الـ API بيتحول تلقائي
+    // لتوقيت الجهاز المحلي (مصر) لحظة الـ Deserialize، بدل ما نلمس كل شاشة لوحدها.
+    private readonly JsonSerializerOptions _json = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters = { new UtcDateTimeConverter(), new UtcNullableDateTimeConverter() }
+    };
 
     // ← غير ده لـ URL الـ API بتاعتك
 
