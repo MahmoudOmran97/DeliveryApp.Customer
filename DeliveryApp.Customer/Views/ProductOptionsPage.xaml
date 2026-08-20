@@ -35,9 +35,18 @@
                     <VerticalStackLayout Grid.Column="0" Spacing="4">
                         <Label Text="{Binding Product.Name}" FontFamily="CairoBold" FontSize="20" TextColor="#212121"/>
                         <Label Text="{Binding Product.Description}" FontFamily="CairoRegular"
-                               FontSize="13" TextColor="#757575"/>
-                        <Label Text="{Binding Product.Price, StringFormat='{0:F0} EGP'}"
-                               FontFamily="CairoBold" FontSize="15" TextColor="#FF5722"/>
+               FontSize="13" TextColor="#757575"/>
+                        <!-- ✅ FIX: كان بيعرض Product.Price (السعر قبل الخصم) دايمًا حتى لو المنتج عليه خصم.
+             دلوقتي بيعرض EffectivePrice (السعر بعد الخصم لو موجود)، ولو فيه خصم
+             فعلاً بيظهر السعر القديم مشطوب عليه جنبه. -->
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{Binding Product.EffectivePrice, StringFormat='{0:F0} EGP'}"
+                   FontFamily="CairoBold" FontSize="15" TextColor="#FF5722"/>
+                            <Label Text="{Binding Product.OriginalPriceText}"
+                   FontFamily="CairoRegular" FontSize="13" TextColor="#9E9E9E"
+                   TextDecorations="Strikethrough"
+                   IsVisible="{Binding Product.HasDiscount}"/>
+                        </HorizontalStackLayout>
                     </VerticalStackLayout>
                     <Label Grid.Column="1" Text="✕" FontSize="22" TextColor="#757575" Padding="8">
                         <Label.GestureRecognizers>
