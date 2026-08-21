@@ -221,9 +221,9 @@ public class Order
 
     public string StatusText => Status switch
     {
-        "Pending" => "Waiting for restaurant",
+        "Pending" => "Waiting for store",
         "Accepted" => "Order accepted ✓",
-        "Preparing" => "Preparing your food 🍳",
+        "Preparing" => "Preparing your order",
         "ReadyForPickup" => "Ready — waiting for driver",
         "OnTheWay" => "Driver on the way 🛵",
         "Delivered" => "Delivered ✓",
@@ -530,6 +530,17 @@ public class Coupon
     public string MinOrderText => MinOrderAmount.HasValue
         ? $"الحد الأدنى {MinOrderAmount:F0} جنيه"
         : "بدون حد أدنى";
+
+    // ✅ نص يوضح للعميل إن الكوبون خاص بمحل معين ولا شغال على كل المحلات
+    public string ScopeText => RestaurantId.HasValue
+        ? (LocalizationService.Current.TwoLetterISOLanguageName == "ar"
+            ? $"خاص بمحل {RestaurantName}"
+            : $"Only for {RestaurantName}")
+        : (LocalizationService.Current.TwoLetterISOLanguageName == "ar"
+            ? "يعمل على كل المحلات"
+            : "Works on all stores");
+
+    public bool IsRestaurantSpecific => RestaurantId.HasValue;
 
     public string ExpiryText => ExpiresInDays.HasValue
         ? (ExpiresInDays <= 0 ? "منتهي" : $"ينتهي بعد {ExpiresInDays} يوم")

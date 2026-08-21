@@ -512,13 +512,13 @@ public class ApiService
     public Task<List<Coupon>?> GetMyCouponsAsync()
         => GetAsync<List<Coupon>>("coupons/my");
 
-    public async Task<CouponValidationResult?> ValidateCouponAsync(string code, decimal orderAmount)
+    public async Task<CouponValidationResult?> ValidateCouponAsync(string code, decimal orderAmount, int? restaurantId = null)
     {
         try
         {
             SetAuth();
             var r = await _http.PostAsJsonAsync($"{Base}/coupons/validate",
-                new { Code = code, OrderAmount = orderAmount });
+                new { Code = code, OrderAmount = orderAmount, RestaurantId = restaurantId });
             if (r.IsSuccessStatusCode)
                 return await r.Content.ReadFromJsonAsync<CouponValidationResult>(_json);
             var body = await r.Content.ReadAsStringAsync();

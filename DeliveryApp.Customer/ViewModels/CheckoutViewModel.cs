@@ -213,7 +213,8 @@ public partial class CheckoutViewModel : BaseViewModel
         IsBusy = true;
         try
         {
-            var result = await _api.ValidateCouponAsync(CouponCode.Trim().ToUpper(), SubTotal);
+            // ✅ FIX: لازم نبعت الـ RestaurantId عشان الكوبون المقيّد بمحل معين ميتقبلش مع محلات تانية
+            var result = await _api.ValidateCouponAsync(CouponCode.Trim().ToUpper(), SubTotal, _cart.RestaurantId);
             _appliedCouponId = result?.Id;
             Discount = result?.Discount ?? 0;
             CouponApplied = true;

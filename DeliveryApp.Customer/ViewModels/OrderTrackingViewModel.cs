@@ -241,7 +241,10 @@ public partial class OrderTrackingViewModel : BaseViewModel
                 break;
 
             case "OnTheWay":
-                _deliveryStartUtc ??= Order.PickedUpAt ?? DateTime.UtcNow;
+                // ✅ FIX: Order.PickedUpAt جايه من الـ API متحوّلة بالفعل لتوقيت الجهاز المحلي
+                // (UtcDateTimeConverter بيعمل ToLocalTime() تلقائي)، فمينفعش نقارنها بـ DateTime.UtcNow
+                // لأن ده كان بيضيف فرق التوقيت المحلي (مثلاً 3 ساعات) على العداد.
+                _deliveryStartUtc ??= Order.PickedUpAt ?? DateTime.Now;
                 _deliveryEstimateSeconds = Math.Max(10 * 60, (Order.EstimatedDeliveryMax ?? Order.EstimatedDelivery ?? 25) * 60);
                 _deliveryTargetUtc ??= _deliveryStartUtc.Value.AddSeconds(_deliveryEstimateSeconds);
                 DeliveryTimerHint = LocalizationService.Get("Timer_DeliveryHint");
@@ -254,7 +257,10 @@ public partial class OrderTrackingViewModel : BaseViewModel
     {
         if (Order == null) return;
 
-        var now = DateTime.UtcNow;
+        // ✅ FIX: القيم اللي جايه من Order (AcceptedAt/CreatedAt/PickedUpAt) بقت متحوّلة
+        // بالفعل لتوقيت الجهاز المحلي عن طريق UtcDateTimeConverter، فلازم نقارنها بـ
+        // DateTime.Now مش DateTime.UtcNow، وإلا هيتضاف فرق التوقيت (مثلاً 3 ساعات) على العداد.
+        var now = DateTime.Now;
         if (IsPrepTimerVisible && _prepStartUtc.HasValue && _prepTargetUtc.HasValue)
         {
             var total = Math.Max(1, (_prepTargetUtc.Value - _prepStartUtc.Value).TotalSeconds);
@@ -278,7 +284,8 @@ public partial class OrderTrackingViewModel : BaseViewModel
         if (durationSeconds <= 0 || Order?.Status != "OnTheWay") return;
 
         _deliveryEstimateSeconds = Math.Max(60, durationSeconds);
-        _deliveryStartUtc ??= Order.PickedUpAt ?? DateTime.UtcNow;
+        // ✅ FIX: نفس السبب فوق — Order.PickedUpAt توقيت محلي مش UTC
+        _deliveryStartUtc ??= Order.PickedUpAt ?? DateTime.Now;
         _deliveryTargetUtc = _deliveryStartUtc.Value.AddSeconds(_deliveryEstimateSeconds);
         MainThread.BeginInvokeOnMainThread(UpdateCountdowns);
     }
