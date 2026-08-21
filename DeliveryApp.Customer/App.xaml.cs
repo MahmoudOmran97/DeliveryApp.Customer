@@ -16,6 +16,11 @@ public partial class App : Application
 
     public static bool IsInForeground { get; private set; }
 
+    // ✅ PERF FIX: بيسمح لأي عنصر (زي CurvedBottomBar) إنه يوقف أنيميشن لوب
+    // بتاعه لما التطبيق يروح الخلفية بدل ما يفضل شغال ويستهلك بطارية/CPU من
+    // غير داعي، ويرجعه لما التطبيق يرجع للـ foreground.
+    public static event Action<bool>? ForegroundChanged;
+
     public App(SplashPage splash, ChatNotificationService chatNotif, FcmTokenService fcmToken,
         AuthService auth, SignalRService signalR, ApiService api, IServiceProvider services)
     {
@@ -54,7 +59,12 @@ public partial class App : Application
 
         _ = Task.Run(async () =>
         {
+            var initTask = auth.InitializeAsync();
             await Task.Delay(1500);
+            // ✅ تأكيد إن كاش التوكن (من SecureStorage) خلص تحميل قبل ما نشيك
+            // IsLoggedIn هنا — أول نداء لـ InitializeAsync() بيتحمّل فعليًا، أي
+            // نداء بعد كده (زي اللي في SplashPage) بياخد نفس الـ Task المحفوظ.
+            await initTask;
             if (auth.IsLoggedIn)
             {
                 await fcmToken.RegisterAsync();
@@ -112,6 +122,7 @@ public partial class App : Application
     {
         base.OnResume();
         IsInForeground = true;
+        ForegroundChanged?.Invoke(true);
         TryNavigatePendingCall();
         TryNavigatePendingNotification();
 
@@ -119,6 +130,7 @@ public partial class App : Application
         {
             _ = Task.Run(async () =>
             {
+                await _auth.InitializeAsync();
                 await Task.Delay(500);
                 await _signalR.ConnectAsync(_auth.GetToken());
                 await JoinActiveOrderGroupsAsync();
@@ -143,6 +155,7 @@ public partial class App : Application
     {
         base.OnSleep();
         IsInForeground = false;
+        ForegroundChanged?.Invoke(false);
     }
 
     void TryNavigatePendingCall()

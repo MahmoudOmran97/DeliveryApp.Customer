@@ -53,7 +53,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="CategoryGridTemplate" x:DataType="m:Category">
-            <Border Style="{StaticResource Card}" Margin="6" Padding="6" WidthRequest="130">
+            <Border Style="{StaticResource CardListItem}" Margin="6" Padding="6" WidthRequest="130">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer
                         Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.GoToCategoryCommand}"
@@ -78,11 +78,10 @@
 
 
         <DataTemplate x:Key="BestSellerTemplate" x:DataType="m:Product">
+            <!-- 🔧 PERF FIX: شلنا Border.Shadow (كان بيتترسم من جديد لكل عنصر
+                 كل ما القايمة الأفقية دي تتعاد رسمها أثناء السكرول). -->
             <Border BackgroundColor="#FFF8F3" StrokeShape="RoundRectangle 20" Stroke="#FFD9C2"
                     StrokeThickness="1.2" WidthRequest="150" Margin="0,4,10,4" Padding="9,8">
-                <Border.Shadow>
-                    <Shadow Brush="#FF5722" Offset="0,2" Opacity="0.08" Radius="6"/>
-                </Border.Shadow>
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer
                         Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.ProductTappedCommand}"
@@ -140,7 +139,7 @@
                            TextColor="#212121" LineBreakMode="TailTruncation" MaxLines="1"/>
                 </Border>
 
-                <Border Style="{StaticResource Card}" Margin="16,0,16,10"
+                <Border Style="{StaticResource CardListItem}" Margin="16,0,16,10"
                         IsVisible="{Binding IsProduct}">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer

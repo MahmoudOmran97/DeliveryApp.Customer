@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              x:Class="DeliveryApp.Customer.Views.ProductOptionsPage"
              x:DataType="vm:ProductOptionsViewModel"
@@ -28,7 +29,15 @@
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding OpenImageCommand}"/>
                     </Border.GestureRecognizers>
-                    <Image Source="{Binding Product.FullImageUrl}" Aspect="AspectFill" HeightRequest="180"/>
+                    <!-- 🔧 PERF FIX: كانت <Image> عادية (بتحمّل من النت من غير caching
+                         ولا downsample) — استبدلناها بـ ff:CachedImage زي باقي صفحات
+                         المنتجات (RestaurantPage, HomePage...) عشان تتكاش وتترسم
+                         بحجم العرض الفعلي بس، مش الحجم الأصلي من السيرفر. -->
+                    <ff:CachedImage Source="{Binding Product.FullImageUrl}"
+                                    Aspect="AspectFill"
+                                    CacheDuration="7"
+                                    DownsampleToViewSize="True"
+                                    HeightRequest="180"/>
                 </Border>
 
                 <Grid ColumnDefinitions="*,Auto">

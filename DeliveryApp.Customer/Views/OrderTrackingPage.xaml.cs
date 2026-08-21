@@ -33,6 +33,24 @@ public partial class OrderTrackingPage : ContentPage
     static readonly string _restaurantMarker = "svg-content://<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 2C20.4 2 11 11.4 11 23c0 14 18.2 35.8 20.1 38.1.5.6 1.4.6 1.9 0C34.8 58.8 53 37 53 23 53 11.4 43.6 2 32 2z' fill='#4CAF50'/><rect x='20' y='16' width='24' height='18' rx='2' fill='#FFFFFF'/><path d='M20 22h24' stroke='#4CAF50' stroke-width='3'/><rect x='24' y='25' width='7' height='9' fill='#4CAF50'/><rect x='34' y='25' width='8' height='6' fill='#4CAF50'/></svg>";
     static readonly string _driverMarker = "svg-content://<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='#FF5722'/><circle cx='22' cy='43' r='8' fill='#FFFFFF'/><circle cx='22' cy='43' r='3.5' fill='#263238'/><circle cx='44' cy='43' r='8' fill='#FFFFFF'/><circle cx='44' cy='43' r='3.5' fill='#263238'/><path d='M18 36h18l8-8h-9l-4-8h-7l3 8h-9z' fill='#263238'/><circle cx='41' cy='24' r='4' fill='#FFFFFF'/></svg>";
 
+    // 🔧 PERF FIX: كان بيتعمل `new HttpClient()` + dispose في كل نداء لـ
+    // DrawRouteAndUpdateEtaAsync، واللي بتتنادى في كل تحديث موقع درايفر (ممكن
+    // كل كام ثانية طول التتبع). ده معناه TCP/TLS handshake جديد كل مرة بدل ما
+    // نستفيد من connection pooling، وبيسبب استهلاك sockets تحت ضغط. دلوقتي
+    // instance واحد static بيتشارك بين كل نداءات الصفحة دي طول عمر التطبيق.
+    // ملحوظة: مقصود إنه منفصل عن HttpClient بتاع ApiService، عشان مينفعش
+    // الـ Bearer token بتاعنا يتسرب لـ router.project-osrm.org (سيرفر خارجي).
+    static readonly HttpClient _routingHttp = new()
+    {
+        Timeout = TimeSpan.FromSeconds(10)
+    };
+
+    static OrderTrackingPage()
+    {
+        _routingHttp.DefaultRequestHeaders.UserAgent.ParseAdd(
+            "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36");
+    }
+
     public OrderTrackingPage(OrderTrackingViewModel vm)
     {
         InitializeComponent();
@@ -209,8 +227,7 @@ public partial class OrderTrackingPage : ContentPage
         {
             Debug.WriteLine($"[Route:{layerName}] ▶ START from ({fromLat},{fromLng}) to ({toLat},{toLng})");
 
-            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
-            http.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36");
+            var http = _routingHttp;
 
             // ✅ FIX #1: استخدام InvariantCulture عشان الأرقام العشرية دايماً تبقى بنقطة (.)
             // مش متأثرة بلغة التطبيق (عربي/إنجليزي)

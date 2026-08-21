@@ -67,7 +67,7 @@ public partial class LoginViewModel : BaseViewModel
 
             {
 
-                _auth.SaveUser(r.Token, r.Id, r.FullName, r.Email, r.Role);
+                await _auth.SaveUserAsync(r.Token, r.Id, r.FullName, r.Email, r.Role);
 
                 // ← بعت الـ FCM token للـ API بعد اللوجين
                 _ = Task.Run(() => _fcm.RegisterAsync());

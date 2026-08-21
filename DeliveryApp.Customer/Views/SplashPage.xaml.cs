@@ -32,7 +32,12 @@ public partial class SplashPage : ContentPage
     {
         base.OnAppearing();
 
+        // ✅ لازم يتحمّل التوكن من SecureStorage للكاش في الذاكرة قبل ما نشيك
+        // IsLoggedIn (شغالة sync). آمنة تتنادى أكتر من مرة، وبتتنفذ بالتوازي مع
+        // الـ delay فمفيش تأخير إضافي حقيقي حاسس بيه المستخدم.
+        var initTask = _auth.InitializeAsync();
         await Task.Delay(2000);
+        await initTask;
 
         if (_auth.IsLoggedIn)
         {

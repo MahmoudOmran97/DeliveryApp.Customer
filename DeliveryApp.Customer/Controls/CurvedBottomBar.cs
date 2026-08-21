@@ -41,6 +41,12 @@ namespace DeliveryApp.Customer.Controls
         private Image? _homePin;
         private CancellationTokenSource? _homeAnimCts;
 
+        // ✅ PERF FIX: كانت الأنيميشن (3 loops) بتفضل شغالة طول ما تاب الهوم
+        // متاختار، حتى لو التطبيق راح الخلفية (OnSleep) — بطارية/CPU من غير
+        // داعي والمستخدم مش شايف حاجة أصلًا. دلوقتي بنوقفها لما التطبيق يروح
+        // الخلفية ونرجعها بس لو كانت شغالة فعلًا وقت ما رجع للـ foreground.
+        private bool _isHomeAnimationActive;
+
         // Tab definitions (same order as before)
         private readonly (string Key, string Route, string LabelKey,
                            string? StaticIcon, bool IsAnimatedHome)[] _tabs =
@@ -72,6 +78,12 @@ namespace DeliveryApp.Customer.Controls
             Padding = 0;
             Margin = 0;
             HeightRequest = 92;
+
+            // ✅ PERF FIX: نتابع حالة الـ foreground/background ونوقف/نرجّع
+            // أنيميشن الهوم تبعًا لها. بنشيل الاشتراك في Unloaded عشان الـ
+            // control ده Transient (نسخة جديدة كل navigation) فلازم نتجنب أي leak.
+            App.ForegroundChanged += OnForegroundChanged;
+            Unloaded += (_, _) => App.ForegroundChanged -= OnForegroundChanged;
 
             // ── Background wave graphic ──────────────
             _background = new GraphicsView
@@ -302,8 +314,11 @@ namespace DeliveryApp.Customer.Controls
         // ──────────────────────────────────────────────
         private void StartHomeAnimation()
         {
-            if (_homeBase is null) return;        // shouldn't happen
-            StopHomeAnimation();                   // always start fresh
+            _isHomeAnimationActive = true;
+
+            if (!App.IsInForeground) return;       // هيبدأ تلقائي لما يرجع foreground
+            if (_homeBase is null) return;          // shouldn't happen
+            StopHomeAnimationCore();                // always start fresh
 
             _homeAnimCts = new CancellationTokenSource();
             var token = _homeAnimCts.Token;
@@ -314,6 +329,14 @@ namespace DeliveryApp.Customer.Controls
         }
 
         private void StopHomeAnimation()
+        {
+            _isHomeAnimationActive = false;
+            StopHomeAnimationCore();
+        }
+
+        // بيوقف اللوبز الفعلية بس من غير ما يلمس _isHomeAnimationActive — مستخدمة
+        // من StartHomeAnimation (restart) ومن OnForegroundChanged (pause مؤقت).
+        private void StopHomeAnimationCore()
         {
             _homeAnimCts?.Cancel();
             _homeAnimCts?.Dispose();
@@ -329,6 +352,20 @@ namespace DeliveryApp.Customer.Controls
                 if (_homeLine is not null)
                     await _homeLine.TranslateTo(0, 0, 200, Easing.SinOut);
             });
+        }
+
+        private void OnForegroundChanged(bool isForeground)
+        {
+            if (!_isHomeAnimationActive) return;   // مكنش شغال أصلًا، مفيش حاجة نعملها
+
+            if (isForeground)
+            {
+                if (_homeAnimCts is null) StartHomeAnimation();
+            }
+            else
+            {
+                StopHomeAnimationCore();            // يوقف اللوبز بس، من غير ما يمسح الـ flag
+            }
         }
 
         // Pin: float up/down (same timing as HomePage — 1100 ms SinInOut)

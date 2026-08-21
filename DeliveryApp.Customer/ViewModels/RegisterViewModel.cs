@@ -79,7 +79,7 @@ public partial class RegisterViewModel : BaseViewModel
             var r = await _api.RegisterAsync(FullName, Email, Password, Phone, Otp);
             if (r != null)
             {
-                _auth.SaveUser(r.Token, r.Id, r.FullName, r.Email, r.Role);
+                await _auth.SaveUserAsync(r.Token, r.Id, r.FullName, r.Email, r.Role);
                 var shell = IPlatformApplication.Current!.Services.GetService<AppShell>()!;
                 Application.Current!.MainPage = shell;
             }

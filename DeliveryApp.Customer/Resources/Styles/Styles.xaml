@@ -117,6 +117,27 @@
 
     </Style>
 
+    <!-- 🔧 PERF FIX: نفس Card بالظبط بس من غير Shadow. الـ Shadow على أندرويد
+         بيتترسم كـ bitmap منفصل لكل View (مفيش hardware-accelerated blur زي
+         iOS)، وده تكلفته بتتضاعف جامد جوه CollectionView/BindableLayout لما
+         الصفوف بتتعاد رسمها (recycle) أثناء السكرول — وده بالظبط سبب اللاج
+         اللي بيحصل في صفحة المحل لما يكون فيها منتجات كتير. استخدم الستايل ده
+         (مش Card) جوه أي DataTemplate/ItemTemplate لعنصر بيتكرر في قائمة قابلة
+         للسكرول؛ سيب Card الأصلي للكروت الثابتة (مرة واحدة على الشاشة) لأن
+         الفرق البصري بسيط والـ Stroke بيدي حدود كفاية من غيره. -->
+    <Style x:Key="CardListItem" TargetType="Border">
+
+        <Setter Property="BackgroundColor" Value="{StaticResource CardBg}" />
+
+        <Setter Property="StrokeShape"     Value="RoundRectangle 16" />
+
+        <Setter Property="Stroke"          Value="#E0E0E0" />
+        <Setter Property="StrokeThickness" Value="1" />
+
+        <Setter Property="Padding"         Value="16" />
+
+    </Style>
+
     <Style x:Key="InputBorder" TargetType="Border">
 
         <Setter Property="BackgroundColor" Value="White" />

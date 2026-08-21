@@ -12,6 +12,9 @@ public class CallActionReceiver : BroadcastReceiver
     const string ProductionBaseUrl = "https://deliveryappapi.runasp.net/api";
     const string TokenPrefKey = "auth_token"; // لازم يتطابق مع AuthService.K_Token
 
+    // 🔧 PERF FIX: instance واحد مشترك بدل new HttpClient() لكل رفض مكالمة.
+    static readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(10) };
+
     public override void OnReceive(Context? context, Intent? intent)
     {
         if (context == null || intent == null) return;
@@ -52,12 +55,17 @@ public class CallActionReceiver : BroadcastReceiver
     {
         if (orderId == 0) return;
 
-        var token = Microsoft.Maui.Storage.Preferences.Get(TokenPrefKey, string.Empty);
+        // 🔒 SECURITY FIX: كان بيقرا من Preferences (plaintext) — بعد ما AuthService
+        // بقى بيخزن في SecureStorage، لازم نقرا من نفس المكان وإلا زرار "رفض
+        // المكالمة" من الإشعار هيبطل يشتغل لأي مستخدم يعمل login بعد التحديث ده.
+        var token = await Microsoft.Maui.Storage.SecureStorage.Default.GetAsync(TokenPrefKey);
         if (string.IsNullOrEmpty(token)) return;
 
-        using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
-        http.DefaultRequestHeaders.Authorization =
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post, $"{ProductionBaseUrl}/voicecall/reject/{orderId}");
+        request.Headers.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-        await http.PostAsync($"{ProductionBaseUrl}/voicecall/reject/{orderId}", null);
+
+        await _http.SendAsync(request);
     }
 }

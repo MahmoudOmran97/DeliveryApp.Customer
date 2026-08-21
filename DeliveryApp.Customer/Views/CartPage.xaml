@@ -54,7 +54,7 @@
                         Margin="16,0">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="m:CartItem">
-                    <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                    <Border Style="{StaticResource CardListItem}" Margin="0,0,0,12">
                         <Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
 
                             <!-- Product image -->

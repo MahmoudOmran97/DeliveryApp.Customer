@@ -207,7 +207,9 @@ public class IncomingCallActivity : Activity
         IncomingCallNotificationHelper.Cancel(this, _orderId);
         try
         {
-            var token = Microsoft.Maui.Storage.Preferences.Get(TokenPrefKey, string.Empty);
+            // 🔒 SECURITY FIX: نفس تعديل CallActionReceiver — التوكن بقى في
+            // SecureStorage بدل Preferences، فلازم نقرا من نفس المكان.
+            var token = await Microsoft.Maui.Storage.SecureStorage.Default.GetAsync(TokenPrefKey);
             if (!string.IsNullOrEmpty(token) && _orderId != 0)
             {
                 using var http = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(10) };

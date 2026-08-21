@@ -48,12 +48,10 @@
                              RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="m:Notification">
+                        <!-- 🔧 PERF FIX: شلنا Border.Shadow جوه قائمة إشعارات ممكن تطول. -->
                         <Border BackgroundColor="{Binding BackgroundColor}"
                                 StrokeShape="RoundRectangle 14" Stroke="Transparent"
                                 Padding="14" Margin="0,0,0,10">
-                            <Border.Shadow>
-                                <Shadow Brush="Black" Offset="0,2" Opacity="0.06" Radius="10"/>
-                            </Border.Shadow>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type vm:NotificationsViewModel}}, Path=TapCommand}"

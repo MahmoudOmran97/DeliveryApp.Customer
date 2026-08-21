@@ -53,12 +53,12 @@
             </VerticalStackLayout>
         </DataTemplate>
 
+        <!-- 🔧 PERF FIX: شلنا Border.Shadow من هنا — ده الـ template بتاع شبكة
+             المنتجات، وهو أكتر مكان حساس للاج لأنه بيتكرر لكل منتج جوه المحل
+             (ممكن عشرات المنتجات) وبيتعاد رسمه أثناء السكرول. -->
         <DataTemplate x:Key="ProductGridTemplate" x:DataType="m:Product">
             <Border BackgroundColor="White" Stroke="#ECEEF2" StrokeThickness="1"
                     StrokeShape="RoundRectangle 20" Margin="5,6" Padding="0">
-                <Border.Shadow>
-                    <Shadow Brush="#1A000000" Offset="0,3" Opacity="0.10" Radius="12"/>
-                </Border.Shadow>
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer
                         Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.ProductTappedCommand}"
@@ -262,7 +262,7 @@
                                     ItemsLayout="HorizontalList" HeightRequest="184">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="m:Product">
-                                <Border Style="{StaticResource Card}" WidthRequest="118" Margin="0,0,10,4" Padding="8">
+                                <Border Style="{StaticResource CardListItem}" WidthRequest="118" Margin="0,0,10,4" Padding="8">
                                     <VerticalStackLayout Spacing="4">
                                         <Border BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 8"
                                                 Stroke="#E0E0E0" HeightRequest="70">

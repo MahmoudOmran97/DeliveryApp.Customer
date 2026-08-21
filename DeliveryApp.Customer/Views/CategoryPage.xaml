@@ -53,7 +53,7 @@
                              RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="m:Restaurant">
-                        <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                        <Border Style="{StaticResource CardListItem}" Margin="0,0,0,14">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CategoryViewModel}}, Path=OpenRestaurantCommand}" 
                                                       CommandParameter="{Binding .}"/>
