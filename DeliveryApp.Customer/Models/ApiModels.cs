@@ -408,7 +408,26 @@ public class PagedResult<T>
     public int Page { get; set; }
     public int PageSize { get; set; }
     public int? TotalPages { get; set; }
+
+    /// <summary>أقصى مسافة توصيل (الزون) المفروضة من الأدمن — بترجع مع /api/restaurants لو معانا lat/lng</summary>
+    public double? MaxDeliveryZoneKm { get; set; }
+
+    /// <summary>سبب تقليل الزون لو الأدمن حدد واحد، وإلا null</summary>
+    public string? ZoneReducedReason { get; set; }
+
     public List<T> Data { get; set; } = new();
+}
+
+// ─── Delivery Settings (الزون + سعر التوصيل) ─────────────────────────────────
+
+public class DeliverySettingsDto
+{
+    public int Id { get; set; }
+    public double FreeRadiusKm { get; set; }
+    public decimal ExtraFeePerKm { get; set; }
+    public double MaxDeliveryZoneKm { get; set; } = 10.0;
+    public string? ZoneReducedReason { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }
 
 public class NotificationUnreadCount

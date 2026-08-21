@@ -215,10 +215,14 @@ public partial class HomeViewModel : BaseViewModel
             // Banners (no location filter)
             var bannersTask = _api.GetBannersAsync();
             var unreadNotificationsTask = _api.GetUnreadNotificationsCountAsync();
+            // ✅ نحدّث الزون (أقصى مسافة توصيل) من السيرفر قبل ما نطلب المحلات، عشان لو الأدمن غيّره يتطبق فورًا
+            var zoneRefreshTask = _location.RefreshZoneAsync(_api);
 
             // Restaurants: location + category + top-rated (≥4 stars, max 5)
             double? lat = _location.HasLocation ? _location.Latitude : null;
             double? lng = _location.HasLocation ? _location.Longitude : null;
+
+            await zoneRefreshTask;
 
             var restaurantsTask = _api.GetRestaurantsAsync(
                 search: SearchText,
@@ -226,7 +230,7 @@ public partial class HomeViewModel : BaseViewModel
                 page: 1,
                 lat: lat,
                 lng: lng,
-                radiusKm: 10.0,
+                radiusKm: _location.ZoneRadiusKm,
                 category: SelectedCategory,
                 minRating: 4.0,
                 pageSize: 5);

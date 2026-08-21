@@ -316,17 +316,36 @@ public partial class CheckoutViewModel : BaseViewModel
             return;
         }
 
-        // ✅ Check distance (10km restriction from store)
+        // ✅ Check distance against the admin-configured zone (LocationService.ZoneRadiusKm)
+        // بدل الرقم الثابت 10 كم. لو الأدمن قلل الزون وحط سبب، بيظهر للعميل بدل الرسالة العامة
+        // عشان محدش يحس إن الخدمة "مقفولة" وهي بس مقلَّلة مؤقتًا.
         if (Restaurant != null)
         {
+            await _location.RefreshZoneAsync(_api);
+            double maxZoneKm = _location.ZoneRadiusKm;
+
             double dist = LocationService.DistanceKm(DeliveryLat, DeliveryLng, Restaurant.Latitude, Restaurant.Longitude);
-            if (dist > 10.0)
+            if (dist > maxZoneKm)
             {
+                bool isAr = LocalizationService.Current.TwoLetterISOLanguageName == "ar";
+                var reason = _location.ZoneReducedReason;
+
+                string message;
+                if (!string.IsNullOrWhiteSpace(reason))
+                {
+                    // السبب اللي كاتبه الأدمن في لوحة التحكم بييجي زي ما هو (نفس اللغة اللي كتبها بيها)
+                    message = reason;
+                }
+                else
+                {
+                    message = isAr
+                        ? $"عذراً، الموقع المختار بعيد جداً عن المحل (أكثر من {maxZoneKm:0.#} كم)"
+                        : $"Sorry, the selected location is too far from the store (more than {maxZoneKm:0.#}km)";
+                }
+
                 await Shell.Current.DisplayAlert(
                     LocalizationService.Get("Notice"),
-                    LocalizationService.Current.TwoLetterISOLanguageName == "ar"
-                        ? "عذراً، الموقع المختار بعيد جداً عن المحل (أكثر من 10 كم)"
-                        : "Sorry, the selected location is too far from the store (more than 10km)",
+                    message,
                     LocalizationService.Get("Ok"));
                 return;
             }

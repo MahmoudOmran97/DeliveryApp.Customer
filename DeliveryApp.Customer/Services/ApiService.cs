@@ -224,6 +224,15 @@ public class ApiService
     public Task<List<SiteLink>?> GetSiteLinksAsync()
         => GetAsync<List<SiteLink>>("site-links");
 
+    // ─── Delivery Settings (الزون + سعر التوصيل) ────────────────────────────────
+
+    /// <summary>
+    /// يجيب إعدادات التوصيل الحالية (الزون، سعر الكيلومتر، سبب تقليل الزون لو موجود).
+    /// Endpoint عام (AllowAnonymous) مش محتاج تسجيل دخول.
+    /// </summary>
+    public Task<DeliverySettingsDto?> GetDeliverySettingsAsync()
+        => GetAsync<DeliverySettingsDto>("deliverysettings");
+
     // ─── Restaurants ─────────────────────────────────────────────────────────
 
     /// <summary>

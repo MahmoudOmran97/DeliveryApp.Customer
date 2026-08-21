@@ -87,7 +87,8 @@ public partial class CategoryViewModel : BaseViewModel
         _hasMore = true;
         try
         {
-            // بنبعت lat/lng للـ API مباشرة — هو بيفلتر جوه الـ 10km
+            // بنبعت lat/lng للـ API مباشرة — هو بيفلتر جوه الزون (MaxDeliveryZoneKm) اللي حدده الأدمن
+            await _location.RefreshZoneAsync(_api);
             double? lat = _location.HasLocation ? _location.Latitude : null;
             double? lng = _location.HasLocation ? _location.Longitude : null;
 
@@ -96,7 +97,7 @@ public partial class CategoryViewModel : BaseViewModel
                 category: CategoryName,
                 lat: lat,
                 lng: lng,
-                radiusKm: 10.0,
+                radiusKm: _location.ZoneRadiusKm,
                 minRating: 0.0,
                 sortBy: "rating",
                 page: _currentPage,
@@ -132,7 +133,7 @@ public partial class CategoryViewModel : BaseViewModel
                 category: CategoryName,
                 lat: lat,
                 lng: lng,
-                radiusKm: 10.0,
+                radiusKm: _location.ZoneRadiusKm,
                 minRating: 0.0,
                 sortBy: "rating",
                 page: nextPage,

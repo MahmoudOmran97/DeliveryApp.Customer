@@ -1,24 +1,66 @@
 // ═══════════════════════════════════════════════════════════════
 // Services / LocationService.cs
-// يحفظ ويسترجع موقع العميل المختار مع التحقق من الـ zone (10km)
+// يحفظ ويسترجع موقع العميل المختار مع التحقق من الـ zone
+// الزون (أقصى مسافة توصيل) بقى قابل للتعديل من لوحة الأدمن (DeliverySettings.MaxDeliveryZoneKm)
+// بدل ما كان رقم ثابت 10 كم في الكود. بنكاشه محليًا (Preferences) عشان يشتغل حتى
+// لو النت وقع، وبنعمله Refresh من السيرفر أول ما نقدر (HomeViewModel/CategoryViewModel/CheckoutViewModel).
 // ═══════════════════════════════════════════════════════════════
 namespace DeliveryApp.Customer.Services;
 
 public class LocationService
 {
     // ── مركز الـ zone (القاهرة الكبرى كمثال — غيّرها لمركز مدينتك) ──
-    // يمكن تغييرها لاحقاً من الـ backend أو الـ settings
     public const double ZoneCenterLat = 30.0444;  // القاهرة
     public const double ZoneCenterLng = 31.2357;
-    public const double ZoneRadiusKm  = 10.0;
 
-    private const string K_Lat     = "user_lat";
-    private const string K_Lng     = "user_lng";
-    private const string K_Address = "user_address";
-    private const string K_HasLoc  = "user_has_location";
+    // ── القيمة الافتراضية (Fallback) لو لسه معملناش Refresh من السيرفر ──
+    public const double DefaultZoneRadiusKm = 10.0;
+
+    private const string K_Lat          = "user_lat";
+    private const string K_Lng          = "user_lng";
+    private const string K_Address      = "user_address";
+    private const string K_HasLoc       = "user_has_location";
+    private const string K_ZoneRadius   = "delivery_zone_radius_km";
+    private const string K_ZoneReason   = "delivery_zone_reason";
 
     // ── Event يُطلق عند تغيير الموقع ──
     public event Action? LocationChanged;
+
+    /// <summary>أقصى مسافة توصيل حالية (الزون) — بتترجع من الكاش، ومحدثة من السيرفر لو حصل Refresh</summary>
+    public double ZoneRadiusKm => Preferences.Get(K_ZoneRadius, DefaultZoneRadiusKm);
+
+    /// <summary>
+    /// سبب تقليل الزون لو الأدمن حدد واحد (مثلاً تقليل مؤقت بالليل)، وإلا null فبتتعرض رسالة عامة.
+    /// </summary>
+    public string? ZoneReducedReason
+    {
+        get
+        {
+            var v = Preferences.Get(K_ZoneReason, string.Empty);
+            return string.IsNullOrWhiteSpace(v) ? null : v;
+        }
+    }
+
+    /// <summary>
+    /// بيجيب أحدث إعدادات الزون من السيرفر ويكاشها محليًا. يتنادى عادة أول ما الصفحة تفتح.
+    /// لو فشل (مفيش نت مثلاً) بيسيب القيمة القديمة في الكاش زي ما هي.
+    /// </summary>
+    public async Task RefreshZoneAsync(ApiService api)
+    {
+        try
+        {
+            var settings = await api.GetDeliverySettingsAsync();
+            if (settings != null && settings.MaxDeliveryZoneKm > 0)
+            {
+                Preferences.Set(K_ZoneRadius, settings.MaxDeliveryZoneKm);
+                Preferences.Set(K_ZoneReason, settings.ZoneReducedReason ?? string.Empty);
+            }
+        }
+        catch
+        {
+            // تجاهل: هنكمل بالقيمة المكاشة أو الافتراضية
+        }
+    }
 
     public bool HasLocation => Preferences.Get(K_HasLoc, false);
 
