@@ -88,10 +88,6 @@ public class LocationService
         LocationChanged?.Invoke();
     }
 
-    // ── التحقق إذا كان الموقع داخل الـ zone (10km) ──
-    public bool IsWithinZone(double lat, double lng)
-        => DistanceKm(lat, lng, ZoneCenterLat, ZoneCenterLng) <= ZoneRadiusKm;
-
     // ── حساب المسافة بين نقطتين بالكيلومتر (Haversine) ──
     public static double DistanceKm(double lat1, double lng1, double lat2, double lng2)
     {

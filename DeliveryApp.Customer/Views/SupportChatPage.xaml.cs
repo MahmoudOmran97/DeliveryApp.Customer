@@ -27,4 +27,12 @@ public partial class SupportChatPage : ContentPage
         base.OnAppearing();
         _vm.InitIfNeeded();
     }
+
+    // ✅ FIX: لازم نفك اشتراك الـ SignalR لما نسيب الصفحة، وإلا الـ ViewModel
+    // (وكل ال Messages بتاعته) هيفضل عالق في الذاكرة للأبد
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _vm.Cleanup();
+    }
 }

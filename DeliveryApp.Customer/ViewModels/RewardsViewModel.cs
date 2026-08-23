@@ -12,6 +12,7 @@ public partial class RewardsViewModel : BaseViewModel
     readonly ApiService _api;
     readonly AuthService _auth;
     readonly CartService _cart;
+    readonly LocationService _location; // ✅ FIX: عشان نقدر نبعت lat/lng للسيرفر ونفلتر العروض بالزون
 
     [ObservableProperty] bool _isRefreshing;
     [ObservableProperty] string _userName = string.Empty;
@@ -24,11 +25,12 @@ public partial class RewardsViewModel : BaseViewModel
     public ObservableCollection<Deal> Deals { get; } = new();
     public ObservableCollection<DealGroup> DealGroups { get; } = new();
 
-    public RewardsViewModel(ApiService api, AuthService auth, CartService cart)
+    public RewardsViewModel(ApiService api, AuthService auth, CartService cart, LocationService location)
     {
         _api = api;
         _auth = auth;
         _cart = cart;
+        _location = location;
         UserName = auth.GetUserName().Split(' ')[0];
     }
 
@@ -38,7 +40,13 @@ public partial class RewardsViewModel : BaseViewModel
         IsBusy = true;
         try
         {
-            var list = await _api.GetDealsAsync();
+            // ✅ نحدّث الزون من السيرفر الأول (لو الأدمن غيّره يتطبق فورًا هنا كمان)
+            await _location.RefreshZoneAsync(_api);
+
+            double? lat = _location.HasLocation ? _location.Latitude : null;
+            double? lng = _location.HasLocation ? _location.Longitude : null;
+
+            var list = await _api.GetDealsAsync(lat, lng, _location.ZoneRadiusKm);
             Deals.Clear();
             DealGroups.Clear();
 
@@ -88,10 +96,18 @@ public partial class RewardsViewModel : BaseViewModel
                 return;
             }
 
+            // ✅ FIX: كان بيحط سعر توصيل ثابت 15 جنيه بدل ما يجيب سعر التوصيل
+            // الفعلي بتاع المحل (اللي بيتحسب حسب المسافة الحقيقية زي ما هو
+            // متعمول في RestaurantViewModel/StoreCategoryProductsViewModel)
+            double? lat = _location.HasLocation ? _location.Latitude : null;
+            double? lng = _location.HasLocation ? _location.Longitude : null;
+            var restaurant = await _api.GetRestaurantAsync(deal.RestaurantId.Value, lat, lng);
+            var deliveryFee = restaurant?.DeliveryFee ?? 15m;
+
             var ok = _cart.AddItem(
                 deal.RestaurantId.Value,
                 product,
-                deliveryFee: 15m,
+                deliveryFee: deliveryFee,
                 unitPrice: deal.DiscountedPrice.Value,
                 dealId: deal.Id,
                 notes: deal.Title);
@@ -105,7 +121,7 @@ public partial class RewardsViewModel : BaseViewModel
                     LocalizationService.Get("Cancel"));
                 if (!clear) return;
                 _cart.Clear();
-                _cart.AddItem(deal.RestaurantId.Value, product, deliveryFee: 15m,
+                _cart.AddItem(deal.RestaurantId.Value, product, deliveryFee: deliveryFee,
                     unitPrice: deal.DiscountedPrice.Value, dealId: deal.Id, notes: deal.Title);
             }
 

@@ -68,25 +68,35 @@ public partial class OrderTrackingViewModel : BaseViewModel
     {
         _api = api; _hub = hub; _auth = auth; _chatNotif = chatNotif;
 
-        _hub.OrderStatusChanged += (id, s) =>
-        {
-            if (id == OrderId) _ = LoadAsync();
-        };
+        // ✅ FIX: كانت الاشتراكات دي بـ lambda مباشرة (من غير reference)، فمكانش
+        // ممكن نعمل لها -= أبدًا حتى لو حبينا. النتيجة: كل مرة العميل يفتح صفحة
+        // تتبع الأوردر (بيفتحها كذا مرة وهو مستني التوصيل) بيتضاف 3 handlers
+        // جداد على الـ SignalRService (اللي هي Singleton) وبيفضلوا شغالين للأبد
+        // حتى بعد ما الصفحة تتقفل — memory leak + كل حدث بيشتغل أكتر من مرة.
+        // بتحويلهم لـ named methods بقينا نقدر نعمل -= في Cleanup() تحت.
+        _hub.OrderStatusChanged += OnOrderStatusChanged;
+        _hub.DriverLocationUpdated += OnDriverLocationUpdated;
+        _hub.DriverAssigned += OnDriverAssigned;
+    }
 
-        _hub.DriverLocationUpdated += (lat, lng) =>
-        {
-            DriverLat = lat;
-            DriverLng = lng;
-            HasDriver = true;
-            MapUpdated?.Invoke();
-        };
+    void OnOrderStatusChanged(int id, string s)
+    {
+        if (id == OrderId) _ = LoadAsync();
+    }
 
-        _hub.DriverAssigned += (orderId, driverId, driverName) =>
-        {
-            if (orderId != OrderId) return;
-            HasDriver = true;
-            _ = LoadAsync();
-        };
+    void OnDriverLocationUpdated(double lat, double lng)
+    {
+        DriverLat = lat;
+        DriverLng = lng;
+        HasDriver = true;
+        MapUpdated?.Invoke();
+    }
+
+    void OnDriverAssigned(int orderId, int driverId, string driverName)
+    {
+        if (orderId != OrderId) return;
+        HasDriver = true;
+        _ = LoadAsync();
     }
 
     partial void OnOrderIdChanged(int v) => _ = InitAsync();
@@ -308,5 +318,10 @@ public partial class OrderTrackingViewModel : BaseViewModel
         _countdownTimer?.Stop();
         _countdownTimer?.Dispose();
         _chatNotif.UnregisterOrder(OrderId);
+
+        // ✅ FIX: فك الاشتراك من أحداث الـ Hub (كانت ناقصة قبل كده)
+        _hub.OrderStatusChanged -= OnOrderStatusChanged;
+        _hub.DriverLocationUpdated -= OnDriverLocationUpdated;
+        _hub.DriverAssigned -= OnDriverAssigned;
     }
 }

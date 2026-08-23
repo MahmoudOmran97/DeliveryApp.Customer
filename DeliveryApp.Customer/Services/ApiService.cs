@@ -501,8 +501,17 @@ public class ApiService
 
     // ─── Banners ─────────────────────────────────────────────────────────────
 
-    public Task<List<Banner>?> GetBannersAsync()
-        => GetAsync<List<Banner>>("banners");
+    // ✅ FIX: بتاخد دلوقتي lat/lng/radiusKm عشان السيرفر يفلتر البانرات
+    // المرتبطة بمحل برا نطاق التوصيل (الزون) الحالي بتاع العميل.
+    public Task<List<Banner>?> GetBannersAsync(double? lat = null, double? lng = null, double radiusKm = 10.0)
+    {
+        var q = "banners";
+        if (lat.HasValue && lng.HasValue)
+            q += $"?lat={lat.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}" +
+                 $"&lng={lng.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}" +
+                 $"&radiusKm={radiusKm.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+        return GetAsync<List<Banner>>(q);
+    }
 
     // ─── Coupons ─────────────────────────────────────────────────────────────
 
@@ -538,8 +547,18 @@ public class ApiService
 
     // ─── Deals ───────────────────────────────────────────────────────────────
 
-    public Task<List<Deal>?> GetDealsAsync()
-        => GetAsync<List<Deal>>("deals");
+    // ✅ FIX: بتاخد دلوقتي lat/lng/radiusKm عشان السيرفر يفلتر العروض المرتبطة
+    // بمحل برا نطاق التوصيل (الزون) الحالي بتاع العميل. العروض العامة (من غير
+    // محل محدد) بترجع دايمًا زي ما هي من السيرفر.
+    public Task<List<Deal>?> GetDealsAsync(double? lat = null, double? lng = null, double radiusKm = 10.0)
+    {
+        var q = "deals";
+        if (lat.HasValue && lng.HasValue)
+            q += $"?lat={lat.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}" +
+                 $"&lng={lng.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}" +
+                 $"&radiusKm={radiusKm.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
+        return GetAsync<List<Deal>>(q);
+    }
 
     public async Task<PointsResult> GetPointsAsync()
     {

@@ -133,6 +133,12 @@ public partial class SupportChatViewModel : BaseViewModel
         });
     }
 
+    // ✅ FIX: كان مفيش أي unsubscribe للاشتراك في الـ Constructor، فكل مرة العميل
+    // يفتح شات الدعم كان بيتضاف handler جديد على الـ SignalRService (Singleton)
+    // بيفضل شغال للأبد حتى بعد ما الصفحة تتقفل (memory leak). لازم الصفحة
+    // (SupportChatPage.OnDisappearing) تنادي الدالة دي.
+    public void Cleanup() => _signalR.SupportMessageReceived -= OnAdminMessageReceived;
+
     // ── Back ──────────────────────────────────────────────────────
     [RelayCommand]
     static async Task GoBack() => await Shell.Current.GoToAsync("..");

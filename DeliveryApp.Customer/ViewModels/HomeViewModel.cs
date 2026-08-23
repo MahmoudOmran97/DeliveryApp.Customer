@@ -212,8 +212,6 @@ public partial class HomeViewModel : BaseViewModel
         if (!silent) IsBusy = true;
         try
         {
-            // Banners (no location filter)
-            var bannersTask = _api.GetBannersAsync();
             var unreadNotificationsTask = _api.GetUnreadNotificationsCountAsync();
             // ✅ نحدّث الزون (أقصى مسافة توصيل) من السيرفر قبل ما نطلب المحلات، عشان لو الأدمن غيّره يتطبق فورًا
             var zoneRefreshTask = _location.RefreshZoneAsync(_api);
@@ -223,6 +221,10 @@ public partial class HomeViewModel : BaseViewModel
             double? lng = _location.HasLocation ? _location.Longitude : null;
 
             await zoneRefreshTask;
+
+            // ✅ FIX: البانرات دلوقتي بتتفلتر بالزون زي المحلات بالظبط (كانت بتتجاب
+            // من غير أي فلترة موقع خالص، فكان بيظهر بانر لمحل برا نطاق التوصيل)
+            var bannersTask = _api.GetBannersAsync(lat, lng, _location.ZoneRadiusKm);
 
             var restaurantsTask = _api.GetRestaurantsAsync(
                 search: SearchText,
@@ -249,7 +251,8 @@ public partial class HomeViewModel : BaseViewModel
             foreach (var x in restaurantsTask.Result?.Data ?? new()) Restaurants.Add(x);
 
             // Fetch Deals and Best Sellers for Home
-            var dealsTask = _api.GetDealsAsync();
+            // ✅ FIX: العروض كمان بقت بتتفلتر بالزون بنفس lat/lng اللي فوق
+            var dealsTask = _api.GetDealsAsync(lat, lng, _location.ZoneRadiusKm);
             var bestSellersTask = _api.GetBestSellersAsync(); // Or fetch top products if available
             await Task.WhenAll(dealsTask, bestSellersTask);
 
@@ -382,11 +385,19 @@ public partial class HomeViewModel : BaseViewModel
                         return;
                     }
 
+                    // ✅ FIX: كان مش بيبعت deliveryFee خالص فكان بيقع على القيمة
+                    // الافتراضية الثابتة (15 جنيه) في CartService بدل سعر التوصيل
+                    // الفعلي بتاع المحل حسب المسافة
+                    double? lat = _location.HasLocation ? _location.Latitude : null;
+                    double? lng = _location.HasLocation ? _location.Longitude : null;
+                    var restaurant = await _api.GetRestaurantAsync(deal.RestaurantId.Value, lat, lng);
+
                     _cart.AddItem(
                         restaurantId: deal.RestaurantId.Value,
                         product: product,
                         qty: 1,
                         notes: deal.Title,
+                        deliveryFee: restaurant?.DeliveryFee ?? 15m,
                         unitPrice: deal.DiscountedPrice,
                         dealId: deal.Id
                     );
