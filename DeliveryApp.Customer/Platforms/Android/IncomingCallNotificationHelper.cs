@@ -10,8 +10,8 @@ internal static class IncomingCallNotificationHelper
 {
     // قناة جديدة Importance.Max — القناة القديمة مش ممكن نرفع أهميتها بعد الإنشاء
     public const string CallChannelId = "incoming_calls_v2";
-    public const string ActionAccept = "com.companyname.deliveryapp.customer.ACTION_ACCEPT_CALL";
-    public const string ActionReject = "com.companyname.deliveryapp.customer.ACTION_REJECT_CALL";
+    public const string ActionAccept = "com.taly.customer.ACTION_ACCEPT_CALL";
+    public const string ActionReject = "com.taly.customer.ACTION_REJECT_CALL";
 
     static void EnsureChannel(Context context)
     {

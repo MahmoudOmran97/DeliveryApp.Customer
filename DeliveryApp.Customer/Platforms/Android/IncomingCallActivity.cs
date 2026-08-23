@@ -15,7 +15,7 @@ namespace DeliveryApp.Customer.Platforms.Android;
 /// شاشة مكالمة واردة فوق قفل الشاشة (زي واتساب/مسنجر).
 /// </summary>
 [Activity(
-    Name = "com.companyname.deliveryapp.customer.IncomingCallActivity",
+    Name = "com.taly.customer.IncomingCallActivity",
     Theme = "@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen",
     ExcludeFromRecents = true,
     ShowWhenLocked = true,
