@@ -927,6 +927,15 @@
 	<data name="OtpSent">
 		<value>تم إرسال كود التحقق على بريدك الإلكتروني</value>
 	</data>
+	<data name="ResendCode">
+		<value>إعادة إرسال الكود</value>
+	</data>
+	<data name="ResendCodeIn">
+		<value>إعادة الإرسال بعد {0} ثانية</value>
+	</data>
+	<data name="DidNotReceiveCode">
+		<value>لم يصلك الكود؟</value>
+	</data>
 	<data name="EnterOtpCode">
 		<value>من فضلك ادخل كود التحقق</value>
 	</data>

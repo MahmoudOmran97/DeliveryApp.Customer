@@ -975,6 +975,15 @@
 	<data name="OtpSent">
 		<value>Verification code sent to your email</value>
 	</data>
+	<data name="ResendCode">
+		<value>Resend code</value>
+	</data>
+	<data name="ResendCodeIn">
+		<value>Resend code in {0}s</value>
+	</data>
+	<data name="DidNotReceiveCode">
+		<value>Didn't receive the code?</value>
+	</data>
 	<data name="EnterOtpCode">
 		<value>Please enter the verification code</value>
 	</data>

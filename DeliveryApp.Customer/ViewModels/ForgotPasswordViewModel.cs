@@ -21,6 +21,21 @@ public partial class ForgotPasswordViewModel : BaseViewModel
 
     public bool IsNotOtpStep => !IsOtpStep;
 
+    // ✅ الجديد: زرار "إعادة إرسال الكود" — متعطّل لمدة 60 ثانية بعد كل إرسال
+    const int ResendCooldownSeconds = 60;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ResendLabel))]
+    bool _canResend;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ResendLabel))]
+    int _resendSecondsLeft;
+
+    public string ResendLabel => CanResend
+        ? LocalizationService.Get("ResendCode")
+        : string.Format(LocalizationService.Get("ResendCodeIn"), ResendSecondsLeft);
+
     public ForgotPasswordViewModel(ApiService api)
     {
         _api = api;
@@ -40,6 +55,7 @@ public partial class ForgotPasswordViewModel : BaseViewModel
         {
             await _api.SendOtpAsync(Email, "ResetPassword");
             IsOtpStep = true;
+            StartResendCountdown();
             await AlertAsync(LocalizationService.Get("OtpSent"));
         }
         catch (ApiException ex)
@@ -51,6 +67,41 @@ public partial class ForgotPasswordViewModel : BaseViewModel
             await AlertAsync(LocalizationService.Get("UnexpectedError"));
         }
         finally { IsBusy = false; }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // ✅ الجديد: إعادة إرسال الكود (نفس السيرفر call بتاع الإرسال الأول)
+    // ─────────────────────────────────────────────────────────
+    [RelayCommand]
+    async Task ResendCodeAsync()
+    {
+        if (!CanResend) return;
+
+        IsBusy = true;
+        try
+        {
+            await _api.SendOtpAsync(Email, "ResetPassword");
+            Otp = string.Empty;
+            StartResendCountdown();
+            await AlertAsync(LocalizationService.Get("OtpSent"));
+        }
+        catch (ApiException ex)
+        {
+            await AlertAsync(ex.Message);
+        }
+        catch (Exception)
+        {
+            await AlertAsync(LocalizationService.Get("UnexpectedError"));
+        }
+        finally { IsBusy = false; }
+    }
+
+    void StartResendCountdown()
+    {
+        CanResend = false;
+        StartCountdown(ResendCooldownSeconds,
+            onTick: remaining => ResendSecondsLeft = remaining,
+            onFinished: () => CanResend = true);
     }
 
     // ─────────────────────────────────────────────────────────

@@ -99,6 +99,18 @@
                     </Border>
                 </VerticalStackLayout>
 
+                <!-- ✅ الجديد: إعادة إرسال الكود مع عدّاد تنازلي -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                    <Label Text="{loc:Loc Key=DidNotReceiveCode}" FontFamily="CairoRegular" FontSize="13"
+                           TextColor="#757575" VerticalOptions="Center"/>
+                    <Label Text="{Binding ResendLabel}" FontFamily="CairoBold" FontSize="13"
+                           TextColor="#FF5722" VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ResendOtpCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+
                 <Button Text="{loc:Loc Key=CreateAccount}" Command="{Binding RegisterCommand}"
                         IsEnabled="{Binding IsNotBusy}" Style="{StaticResource PrimaryBtn}" Margin="0,8,0,0"/>
 

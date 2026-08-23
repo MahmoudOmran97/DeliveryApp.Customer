@@ -46,4 +46,35 @@ public partial class BaseViewModel : ObservableObject
             Services.LocalizationService.Get("Notice"), msg,
             Services.LocalizationService.Get("Ok"));
     }
+
+    // ── Countdown helper for "resend code" buttons (OTP screens) ──
+    // بيعد ثانية بثانية من seconds لحد 0 وبيستدعي onTick بعد كل خطوة
+    // (تحديث الـ UI)، وبيستدعي onFinished لما يوصل للصفر (يفتح زرار الإرسال تاني).
+    IDispatcherTimer? _countdownTimer;
+
+    protected void StartCountdown(int seconds, Action<int> onTick, Action onFinished)
+    {
+        _countdownTimer?.Stop();
+
+        var remaining = seconds;
+        onTick(remaining);
+
+        var dispatcher = Application.Current?.Dispatcher ?? Dispatcher.GetForCurrentThread()!;
+        _countdownTimer = dispatcher.CreateTimer();
+        _countdownTimer.Interval = TimeSpan.FromSeconds(1);
+        _countdownTimer.Tick += (_, _) =>
+        {
+            remaining--;
+            if (remaining <= 0)
+            {
+                _countdownTimer?.Stop();
+                onFinished();
+            }
+            else
+            {
+                onTick(remaining);
+            }
+        };
+        _countdownTimer.Start();
+    }
 }
