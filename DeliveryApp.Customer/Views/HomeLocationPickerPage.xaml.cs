@@ -83,11 +83,11 @@ public partial class HomeLocationPickerPage : ContentPage
             }
         }
 
-        await ExecuteMapScriptAsync($"centerOn({lng.ToString(CultureInfo.InvariantCulture)},{lat.ToString(CultureInfo.InvariantCulture)},15);setMarker('selected',{lng.ToString(CultureInfo.InvariantCulture)},{lat.ToString(CultureInfo.InvariantCulture)},'#FF5722','📍');");
+        await ExecuteMapScriptAsync($"centerOn({lng.ToString(CultureInfo.InvariantCulture)},{lat.ToString(CultureInfo.InvariantCulture)},15);setMarker('selected',{lng.ToString(CultureInfo.InvariantCulture)},{lat.ToString(CultureInfo.InvariantCulture)},'#FF5722','pin');");
     }
 
     Task SetMarkerAsync(double lng, double lat) =>
-        ExecuteMapScriptAsync($"setMarker('selected',{lng.ToString(CultureInfo.InvariantCulture)},{lat.ToString(CultureInfo.InvariantCulture)},'#FF5722','📍');");
+        ExecuteMapScriptAsync($"setMarker('selected',{lng.ToString(CultureInfo.InvariantCulture)},{lat.ToString(CultureInfo.InvariantCulture)},'#FF5722','pin');");
 
     Task<string> ExecuteMapScriptAsync(string script) =>
         _mapReady ? MapWebView.EvaluateJavaScriptAsync(script) : Task.FromResult(string.Empty);

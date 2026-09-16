@@ -41,26 +41,50 @@ public static class OpenFreeMapHtml
     let markers = {};
     let routes = {};
 
-    function notify(url) { window.location.href = url; }
-    function esc(value) { return encodeURIComponent(String(value)); }
+    // ✅ أيقونات ماركرز حقيقية (Pin) بدل الدايرة الملونة + رمز نصي القديمة —
+    // نفس تصميم marker_user.svg / marker_shop.svg / marker_driver.svg
+    // المستخدمة في باقي التطبيق، اترسمت هنا كـ inline SVG عشان الـ WebView
+    // (اللي بيحمّل HTML خام) مينفعش يوصل لملفات الموارد الأصلية للتطبيق مباشرة.
+    const markerIcons = {
+      user: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="42" height="42">'
+          + '<path d="M32 2C20.4 2 11 11.4 11 23c0 14 18.2 35.8 20.1 38.1.5.6 1.4.6 1.9 0C34.8 58.8 53 37 53 23 53 11.4 43.6 2 32 2z" fill="{C}"/>'
+          + '<circle cx="32" cy="23" r="10" fill="#FFFFFF"/>'
+          + '<circle cx="32" cy="20" r="4.6" fill="{C}"/>'
+          + '<path d="M24.5 30.5c1.8-3 4.2-4.5 7.5-4.5s5.7 1.5 7.5 4.5" fill="none" stroke="{C}" stroke-width="3" stroke-linecap="round"/>'
+          + '</svg>',
+      pin: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="42" height="42">'
+          + '<path d="M32 2C20.4 2 11 11.4 11 23c0 14 18.2 35.8 20.1 38.1.5.6 1.4.6 1.9 0C34.8 58.8 53 37 53 23 53 11.4 43.6 2 32 2z" fill="{C}"/>'
+          + '<circle cx="32" cy="23" r="9" fill="#FFFFFF"/>'
+          + '</svg>',
+      shop: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="42" height="42">'
+          + '<path d="M32 2C20.4 2 11 11.4 11 23c0 14 18.2 35.8 20.1 38.1.5.6 1.4.6 1.9 0C34.8 58.8 53 37 53 23 53 11.4 43.6 2 32 2z" fill="{C}"/>'
+          + '<rect x="20" y="16" width="24" height="18" rx="2" fill="#FFFFFF"/>'
+          + '<path d="M20 22h24" stroke="{C}" stroke-width="3"/>'
+          + '<rect x="24" y="25" width="7" height="9" fill="{C}"/>'
+          + '<rect x="34" y="25" width="8" height="6" fill="{C}"/>'
+          + '</svg>',
+      driver: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40">'
+          + '<circle cx="32" cy="32" r="30" fill="{C}"/>'
+          + '<circle cx="22" cy="43" r="8" fill="#FFFFFF"/><circle cx="22" cy="43" r="3.5" fill="#263238"/>'
+          + '<circle cx="44" cy="43" r="8" fill="#FFFFFF"/><circle cx="44" cy="43" r="3.5" fill="#263238"/>'
+          + '<path d="M18 36h18l8-8h-9l-4-8h-7l3 8h-9z" fill="#263238"/>'
+          + '<circle cx="41" cy="24" r="4" fill="#FFFFFF"/>'
+          + '</svg>'
+    };
 
-    function setMarker(id, lng, lat, color, symbol) {
+    function setMarker(id, lng, lat, color, iconType) {
       if (markers[id]) markers[id].remove();
       const element = document.createElement('div');
-      element.style.width = '36px';
-      element.style.height = '36px';
-      element.style.borderRadius = '50%';
-      element.style.background = color;
-      element.style.border = '3px solid white';
-      element.style.boxShadow = '0 2px 7px #0008';
-      element.style.display = 'flex';
-      element.style.alignItems = 'center';
-      element.style.justifyContent = 'center';
-      element.style.fontSize = '19px';
-      element.textContent = symbol || '';
-      markers[id] = new maplibregl.Marker({ element: element, anchor: 'center' })
+      element.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.45))';
+      const template = markerIcons[iconType] || markerIcons.pin;
+      element.innerHTML = template.split('{C}').join(color);
+      const anchor = iconType === 'driver' ? 'center' : 'bottom';
+      markers[id] = new maplibregl.Marker({ element: element, anchor: anchor })
         .setLngLat([lng, lat]).addTo(map);
     }
+
+    function notify(url) { window.location.href = url; }
+    function esc(value) { return encodeURIComponent(String(value)); }
 
     function removeMarker(id) {
       if (markers[id]) { markers[id].remove(); delete markers[id]; }

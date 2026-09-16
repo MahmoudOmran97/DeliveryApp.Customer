@@ -81,8 +81,8 @@ public partial class OrderTrackingPage : ContentPage
         if (!_staticPinsDrawn && hasCustomer && hasRestaurant)
         {
             _staticPinsDrawn = true;
-            await SetMarkerAsync("customer", _vm.CustomerLng, _vm.CustomerLat, "#2196F3", "●");
-            await SetMarkerAsync("restaurant", _vm.RestaurantLng, _vm.RestaurantLat, "#4CAF50", "▣");
+            await SetMarkerAsync("customer", _vm.CustomerLng, _vm.CustomerLat, "#2196F3", "user");
+            await SetMarkerAsync("restaurant", _vm.RestaurantLng, _vm.RestaurantLat, "#4CAF50", "shop");
 
             await DrawRouteAndUpdateEtaAsync(
                 _vm.RestaurantLat, _vm.RestaurantLng,
@@ -97,19 +97,19 @@ public partial class OrderTrackingPage : ContentPage
         else if (!_staticPinsDrawn && hasCustomer)
         {
             _staticPinsDrawn = true;
-            await SetMarkerAsync("customer", _vm.CustomerLng, _vm.CustomerLat, "#2196F3", "●");
+            await SetMarkerAsync("customer", _vm.CustomerLng, _vm.CustomerLat, "#2196F3", "user");
             await CenterOnAsync(_vm.CustomerLng, _vm.CustomerLat, 15);
         }
         else if (!_staticPinsDrawn && hasRestaurant)
         {
             _staticPinsDrawn = true;
-            await SetMarkerAsync("restaurant", _vm.RestaurantLng, _vm.RestaurantLat, "#4CAF50", "▣");
+            await SetMarkerAsync("restaurant", _vm.RestaurantLng, _vm.RestaurantLat, "#4CAF50", "shop");
             await CenterOnAsync(_vm.RestaurantLng, _vm.RestaurantLat, 15);
         }
 
         if (_vm.HasDriver && _vm.DriverLat != 0)
         {
-            await SetMarkerAsync("driver", _vm.DriverLng, _vm.DriverLat, "#FF5722", "🛵");
+            await SetMarkerAsync("driver", _vm.DriverLng, _vm.DriverLat, "#FF5722", "driver");
 
             if (hasCustomer && ShouldUpdateDriverRoute())
             {
@@ -135,12 +135,12 @@ public partial class OrderTrackingPage : ContentPage
         return Math.Sqrt(dlat * dlat + dlng * dlng) > 0.0005;
     }
 
-    async Task SetMarkerAsync(string id, double lng, double lat, string color, string symbol)
+    async Task SetMarkerAsync(string id, double lng, double lat, string color, string iconType)
     {
         var script = string.Format(
             CultureInfo.InvariantCulture,
             "setMarker('{0}',{1},{2},'{3}','{4}');",
-            id, lng, lat, color, symbol);
+            id, lng, lat, color, iconType);
         await ExecuteMapScriptAsync(script);
     }
 
