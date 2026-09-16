@@ -22,6 +22,19 @@ public partial class LoginViewModel : BaseViewModel
 
     [ObservableProperty] string _password = string.Empty;
 
+    // ✅ الجديد: إظهار/إخفاء كلمة السر (علامة العين)
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPasswordHidden))]
+    [NotifyPropertyChangedFor(nameof(PasswordEyeIcon))]
+    bool _isPasswordVisible;
+
+    public bool IsPasswordHidden => !IsPasswordVisible;
+
+    public string PasswordEyeIcon => IsPasswordVisible ? "icon_eye_off.png" : "icon_eye.png";
+
+    [RelayCommand]
+    void TogglePasswordVisibility() => IsPasswordVisible = !IsPasswordVisible;
+
     // ── Language toggle (top of Login page) ────────────────────
     // Shows the *other* language's name, since tapping switches to it.
     public string OtherLanguageLabel =>

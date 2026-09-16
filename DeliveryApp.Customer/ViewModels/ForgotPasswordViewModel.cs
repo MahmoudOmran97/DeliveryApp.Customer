@@ -14,6 +14,31 @@ public partial class ForgotPasswordViewModel : BaseViewModel
     [ObservableProperty] string _newPassword = string.Empty;
     [ObservableProperty] string _confirmNewPassword = string.Empty;
 
+    // ✅ الجديد: إظهار/إخفاء كلمة السر (علامة العين) - لحقلي NewPassword و ConfirmNewPassword
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNewPasswordHidden))]
+    [NotifyPropertyChangedFor(nameof(NewPasswordEyeIcon))]
+    bool _isNewPasswordVisible;
+
+    public bool IsNewPasswordHidden => !IsNewPasswordVisible;
+
+    public string NewPasswordEyeIcon => IsNewPasswordVisible ? "icon_eye_off.png" : "icon_eye.png";
+
+    [RelayCommand]
+    void ToggleNewPasswordVisibility() => IsNewPasswordVisible = !IsNewPasswordVisible;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsConfirmNewPasswordHidden))]
+    [NotifyPropertyChangedFor(nameof(ConfirmNewPasswordEyeIcon))]
+    bool _isConfirmNewPasswordVisible;
+
+    public bool IsConfirmNewPasswordHidden => !IsConfirmNewPasswordVisible;
+
+    public string ConfirmNewPasswordEyeIcon => IsConfirmNewPasswordVisible ? "icon_eye_off.png" : "icon_eye.png";
+
+    [RelayCommand]
+    void ToggleConfirmNewPasswordVisibility() => IsConfirmNewPasswordVisible = !IsConfirmNewPasswordVisible;
+
     // false = لسه في خطوة إدخال الإيميل، true = وصل لخطوة إدخال الكود وكلمة المرور الجديدة
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotOtpStep))]

@@ -19,6 +19,31 @@ public partial class RegisterViewModel : BaseViewModel
     [ObservableProperty] string _password = string.Empty;
     [ObservableProperty] string _confirmPassword = string.Empty;
 
+    // ✅ الجديد: إظهار/إخفاء كلمة السر (علامة العين) - لحقلي Password و Confirm Password
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPasswordHidden))]
+    [NotifyPropertyChangedFor(nameof(PasswordEyeIcon))]
+    bool _isPasswordVisible;
+
+    public bool IsPasswordHidden => !IsPasswordVisible;
+
+    public string PasswordEyeIcon => IsPasswordVisible ? "icon_eye_off.png" : "icon_eye.png";
+
+    [RelayCommand]
+    void TogglePasswordVisibility() => IsPasswordVisible = !IsPasswordVisible;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsConfirmPasswordHidden))]
+    [NotifyPropertyChangedFor(nameof(ConfirmPasswordEyeIcon))]
+    bool _isConfirmPasswordVisible;
+
+    public bool IsConfirmPasswordHidden => !IsConfirmPasswordVisible;
+
+    public string ConfirmPasswordEyeIcon => IsConfirmPasswordVisible ? "icon_eye_off.png" : "icon_eye.png";
+
+    [RelayCommand]
+    void ToggleConfirmPasswordVisibility() => IsConfirmPasswordVisible = !IsConfirmPasswordVisible;
+
     // ✅ الجديد: خطوة كود التحقق (OTP)
     [ObservableProperty] string _otp = string.Empty;
 

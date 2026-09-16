@@ -83,12 +83,23 @@
                         <Label Text="{loc:Loc Key=Password}"
                                FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
                         <Border Style="{StaticResource InputBorder}">
-                            <Entry Placeholder="{loc:Loc Key=PasswordPlaceholder}"
-                                   Text="{Binding Password}"
-                                   IsPassword="True"
-                                   HeightRequest="50" BackgroundColor="Transparent"
-                                   FontFamily="CairoRegular" FontSize="15" TextColor="#212121"
-                                   ReturnCommand="{Binding LoginCommand}"/>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Entry Grid.Column="0"
+                                       Placeholder="{loc:Loc Key=PasswordPlaceholder}"
+                                       Text="{Binding Password}"
+                                       IsPassword="{Binding IsPasswordHidden}"
+                                       HeightRequest="50" BackgroundColor="Transparent"
+                                       FontFamily="CairoRegular" FontSize="15" TextColor="#212121"
+                                       ReturnCommand="{Binding LoginCommand}"/>
+                                <!-- ✅ الجديد: علامة العين لإظهار/إخفاء كلمة السر -->
+                                <ImageButton Grid.Column="1"
+                                             Source="{Binding PasswordEyeIcon}"
+                                             Command="{Binding TogglePasswordVisibilityCommand}"
+                                             BackgroundColor="Transparent"
+                                             WidthRequest="24" HeightRequest="24"
+                                             Padding="0" Margin="8,0,0,0"
+                                             VerticalOptions="Center"/>
+                            </Grid>
                         </Border>
                     </VerticalStackLayout>
 

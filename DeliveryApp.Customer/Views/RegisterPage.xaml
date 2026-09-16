@@ -63,9 +63,21 @@
                 <VerticalStackLayout Spacing="6">
                     <Label Text="{loc:Loc Key=Password}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
                     <Border Style="{StaticResource InputBorder}">
-                        <Entry Placeholder="{loc:Loc Key=MinPasswordHint}" Text="{Binding Password}" IsPassword="True"
-                               HeightRequest="50" BackgroundColor="Transparent"
-                               FontFamily="CairoRegular" FontSize="15"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Entry Grid.Column="0"
+                                   Placeholder="{loc:Loc Key=MinPasswordHint}" Text="{Binding Password}"
+                                   IsPassword="{Binding IsPasswordHidden}"
+                                   HeightRequest="50" BackgroundColor="Transparent"
+                                   FontFamily="CairoRegular" FontSize="15"/>
+                            <!-- ✅ الجديد: علامة العين لإظهار/إخفاء كلمة السر -->
+                            <ImageButton Grid.Column="1"
+                                         Source="{Binding PasswordEyeIcon}"
+                                         Command="{Binding TogglePasswordVisibilityCommand}"
+                                         BackgroundColor="Transparent"
+                                         WidthRequest="24" HeightRequest="24"
+                                         Padding="0" Margin="8,0,0,0"
+                                         VerticalOptions="Center"/>
+                        </Grid>
                     </Border>
                 </VerticalStackLayout>
 
@@ -73,10 +85,22 @@
                 <VerticalStackLayout Spacing="6">
                     <Label Text="{loc:Loc Key=ConfirmPassword}" FontFamily="CairoRegular" FontSize="13" TextColor="#757575"/>
                     <Border Style="{StaticResource InputBorder}">
-                        <Entry Placeholder="{loc:Loc Key=ConfirmPasswordPlaceholder}" Text="{Binding ConfirmPassword}"
-                               IsPassword="True" HeightRequest="50" BackgroundColor="Transparent"
-                               FontFamily="CairoRegular" FontSize="15"
-                               ReturnCommand="{Binding SendOtpCommand}"/>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Entry Grid.Column="0"
+                                   Placeholder="{loc:Loc Key=ConfirmPasswordPlaceholder}" Text="{Binding ConfirmPassword}"
+                                   IsPassword="{Binding IsConfirmPasswordHidden}"
+                                   HeightRequest="50" BackgroundColor="Transparent"
+                                   FontFamily="CairoRegular" FontSize="15"
+                                   ReturnCommand="{Binding SendOtpCommand}"/>
+                            <!-- ✅ الجديد: علامة العين لإظهار/إخفاء كلمة السر -->
+                            <ImageButton Grid.Column="1"
+                                         Source="{Binding ConfirmPasswordEyeIcon}"
+                                         Command="{Binding ToggleConfirmPasswordVisibilityCommand}"
+                                         BackgroundColor="Transparent"
+                                         WidthRequest="24" HeightRequest="24"
+                                         Padding="0" Margin="8,0,0,0"
+                                         VerticalOptions="Center"/>
+                        </Grid>
                     </Border>
                 </VerticalStackLayout>
 
