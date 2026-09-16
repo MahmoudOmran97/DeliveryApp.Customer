@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
-             xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
              x:Class="DeliveryApp.Customer.Views.OrderTrackingPage"
              x:DataType="vm:OrderTrackingViewModel"
              Shell.NavBarIsVisible="False">
@@ -11,8 +10,14 @@
     <!-- لوحة سفلية أعلى وأكثر وضوحاً؛ بطاقة المندوب تظهر في بداية المحتوى -->
     <Grid RowDefinitions="*,390">
 
-        <!-- Map Control -->
-        <mapsui:MapControl x:Name="MapControl" Grid.Row="0" />
+        <!-- OpenFreeMap / MapLibre vector map -->
+        <Grid Grid.Row="0">
+            <WebView x:Name="MapWebView" />
+            <Label Text="OpenFreeMap © OpenMapTiles · Data from OpenStreetMap"
+                   FontSize="9" TextColor="#555" BackgroundColor="#CCFFFFFF"
+                   Padding="4,2" Margin="8" HorizontalOptions="Start" VerticalOptions="End"
+                   ZIndex="11" InputTransparent="True" />
+        </Grid>
 
         <!-- Back Button -->
         <Border BackgroundColor="White" StrokeShape="RoundRectangle 22" Stroke="Transparent"

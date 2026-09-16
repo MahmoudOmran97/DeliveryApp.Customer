@@ -1,12 +1,5 @@
-﻿// ═══════════════════════════════════════════════════════════════
-// DeliveryApp.Customer / Views / OrderTrackingPage.xaml.cs
-// ═══════════════════════════════════════════════════════════════
+﻿using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.ViewModels;
-using Mapsui;
-using Mapsui.Layers;
-using Mapsui.Projections;
-using Mapsui.Styles;
-using Mapsui.Tiling;
 using System.Globalization;
 using System.Text.Json;
 using System.Diagnostics;
@@ -16,30 +9,12 @@ namespace DeliveryApp.Customer.Views;
 public partial class OrderTrackingPage : ContentPage
 {
     readonly OrderTrackingViewModel _vm;
-
-    MemoryLayer? _driverLayer;
-    MemoryLayer? _customerLayer;
-    MemoryLayer? _restaurantLayer;
-    MemoryLayer? _routeLayer;
-    MemoryLayer? _driverRouteLayer;
-
-    // حالة الرسم - نتعقب آخر إحداثيات رُسمت عليها الـ pins
-    bool _staticPinsDrawn = false;
-    double _lastDriverRouteFromLat = 0, _lastDriverRouteFromLng = 0;
+    bool _mapReady;
+    bool _staticPinsDrawn;
+    double _lastDriverRouteFromLat;
+    double _lastDriverRouteFromLng;
     DateTime _lastDriverRouteTime = DateTime.MinValue;
 
-    // Images - Mapsui requires svg-content:// URI scheme, not plain filenames
-    static readonly string _customerMarker = "svg-content://<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 2C20.4 2 11 11.4 11 23c0 14 18.2 35.8 20.1 38.1.5.6 1.4.6 1.9 0C34.8 58.8 53 37 53 23 53 11.4 43.6 2 32 2z' fill='#2196F3'/><circle cx='32' cy='23' r='10' fill='#FFFFFF'/><circle cx='32' cy='20' r='4.6' fill='#2196F3'/><path d='M24.5 30.5c1.8-3 4.2-4.5 7.5-4.5s5.7 1.5 7.5 4.5' fill='none' stroke='#2196F3' stroke-width='3' stroke-linecap='round'/></svg>";
-    static readonly string _restaurantMarker = "svg-content://<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 2C20.4 2 11 11.4 11 23c0 14 18.2 35.8 20.1 38.1.5.6 1.4.6 1.9 0C34.8 58.8 53 37 53 23 53 11.4 43.6 2 32 2z' fill='#4CAF50'/><rect x='20' y='16' width='24' height='18' rx='2' fill='#FFFFFF'/><path d='M20 22h24' stroke='#4CAF50' stroke-width='3'/><rect x='24' y='25' width='7' height='9' fill='#4CAF50'/><rect x='34' y='25' width='8' height='6' fill='#4CAF50'/></svg>";
-    static readonly string _driverMarker = "svg-content://<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='#FF5722'/><circle cx='22' cy='43' r='8' fill='#FFFFFF'/><circle cx='22' cy='43' r='3.5' fill='#263238'/><circle cx='44' cy='43' r='8' fill='#FFFFFF'/><circle cx='44' cy='43' r='3.5' fill='#263238'/><path d='M18 36h18l8-8h-9l-4-8h-7l3 8h-9z' fill='#263238'/><circle cx='41' cy='24' r='4' fill='#FFFFFF'/></svg>";
-
-    // 🔧 PERF FIX: كان بيتعمل `new HttpClient()` + dispose في كل نداء لـ
-    // DrawRouteAndUpdateEtaAsync، واللي بتتنادى في كل تحديث موقع درايفر (ممكن
-    // كل كام ثانية طول التتبع). ده معناه TCP/TLS handshake جديد كل مرة بدل ما
-    // نستفيد من connection pooling، وبيسبب استهلاك sockets تحت ضغط. دلوقتي
-    // instance واحد static بيتشارك بين كل نداءات الصفحة دي طول عمر التطبيق.
-    // ملحوظة: مقصود إنه منفصل عن HttpClient بتاع ApiService، عشان مينفعش
-    // الـ Bearer token بتاعنا يتسرب لـ router.project-osrm.org (سيرفر خارجي).
     static readonly HttpClient _routingHttp = new()
     {
         Timeout = TimeSpan.FromSeconds(10)
@@ -48,7 +23,7 @@ public partial class OrderTrackingPage : ContentPage
     static OrderTrackingPage()
     {
         _routingHttp.DefaultRequestHeaders.UserAgent.ParseAdd(
-            "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36");
+            "TalyCustomerApp/1.0 (+https://your-domain.com)");
     }
 
     public OrderTrackingPage(OrderTrackingViewModel vm)
@@ -56,121 +31,95 @@ public partial class OrderTrackingPage : ContentPage
         InitializeComponent();
         _vm = vm;
         BindingContext = vm;
-        SetupMap();
         vm.MapUpdated += OnMapUpdated;
-    }
-
-    // ─── SVG: teardrop pin ────────────────────────────────────────────────────
-    static string BuildPinSvg(string fill, string dark) =>
-        $"svg-content://<svg xmlns='http://www.w3.org/2000/svg' width='56' height='72' viewBox='0 0 56 72'>" +
-        $"<defs><filter id='sh'><feDropShadow dx='0' dy='2' stdDeviation='2.5' flood-color='#00000055'/></filter></defs>" +
-        $"<g filter='url(#sh)'>" +
-        $"<path d='M28 4C14.7 4 4 14.7 4 28C4 44 28 68 28 68C28 68 52 44 52 28C52 14.7 41.3 4 28 4Z' fill='{fill}' stroke='white' stroke-width='2'/>" +
-        $"</g>" +
-        $"<circle cx='28' cy='28' r='10' fill='white' opacity='0.9'/>" +
-        $"<circle cx='28' cy='28' r='7' fill='{dark}'/>" +
-        $"</svg>";
-
-    // ─── SVG: driver circle ───────────────────────────────────────────────────
-    static string BuildCircleSvg(string fill, string dark) =>
-        $"svg-content://<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'>" +
-        $"<defs><filter id='sh'><feDropShadow dx='0' dy='2' stdDeviation='3' flood-color='#00000060'/></filter></defs>" +
-        $"<circle cx='30' cy='30' r='26' fill='{fill}' stroke='white' stroke-width='3' filter='url(#sh)'/>" +
-        $"<circle cx='30' cy='30' r='16' fill='white' opacity='0.2'/>" +
-        $"<text x='30' y='38' text-anchor='middle' font-size='22' fill='white'>🛵</text>" +
-        $"</svg>";
-
-    // ─── إعداد الخريطة ────────────────────────────────────────────────────────
-    void SetupMap()
-    {
-        Mapsui.Logging.Logger.LogDelegate = (level, msg, ex) =>
-            Debug.WriteLine($"[Mapsui/{level}] {msg} {ex?.Message}");
-
-        MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
-
-        // Center on Cairo as default until real coordinates arrive
-        var (x, y) = SphericalMercator.FromLonLat(31.2357, 30.0444);
-        MapControl.Map.Navigator.CenterOnAndZoomTo(
-            new MPoint(x, y), MapControl.Map.Navigator.Resolutions[13]);
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        MapControl.Refresh();
-    }
-
-    // ─── Main handler: يتنادى لما ViewModel يجيب data أو يتحدث موقع الدرايفر ──
-    void OnMapUpdated()
-    {
-        MainThread.BeginInvokeOnMainThread(async () =>
+        _mapReady = false;
+        MapWebView.Navigating -= MapWebView_Navigating;
+        MapWebView.Navigating += MapWebView_Navigating;
+        MapWebView.Source = new HtmlWebViewSource
         {
-            bool hasCustomer = _vm.CustomerLat != 0 && _vm.CustomerLng != 0;
-            bool hasRestaurant = _vm.RestaurantLat != 0 && _vm.RestaurantLng != 0;
-
-            // ── الـ Static Pins (مطعم + عميل) ─────────────────────────────
-            if (!_staticPinsDrawn && hasCustomer && hasRestaurant)
-            {
-                _staticPinsDrawn = true;
-
-                DrawPin(ref _customerLayer, "CustomerLayer",
-                    _vm.CustomerLat, _vm.CustomerLng, _customerMarker, 0.8);
-
-                DrawPin(ref _restaurantLayer, "RestaurantLayer",
-                    _vm.RestaurantLat, _vm.RestaurantLng, _restaurantMarker, 0.8);
-
-                // رسم الـ Route بين المطعم والعميل
-                await DrawRouteAndUpdateEtaAsync(
-                    _vm.RestaurantLat, _vm.RestaurantLng,
-                    _vm.CustomerLat, _vm.CustomerLng,
-                    "#FF5722", 5, "RouteLayer",
-                    updateEta: true,
-                    onComplete: layer => _routeLayer = layer);
-
-                // Fit map to show both pins
-                FitBounds(
-                    _vm.RestaurantLat, _vm.RestaurantLng,
-                    _vm.CustomerLat, _vm.CustomerLng);
-            }
-            else if (!_staticPinsDrawn && hasCustomer)
-            {
-                DrawPin(ref _customerLayer, "CustomerLayer",
-                    _vm.CustomerLat, _vm.CustomerLng, _customerMarker, 0.8);
-                CenterOn(_vm.CustomerLat, _vm.CustomerLng, 15);
-            }
-            else if (!_staticPinsDrawn && hasRestaurant)
-            {
-                DrawPin(ref _restaurantLayer, "RestaurantLayer",
-                    _vm.RestaurantLat, _vm.RestaurantLng, _restaurantMarker, 0.8);
-                CenterOn(_vm.RestaurantLat, _vm.RestaurantLng, 15);
-            }
-
-            // ── الدرايفر ─────────────────────────────────────────────────────
-            if (_vm.HasDriver && _vm.DriverLat != 0)
-            {
-                DrawPin(ref _driverLayer, "DriverLayer",
-                    _vm.DriverLat, _vm.DriverLng, _driverMarker, 0.8);
-
-                if (hasCustomer && ShouldUpdateDriverRoute())
-                {
-                    _lastDriverRouteFromLat = _vm.DriverLat;
-                    _lastDriverRouteFromLng = _vm.DriverLng;
-                    _lastDriverRouteTime = DateTime.Now;
-
-                    await DrawRouteAndUpdateEtaAsync(
-                        _vm.DriverLat, _vm.DriverLng,
-                        _vm.CustomerLat, _vm.CustomerLng,
-                        "#FF9800", 4, "DriverRouteLayer",
-                        updateEta: true,
-                        onComplete: layer => _driverRouteLayer = layer);
-                }
-            }
-
-            MapControl.Refresh();
-        });
+            Html = OpenFreeMapHtml.Create()
+        };
     }
 
-    // ─── هل لازم نحدث route الدرايفر؟ ────────────────────────────────────────
+    async void MapWebView_Navigating(object? sender, WebNavigatingEventArgs e)
+    {
+        if (e.Url == "app://map-ready")
+        {
+            e.Cancel = true;
+            _mapReady = true;
+            await RefreshMapAsync();
+            return;
+        }
+
+        // No navigation is performed: this is only an in-page event bridge.
+        if (e.Url.StartsWith("app://", StringComparison.OrdinalIgnoreCase))
+            e.Cancel = true;
+    }
+
+    async void OnMapUpdated()
+    {
+        await MainThread.InvokeOnMainThreadAsync(RefreshMapAsync);
+    }
+
+    async Task RefreshMapAsync()
+    {
+        if (!_mapReady) return;
+
+        bool hasCustomer = _vm.CustomerLat != 0 && _vm.CustomerLng != 0;
+        bool hasRestaurant = _vm.RestaurantLat != 0 && _vm.RestaurantLng != 0;
+
+        if (!_staticPinsDrawn && hasCustomer && hasRestaurant)
+        {
+            _staticPinsDrawn = true;
+            await SetMarkerAsync("customer", _vm.CustomerLng, _vm.CustomerLat, "#2196F3", "●");
+            await SetMarkerAsync("restaurant", _vm.RestaurantLng, _vm.RestaurantLat, "#4CAF50", "▣");
+
+            await DrawRouteAndUpdateEtaAsync(
+                _vm.RestaurantLat, _vm.RestaurantLng,
+                _vm.CustomerLat, _vm.CustomerLng,
+                "#FF5722", 5, "customer-route", true);
+
+            await FitToPointsAsync([
+                [_vm.RestaurantLng, _vm.RestaurantLat],
+                [_vm.CustomerLng, _vm.CustomerLat]
+            ]);
+        }
+        else if (!_staticPinsDrawn && hasCustomer)
+        {
+            _staticPinsDrawn = true;
+            await SetMarkerAsync("customer", _vm.CustomerLng, _vm.CustomerLat, "#2196F3", "●");
+            await CenterOnAsync(_vm.CustomerLng, _vm.CustomerLat, 15);
+        }
+        else if (!_staticPinsDrawn && hasRestaurant)
+        {
+            _staticPinsDrawn = true;
+            await SetMarkerAsync("restaurant", _vm.RestaurantLng, _vm.RestaurantLat, "#4CAF50", "▣");
+            await CenterOnAsync(_vm.RestaurantLng, _vm.RestaurantLat, 15);
+        }
+
+        if (_vm.HasDriver && _vm.DriverLat != 0)
+        {
+            await SetMarkerAsync("driver", _vm.DriverLng, _vm.DriverLat, "#FF5722", "🛵");
+
+            if (hasCustomer && ShouldUpdateDriverRoute())
+            {
+                _lastDriverRouteFromLat = _vm.DriverLat;
+                _lastDriverRouteFromLng = _vm.DriverLng;
+                _lastDriverRouteTime = DateTime.Now;
+
+                await DrawRouteAndUpdateEtaAsync(
+                    _vm.DriverLat, _vm.DriverLng,
+                    _vm.CustomerLat, _vm.CustomerLng,
+                    "#FF9800", 4, "driver-route", true);
+            }
+        }
+    }
+
     bool ShouldUpdateDriverRoute()
     {
         if (_lastDriverRouteFromLat == 0) return true;
@@ -178,226 +127,115 @@ public partial class OrderTrackingPage : ContentPage
 
         double dlat = _vm.DriverLat - _lastDriverRouteFromLat;
         double dlng = _vm.DriverLng - _lastDriverRouteFromLng;
-        double distDeg = Math.Sqrt(dlat * dlat + dlng * dlng);
-        return distDeg > 0.0005; // ~55 متر
+        return Math.Sqrt(dlat * dlat + dlng * dlng) > 0.0005;
     }
 
-    // ─── رسم Pin ──────────────────────────────────────────────────────────────
-    void DrawPin(ref MemoryLayer? existing, string name,
-                 double lat, double lng, string imageSource, double scale)
+    async Task SetMarkerAsync(string id, double lng, double lat, string color, string symbol)
     {
-        if (existing != null)
-        {
-            try { MapControl.Map.Layers.Remove(existing); }
-            catch { }
-        }
-
-        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
-        var feature = new PointFeature(new MPoint(x, y));
-        feature.Styles = new List<IStyle>
-        {
-            new ImageStyle
-            {
-                Image = imageSource,
-                SymbolScale = scale,
-                RelativeOffset = new RelativeOffset(0.0, 0.5)
-            }
-        };
-
-        existing = new MemoryLayer
-        {
-            Name = name,
-            Features = new[] { feature },
-            Style = null
-        };
-
-        MapControl.Map.Layers.Add(existing);
+        var script = string.Format(
+            CultureInfo.InvariantCulture,
+            "setMarker('{0}',{1},{2},'{3}','{4}');",
+            id, lng, lat, color, symbol);
+        await ExecuteMapScriptAsync(script);
     }
 
-    // ─── رسم Route + تحديث ETA/Distance ──────────────────────────────────────
     async Task DrawRouteAndUpdateEtaAsync(
         double fromLat, double fromLng,
         double toLat, double toLng,
         string colorHex, double width,
-        string layerName,
-        bool updateEta,
-        Action<MemoryLayer> onComplete)
+        string routeId,
+        bool updateEta)
     {
         try
         {
-            Debug.WriteLine($"[Route:{layerName}] ▶ START from ({fromLat},{fromLng}) to ({toLat},{toLng})");
-
-            var http = _routingHttp;
-
-            // ✅ FIX #1: استخدام InvariantCulture عشان الأرقام العشرية دايماً تبقى بنقطة (.)
-            // مش متأثرة بلغة التطبيق (عربي/إنجليزي)
             var url = string.Format(
                 CultureInfo.InvariantCulture,
                 "https://router.project-osrm.org/route/v1/driving/{0},{1};{2},{3}?overview=full&geometries=geojson",
                 fromLng, fromLat, toLng, toLat);
 
-            Debug.WriteLine($"[Route:{layerName}] 🌐 Calling OSRM: {url}");
-            var json = await http.GetStringAsync(url);
-            Debug.WriteLine($"[Route:{layerName}] ✅ OSRM response length: {json.Length}");
-
-            var doc = JsonDocument.Parse(json);
+            var json = await _routingHttp.GetStringAsync(url);
+            using var doc = JsonDocument.Parse(json);
             var routes = doc.RootElement.GetProperty("routes");
-            Debug.WriteLine($"[Route:{layerName}] 📍 Routes count: {routes.GetArrayLength()}");
             if (routes.GetArrayLength() == 0) return;
 
             var route = routes[0];
-
-            // ✅ FIX #2: استخدام InvariantCulture في format الأرقام عشان دايماً تطلع
-            // أرقام غربية (1234) مش عربية (١٢٣٤) بغض النظر عن لغة التطبيق
             if (updateEta)
             {
                 double distanceM = route.GetProperty("distance").GetDouble();
                 double durationS = route.GetProperty("duration").GetDouble();
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    if (layerName == "DriverRouteLayer")
-                        _vm.UpdateDeliveryEta(durationS);
-                    bool isAr = Services.LocalizationService.Current.TwoLetterISOLanguageName == "ar";
-
-                    // ── المسافة ───────────────────────────────────────────────
-                    if (distanceM < 1000)
-                    {
-                        string meters = distanceM.ToString("F0", CultureInfo.InvariantCulture);
-                        _vm.Distance = isAr ? $"{meters} م" : $"{meters} m";
-                    }
-                    else
-                    {
-                        string km = (distanceM / 1000).ToString("F1", CultureInfo.InvariantCulture);
-                        _vm.Distance = isAr ? $"{km} كم" : $"{km} km";
-                    }
-
-                    // ── الوقت ─────────────────────────────────────────────────
-                    if (durationS < 60)
-                    {
-                        _vm.TravelTime = isAr ? "< 1 دقيقة" : "< 1 min";
-                    }
-                    else
-                    {
-                        string mins = Math.Ceiling(durationS / 60).ToString("F0", CultureInfo.InvariantCulture);
-                        _vm.TravelTime = isAr ? $"{mins} دقيقة" : $"{mins} min";
-                    }
-                });
+                UpdateEtaAndDistance(distanceM, durationS, routeId);
             }
 
-            // بناء نقاط الـ route
-            var coords = route.GetProperty("geometry").GetProperty("coordinates");
-            var points = new List<MPoint>();
-            foreach (var c in coords.EnumerateArray())
-            {
-                var (mx, my) = SphericalMercator.FromLonLat(c[0].GetDouble(), c[1].GetDouble());
-                points.Add(new MPoint(mx, my));
-            }
-            Debug.WriteLine($"[Route:{layerName}] 📐 Points built: {points.Count}");
-            if (points.Count < 2) return;
+            var coords = route.GetProperty("geometry").GetProperty("coordinates")
+                .EnumerateArray()
+                .Select(c => new[] { c[0].GetDouble(), c[1].GetDouble() })
+                .ToList();
 
-            // حذف الـ layer القديم بالاسم بشكل آمن
-            var existingByName = MapControl.Map.Layers
-                .FirstOrDefault(l => l.Name == layerName);
-            if (existingByName != null)
-            {
-                try { MapControl.Map.Layers.Remove(existingByName); }
-                catch { }
-            }
+            if (coords.Count < 2) return;
 
-            var line = new NetTopologySuite.Geometries.LineString(
-                points.Select(p =>
-                    new NetTopologySuite.Geometries.Coordinate(p.X, p.Y)).ToArray());
-
-            var feature = new Mapsui.Nts.GeometryFeature(line);
-            feature.Styles = new List<IStyle>
-            {
-                // Shadow
-                new VectorStyle
-                {
-                    Line = new Pen(Mapsui.Styles.Color.FromArgb(50, 0, 0, 0), width + 4)
-                },
-                // Main line
-                new VectorStyle
-                {
-                    Line = new Pen(Mapsui.Styles.Color.FromString(colorHex), width)
-                },
-                // White dashes
-                new VectorStyle
-                {
-                    Line = new Pen(Mapsui.Styles.Color.White, 1.5f)
-                    {
-                        PenStyle = PenStyle.Dash
-                    }
-                }
-            };
-
-            var newLayer = new MemoryLayer
-            {
-                Name = layerName,
-                Features = new[] { feature },
-                Style = null
-            };
-
-            // أضف route layers تحت Pin layers
-            int insertIdx;
-            int pinLayerIdx = MapControl.Map.Layers
-                .ToList()
-                .FindIndex(l => l.Name is "CustomerLayer" or "RestaurantLayer" or "DriverLayer");
-            if (pinLayerIdx > 0)
-                insertIdx = pinLayerIdx;
-            else
-                insertIdx = Math.Min(1, MapControl.Map.Layers.Count);
-
-            MapControl.Map.Layers.Insert(insertIdx, newLayer);
-            onComplete(newLayer);
-            Debug.WriteLine($"[Route:{layerName}] ✅ DONE - layer inserted at index {insertIdx}");
+            var jsonCoords = JsonSerializer.Serialize(coords);
+            var script = $"setRoute('{routeId}',{jsonCoords},'{colorHex}',{width.ToString(CultureInfo.InvariantCulture)});";
+            await ExecuteMapScriptAsync(script);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[Route:{layerName}] ERROR: {ex.GetType().Name}: {ex.Message}");
-            Debug.WriteLine($"[Route:{layerName}] StackTrace: {ex.StackTrace}");
+            Debug.WriteLine($"[Route:{routeId}] {ex.GetType().Name}: {ex.Message}");
         }
     }
 
-    // ─── FitBounds: يضبط الـ viewport عشان يشمل نقطتين ──────────────────────
-    void FitBounds(double lat1, double lng1, double lat2, double lng2)
+    void UpdateEtaAndDistance(double distanceM, double durationS, string routeId)
     {
-        var (x1, y1) = SphericalMercator.FromLonLat(lng1, lat1);
-        var (x2, y2) = SphericalMercator.FromLonLat(lng2, lat2);
-
-        double dist = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
-
-        int zoom = dist switch
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            < 2000 => 16,
-            < 5000 => 15,
-            < 10000 => 14,
-            < 25000 => 13,
-            < 50000 => 12,
-            _ => 11
-        };
+            if (routeId != "driver-route") return;
 
-        double centerX = (x1 + x2) / 2;
-        double centerY = (y1 + y2) / 2;
-        double verticalBias = (y2 - y1) * 0.15;
+            _vm.UpdateDeliveryEta(durationS);
+            bool isAr = Services.LocalizationService.Current.TwoLetterISOLanguageName == "ar";
 
-        MapControl.Map.Navigator.CenterOnAndZoomTo(
-            new MPoint(centerX, centerY + verticalBias),
-            MapControl.Map.Navigator.Resolutions[Math.Max(zoom, 0)]);
+            if (distanceM < 1000)
+            {
+                var meters = distanceM.ToString("F0", CultureInfo.InvariantCulture);
+                _vm.Distance = isAr ? $"{meters} م" : $"{meters} m";
+            }
+            else
+            {
+                var km = (distanceM / 1000).ToString("F1", CultureInfo.InvariantCulture);
+                _vm.Distance = isAr ? $"{km} كم" : $"{km} km";
+            }
+
+            if (durationS < 60)
+            {
+                _vm.TravelTime = isAr ? "< 1 دقيقة" : "< 1 min";
+            }
+            else
+            {
+                var mins = Math.Ceiling(durationS / 60)
+                    .ToString("F0", CultureInfo.InvariantCulture);
+                _vm.TravelTime = isAr ? $"{mins} دقيقة" : $"{mins} min";
+            }
+        });
     }
 
-    // ─── Center on single point ───────────────────────────────────────────────
-    void CenterOn(double lat, double lng, int zoom)
+    async Task FitToPointsAsync(double[][] points)
     {
-        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
-        MapControl.Map.Navigator.CenterOnAndZoomTo(
-            new MPoint(x, y), MapControl.Map.Navigator.Resolutions[zoom]);
+        await ExecuteMapScriptAsync($"fitToPoints({JsonSerializer.Serialize(points)});");
     }
+
+    async Task CenterOnAsync(double lng, double lat, int zoom)
+    {
+        await ExecuteMapScriptAsync(string.Format(
+            CultureInfo.InvariantCulture,
+            "centerOn({0},{1},{2});", lng, lat, zoom));
+    }
+
+    Task<string> ExecuteMapScriptAsync(string script) =>
+        _mapReady ? MapWebView.EvaluateJavaScriptAsync(script) : Task.FromResult(string.Empty);
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
+        _mapReady = false;
+        MapWebView.Navigating -= MapWebView_Navigating;
         _vm.MapUpdated -= OnMapUpdated;
         _vm.Cleanup();
     }

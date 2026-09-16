@@ -1,21 +1,13 @@
-// ═══════════════════════════════════════════════════════════════
-// Views / HomeLocationPickerPage.xaml.cs
-// نفس منطق LocationPickerPage لكن يحفظ في LocationService
-// ═══════════════════════════════════════════════════════════════
+using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.ViewModels;
-using Mapsui;
-using Mapsui.Layers;
-using Mapsui.Projections;
-using Mapsui.Styles;
-using Mapsui.Tiling;
-using Mapsui.UI.Maui;
+using System.Globalization;
 
 namespace DeliveryApp.Customer.Views;
 
 public partial class HomeLocationPickerPage : ContentPage
 {
     readonly HomeLocationPickerViewModel _vm;
-    MemoryLayer? _pinLayer;
+    bool _mapReady;
 
     public HomeLocationPickerPage(HomeLocationPickerViewModel vm)
     {
@@ -27,20 +19,43 @@ public partial class HomeLocationPickerPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        SetupMap();
+        _mapReady = false;
+        MapWebView.Navigating -= MapWebView_Navigating;
+        MapWebView.Navigating += MapWebView_Navigating;
+        MapWebView.Source = new HtmlWebViewSource
+        {
+            Html = OpenFreeMapHtml.Create()
+        };
     }
 
-    async void SetupMap()
+    async void MapWebView_Navigating(object? sender, WebNavigatingEventArgs e)
     {
-        MapControl.Map.Layers.Clear();
-        MapControl.Map.Layers.Add(OpenStreetMap.CreateTileLayer());
+        if (e.Url == "app://map-ready")
+        {
+            e.Cancel = true;
+            _mapReady = true;
+            await SetInitialLocationAsync();
+            return;
+        }
 
-        // ابدأ بالموقع المحفوظ لو موجود، وإلا GPS، وإلا القاهرة
+        if (e.Url.StartsWith("app://map-click", StringComparison.OrdinalIgnoreCase))
+        {
+            e.Cancel = true;
+            if (WebViewMapQuery.TryGetCoordinates(e.Url, out var lat, out var lng))
+            {
+                _vm.SelectedLat = lat;
+                _vm.SelectedLng = lng;
+                await SetMarkerAsync(lng, lat);
+            }
+        }
+    }
+
+    async Task SetInitialLocationAsync()
+    {
         double lat = _vm.SelectedLat;
         double lng = _vm.SelectedLng;
 
-        // محاولة GPS لو مفيش موقع محفوظ
-        if (lat == Services.LocationService.ZoneCenterLat && lng == Services.LocationService.ZoneCenterLng)
+        if (lat == LocationService.ZoneCenterLat && lng == LocationService.ZoneCenterLng)
         {
             try
             {
@@ -62,81 +77,25 @@ public partial class HomeLocationPickerPage : ContentPage
                     }
                 }
             }
-            catch { /* فشل GPS → نبقى على القيمة الافتراضية */ }
+            catch
+            {
+                // GPS failure: keep the saved/default location.
+            }
         }
 
-        // تمركز الخريطة
-        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
-        MapControl.Map.Navigator.CenterOnAndZoomTo(
-            new MPoint(x, y),
-            MapControl.Map.Navigator.Resolutions[15]);
-
-        DrawLocationPin(lat, lng);
-        UpdateLabel(lat, lng);
-
-        MapControl.MapTapped -= OnMapTapped;
-        MapControl.MapTapped += OnMapTapped;
-        MapControl.Refresh();
+        await ExecuteMapScriptAsync($"centerOn({lng.ToString(CultureInfo.InvariantCulture)},{lat.ToString(CultureInfo.InvariantCulture)},15);setMarker('selected',{lng.ToString(CultureInfo.InvariantCulture)},{lat.ToString(CultureInfo.InvariantCulture)},'#FF5722','📍');");
     }
 
-    void OnMapTapped(object? sender, MapEventArgs e)
-    {
-        var info = e.GetMapInfo(MapControl.Map.Layers);
-        if (info?.WorldPosition == null) return;
+    Task SetMarkerAsync(double lng, double lat) =>
+        ExecuteMapScriptAsync($"setMarker('selected',{lng.ToString(CultureInfo.InvariantCulture)},{lat.ToString(CultureInfo.InvariantCulture)},'#FF5722','📍');");
 
-        var lonLat = SphericalMercator.ToLonLat(info.WorldPosition.X, info.WorldPosition.Y);
-
-        _vm.SelectedLat = lonLat.lat;
-        _vm.SelectedLng = lonLat.lon;
-
-        DrawLocationPin(lonLat.lat, lonLat.lon);
-        UpdateLabel(lonLat.lat, lonLat.lon);
-    }
-
-    void DrawLocationPin(double lat, double lng)
-    {
-        if (_pinLayer != null)
-            MapControl.Map.Layers.Remove(_pinLayer);
-
-        var (x, y) = SphericalMercator.FromLonLat(lng, lat);
-
-        var outerStyle = new SymbolStyle
-        {
-            SymbolType = SymbolType.Ellipse,
-            Fill       = new Mapsui.Styles.Brush(new Mapsui.Styles.Color(255, 87, 34)),
-            Outline    = new Pen(new Mapsui.Styles.Color(255, 255, 255), 3),
-            SymbolScale = 1.4
-        };
-
-        var innerStyle = new SymbolStyle
-        {
-            SymbolType = SymbolType.Ellipse,
-            Fill       = new Mapsui.Styles.Brush(new Mapsui.Styles.Color(255, 255, 255)),
-            Outline    = new Pen(new Mapsui.Styles.Color(255, 87, 34), 1),
-            SymbolScale = 0.5
-        };
-
-        var feature = new PointFeature(new MPoint(x, y));
-        feature.Styles.Clear();
-        feature.Styles.Add(outerStyle);
-        feature.Styles.Add(innerStyle);
-
-        _pinLayer = new MemoryLayer { Name = "PinLayer", Features = [feature] };
-        MapControl.Map.Layers.Add(_pinLayer);
-        MapControl.Refresh();
-    }
-
-    void UpdateLabel(double lat, double lng)
-    {
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            CoordinatesLabel.Text = $"📍 {lat:F5}, {lng:F5}";
-        });
-    }
+    Task<string> ExecuteMapScriptAsync(string script) =>
+        _mapReady ? MapWebView.EvaluateJavaScriptAsync(script) : Task.FromResult(string.Empty);
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        MapControl.MapTapped -= OnMapTapped;
+        _mapReady = false;
+        MapWebView.Navigating -= MapWebView_Navigating;
     }
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:mapsui="clr-namespace:Mapsui.UI.Maui;assembly=Mapsui.UI.Maui"
              xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
              xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
              x:Class="DeliveryApp.Customer.Views.HomeLocationPickerPage"
@@ -10,63 +9,46 @@
              BackgroundColor="White">
 
     <Grid RowDefinitions="Auto,*,Auto">
-
-        <!-- ══ Header ══ -->
         <Grid Grid.Row="0" Padding="16,52,16,12"
               ColumnDefinitions="44,*,44" BackgroundColor="White">
-            <Image Grid.Column="0" Source="icon_back.png"
-                   WidthRequest="38" HeightRequest="38">
+            <Image Grid.Column="0" Source="icon_back.png" WidthRequest="38" HeightRequest="38">
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
                 </Image.GestureRecognizers>
             </Image>
-            <Label Grid.Column="1"
-                   Text="{loc:Loc Key=ChooseLocation}"
-                   FontFamily="CairoBold" FontSize="20"
-                   TextColor="#212121"
+            <Label Grid.Column="1" Text="{loc:Loc Key=ChooseLocation}"
+                   FontFamily="CairoBold" FontSize="20" TextColor="#212121"
                    HorizontalOptions="Center" VerticalOptions="Center"/>
         </Grid>
 
-        <!-- ══ Map ══ -->
-        <mapsui:MapControl x:Name="MapControl" Grid.Row="1"/>
+        <Grid Grid.Row="1">
+            <WebView x:Name="MapWebView" />
+            <Label Text="📍" FontSize="48" HorizontalOptions="Center" VerticalOptions="Center" ZIndex="10"
+                   InputTransparent="True" />
+            <Label Text="OpenFreeMap © OpenMapTiles · Data from OpenStreetMap"
+                   FontSize="9" TextColor="#555" BackgroundColor="#CCFFFFFF"
+                   Padding="4,2" Margin="8" HorizontalOptions="Start" VerticalOptions="End"
+                   ZIndex="11" InputTransparent="True" />
+        </Grid>
 
-        <!-- دبوس ثابت في المركز -->
-        <Label Grid.Row="1" Text="📍" FontSize="48"
-               HorizontalOptions="Center" VerticalOptions="Center" ZIndex="10"/>
-
-        <!-- ══ Bottom Panel ══ -->
         <Border Grid.Row="2" BackgroundColor="White" Padding="16,14,16,34"
                 StrokeShape="RoundRectangle 0" Stroke="Transparent">
             <VerticalStackLayout Spacing="10">
-
-                <!-- اسم المكان المختار (Reverse Geocoding) -->
                 <Grid ColumnDefinitions="Auto,*">
-                    <!-- Loading spinner أثناء الـ resolve -->
-                    <ActivityIndicator Grid.Column="0"
-                                       IsRunning="{Binding IsResolvingAddress}"
-                                       IsVisible="{Binding IsResolvingAddress}"
-                                       Color="#FF5722"
-                                       WidthRequest="18" HeightRequest="18"
-                                       Margin="0,0,6,0"
+                    <ActivityIndicator Grid.Column="0" IsRunning="{Binding IsResolvingAddress}"
+                                       IsVisible="{Binding IsResolvingAddress}" Color="#FF5722"
+                                       WidthRequest="18" HeightRequest="18" Margin="0,0,6,0"
                                        VerticalOptions="Center"/>
-                    <Label x:Name="CoordinatesLabel"
-                           Grid.Column="1"
-                           Text="{Binding ResolvedAddress}"
-                           FontFamily="CairoRegular" FontSize="13"
-                           TextColor="#616161"
-                           VerticalOptions="Center"
-                           HorizontalOptions="Start"
-                           HorizontalTextAlignment="Start"/>
+                    <Label x:Name="CoordinatesLabel" Grid.Column="1"
+                           Text="{Binding ResolvedAddress}" FontFamily="CairoRegular" FontSize="13"
+                           TextColor="#616161" VerticalOptions="Center"
+                           HorizontalOptions="Start" HorizontalTextAlignment="Start"/>
                 </Grid>
-
-                <!-- زر التأكيد -->
                 <Button Text="{loc:Loc Key=ConfirmLocation}"
                         Command="{Binding ConfirmLocationCommand}"
                         IsEnabled="{Binding IsLocationSelected}"
                         Style="{StaticResource PrimaryBtn}"/>
-
             </VerticalStackLayout>
         </Border>
-
     </Grid>
 </ContentPage>
