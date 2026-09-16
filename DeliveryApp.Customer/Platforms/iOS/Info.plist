@@ -4,6 +4,9 @@
 <dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>محتاجين نستخدم المايك عشان تقدر تعمل مكالمة صوتية داخل التطبيق مع المندوب</string>
+	<!-- ✅ الجديد: تصوير الروشتة مباشرة بالكاميرا -->
+	<key>NSCameraUsageDescription</key>
+	<string>محتاجين نستخدم الكاميرا عشان تقدر تصور الروشتة وتبعتها للصيدلية</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIDeviceFamily</key>

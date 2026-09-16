@@ -861,6 +861,12 @@
 	<data name="UploadPrescription">
 		<value>ارفع الروشتة</value>
 	</data>
+	<data name="CapturePrescriptionPhoto">
+		<value>صوّر الروشتة</value>
+	</data>
+	<data name="CameraNotSupported">
+		<value>الكاميرا مش متاحة على الجهاز ده</value>
+	</data>
 	<data name="PrescriptionHint">
 		<value>ارفع روشتة الدكتور وهيتفتحلك شات مع الصيدلية يحددوا لك تمن الفاتورة</value>
 	</data>

@@ -909,6 +909,12 @@
 	<data name="UploadPrescription">
 		<value>Upload prescription</value>
 	</data>
+	<data name="CapturePrescriptionPhoto">
+		<value>Take a photo</value>
+	</data>
+	<data name="CameraNotSupported">
+		<value>Camera isn't available on this device</value>
+	</data>
 	<data name="PrescriptionHint">
 		<value>Upload your doctor's prescription and chat with the pharmacy to agree on the price</value>
 	</data>

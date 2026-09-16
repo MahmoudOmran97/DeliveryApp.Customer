@@ -340,10 +340,18 @@
                                FontSize="16" TextColor="#1565C0"/>
                             <Label Text="{loc:Loc Key=PrescriptionHint}" FontFamily="CairoRegular"
                                FontSize="13" TextColor="#424242"/>
-                            <Button Text="{loc:Loc Key=ChoosePrescriptionImage}"
-                                Command="{Binding UploadPrescriptionCommand}"
-                                BackgroundColor="#1976D2" TextColor="White"
-                                FontFamily="CairoBold" CornerRadius="10"/>
+                            <!-- ✅ الجديد: زرار تصوير الروشتة مباشرة بالكاميرا جنب زرار اختيار صورة من المعرض -->
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Button Grid.Column="0" Text="{loc:Loc Key=ChoosePrescriptionImage}"
+                                    Command="{Binding UploadPrescriptionCommand}"
+                                    BackgroundColor="#1976D2" TextColor="White"
+                                    FontFamily="CairoBold" FontSize="13" CornerRadius="10"/>
+                                <Button Grid.Column="1" Text="{loc:Loc Key=CapturePrescriptionPhoto}"
+                                    Command="{Binding CapturePrescriptionPhotoCommand}"
+                                    BackgroundColor="White" TextColor="#1976D2"
+                                    BorderColor="#1976D2" BorderWidth="1.5"
+                                    FontFamily="CairoBold" FontSize="13" CornerRadius="10"/>
+                            </Grid>
                         </VerticalStackLayout>
                     </Border>
 
@@ -487,10 +495,18 @@
                                FontSize="16" TextColor="#1565C0"/>
                         <Label Text="{loc:Loc Key=PrescriptionHint}" FontFamily="CairoRegular"
                                FontSize="13" TextColor="#424242"/>
-                        <Button Text="{loc:Loc Key=ChoosePrescriptionImage}"
-                                Command="{Binding UploadPrescriptionCommand}"
-                                BackgroundColor="#1976D2" TextColor="White"
-                                FontFamily="CairoBold" CornerRadius="10"/>
+                        <!-- ✅ الجديد: زرار تصوير الروشتة مباشرة بالكاميرا جنب زرار اختيار صورة من المعرض -->
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Button Grid.Column="0" Text="{loc:Loc Key=ChoosePrescriptionImage}"
+                                    Command="{Binding UploadPrescriptionCommand}"
+                                    BackgroundColor="#1976D2" TextColor="White"
+                                    FontFamily="CairoBold" FontSize="13" CornerRadius="10"/>
+                            <Button Grid.Column="1" Text="{loc:Loc Key=CapturePrescriptionPhoto}"
+                                    Command="{Binding CapturePrescriptionPhotoCommand}"
+                                    BackgroundColor="White" TextColor="#1976D2"
+                                    BorderColor="#1976D2" BorderWidth="1.5"
+                                    FontFamily="CairoBold" FontSize="13" CornerRadius="10"/>
+                        </Grid>
                     </VerticalStackLayout>
                 </Border>
 
@@ -600,20 +616,15 @@
             </Grid>
 
             <!-- شريط بحث ثابت داخل نفس الهيدر، مع هامش جانبي واضح -->
+            <!-- ✅ اتعدّل: نفس تصميم مربع البحث في الشاشة الرئيسية بالظبط (SearchBar أصلي بدون Shadow ولا أيقونة يدوية) -->
             <Border x:Name="SearchBarBorder" Opacity="1" Scale="1" InputTransparent="False"
-                    BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E0E0E0"
-                    Margin="16,82,16,0" Padding="12,0" HeightRequest="42"
+                    BackgroundColor="White" StrokeShape="RoundRectangle 12" Stroke="#E0E0E0" StrokeThickness="1"
+                    Margin="16,82,16,0" Padding="4,0" HeightRequest="42"
                     HorizontalOptions="Fill" VerticalOptions="Start">
-                <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,2" Opacity="0.1" Radius="4"/>
-                </Border.Shadow>
-                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                    <Label Grid.Column="0" Text="🔍" FontSize="15" VerticalOptions="Center" TextColor="#757575"/>
-                    <Entry x:Name="SearchEntry" Grid.Column="1" Text="{Binding SearchQuery}"
+                <SearchBar x:Name="SearchEntry" Text="{Binding SearchQuery}"
                            Placeholder="{loc:Loc Key=SearchInMenu}"
-                           FontFamily="CairoRegular" FontSize="13" VerticalOptions="Center"
-                           BackgroundColor="Transparent" TextColor="#212121"/>
-                </Grid>
+                           BackgroundColor="Transparent"
+                           FontFamily="CairoRegular" FontSize="14" TextColor="#212121"/>
             </Border>
         </Grid>
 

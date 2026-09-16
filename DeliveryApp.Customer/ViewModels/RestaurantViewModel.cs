@@ -239,8 +239,45 @@ public partial class RestaurantViewModel : BaseViewModel
             });
             if (result == null) return;
 
-            IsBusy = true;
-            var url = await _api.UploadPrescriptionAsync(result);
+            await ProcessPrescriptionFileAsync(result);
+        }
+        catch (Exception ex)
+        {
+            await AlertAsync(ex.Message);
+        }
+    }
+
+    // ✅ الجديد: زرار "تصوير الروشتة" — يفتح الكاميرا مباشرة بدل اختيار صورة من المعرض
+    [RelayCommand]
+    async Task CapturePrescriptionPhotoAsync()
+    {
+        try
+        {
+            if (!MediaPicker.Default.IsCaptureSupported)
+            {
+                await AlertAsync(LocalizationService.Get("CameraNotSupported"));
+                return;
+            }
+
+            var photo = await MediaPicker.Default.CapturePhotoAsync();
+            if (photo == null) return;
+
+            await ProcessPrescriptionFileAsync(photo);
+        }
+        catch (Exception ex)
+        {
+            await AlertAsync(ex.Message);
+        }
+    }
+
+    // منطق مشترك: رفع صورة الروشتة (جاية من المعرض أو من الكاميرا)، إنشاء PrescriptionRequest،
+    // وفتح شات صاحب الصيدلية عشان يحدد تمن الفاتورة.
+    async Task ProcessPrescriptionFileAsync(FileResult file)
+    {
+        IsBusy = true;
+        try
+        {
+            var url = await _api.UploadPrescriptionAsync(file);
             if (string.IsNullOrEmpty(url))
             {
                 await AlertAsync(LocalizationService.Get("UploadFailed"));
@@ -261,10 +298,6 @@ public partial class RestaurantViewModel : BaseViewModel
             _cart.SetPrescription(RestaurantId, url, PrescriptionNotes, Restaurant?.DeliveryFee ?? 15m);
             _cart.SetPrescriptionRequestId(created.Id);
             await Shell.Current.GoToAsync($"PrescriptionChatPage?requestId={created.Id}");
-        }
-        catch (Exception ex)
-        {
-            await AlertAsync(ex.Message);
         }
         finally { IsBusy = false; }
     }

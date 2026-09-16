@@ -56,93 +56,12 @@
                                        HorizontalTextAlignment="Center"
                                        Margin="0,8,0,0" />
 
-                                <!-- ═══ سلايد 1: شبكة الأقسام ═══ -->
-                                <Grid IsVisible="{Binding Kind, Converter={StaticResource StringEquals}, ConverterParameter=Categories}"
-                                      Margin="0,20,0,0"
-                                      RowDefinitions="Auto,Auto"
-                                      ColumnDefinitions="*,*,*"
-                                      RowSpacing="14" ColumnSpacing="4">
-
-                                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="6" HorizontalOptions="Center">
-                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
-                                                BackgroundColor="#FF7A45" WidthRequest="56" HeightRequest="56">
-                                            <Label Text="🍴" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center" />
-                                        </Border>
-                                        <Label Text="{loc:Loc Key=Cat_Restaurants}" FontFamily="CairoBold" FontSize="11"
-                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
-                                    </VerticalStackLayout>
-
-                                    <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="6" HorizontalOptions="Center">
-                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
-                                                BackgroundColor="#26A69A" WidthRequest="56" HeightRequest="56">
-                                            <Label Text="💊" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center" />
-                                        </Border>
-                                        <Label Text="{loc:Loc Key=Cat_Pharmacy}" FontFamily="CairoBold" FontSize="11"
-                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
-                                    </VerticalStackLayout>
-
-                                    <VerticalStackLayout Grid.Row="0" Grid.Column="2" Spacing="6" HorizontalOptions="Center">
-                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
-                                                BackgroundColor="#7E57C2" WidthRequest="56" HeightRequest="56">
-                                            <Label Text="🛒" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center" />
-                                        </Border>
-                                        <Label Text="{loc:Loc Key=Cat_Supermarket}" FontFamily="CairoBold" FontSize="11"
-                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
-                                    </VerticalStackLayout>
-
-                                    <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="6" HorizontalOptions="Center">
-                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
-                                                BackgroundColor="#EC407A" WidthRequest="56" HeightRequest="56">
-                                            <Label Text="🥤" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center" />
-                                        </Border>
-                                        <Label Text="{loc:Loc Key=Cat_Drinks}" FontFamily="CairoBold" FontSize="11"
-                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
-                                    </VerticalStackLayout>
-
-                                    <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6" HorizontalOptions="Center">
-                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
-                                                BackgroundColor="#42A5F5" WidthRequest="56" HeightRequest="56">
-                                            <Label Text="📦" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center" />
-                                        </Border>
-                                        <Label Text="{loc:Loc Key=Cat_Accessories}" FontFamily="CairoBold" FontSize="11"
-                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
-                                    </VerticalStackLayout>
-
-                                    <VerticalStackLayout Grid.Row="1" Grid.Column="2" Spacing="6" HorizontalOptions="Center">
-                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
-                                                BackgroundColor="#66BB6A" WidthRequest="56" HeightRequest="56">
-                                            <Label Text="🍎" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center" />
-                                        </Border>
-                                        <Label Text="{loc:Loc Key=Cat_Vegetables}" FontFamily="CairoBold" FontSize="11"
-                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
-                                    </VerticalStackLayout>
-                                </Grid>
-
-                                <!-- ═══ سلايد 2: توصيل سريع ═══ -->
-                                <Grid IsVisible="{Binding Kind, Converter={StaticResource StringEquals}, ConverterParameter=Delivery}"
-                                      Margin="0,18,0,0" HeightRequest="190" WidthRequest="190" HorizontalOptions="Center">
-                                    <Border StrokeShape="RoundRectangle 120" Stroke="Transparent"
-                                            BackgroundColor="#FFF3E0" WidthRequest="176" HeightRequest="176"
-                                            HorizontalOptions="Center" VerticalOptions="Center" />
-                                    <Label Text="🛵" FontSize="72" HorizontalOptions="Center" VerticalOptions="Center" />
-                                    <Label Text="📍" FontSize="24" HorizontalOptions="Start" VerticalOptions="Start" Margin="4,10,0,0" />
-                                    <Label Text="📍" FontSize="18" HorizontalOptions="End" VerticalOptions="End" Margin="0,0,4,18" />
-                                </Grid>
-
-                                <!-- ═══ سلايد 3: تجربة أسهل ═══ -->
-                                <Grid IsVisible="{Binding Kind, Converter={StaticResource StringEquals}, ConverterParameter=Easy}"
-                                      Margin="0,18,0,0" HeightRequest="190" WidthRequest="190" HorizontalOptions="Center">
-                                    <Border StrokeShape="RoundRectangle 120" Stroke="Transparent"
-                                            BackgroundColor="#E3F2FD" WidthRequest="176" HeightRequest="176"
-                                            HorizontalOptions="Center" VerticalOptions="Center" />
-                                    <Label Text="📱" FontSize="72" HorizontalOptions="Center" VerticalOptions="Center" />
-                                    <Border StrokeShape="RoundRectangle 18" Stroke="Transparent"
-                                            BackgroundColor="{StaticResource Primary}"
-                                            WidthRequest="44" HeightRequest="44"
-                                            HorizontalOptions="End" VerticalOptions="Start" Margin="0,6,8,0">
-                                        <Label Text="📦" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
-                                    </Border>
-                                </Grid>
+                                <!-- ═══ صورة السلايد (من الصور التسويقية الجاهزة) ═══ -->
+                                <Image Source="{Binding Image}"
+                                       Aspect="AspectFit"
+                                       HeightRequest="260"
+                                       HorizontalOptions="Fill"
+                                       Margin="0,20,0,0" />
 
                             </VerticalStackLayout>
                         </ScrollView>

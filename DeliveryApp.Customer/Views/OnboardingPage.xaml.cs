@@ -1,3 +1,4 @@
+
 using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,19 +25,19 @@ public partial class OnboardingPage : ContentPage
         [
             new OnboardingSlide
             {
-                Kind = "Categories",
+                Image = "screenshot1.png",
                 Title = LocalizationService.Get("Onboarding_Title1"),
                 Subtitle = LocalizationService.Get("Onboarding_Subtitle1")
             },
             new OnboardingSlide
             {
-                Kind = "Delivery",
+                Image = "screenshot2.png",
                 Title = LocalizationService.Get("Onboarding_Title2"),
                 Subtitle = LocalizationService.Get("Onboarding_Subtitle2")
             },
             new OnboardingSlide
             {
-                Kind = "Easy",
+                Image = "screenshot3.png",
                 Title = LocalizationService.Get("Onboarding_Title3"),
                 Subtitle = LocalizationService.Get("Onboarding_Subtitle3")
             }
