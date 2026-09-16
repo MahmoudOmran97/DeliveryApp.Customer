@@ -78,8 +78,21 @@ public partial class SplashPage : ContentPage
         }
         else
         {
-            var loginPage = IPlatformApplication.Current!.Services.GetService<LoginPage>()!;
-            Application.Current!.MainPage = new NavigationPage(loginPage);
+            // ✅ أول مرة التطبيق بيتفتح فيها (زي وقت التسطيب) وقبل ما اليوزر
+            // يعمل تسجيل دخول — نعرض شاشات الـ Onboarding التعريفية مرة واحدة
+            // بس. بعد ما يخلصها (أو لو فتحها قبل كده) بيروح مباشرة لـ Login.
+            bool hasSeenOnboarding = Preferences.Default.Get(OnboardingPage.HasSeenOnboardingKey, false);
+
+            if (!hasSeenOnboarding)
+            {
+                var onboardingPage = IPlatformApplication.Current!.Services.GetService<OnboardingPage>()!;
+                Application.Current!.MainPage = onboardingPage;
+            }
+            else
+            {
+                var loginPage = IPlatformApplication.Current!.Services.GetService<LoginPage>()!;
+                Application.Current!.MainPage = new NavigationPage(loginPage);
+            }
         }
     }
 }

@@ -56,6 +56,30 @@
 	</data>
 
 	<!-- Auth -->
+	<data name="Onboarding_Title1">
+		<value>كل احتياجاتك في مكان واحد</value>
+	</data>
+	<data name="Onboarding_Subtitle1">
+		<value>من المطاعم والصيدليات والسوبر ماركت والمحلات والخدمات المتنوعة</value>
+	</data>
+	<data name="Onboarding_Title2">
+		<value>توصيل سريع وآمن</value>
+	</data>
+	<data name="Onboarding_Subtitle2">
+		<value>نوصل طلبك في أسرع وقت وبأعلى معايير الأمان</value>
+	</data>
+	<data name="Onboarding_Title3">
+		<value>تجربة أسهل لحياة أفضل</value>
+	</data>
+	<data name="Onboarding_Subtitle3">
+		<value>وفر وقتك وجهدك وخلّينا نلبي احتياجاتك</value>
+	</data>
+	<data name="Onboarding_Next">
+		<value>التالى</value>
+	</data>
+	<data name="Onboarding_Start">
+		<value>ابدأ الآن</value>
+	</data>
 	<data name="WelcomeBack">
 		<value>أهلاً بعودتك!</value>
 	</data>

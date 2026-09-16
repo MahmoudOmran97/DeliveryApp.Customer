@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:DeliveryApp.Customer.Models"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             x:Class="DeliveryApp.Customer.Views.OnboardingPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="White">
+
+    <!-- ✅ شاشات تعريفية (Onboarding) — بتتعرض مرة واحدة بس أول ما العميل
+         يسطّب التطبيق ويفتحه لأول مرة (شوف OnboardingPage.xaml.cs +
+         SplashPage.xaml.cs لمنطق "مرة واحدة بس" باستخدام Preferences). -->
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- ═══════ محتوى السلايدات ═══════ -->
+        <Grid Grid.Row="0">
+
+            <!-- الموجة السفلية (كحلي + برتقالي) خلف المحتوى، ثابتة عبر السلايدات -->
+            <Grid VerticalOptions="End" HeightRequest="150" InputTransparent="True">
+                <BoxView Color="{StaticResource TalyNavy}"
+                         HeightRequest="70"
+                         VerticalOptions="End" />
+                <Path Data="M0,55 C 90,110 260,0 400,60 L400,150 L0,150 Z"
+                      Fill="{StaticResource Primary}"
+                      Aspect="Fill"
+                      HorizontalOptions="Fill"
+                      HeightRequest="120"
+                      VerticalOptions="End" />
+            </Grid>
+
+            <CarouselView x:Name="Carousel"
+                          Loop="False"
+                          IndicatorView="PageIndicator"
+                          PositionChanged="Carousel_PositionChanged"
+                          VerticalOptions="Fill">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate x:DataType="models:OnboardingSlide">
+                        <ScrollView>
+                            <VerticalStackLayout Padding="28,48,28,24" Spacing="0" HorizontalOptions="Fill">
+
+                                <!-- شعار Taly (البادچ الكحلي جوه الصورة نفسها) -->
+                                <Image Source="logo_ar.png"
+                                       WidthRequest="128" HeightRequest="128"
+                                       Aspect="AspectFit"
+                                       HorizontalOptions="Center" />
+
+                                <Label Text="{Binding Title}"
+                                       FontFamily="CairoBold" FontSize="24"
+                                       TextColor="{StaticResource TalyNavy}"
+                                       HorizontalTextAlignment="Center"
+                                       Margin="0,20,0,0" />
+
+                                <Label Text="{Binding Subtitle}"
+                                       FontFamily="CairoRegular" FontSize="14"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="Center"
+                                       Margin="0,10,0,0" />
+
+                                <!-- ═══ سلايد 1: شبكة الأقسام ═══ -->
+                                <Grid IsVisible="{Binding Kind, Converter={StaticResource StringEquals}, ConverterParameter=Categories}"
+                                      Margin="0,36,0,0"
+                                      RowDefinitions="Auto,Auto"
+                                      ColumnDefinitions="*,*,*"
+                                      RowSpacing="22" ColumnSpacing="8">
+
+                                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="6" HorizontalOptions="Center">
+                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
+                                                BackgroundColor="#FF7A45" WidthRequest="64" HeightRequest="64">
+                                            <Label Text="🍴" FontSize="28" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                        <Label Text="{loc:Loc Key=Cat_Restaurants}" FontFamily="CairoBold" FontSize="11"
+                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="6" HorizontalOptions="Center">
+                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
+                                                BackgroundColor="#26A69A" WidthRequest="64" HeightRequest="64">
+                                            <Label Text="💊" FontSize="28" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                        <Label Text="{loc:Loc Key=Cat_Pharmacy}" FontFamily="CairoBold" FontSize="11"
+                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Row="0" Grid.Column="2" Spacing="6" HorizontalOptions="Center">
+                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
+                                                BackgroundColor="#7E57C2" WidthRequest="64" HeightRequest="64">
+                                            <Label Text="🛒" FontSize="28" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                        <Label Text="{loc:Loc Key=Cat_Supermarket}" FontFamily="CairoBold" FontSize="11"
+                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="6" HorizontalOptions="Center">
+                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
+                                                BackgroundColor="#EC407A" WidthRequest="64" HeightRequest="64">
+                                            <Label Text="🥤" FontSize="28" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                        <Label Text="{loc:Loc Key=Cat_Drinks}" FontFamily="CairoBold" FontSize="11"
+                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="6" HorizontalOptions="Center">
+                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
+                                                BackgroundColor="#42A5F5" WidthRequest="64" HeightRequest="64">
+                                            <Label Text="📦" FontSize="28" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                        <Label Text="{loc:Loc Key=Cat_Accessories}" FontFamily="CairoBold" FontSize="11"
+                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Row="1" Grid.Column="2" Spacing="6" HorizontalOptions="Center">
+                                        <Border StrokeShape="RoundRectangle 20" Stroke="Transparent"
+                                                BackgroundColor="#66BB6A" WidthRequest="64" HeightRequest="64">
+                                            <Label Text="🍎" FontSize="28" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                        <Label Text="{loc:Loc Key=Cat_Vegetables}" FontFamily="CairoBold" FontSize="11"
+                                               TextColor="{StaticResource TalyNavy}" HorizontalTextAlignment="Center" />
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                                <!-- ═══ سلايد 2: توصيل سريع ═══ -->
+                                <Grid IsVisible="{Binding Kind, Converter={StaticResource StringEquals}, ConverterParameter=Delivery}"
+                                      Margin="0,30,0,0" HeightRequest="240" WidthRequest="240" HorizontalOptions="Center">
+                                    <Border StrokeShape="RoundRectangle 120" Stroke="Transparent"
+                                            BackgroundColor="#FFF3E0" WidthRequest="220" HeightRequest="220"
+                                            HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Label Text="🛵" FontSize="90" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Label Text="📍" FontSize="30" HorizontalOptions="Start" VerticalOptions="Start" Margin="4,10,0,0" />
+                                    <Label Text="📍" FontSize="24" HorizontalOptions="End" VerticalOptions="End" Margin="0,0,4,18" />
+                                </Grid>
+
+                                <!-- ═══ سلايد 3: تجربة أسهل ═══ -->
+                                <Grid IsVisible="{Binding Kind, Converter={StaticResource StringEquals}, ConverterParameter=Easy}"
+                                      Margin="0,30,0,0" HeightRequest="240" WidthRequest="240" HorizontalOptions="Center">
+                                    <Border StrokeShape="RoundRectangle 120" Stroke="Transparent"
+                                            BackgroundColor="#E3F2FD" WidthRequest="220" HeightRequest="220"
+                                            HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Label Text="📱" FontSize="90" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    <Border StrokeShape="RoundRectangle 18" Stroke="Transparent"
+                                            BackgroundColor="{StaticResource Primary}"
+                                            WidthRequest="44" HeightRequest="44"
+                                            HorizontalOptions="End" VerticalOptions="Start" Margin="0,6,8,0">
+                                        <Label Text="📦" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                </Grid>
+
+                            </VerticalStackLayout>
+                        </ScrollView>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+        </Grid>
+
+        <!-- ═══════ الفوتر: النقط + زرار التالي/ابدأ ═══════ -->
+        <Grid Grid.Row="1" Padding="24,10,24,26" ColumnDefinitions="Auto,*">
+
+            <Border Grid.Column="0" StrokeShape="RoundRectangle 24" Stroke="Transparent"
+                    BackgroundColor="{StaticResource Primary}"
+                    Padding="22,12" HorizontalOptions="Start">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnNextTapped" />
+                </Border.GestureRecognizers>
+                <HorizontalStackLayout Spacing="8">
+                    <Label x:Name="NextButtonLabel"
+                           Text="{loc:Loc Key=Onboarding_Next}"
+                           FontFamily="CairoBold" FontSize="15" TextColor="White"
+                           VerticalOptions="Center" />
+                    <Label Text="→" FontSize="16" TextColor="White" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <IndicatorView x:Name="PageIndicator"
+                           Grid.Column="1"
+                           HorizontalOptions="Start" VerticalOptions="Center"
+                           Margin="18,0,0,0"
+                           IndicatorSize="8"
+                           IndicatorColor="{StaticResource Divider}"
+                           SelectedIndicatorColor="{StaticResource Primary}" />
+        </Grid>
+
+    </Grid>
+</ContentPage>

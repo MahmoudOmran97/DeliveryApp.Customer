@@ -7,6 +7,7 @@ using AndroidX.Core.App;
 using AndroidX.Core.Content;
 using AndroidX.Core.View;
 using DeliveryApp.Customer.Platforms.Android;
+using Microsoft.Maui.Storage;
 using Plugin.Firebase.CloudMessaging;
 using Plugin.Firebase.CloudMessaging.Platforms.Android.Extensions;
 using Color = Android.Graphics.Color;
@@ -199,14 +200,30 @@ namespace DeliveryApp.Customer
             RequestFullScreenIntentPermissionIfNeeded();
         }
 
+        // ✅ FIX: كانت الشاشة دي بتتفتح في كل مرة التطبيق بيفتح طول ما اليوزر
+        // لسه ما وافقش على إذن الـ Full-Screen Intent — مفيش أي تسجيل إنها
+        // اتعرضت قبل كده. دلوقتي بنسجلها في Preferences أول مرة تتعرض فيها
+        // (سواء اليوزر وافق أو رفض)، فتتعرض مرة واحدة بس مدى عمر التطبيق
+        // (زي وقت التسطيب)، ومش هتظهر تاني كل ما يفتح التطبيق.
+        private const string FsiPromptShownKey = "fsi_permission_prompt_shown";
+
         private void RequestFullScreenIntentPermissionIfNeeded()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.UpsideDownCake) return;
+            if (Preferences.Default.Get(FsiPromptShownKey, false)) return;
 
             try
             {
                 var manager = GetSystemService(NotificationService) as NotificationManager;
-                if (manager == null || manager.CanUseFullScreenIntent()) return;
+                if (manager == null || manager.CanUseFullScreenIntent())
+                {
+                    Preferences.Default.Set(FsiPromptShownKey, true);
+                    return;
+                }
+
+                // نسجل إن الشاشة اتعرضت قبل ما نفتحها فعليًا، عشان تتعرض مرة
+                // واحدة بس حتى لو اليوزر رفض أو رجع من غير ما يوافق.
+                Preferences.Default.Set(FsiPromptShownKey, true);
 
                 var intent = new Intent(Android.Provider.Settings.ActionManageAppUseFullScreenIntent);
                 intent.SetData(Android.Net.Uri.Parse($"package:{PackageName}"));

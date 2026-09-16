@@ -38,6 +38,11 @@ public partial class OrderTrackingPage : ContentPage
     {
         base.OnAppearing();
         _mapReady = false;
+        // ✅ FIX: كان الفلاج ده بيفضل true من آخر مرة الصفحة اتفتحت، فلما ترجع
+        // تاني للصفحة الـ WebView بيتعمله reload كامل (خريطة فاضية من غير ماركرز)
+        // بس الكود كان بيتخطى رسم ماركر العميل/المطعم لأن الفلاج already true —
+        // فكان بيفضل ظاهر بس ماركر الدليفري لأنه مش متحكم بالفلاج ده.
+        _staticPinsDrawn = false;
         MapWebView.Navigating -= MapWebView_Navigating;
         MapWebView.Navigating += MapWebView_Navigating;
         MapWebView.Source = new HtmlWebViewSource

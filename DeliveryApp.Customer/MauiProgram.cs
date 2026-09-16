@@ -128,6 +128,7 @@ builder.Services.AddSingleton<Services.Call.IAgoraCallService, Platforms.iOS.Ago
         // NullReferenceException جوا محرك الـ Shell. لازم Instance جديدة كل مرة.
         builder.Services.AddTransient<AppShell>();
         builder.Services.AddTransient<SplashPage>();
+        builder.Services.AddTransient<OnboardingPage>();
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<RegisterPage>();
         builder.Services.AddTransient<ForgotPasswordPage>();

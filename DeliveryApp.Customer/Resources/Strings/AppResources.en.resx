@@ -57,6 +57,30 @@
 	</data>
 
 	<!-- Auth -->
+	<data name="Onboarding_Title1">
+		<value>Everything you need in one place</value>
+	</data>
+	<data name="Onboarding_Subtitle1">
+		<value>Restaurants, pharmacies, supermarkets, shops and more services</value>
+	</data>
+	<data name="Onboarding_Title2">
+		<value>Fast &amp; safe delivery</value>
+	</data>
+	<data name="Onboarding_Subtitle2">
+		<value>We deliver your order as fast as possible, with the highest safety standards</value>
+	</data>
+	<data name="Onboarding_Title3">
+		<value>An easier experience, a better life</value>
+	</data>
+	<data name="Onboarding_Subtitle3">
+		<value>Save your time and effort — we've got everything you need covered</value>
+	</data>
+	<data name="Onboarding_Next">
+		<value>Next</value>
+	</data>
+	<data name="Onboarding_Start">
+		<value>Get Started</value>
+	</data>
 	<data name="WelcomeBack">
 		<value>Welcome Back!</value>
 	</data>

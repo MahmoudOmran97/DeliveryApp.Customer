@@ -10,6 +10,11 @@
 
     <Color x:Key="PrimaryLight">#FF8A65</Color>
 
+    <!-- ✅ كحلي شعار Taly — مستخدم في شاشات الـ Onboarding (عناوين + الموجة السفلية) -->
+    <Color x:Key="TalyNavy">#123A6E</Color>
+
+    <Color x:Key="TalyNavyDark">#0D2C54</Color>
+
     <Color x:Key="Secondary">#2D2D2D</Color>
 
     <Color x:Key="TextPrimary">#212121</Color>
