@@ -53,24 +53,26 @@
         </DataTemplate>
 
         <DataTemplate x:Key="CategoryGridTemplate" x:DataType="m:Category">
-            <Border Style="{StaticResource CardListItem}" Margin="6" Padding="6" WidthRequest="130">
+            <!-- 🔧 FIX: كان WidthRequest=130 + Margin=6 (~142 فعليًا) بيسمح بعمودين بس؛
+                 دلوقتي ~108 فعليًا يسمح بـ 3 كروت في الصف على شاشة موبايل عادية. -->
+            <Border Style="{StaticResource CardListItem}" Margin="4" Padding="4" WidthRequest="100">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer
                         Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.GoToCategoryCommand}"
                         CommandParameter="{Binding .}"/>
                 </Border.GestureRecognizers>
-                <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
-                    <Border BackgroundColor="#FFF3EC" StrokeShape="RoundRectangle 36" Stroke="#FFD9C2" StrokeThickness="1"
-                            WidthRequest="72" HeightRequest="72">
+                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                    <Border BackgroundColor="#FFF3EC" StrokeShape="RoundRectangle 28" Stroke="#FFD9C2" StrokeThickness="1"
+                            WidthRequest="56" HeightRequest="56">
                         <Grid>
-                            <Label Text="🛍️" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"
+                            <Label Text="🛍️" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"
                                    IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
                             <ff:CachedImage Source="{Binding FullImageUrl}" Aspect="AspectFill"
                                    CacheDuration="7" DownsampleToViewSize="True"
                                    IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
                         </Grid>
                     </Border>
-                    <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="12" TextColor="#212121"
+                    <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="11" TextColor="#212121"
                            HorizontalTextAlignment="Center" MaxLines="1" LineBreakMode="TailTruncation"/>
                 </VerticalStackLayout>
             </Border>

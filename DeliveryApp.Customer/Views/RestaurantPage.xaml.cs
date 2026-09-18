@@ -211,6 +211,18 @@ public partial class RestaurantPage : ContentPage
         if (e.Parameter is not Category category) return;
         if (BindingContext is not RestaurantViewModel vm) return;
 
+        // 🔧 FIX: تصميم السوبر ماركت/الصيدلية (IsGroceryStoreLayout) مفهوش
+        // سكشنات نعمل لها Scroll جوه نفس الصفحة — الكولكشن فيو اللي كان بيتحرك
+        // (MenuCollectionView) بتاع تصميم المطاعم بس ومتخفي هنا، فكان الدوس على
+        // الشريط العائم "مش بيتفاعل" فعليًا. هنا بنفتح صفحة القسم مباشرة
+        // بنفس أمر شبكة الأقسام (GoToCategoryCommand).
+        if (vm.IsGroceryStoreLayout)
+        {
+            if (vm.GoToCategoryCommand.CanExecute(category))
+                await vm.GoToCategoryCommand.ExecuteAsync(category);
+            return;
+        }
+
         var rowIndex = -1;
         for (var i = 0; i < vm.MenuRows.Count; i++)
         {
