@@ -126,13 +126,19 @@
             </Grid>
 
             <!-- Search -->
+            <!-- ✅ FEATURE: المربع ده مبقاش حقل كتابة — أول ما العميل يدوس عليه بيتفتح
+                 صفحة البحث الشاملة (محلات + منتجات + عروض) والكيبورد يطلع هناك على طول. -->
             <Border Grid.Row="2" BackgroundColor="White"
-                    StrokeShape="RoundRectangle 12" Stroke="#E0E0E0" StrokeThickness="1" Padding="4,0">
-                <SearchBar Placeholder="{Binding SearchHint}"
-                           Text="{Binding SearchText}"
-                           SearchCommand="{Binding SearchCommand}"
-                           BackgroundColor="Transparent"
-                           FontFamily="CairoRegular" FontSize="14" TextColor="Black"/>
+                    StrokeShape="RoundRectangle 12" Stroke="#E0E0E0" StrokeThickness="1"
+                    Padding="14,0" HeightRequest="48">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding OpenSearchCommand}"/>
+                </Border.GestureRecognizers>
+                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                    <Label Text="🔍" FontSize="16" VerticalOptions="Center"/>
+                    <Label Text="{Binding SearchHint}" FontFamily="CairoRegular" FontSize="14"
+                           TextColor="#757575" LineBreakMode="TailTruncation" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
             </Border>
 
         </Grid>

@@ -25,6 +25,15 @@
             <WebView x:Name="MapWebView" />
             <Label Text="📍" FontSize="48" HorizontalOptions="Center" VerticalOptions="Center" ZIndex="10"
                    InputTransparent="True" />
+            <Button x:Name="MyLocationButton"
+                    Text="{loc:Loc Key=MyLocation}"
+                    Clicked="OnMyLocationClicked"
+                    BackgroundColor="White" TextColor="#FF5722"
+                    FontFamily="CairoBold" FontSize="13"
+                    CornerRadius="22" HeightRequest="44" Padding="16,0"
+                    BorderColor="#FFD9C2" BorderWidth="1"
+                    HorizontalOptions="End" VerticalOptions="End"
+                    Margin="12,0,12,28" ZIndex="12"/>
             <Label Text="OpenFreeMap © OpenMapTiles · Data from OpenStreetMap"
                    FontSize="9" TextColor="#555" BackgroundColor="#CCFFFFFF"
                    Padding="4,2" Margin="8" HorizontalOptions="Start" VerticalOptions="End"

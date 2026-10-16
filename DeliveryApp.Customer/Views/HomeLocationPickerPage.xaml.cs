@@ -1,3 +1,4 @@
+using DeliveryApp.Customer.Helpers;
 using DeliveryApp.Customer.Services;
 using DeliveryApp.Customer.ViewModels;
 using System.Globalization;
@@ -57,29 +58,14 @@ public partial class HomeLocationPickerPage : ContentPage
 
         if (lat == LocationService.ZoneCenterLat && lng == LocationService.ZoneCenterLng)
         {
-            try
+            // ✅ FIX: نفس إصلاح صفحة الشيك أوت — DeviceLocationHelper بدل المحاولة الواحدة الضعيفة
+            var (loc, _) = await DeviceLocationHelper.GetCurrentAsync();
+            if (loc != null)
             {
-                var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
-                if (status == PermissionStatus.Granted)
-                {
-                    var loc = await Geolocation.Default.GetLocationAsync(
-                        new GeolocationRequest(GeolocationAccuracy.Medium)
-                        {
-                            Timeout = TimeSpan.FromSeconds(8)
-                        });
-
-                    if (loc != null)
-                    {
-                        lat = loc.Latitude;
-                        lng = loc.Longitude;
-                        _vm.SelectedLat = lat;
-                        _vm.SelectedLng = lng;
-                    }
-                }
-            }
-            catch
-            {
-                // GPS failure: keep the saved/default location.
+                lat = loc.Latitude;
+                lng = loc.Longitude;
+                _vm.SelectedLat = lat;
+                _vm.SelectedLng = lng;
             }
         }
 
@@ -91,6 +77,38 @@ public partial class HomeLocationPickerPage : ContentPage
 
     Task<string> ExecuteMapScriptAsync(string script) =>
         _mapReady ? MapWebView.EvaluateJavaScriptAsync(script) : Task.FromResult(string.Empty);
+
+    // ✅ FEATURE: زرار "موقعي" — يحدد موقع العميل الحالي قبل التأكيد
+    bool _locating;
+
+    async void OnMyLocationClicked(object? sender, EventArgs e)
+    {
+        if (_locating) return;
+        _locating = true;
+        MyLocationButton.IsEnabled = false;
+        try
+        {
+            var (loc, failure) = await DeviceLocationHelper.GetCurrentAsync();
+            if (loc == null)
+            {
+                await DeviceLocationHelper.ShowFailureAsync(this, failure);
+                return;
+            }
+
+            _vm.SelectedLat = loc.Latitude;
+            _vm.SelectedLng = loc.Longitude;
+            _vm.IsLocationSelected = true;
+
+            var lat = loc.Latitude.ToString(CultureInfo.InvariantCulture);
+            var lng = loc.Longitude.ToString(CultureInfo.InvariantCulture);
+            await ExecuteMapScriptAsync($"centerOn({lng},{lat},16);setMarker('selected',{lng},{lat},'#FF5722','pin');");
+        }
+        finally
+        {
+            _locating = false;
+            MyLocationButton.IsEnabled = true;
+        }
+    }
 
     protected override void OnDisappearing()
     {

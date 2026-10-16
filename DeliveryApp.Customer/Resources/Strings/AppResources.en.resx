@@ -1103,4 +1103,43 @@
 	<data name="About_Developer">
 		<value>Developed by EngineeCode Team</value>
 	</data>
+	<data name="MyLocation">
+		<value>📍 My location</value>
+	</data>
+	<data name="LocationServiceDisabled">
+		<value>Location services (GPS) are turned off. Enable them in your phone settings and try again.</value>
+	</data>
+	<data name="LocationUnavailable">
+		<value>We couldn't get your location right now. Try again or pick your spot on the map.</value>
+	</data>
+	<data name="OpenSettings">
+		<value>Open settings</value>
+	</data>
+	<data name="SearchPageHint">
+		<value>Search stores, products or offers</value>
+	</data>
+	<data name="SearchAll">
+		<value>All</value>
+	</data>
+	<data name="SearchStores">
+		<value>Stores</value>
+	</data>
+	<data name="SearchProducts">
+		<value>Products</value>
+	</data>
+	<data name="SearchOffers">
+		<value>Offers</value>
+	</data>
+	<data name="SearchStartTyping">
+		<value>Type a store, product or offer name to start searching</value>
+	</data>
+	<data name="NoSearchResults">
+		<value>No results found</value>
+	</data>
+	<data name="SearchInStore">
+		<value>Search this store's products...</value>
+	</data>
+	<data name="StoreClosedShort">
+		<value>Closed</value>
+	</data>
 </root>

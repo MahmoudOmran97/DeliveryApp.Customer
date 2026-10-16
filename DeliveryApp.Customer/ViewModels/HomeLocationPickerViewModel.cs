@@ -45,18 +45,30 @@ public partial class HomeLocationPickerViewModel : BaseViewModel
     partial void OnSelectedLatChanged(double v) => _ = OnPinChanged();
     partial void OnSelectedLngChanged(double v) => _ = OnPinChanged();
 
+    // ✅ FIX: تغيير الـ Lat ثم الـ Lng كان بيطلّع نداءين Nominatim ورا بعض (والـ policy بتاعها
+    // نداء كل ثانية) — دلوقتي بنأخّر 350ms ونلغي أي نداء قديم، فبيتبعت نداء واحد بس بآخر نقطة.
+    CancellationTokenSource? _geocodeCts;
+
     async Task OnPinChanged()
     {
         IsLocationSelected = true;
-        // بنشيل الـ Zone restriction — الـ API هو اللي بيرجع المحلات القريبة أو لا
-        await ResolveAddressAsync(SelectedLat, SelectedLng);
+
+        _geocodeCts?.Cancel();
+        var cts = _geocodeCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(350, cts.Token);
+            // بنشيل الـ Zone restriction — الـ API هو اللي بيرجع المحلات القريبة أو لا
+            await ResolveAddressAsync(SelectedLat, SelectedLng, cts.Token);
+        }
+        catch (OperationCanceledException) { }
     }
 
     /// <summary>
     /// Nominatim Reverse Geocoding — بيرجع اسم الشارع/الحي/المدينة
     /// مجاني ومش محتاج API Key
     /// </summary>
-    async Task ResolveAddressAsync(double lat, double lng)
+    async Task ResolveAddressAsync(double lat, double lng, CancellationToken ct = default)
     {
         IsResolvingAddress = true;
         ResolvedAddress = string.Empty;
@@ -70,7 +82,7 @@ public partial class HomeLocationPickerViewModel : BaseViewModel
             _httpClient.DefaultRequestHeaders.Remove("User-Agent");
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "DeliveryApp/1.0");
 
-            var result = await _httpClient.GetFromJsonAsync<NominatimResponse>(url);
+            var result = await _httpClient.GetFromJsonAsync<NominatimResponse>(url, ct);
 
             if (result?.Address != null)
             {
@@ -106,6 +118,11 @@ public partial class HomeLocationPickerViewModel : BaseViewModel
                 ResolvedAddress = $"{lat:F4}, {lng:F4}";
             }
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            // نقطة أحدث حلّت مكانها — مفيش داعي نعمل أي حاجة
+            return;
+        }
         catch
         {
             // في حالة فشل الـ internet أو أي خطأ، نظهر الإحداثيات كـ fallback
@@ -113,7 +130,7 @@ public partial class HomeLocationPickerViewModel : BaseViewModel
         }
         finally
         {
-            IsResolvingAddress = false;
+            if (!ct.IsCancellationRequested) IsResolvingAddress = false;
         }
     }
 

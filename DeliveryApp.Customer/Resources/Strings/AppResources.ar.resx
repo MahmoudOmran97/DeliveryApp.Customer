@@ -1054,4 +1054,43 @@
 	<data name="About_Developer">
 		<value>تم التطوير بواسطة فريق انجين كود</value>
 	</data>
+	<data name="MyLocation">
+		<value>📍 موقعي الحالي</value>
+	</data>
+	<data name="LocationServiceDisabled">
+		<value>خدمة الموقع (GPS) مقفولة. فعّلها من إعدادات الموبايل وجرّب تاني.</value>
+	</data>
+	<data name="LocationUnavailable">
+		<value>مقدرناش نحدد موقعك دلوقتي. جرّب تاني أو اختار مكانك من الخريطة.</value>
+	</data>
+	<data name="OpenSettings">
+		<value>فتح الإعدادات</value>
+	</data>
+	<data name="SearchPageHint">
+		<value>ابحث عن محل أو منتج أو عرض</value>
+	</data>
+	<data name="SearchAll">
+		<value>الكل</value>
+	</data>
+	<data name="SearchStores">
+		<value>المحلات</value>
+	</data>
+	<data name="SearchProducts">
+		<value>المنتجات</value>
+	</data>
+	<data name="SearchOffers">
+		<value>العروض</value>
+	</data>
+	<data name="SearchStartTyping">
+		<value>اكتب اسم محل أو منتج أو عرض عشان تبدأ البحث</value>
+	</data>
+	<data name="NoSearchResults">
+		<value>مفيش نتايج للبحث ده</value>
+	</data>
+	<data name="SearchInStore">
+		<value>ابحث في منتجات المحل...</value>
+	</data>
+	<data name="StoreClosedShort">
+		<value>مغلق</value>
+	</data>
 </root>

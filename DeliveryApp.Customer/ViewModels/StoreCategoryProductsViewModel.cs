@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DeliveryApp.Customer.Helpers;
 using DeliveryApp.Customer.Models;
 using DeliveryApp.Customer.Services;
 
@@ -38,6 +39,13 @@ public partial class StoreCategoryProductsViewModel : BaseViewModel
     // "best" | "priceAsc" | "priceDesc"
     [ObservableProperty] string _sortBy = "best";
     [ObservableProperty] bool _discountOnly;
+
+    // ✅ FEATURE: بحث جوه المحل (سوبر ماركت / بقالة / صيدلية) — لما العميل يكتب، بندوّر في
+    // منتجات كل أقسام المحل (مش القسم المختار بس) من غير أي نداء API لأن المنيو كله محمّل.
+    [ObservableProperty] string _searchText = string.Empty;
+    public string SearchHint => LocalizationService.Get("SearchInStore");
+    public bool IsSearching => !string.IsNullOrWhiteSpace(SearchText);
+    public string EmptyMessage => LocalizationService.Get(IsSearching ? "NoSearchResults" : "NoProductsFound");
 
     // شريط اقتراحات "بيتطلب مع" بعد الإضافة للسلة
     [ObservableProperty] bool _showSuggestions;
@@ -84,6 +92,13 @@ public partial class StoreCategoryProductsViewModel : BaseViewModel
     }
     partial void OnDiscountOnlyChanged(bool value) => ApplyFilters();
 
+    partial void OnSearchTextChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsSearching));
+        OnPropertyChanged(nameof(EmptyMessage));
+        ApplyFilters();
+    }
+
     [RelayCommand]
     async Task LoadAsync()
     {
@@ -106,7 +121,15 @@ public partial class StoreCategoryProductsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    void SelectCategory(Category c) => SelectedCategory = c;
+    void SelectCategory(Category c)
+    {
+        // اختيار قسم بيلغي البحث عشان العميل يرجع يتصفح القسم ده
+        if (!string.IsNullOrEmpty(SearchText)) SearchText = string.Empty;
+        SelectedCategory = c;
+    }
+
+    [RelayCommand]
+    void ClearSearch() => SearchText = string.Empty;
 
     [RelayCommand]
     void SetSort(string sort) => SortBy = sort;
@@ -119,7 +142,21 @@ public partial class StoreCategoryProductsViewModel : BaseViewModel
         DisplayedProducts.Clear();
         if (SelectedCategory == null) { OnPropertyChanged(nameof(HasNoProducts)); return; }
 
-        IEnumerable<Product> q = SelectedCategory.Products;
+        // لو فيه بحث: بندوّر في كل أقسام المحل، وإلا بنعرض القسم المختار بس
+        IEnumerable<Product> q;
+        var nq = SearchTextHelper.Normalize(SearchText);
+        if (nq.Length > 0)
+        {
+            q = _allCategories
+                .SelectMany(c => c.Products)
+                .GroupBy(p => p.Id).Select(g => g.First())
+                .Where(p => SearchTextHelper.Matches(p.Name, nq)
+                         || SearchTextHelper.Matches(p.Description, nq));
+        }
+        else
+        {
+            q = SelectedCategory.Products;
+        }
         if (DiscountOnly) q = q.Where(p => p.HasDiscount);
 
         q = SortBy switch

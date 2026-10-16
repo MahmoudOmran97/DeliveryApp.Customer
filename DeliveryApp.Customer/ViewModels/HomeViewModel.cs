@@ -269,18 +269,15 @@ public partial class HomeViewModel : BaseViewModel
     async Task RefreshAsync() { IsRefreshing = true; await LoadAsync(); }
 
     /// <summary>
-    /// لما المستخدم يدوس بحث من الرئيسية، بنودّيه على صفحة المحلات (CategoryPage)
-    /// وهي اللي هتعرض النتائج، بنفس الكاتيجوري المختارة لو فيه واحدة
+    /// ✅ FEATURE: الدوس على مربع البحث في الرئيسية بيفتح صفحة البحث الشاملة
+    /// (SearchPage) على طول من غير ما العميل يكتب حاجة هنا — البحث نفسه (محلات +
+    /// منتجات + عروض) بيحصل هناك.
     /// </summary>
     [RelayCommand]
-    async Task SearchAsync()
+    async Task OpenSearch()
     {
-        if (string.IsNullOrWhiteSpace(SearchText))
-            return;
-
-        var category = SelectedCategory ?? string.Empty;
-        await Shell.Current.GoToAsync(
-            $"{nameof(Views.CategoryPage)}?category={Uri.EscapeDataString(category)}&search={Uri.EscapeDataString(SearchText)}");
+        try { await Shell.Current.GoToAsync(nameof(Views.SearchPage)); }
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"OpenSearch failed: {ex}"); }
     }
 
     [RelayCommand]

@@ -105,6 +105,46 @@ public partial class Category : ObservableObject
         }
     }
 }
+/// <summary>
+/// نتيجة بحث منتج من /api/products/search — بترجع مع اسم المحل اللي المنتج تابع له
+/// عشان صفحة البحث تقدر تعرض "المنتج ده تبع محل كذا".
+/// </summary>
+public class ProductSearchResult
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public decimal Price { get; set; }
+    public decimal? DiscountedPrice { get; set; }
+    public string? ImageUrl { get; set; }
+    public bool IsAvailable { get; set; }
+    public string? CategoryName { get; set; }
+
+    public int RestaurantId { get; set; }
+    public string RestaurantName { get; set; } = string.Empty;
+    public string? RestaurantImage { get; set; }
+    public bool RestaurantIsOpen { get; set; } = true;
+    public string StoreType { get; set; } = "Restaurant";
+    public double? DistanceKm { get; set; }
+
+    private const string _srImgBase = "https://deliveryappapi.runasp.net";
+    public string? FullImageUrl
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(ImageUrl)) return null;
+            if (ImageUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return ImageUrl;
+            return _srImgBase + (ImageUrl.StartsWith("/") ? ImageUrl : "/" + ImageUrl);
+        }
+    }
+
+    public decimal EffectivePrice => DiscountedPrice ?? Price;
+    public bool HasDiscount => DiscountedPrice.HasValue && DiscountedPrice < Price;
+    public string PriceText => $"{EffectivePrice:F0} EGP";
+    public string OriginalPriceText => $"{Price:F0} EGP";
+    public bool IsStoreClosed => !RestaurantIsOpen;
+}
+
 public class Product
 {
     public int Id { get; set; }

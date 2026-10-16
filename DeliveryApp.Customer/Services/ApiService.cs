@@ -417,6 +417,30 @@ public class ApiService
     public Task<List<Product>?> GetBestSellersAsync()
         => GetAsync<List<Product>>("products/bestsellers");
 
+    /// <summary>
+    /// بحث في المنتجات عبر كل المحلات (اسم المنتج أو وصفه). لو lat/lng اتبعتوا بيرجّع بس
+    /// منتجات المحلات اللي جوه نطاق التوصيل (السيرفر هو اللي بيفرض سقف الزون).
+    /// </summary>
+    public Task<PagedResult<ProductSearchResult>?> SearchProductsAsync(
+        string query,
+        double? lat = null,
+        double? lng = null,
+        double radiusKm = 10.0,
+        string? category = null,
+        int page = 1,
+        int pageSize = 30)
+    {
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        var q = $"products/search?q={Uri.EscapeDataString(query)}&page={page}&pageSize={pageSize}";
+        if (lat.HasValue && lng.HasValue)
+        {
+            q += $"&lat={lat.Value.ToString(inv)}&lng={lng.Value.ToString(inv)}&radiusKm={radiusKm.ToString(inv)}";
+        }
+        if (!string.IsNullOrEmpty(category))
+            q += $"&category={Uri.EscapeDataString(category)}";
+        return GetAsync<PagedResult<ProductSearchResult>>(q);
+    }
+
     public async Task<RedeemPointsResult?> RedeemPointsAsync(int points)
     {
         try

@@ -1,0 +1,293 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DeliveryApp.Customer.ViewModels"
+             xmlns:m="clr-namespace:DeliveryApp.Customer.Models"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             xmlns:loc="clr-namespace:DeliveryApp.Customer.Converters"
+             x:Class="DeliveryApp.Customer.Views.SearchPage"
+             x:DataType="vm:SearchViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <ContentPage.Resources>
+
+        <!-- شريحة تاب (الكل / المحلات / المنتجات / العروض) -->
+        <Style x:Key="TabLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="CairoBold"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
+        <Style x:Key="SectionTitle" TargetType="Label">
+            <Setter Property="FontFamily" Value="CairoBold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="TextColor" Value="#212121"/>
+        </Style>
+
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*" BackgroundColor="{StaticResource Background}">
+
+        <!-- ══════════════ HEADER: رجوع + مربع البحث ══════════════ -->
+        <Grid Grid.Row="0" BackgroundColor="#FF5722" Padding="16,52,16,14"
+              ColumnDefinitions="Auto,*" ColumnSpacing="8">
+            <ImageButton Grid.Column="0" Source="icon_back.png"
+                         WidthRequest="38" HeightRequest="38"
+                         BackgroundColor="Transparent" VerticalOptions="Center"
+                         Command="{Binding GoBackCommand}"/>
+            <Border Grid.Column="1" BackgroundColor="White"
+                    StrokeShape="RoundRectangle 12" Stroke="#E0E0E0" StrokeThickness="1" Padding="4,0">
+                <SearchBar x:Name="SearchEntry"
+                           Placeholder="{Binding SearchHint}"
+                           Text="{Binding Query}"
+                           SearchCommand="{Binding SearchNowCommand}"
+                           BackgroundColor="Transparent"
+                           FontFamily="CairoRegular" FontSize="14" TextColor="#212121"/>
+            </Border>
+        </Grid>
+
+        <!-- ══════════════ شريط التابات (يظهر بعد وجود نتايج) ══════════════ -->
+        <Border Grid.Row="1" IsVisible="{Binding ShowTabs}"
+                Margin="12,10,12,2" Padding="4,3" BackgroundColor="White"
+                Stroke="#ECEEF2" StrokeThickness="1" StrokeShape="RoundRectangle 16">
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="8">
+
+                    <Border BackgroundColor="{Binding IsTabAll, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
+                            StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="14,7">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="all"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="{loc:Loc Key=SearchAll}" Style="{StaticResource TabLabel}"
+                               TextColor="{Binding IsTabAll, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#424242'}"/>
+                    </Border>
+
+                    <Border BackgroundColor="{Binding IsTabStores, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
+                            StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="14,7"
+                            IsVisible="{Binding Stores.Count, Converter={StaticResource IntToBool}}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="stores"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="{loc:Loc Key=SearchStores}" Style="{StaticResource TabLabel}"
+                               TextColor="{Binding IsTabStores, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#424242'}"/>
+                    </Border>
+
+                    <Border BackgroundColor="{Binding IsTabProducts, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
+                            StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="14,7"
+                            IsVisible="{Binding Products.Count, Converter={StaticResource IntToBool}}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="products"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="{loc:Loc Key=SearchProducts}" Style="{StaticResource TabLabel}"
+                               TextColor="{Binding IsTabProducts, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#424242'}"/>
+                    </Border>
+
+                    <Border BackgroundColor="{Binding IsTabOffers, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FF5722|#F0F0F0'}"
+                            StrokeShape="RoundRectangle 16" Stroke="Transparent" Padding="14,7"
+                            IsVisible="{Binding Deals.Count, Converter={StaticResource IntToBool}}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectTabCommand}" CommandParameter="offers"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="{loc:Loc Key=SearchOffers}" Style="{StaticResource TabLabel}"
+                               TextColor="{Binding IsTabOffers, Converter={StaticResource BoolToColorConverter}, ConverterParameter='White|#424242'}"/>
+                    </Border>
+
+                </HorizontalStackLayout>
+            </ScrollView>
+        </Border>
+
+        <!-- ══════════════ النتايج ══════════════ -->
+        <Grid Grid.Row="2">
+
+            <ScrollView>
+                <VerticalStackLayout Padding="16,10,16,40" Spacing="18">
+
+                    <!-- ── العروض (بتظهر أول حاجة لو العميل بيدوّر على عرض) ── -->
+                    <VerticalStackLayout Spacing="8" IsVisible="{Binding ShowDeals}">
+                        <Label Text="{loc:Loc Key=SearchOffers}" Style="{StaticResource SectionTitle}"/>
+                        <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Deals}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="m:Deal">
+                                    <Border Style="{StaticResource CardListItem}" Padding="10">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=OpenDealCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="84,*" ColumnSpacing="12">
+                                            <Border Grid.Column="0" BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 12"
+                                                    Stroke="Transparent" HeightRequest="84" WidthRequest="84">
+                                                <Grid>
+                                                    <Label Text="🏷️" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"
+                                                           IsVisible="{Binding ImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                                                    <ff:CachedImage Source="{Binding ImageUrl}" Aspect="AspectFill"
+                                                                    HeightRequest="84" WidthRequest="84"
+                                                                    CacheDuration="7" DownsampleToViewSize="True"
+                                                                    IsVisible="{Binding ImageUrl, Converter={StaticResource HasImage}}"/>
+                                                    <Border BackgroundColor="{Binding BadgeColorValue}" StrokeShape="RoundRectangle 6"
+                                                            Stroke="Transparent" Padding="5,2"
+                                                            HorizontalOptions="Start" VerticalOptions="Start" Margin="4"
+                                                            IsVisible="{Binding BadgeText, Converter={StaticResource HasImage}}">
+                                                        <Label Text="{Binding BadgeText}" FontFamily="CairoBold" FontSize="9" TextColor="White"/>
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                                <Label Text="{Binding Title}" FontFamily="CairoBold" FontSize="14"
+                                                       TextColor="#212121" MaxLines="2" LineBreakMode="TailTruncation"/>
+                                                <Label Text="{Binding RestaurantName}" FontFamily="CairoRegular" FontSize="12"
+                                                       TextColor="#757575" MaxLines="1" LineBreakMode="TailTruncation"
+                                                       IsVisible="{Binding RestaurantName, Converter={StaticResource HasImage}}"/>
+                                                <HorizontalStackLayout Spacing="8" IsVisible="{Binding DiscountedPrice, Converter={StaticResource HasImage}}">
+                                                    <Label Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="14" TextColor="#FF5722"/>
+                                                    <Label Text="{Binding OriginalPriceText}" FontFamily="CairoRegular" FontSize="11"
+                                                           TextColor="#A8ACB4" TextDecorations="Strikethrough" VerticalOptions="Center"
+                                                           IsVisible="{Binding HasDiscount}"/>
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- ── المحلات ── -->
+                    <VerticalStackLayout Spacing="8" IsVisible="{Binding ShowStores}">
+                        <Label Text="{loc:Loc Key=SearchStores}" Style="{StaticResource SectionTitle}"/>
+                        <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Stores}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="m:Restaurant">
+                                    <Border Style="{StaticResource CardListItem}" Padding="10">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=OpenStoreCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="72,*" ColumnSpacing="12">
+                                            <Border Grid.Column="0" BackgroundColor="#F0F0F0" StrokeShape="RoundRectangle 12"
+                                                    Stroke="Transparent" HeightRequest="72" WidthRequest="72">
+                                                <Grid>
+                                                    <Label Text="🍽️" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"
+                                                           IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                                                    <ff:CachedImage Source="{Binding FullImageUrl}" Aspect="AspectFill"
+                                                                    HeightRequest="72" WidthRequest="72"
+                                                                    CacheDuration="7" DownsampleToViewSize="True"
+                                                                    IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
+                                                </Grid>
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <Label Grid.Column="0" Text="{Binding Name}" FontFamily="CairoBold" FontSize="15"
+                                                           TextColor="#212121" LineBreakMode="TailTruncation"/>
+                                                    <Border Grid.Column="1" StrokeShape="RoundRectangle 8" Stroke="Transparent"
+                                                            Padding="7,3" BackgroundColor="{Binding StatusBg}">
+                                                        <Label Text="{Binding StatusText}" TextColor="{Binding StatusColor}"
+                                                               FontFamily="CairoBold" FontSize="10"/>
+                                                    </Border>
+                                                </Grid>
+                                                <Label Text="{Binding Description}" FontFamily="CairoRegular" FontSize="12"
+                                                       TextColor="#757575" MaxLines="1" LineBreakMode="TailTruncation"/>
+                                                <HorizontalStackLayout Spacing="10">
+                                                    <Label Text="{Binding RatingText}" FontFamily="CairoBold" FontSize="12"
+                                                           TextColor="#212121" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding EstimatedTimeText}" FontFamily="CairoRegular" FontSize="12"
+                                                           TextColor="#757575" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding DeliveryFeeText}" FontFamily="CairoBold" FontSize="12"
+                                                           TextColor="#FF5722" VerticalOptions="Center"/>
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- ── المنتجات (كل منتج بيظهر معاه اسم المحل التابع له) ── -->
+                    <VerticalStackLayout Spacing="8" IsVisible="{Binding ShowProducts}">
+                        <Label Text="{loc:Loc Key=SearchProducts}" Style="{StaticResource SectionTitle}"/>
+                        <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Products}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="m:ProductSearchResult">
+                                    <Border Style="{StaticResource CardListItem}" Padding="10">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=OpenProductCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="72,*" ColumnSpacing="12">
+                                            <Border Grid.Column="0" BackgroundColor="#F5F6FA" StrokeShape="RoundRectangle 12"
+                                                    Stroke="Transparent" HeightRequest="72" WidthRequest="72">
+                                                <Grid>
+                                                    <Label Text="🛒" FontSize="28" HorizontalOptions="Center" VerticalOptions="Center"
+                                                           IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}, ConverterParameter='invert'}"/>
+                                                    <ff:CachedImage Source="{Binding FullImageUrl}" Aspect="AspectFill"
+                                                                    HeightRequest="72" WidthRequest="72"
+                                                                    CacheDuration="7" DownsampleToViewSize="True"
+                                                                    IsVisible="{Binding FullImageUrl, Converter={StaticResource HasImage}}"/>
+                                                </Grid>
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                                <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="14"
+                                                       TextColor="#212121" MaxLines="2" LineBreakMode="TailTruncation"/>
+
+                                                <!-- اسم المحل: دوسة عليه بتفتح المحل نفسه -->
+                                                <HorizontalStackLayout Spacing="4">
+                                                    <HorizontalStackLayout.GestureRecognizers>
+                                                        <TapGestureRecognizer
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=OpenProductStoreCommand}"
+                                                            CommandParameter="{Binding .}"/>
+                                                    </HorizontalStackLayout.GestureRecognizers>
+                                                    <Label Text="🏪" FontSize="12" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding RestaurantName}" FontFamily="CairoBold" FontSize="12"
+                                                           TextColor="#FF5722" MaxLines="1" LineBreakMode="TailTruncation"
+                                                           VerticalOptions="Center"/>
+                                                </HorizontalStackLayout>
+
+                                                <HorizontalStackLayout Spacing="8">
+                                                    <Label Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="14" TextColor="#212121"
+                                                           VerticalOptions="Center"/>
+                                                    <Label Text="{Binding OriginalPriceText}" FontFamily="CairoRegular" FontSize="11"
+                                                           TextColor="#A8ACB4" TextDecorations="Strikethrough" VerticalOptions="Center"
+                                                           IsVisible="{Binding HasDiscount}"/>
+                                                    <Border BackgroundColor="#FFEBEE" StrokeShape="RoundRectangle 6" Stroke="Transparent"
+                                                            Padding="6,2" VerticalOptions="Center"
+                                                            IsVisible="{Binding IsStoreClosed}">
+                                                        <Label Text="{loc:Loc Key=StoreClosedShort}" FontFamily="CairoBold" FontSize="10"
+                                                               TextColor="#D32F2F"/>
+                                                    </Border>
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <ActivityIndicator IsRunning="{Binding IsSearching}" IsVisible="{Binding IsSearching}"
+                               Color="#FF5722" VerticalOptions="Start" HorizontalOptions="Center" Margin="0,24,0,0"/>
+
+            <!-- قبل ما العميل يكتب -->
+            <VerticalStackLayout IsVisible="{Binding ShowHint}" VerticalOptions="Center"
+                                 HorizontalOptions="Center" Spacing="10" Padding="30,0">
+                <Label Text="🔍" FontSize="48" HorizontalOptions="Center"/>
+                <Label Text="{loc:Loc Key=SearchStartTyping}" FontFamily="CairoRegular" FontSize="14"
+                       TextColor="#757575" HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+
+            <!-- مفيش نتايج -->
+            <VerticalStackLayout IsVisible="{Binding ShowEmpty}" VerticalOptions="Center"
+                                 HorizontalOptions="Center" Spacing="10" Padding="30,0">
+                <Label Text="😕" FontSize="48" HorizontalOptions="Center"/>
+                <Label Text="{loc:Loc Key=NoSearchResults}" FontFamily="CairoRegular" FontSize="14"
+                       TextColor="#757575" HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+
+        </Grid>
+    </Grid>
+</ContentPage>
