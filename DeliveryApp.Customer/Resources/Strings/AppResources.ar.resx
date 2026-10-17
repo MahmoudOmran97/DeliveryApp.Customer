@@ -1093,4 +1093,37 @@
 	<data name="StoreClosedShort">
 		<value>مغلق</value>
 	</data>
+	<data name="StoreOpen">
+		<value>مفتوح</value>
+	</data>
+	<data name="StoreClosed">
+		<value>مغلق</value>
+	</data>
+	<data name="OrderStatus_Pending">
+		<value>في انتظار المحل ⏳</value>
+	</data>
+	<data name="OrderStatus_Accepted">
+		<value>تم قبول الطلب ✓</value>
+	</data>
+	<data name="OrderStatus_Preparing">
+		<value>جاري التجهيز 📦</value>
+	</data>
+	<data name="OrderStatus_ReadyForPickup">
+		<value>جاهز — في انتظار المندوب</value>
+	</data>
+	<data name="OrderStatus_OnTheWay">
+		<value>المندوب في الطريق 🛵</value>
+	</data>
+	<data name="OrderStatus_Delivered">
+		<value>تم التوصيل ✓</value>
+	</data>
+	<data name="OrderStatus_Cancelled">
+		<value>ملغي</value>
+	</data>
+	<data name="OrderStatus_Rejected">
+		<value>مرفوض</value>
+	</data>
+	<data name="SearchHasProducts">
+		<value>🍽️ فيه: {0}</value>
+	</data>
 </root>

@@ -144,14 +144,17 @@ public partial class StoreCategoryProductsViewModel : BaseViewModel
 
         // لو فيه بحث: بندوّر في كل أقسام المحل، وإلا بنعرض القسم المختار بس
         IEnumerable<Product> q;
-        var nq = SearchTextHelper.Normalize(SearchText);
-        if (nq.Length > 0)
+        var fq = new SearchTextHelper.FuzzyQuery(SearchText);
+        if (!fq.IsEmpty)
         {
+            // بحث بالتخمين (بيتحمّل أخطاء الكتابة) والأقرب تطابقًا يطلع الأول
             q = _allCategories
                 .SelectMany(c => c.Products)
                 .GroupBy(p => p.Id).Select(g => g.First())
-                .Where(p => SearchTextHelper.Matches(p.Name, nq)
-                         || SearchTextHelper.Matches(p.Description, nq));
+                .Select(p => (P: p, Score: SearchTextHelper.FuzzyBest(fq, p.Name, p.Description)))
+                .Where(x => x.Score.HasValue)
+                .OrderBy(x => x.Score)
+                .Select(x => x.P);
         }
         else
         {
@@ -163,6 +166,8 @@ public partial class StoreCategoryProductsViewModel : BaseViewModel
         {
             "priceAsc" => q.OrderBy(p => p.EffectivePrice),
             "priceDesc" => q.OrderByDescending(p => p.EffectivePrice),
+            // أثناء البحث الترتيب الافتراضي هو الأقرب تطابقًا (مش الأكثر مبيعًا)
+            _ when !fq.IsEmpty => q,
             _ => q.OrderByDescending(p => p.IsBestSeller).ThenByDescending(p => p.SalesCount)
         };
 

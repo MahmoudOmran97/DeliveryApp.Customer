@@ -1142,4 +1142,37 @@
 	<data name="StoreClosedShort">
 		<value>Closed</value>
 	</data>
+	<data name="StoreOpen">
+		<value>Open</value>
+	</data>
+	<data name="StoreClosed">
+		<value>Closed</value>
+	</data>
+	<data name="OrderStatus_Pending">
+		<value>Waiting for store ⏳</value>
+	</data>
+	<data name="OrderStatus_Accepted">
+		<value>Order accepted ✓</value>
+	</data>
+	<data name="OrderStatus_Preparing">
+		<value>Preparing your order 📦</value>
+	</data>
+	<data name="OrderStatus_ReadyForPickup">
+		<value>Ready — waiting for driver</value>
+	</data>
+	<data name="OrderStatus_OnTheWay">
+		<value>Driver on the way 🛵</value>
+	</data>
+	<data name="OrderStatus_Delivered">
+		<value>Delivered ✓</value>
+	</data>
+	<data name="OrderStatus_Cancelled">
+		<value>Cancelled</value>
+	</data>
+	<data name="OrderStatus_Rejected">
+		<value>Rejected</value>
+	</data>
+	<data name="SearchHasProducts">
+		<value>🍽️ Has: {0}</value>
+	</data>
 </root>

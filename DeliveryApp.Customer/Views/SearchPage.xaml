@@ -188,6 +188,10 @@
                                                 </Grid>
                                                 <Label Text="{Binding Description}" FontFamily="CairoRegular" FontSize="12"
                                                        TextColor="#757575" MaxLines="1" LineBreakMode="TailTruncation"/>
+                                                <!-- لو المحل ظهر لأن عنده منتجات مطابقة: نكتب أسماءها -->
+                                                <Label Text="{Binding MatchedProductsText}" FontFamily="CairoBold" FontSize="12"
+                                                       TextColor="#FF5722" MaxLines="2" LineBreakMode="TailTruncation"
+                                                       IsVisible="{Binding HasMatchedProducts}"/>
                                                 <HorizontalStackLayout Spacing="10">
                                                     <Label Text="{Binding RatingText}" FontFamily="CairoBold" FontSize="12"
                                                            TextColor="#212121" VerticalOptions="Center"/>

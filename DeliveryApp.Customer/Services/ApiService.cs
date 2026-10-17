@@ -418,6 +418,19 @@ public class ApiService
         => GetAsync<List<Product>>("products/bestsellers");
 
     /// <summary>
+    /// ✅ بحث شامل بالتخمين (api/search): المحلات (باسمها أو لأن عندها منتج مطابق) + المنتجات.
+    /// بيرجّع null لو السيرفر لسه مترفعش عليه الـ endpoint — وقتها الـ ViewModel بيرجع للبحث القديم.
+    /// </summary>
+    public Task<SearchAllResult?> SearchAllAsync(string query, double? lat = null, double? lng = null, double radiusKm = 10.0)
+    {
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        var q = $"search?q={Uri.EscapeDataString(query)}";
+        if (lat.HasValue && lng.HasValue)
+            q += $"&lat={lat.Value.ToString(inv)}&lng={lng.Value.ToString(inv)}&radiusKm={radiusKm.ToString(inv)}";
+        return GetAsync<SearchAllResult>(q);
+    }
+
+    /// <summary>
     /// بحث في المنتجات عبر كل المحلات (اسم المنتج أو وصفه). لو lat/lng اتبعتوا بيرجّع بس
     /// منتجات المحلات اللي جوه نطاق التوصيل (السيرفر هو اللي بيفرض سقف الزون).
     /// </summary>

@@ -66,7 +66,16 @@ public class Restaurant
     public string RatingText => $"{Rating:F1} ★";
     public string DeliveryFeeText => DeliveryFee == 0 ? "Free Delivery" : $"{DeliveryFee:F0} EGP";
     public string EstimatedTimeText => $"{EstimatedTime} min";
-    public string StatusText => IsOpen ? "Open" : "Closed";
+    // ✅ FEATURE: منتجات المحل اللي طابقت كلمة البحث (بتيجي من /api/search)
+    public List<string>? MatchedProducts { get; set; }
+    public int MatchedProductCount { get; set; }
+    public bool HasMatchedProducts => MatchedProducts is { Count: > 0 };
+    public string MatchedProductsText => HasMatchedProducts
+        ? string.Format(LocalizationService.Get("SearchHasProducts"), string.Join("، ", MatchedProducts!))
+        : string.Empty;
+
+    // ✅ FIX: كلمة مفتوح/مغلق بقت بتتترجم حسب لغة التطبيق (عربي: مفتوح/مغلق، إنجليزي: Open/Closed)
+    public string StatusText => LocalizationService.Get(IsOpen ? "StoreOpen" : "StoreClosed");
     public Color StatusColor => IsOpen ? Colors.Green : Colors.Red;
     public Color StatusBg => IsOpen ? Color.FromArgb("#E8F5E9") : Color.FromArgb("#FFEBEE");
 
@@ -143,6 +152,12 @@ public class ProductSearchResult
     public string PriceText => $"{EffectivePrice:F0} EGP";
     public string OriginalPriceText => $"{Price:F0} EGP";
     public bool IsStoreClosed => !RestaurantIsOpen;
+}
+
+public class SearchAllResult
+{
+    public List<Restaurant> Stores { get; set; } = new();
+    public List<ProductSearchResult> Products { get; set; } = new();
 }
 
 public class Product
@@ -259,16 +274,12 @@ public class Order
 
     public string TotalAmountText => $"{TotalAmount:F0} EGP";
 
+    // ✅ FIX: حالة الأوردر بقت بتتترجم حسب لغة التطبيق (طلباتي + تفاصيل الطلب)
     public string StatusText => Status switch
     {
-        "Pending" => "Waiting for store",
-        "Accepted" => "Order accepted ✓",
-        "Preparing" => "Preparing your order",
-        "ReadyForPickup" => "Ready — waiting for driver",
-        "OnTheWay" => "Driver on the way 🛵",
-        "Delivered" => "Delivered ✓",
-        "Cancelled" => "Cancelled",
-        "Rejected" => "Rejected",
+        "Pending" or "Accepted" or "Preparing" or "ReadyForPickup"
+            or "OnTheWay" or "Delivered" or "Cancelled" or "Rejected"
+            => LocalizationService.Get($"OrderStatus_{Status}"),
         _ => Status
     };
 

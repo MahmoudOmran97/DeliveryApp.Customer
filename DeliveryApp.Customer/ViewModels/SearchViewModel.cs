@@ -158,33 +158,45 @@ public partial class SearchViewModel : BaseViewModel
             double? lng = _location.HasLocation ? _location.Longitude : null;
             var radius = _location.ZoneRadiusKm;
 
-            var storesTask = _api.GetRestaurantsAsync(
-                search: text, sortBy: "rating", page: 1,
-                lat: lat, lng: lng, radiusKm: radius, pageSize: 10);
-            var productsTask = _api.SearchProductsAsync(text, lat, lng, radius, pageSize: 30);
+            // ✅ بحث شامل بالتخمين من السيرفر (محلات + منتجات)، والعروض بنجيبها بالتوازي
+            var allTask = _api.SearchAllAsync(text, lat, lng, radius);
             var dealsTask = _api.GetDealsAsync(lat, lng, radius);
 
-            try { await Task.WhenAll(storesTask, productsTask, dealsTask); }
+            try { await Task.WhenAll(allTask, dealsTask); }
             catch { /* ApiService بيبلع الأخطاء، ده مجرد احتياط */ }
 
             // نتيجة قديمة (العميل كمّل كتابة) — نتجاهلها
             if (ct.IsCancellationRequested) return;
 
-            var stores = storesTask.IsCompletedSuccessfully ? storesTask.Result?.Data : null;
-            var products = productsTask.IsCompletedSuccessfully ? productsTask.Result?.Data : null;
+            var all = allTask.IsCompletedSuccessfully ? allTask.Result : null;
+            List<Restaurant>? stores = all?.Stores;
+            List<ProductSearchResult>? products = all?.Products;
+
+            // احتياط: لو الـ endpoint الجديد لسه مترفعش على السيرفر نرجع للبحث القديم (حرفي)
+            if (all == null)
+            {
+                var oldStores = _api.GetRestaurantsAsync(
+                    search: text, sortBy: "rating", page: 1,
+                    lat: lat, lng: lng, radiusKm: radius, pageSize: 10);
+                var oldProducts = _api.SearchProductsAsync(text, lat, lng, radius, pageSize: 30);
+                try { await Task.WhenAll(oldStores, oldProducts); } catch { }
+                if (ct.IsCancellationRequested) return;
+                stores = oldStores.IsCompletedSuccessfully ? oldStores.Result?.Data : null;
+                products = oldProducts.IsCompletedSuccessfully ? oldProducts.Result?.Data : null;
+            }
+
             var allDeals = dealsTask.IsCompletedSuccessfully ? dealsTask.Result : null;
 
-            // العروض: بحث محلي في العروض اللي جاية أصلاً مفلترة بالزون
-            var nq = SearchTextHelper.Normalize(text);
-            var wantsOffers = OfferKeywords.Any(k => nq.Contains(k, StringComparison.Ordinal));
+            // العروض: بحث محلي بالتخمين في العروض اللي جاية أصلاً مفلترة بالزون
+            var fq = new SearchTextHelper.FuzzyQuery(text);
+            var wantsOffers = OfferKeywords.Any(k => fq.Normalized.Contains(k, StringComparison.Ordinal));
             var matchedDeals = (allDeals ?? new List<Deal>())
-                .Where(d => wantsOffers
-                    || SearchTextHelper.Matches(d.Title, nq)
-                    || SearchTextHelper.Matches(d.Description, nq)
-                    || SearchTextHelper.Matches(d.ProductName, nq)
-                    || SearchTextHelper.Matches(d.RestaurantName, nq)
-                    || SearchTextHelper.Matches(d.BadgeText, nq))
-                .OrderBy(d => d.SortOrder)
+                .Select(d => (Deal: d, Score: SearchTextHelper.FuzzyBest(fq,
+                    d.Title, d.Description, d.ProductName, d.RestaurantName, d.BadgeText)))
+                .Where(x => wantsOffers || x.Score.HasValue)
+                .OrderBy(x => wantsOffers ? 0 : x.Score ?? 0)
+                .ThenBy(x => x.Deal.SortOrder)
+                .Select(x => x.Deal)
                 .ToList();
 
             Stores.Clear();
