@@ -311,6 +311,7 @@ public class ApiService
                 i.Quantity,
                 i.Notes,
                 VariantId = i.VariantId,
+                OptionIds = i.OptionIds,
                 UnitPriceOverride = i.DealId.HasValue ? i.UnitPrice : (decimal?)null
             }),
             DeliveryAddress = address,

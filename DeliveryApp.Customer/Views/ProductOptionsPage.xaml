@@ -18,9 +18,13 @@
             </BoxView.GestureRecognizers>
         </BoxView>
 
-        <Border Grid.Row="1" BackgroundColor="White"
+        <Border x:Name="Sheet" Grid.Row="1" BackgroundColor="White"
                 StrokeShape="RoundRectangle 24,24,0,0"
                 Stroke="Transparent" Padding="20,16,20,28">
+            <!-- ✅ المحتوى بقى جوه ScrollView (عشان لو فيه مقاسات + مجموعات اختيارات كتير الشاشة تسكرول)،
+                 وصف الكمية وزرار الإضافة ثابتين تحت. -->
+            <Grid RowDefinitions="*,Auto" RowSpacing="14">
+            <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Never">
             <VerticalStackLayout Spacing="16">
                 <!-- ✅ FIX: صورة المنتج مكنتش ظاهرة في شاشة التفاصيل خالص -->
                 <!-- ✅ FIX: دلوقتي تقدر تدوس على الصورة تفتحلك بحجمها الكامل مع إمكانية الزوم -->
@@ -101,6 +105,64 @@
                     </CollectionView>
                 </VerticalStackLayout>
 
+                <!-- ✅ FEATURE: مجموعات الاختيارات (اختار 2 صوص من 8 ...) -->
+                <VerticalStackLayout Spacing="16" IsVisible="{Binding HasOptionGroups}"
+                                     BindableLayout.ItemsSource="{Binding OptionGroups}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:ProductOptionGroup">
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                    <Label Grid.Column="0" Text="{Binding Name}" FontFamily="CairoBold" FontSize="16"
+                                           VerticalOptions="Center"/>
+                                    <Label Grid.Column="1" Text="{Binding CounterText}" FontFamily="CairoBold" FontSize="13"
+                                           TextColor="#FF5722" VerticalOptions="Center"/>
+                                    <Border Grid.Column="2" BackgroundColor="#212121" StrokeShape="RoundRectangle 6" Padding="8,4"
+                                            IsVisible="{Binding IsRequired}">
+                                        <Label Text="{loc:Loc Key=Required}" FontFamily="CairoBold" FontSize="11" TextColor="White"/>
+                                    </Border>
+                                </Grid>
+                                <Label Text="{Binding RuleText}" FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
+
+                                <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start"
+                                            BindableLayout.ItemsSource="{Binding Items}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="m:ProductOptionItem">
+                                            <Border Margin="0,0,8,8" Padding="12,8" StrokeShape="RoundRectangle 20"
+                                                    StrokeThickness="2"
+                                                    Stroke="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}}"
+                                                    BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=#FFF3EF|#FFFFFF}"
+                                                    IsEnabled="{Binding IsDisabled, Converter={StaticResource InvertBool}}">
+                                                <Border.Triggers>
+                                                    <DataTrigger TargetType="Border" Binding="{Binding IsDisabled}" Value="True">
+                                                        <Setter Property="Opacity" Value="0.4"/>
+                                                    </DataTrigger>
+                                                </Border.Triggers>
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ProductOptionsViewModel}}, Path=ToggleOptionCommand}"
+                                                        CommandParameter="{Binding .}"/>
+                                                </Border.GestureRecognizers>
+                                                <HorizontalStackLayout Spacing="6">
+                                                    <Label Text="✓" FontFamily="CairoBold" FontSize="13" TextColor="#FF5722"
+                                                           IsVisible="{Binding IsSelected}" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding Name}" FontFamily="CairoBold" FontSize="13"
+                                                           TextColor="#212121" VerticalOptions="Center"/>
+                                                    <Label Text="{Binding PriceText}" FontFamily="CairoBold" FontSize="12"
+                                                           TextColor="#FF5722" IsVisible="{Binding HasExtra}" VerticalOptions="Center"/>
+                                                </HorizontalStackLayout>
+                                            </Border>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </FlexLayout>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+            </ScrollView>
+
+            <VerticalStackLayout Grid.Row="1">
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                     <HorizontalStackLayout Grid.Column="0" Spacing="12" VerticalOptions="Center">
                         <Border BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 8" Padding="8">
@@ -130,6 +192,7 @@
                     </Border>
                 </Grid>
             </VerticalStackLayout>
+            </Grid>
         </Border>
     </Grid>
 </ContentPage>

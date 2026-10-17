@@ -174,6 +174,9 @@ public class Product
     public bool IsAvailable { get; set; }
     public List<ProductVariant> Variants { get; set; } = new();
 
+    // ✅ FEATURE: مجموعات اختيارات (اختار 2 صوص من 8 ...) — مستقلة عن المقاسات (Variants)
+    public List<ProductOptionGroup> OptionGroups { get; set; } = new();
+
     // ✅ FEATURE: راجعين من /menu و /related — عدد مرات البيع الفعلي (أوردرات
     // Delivered) وهل المنتج ده من أعلى 10 مبيعًا في المحل، عشان الفرز والفلترة
     // في صفحة "الأفضل مبيعًا".
@@ -196,13 +199,61 @@ public class Product
 
     public decimal EffectivePrice => DiscountedPrice ?? Price;
     public bool HasDiscount => DiscountedPrice.HasValue && DiscountedPrice < Price;
-    public bool HasVariants => Variants.Count > 0;
+    // ✅ HasVariants = "المنتج محتاج شاشة اختيارات قبل الإضافة للسلة" — بيشمل المقاسات ومجموعات الاختيارات
+    // (اختار 2 صوص ...)، فكل الصفحات اللي كانت بتفتح شاشة الخيارات للمنتجات ذات المقاسات
+    // (المحل، السوبر ماركت، البحث، الرئيسية...) بتفتحها كمان للمنتجات اللي ليها مجموعات اختيارات.
+    public bool HasVariants => Variants.Count > 0 || OptionGroups.Count > 0;
     public bool IsCustomizable => HasVariants;
     public string PriceText => HasVariants
         ? (LocalizationService.Current.TwoLetterISOLanguageName == "ar" ? "يمكن تخصيصه" : "Customizable")
         : $"{EffectivePrice:F0} EGP";
     public string OriginalPriceText => $"{Price:F0} EGP";
-    public decimal MinVariantPrice => HasVariants ? Variants.Min(v => v.Price) : EffectivePrice;
+    public decimal MinVariantPrice => Variants.Count > 0 ? Variants.Min(v => v.Price) : EffectivePrice;
+}
+
+/// <summary>مجموعة اختيارات على المنتج، مثلاً "اختار صوص": أقل 2 وأكبر 2 من 8 اختيارات.</summary>
+public partial class ProductOptionGroup : ObservableObject
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public int MinSelect { get; set; }
+    public int MaxSelect { get; set; } = 1;
+    public int SortOrder { get; set; }
+    public List<ProductOptionItem> Items { get; set; } = new();
+
+    public bool IsRequired => MinSelect > 0;
+
+    public string RuleText => MinSelect == MaxSelect
+        ? string.Format(LocalizationService.Get("OptionChooseExactly"), MaxSelect)
+        : MinSelect > 0
+            ? string.Format(LocalizationService.Get("OptionChooseBetween"), MinSelect, MaxSelect)
+            : string.Format(LocalizationService.Get("OptionChooseUpTo"), MaxSelect);
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CounterText))]
+    [NotifyPropertyChangedFor(nameof(IsSatisfied))]
+    private int _selectedCount;
+
+    public string CounterText => $"{SelectedCount}/{MaxSelect}";
+    public bool IsSatisfied => SelectedCount >= MinSelect;
+}
+
+public partial class ProductOptionItem : ObservableObject
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public decimal ExtraPrice { get; set; }
+    public int SortOrder { get; set; }
+
+    public bool HasExtra => ExtraPrice > 0;
+    public string PriceText => ExtraPrice > 0 ? $"+{ExtraPrice:F0} EGP" : string.Empty;
+
+    [ObservableProperty]
+    private bool _isSelected;
+
+    // بتقفل لما المجموعة توصل لأكبر عدد اختيارات والاختيار ده مش مختار
+    [ObservableProperty]
+    private bool _isDisabled;
 }
 
 public partial class ProductVariant : ObservableObject
@@ -234,7 +285,14 @@ public partial class CartItem : ObservableObject
     private int _Quantity;
 
     public string? Notes { get; set; }
-    public string LineKey => $"{Product.Id}:{VariantId ?? 0}:{DealId ?? 0}:{Notes}";
+
+    // ✅ الاختيارات المختارة (اختار 2 صوص ...): الـ Ids بتتبعت للسيرفر، والنص للعرض في السلة
+    public List<int> OptionIds { get; set; } = new();
+    public string? OptionsText { get; set; }
+    public bool HasOptionsText => !string.IsNullOrWhiteSpace(OptionsText);
+
+    // نفس المنتج بصوصات مختلفة = سطرين منفصلين في السلة
+    public string LineKey => $"{Product.Id}:{VariantId ?? 0}:{DealId ?? 0}:{string.Join(",", OptionIds.OrderBy(x => x))}:{Notes}";
     public string DisplayName => string.IsNullOrEmpty(VariantName) ? Product.Name : $"{Product.Name} ({VariantName})";
     public decimal TotalPrice => UnitPrice * _Quantity;
     public string TotalPriceText => $"{TotalPrice:F0} EGP";
@@ -317,6 +375,11 @@ public class OrderItem
     public decimal UnitPrice { get; set; }
     public decimal? TotalPrice { get; set; }
     public string? Notes { get; set; }
+    public string? VariantName { get; set; }
+    public string? OptionsText { get; set; }
+
+    public string DisplayName => string.IsNullOrEmpty(VariantName) ? ProductName : $"{ProductName} ({VariantName})";
+    public bool HasOptionsText => !string.IsNullOrWhiteSpace(OptionsText);
 
     public string TotalPriceText => $"{TotalPrice ?? UnitPrice * Quantity:F0} EGP";
 }

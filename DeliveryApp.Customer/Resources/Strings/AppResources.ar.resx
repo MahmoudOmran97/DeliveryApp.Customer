@@ -1126,4 +1126,13 @@
 	<data name="SearchHasProducts">
 		<value>🍽️ فيه: {0}</value>
 	</data>
+	<data name="OptionChooseExactly">
+		<value>اختار {0}</value>
+	</data>
+	<data name="OptionChooseBetween">
+		<value>اختار من {0} إلى {1}</value>
+	</data>
+	<data name="OptionChooseUpTo">
+		<value>اختياري — اختار حتى {0}</value>
+	</data>
 </root>

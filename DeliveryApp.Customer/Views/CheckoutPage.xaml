@@ -211,9 +211,13 @@
                                     <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,4" ColumnSpacing="8">
                                         <Label Grid.Column="0" Text="{Binding Quantity, StringFormat='{0}x'}"
                                                FontFamily="CairoBold" FontSize="13" TextColor="#FF5722"/>
-                                        <Label Grid.Column="1" Text="{Binding DisplayName}"
-                                               FontFamily="CairoRegular" FontSize="13" TextColor="#424242"
-                                               LineBreakMode="TailTruncation"/>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                            <Label Text="{Binding DisplayName}"
+                                                   FontFamily="CairoRegular" FontSize="13" TextColor="#424242"
+                                                   LineBreakMode="TailTruncation"/>
+                                            <Label Text="{Binding OptionsText}" IsVisible="{Binding HasOptionsText}"
+                                                   FontFamily="CairoRegular" FontSize="11" TextColor="#757575"/>
+                                        </VerticalStackLayout>
                                         <Label Grid.Column="2" Text="{Binding TotalPriceText}"
                                                FontFamily="CairoBold" FontSize="13" TextColor="#212121"/>
                                     </Grid>

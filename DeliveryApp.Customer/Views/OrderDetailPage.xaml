@@ -60,15 +60,19 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="m:OrderItem">
                                     <Grid ColumnDefinitions="*,Auto" Padding="0,5,0,5">
-                                        <Label Grid.Column="0" FontFamily="CairoRegular" FontSize="14" TextColor="#212121">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="{Binding Quantity}" FontAttributes="Bold"/>
-                                                    <Span Text="×  "/>
-                                                    <Span Text="{Binding ProductName}"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
+                                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                            <Label FontFamily="CairoRegular" FontSize="14" TextColor="#212121">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding Quantity}" FontAttributes="Bold"/>
+                                                        <Span Text="×  "/>
+                                                        <Span Text="{Binding DisplayName}"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                            <Label Text="{Binding OptionsText}" IsVisible="{Binding HasOptionsText}"
+                                                   FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
+                                        </VerticalStackLayout>
                                         <Label Grid.Column="1" Text="{Binding TotalPriceText}"
                                            FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
                                     </Grid>

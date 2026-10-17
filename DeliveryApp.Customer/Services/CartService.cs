@@ -41,7 +41,9 @@ public class CartService
         int? variantId = null,
         string? variantName = null,
         decimal? unitPrice = null,
-        int? dealId = null)
+        int? dealId = null,
+        List<int>? optionIds = null,
+        string? optionsText = null)
     {
         if (_restaurantId.HasValue && _restaurantId != restaurantId)
             return false;
@@ -50,10 +52,13 @@ public class CartService
         _restaurantDeliveryFee = deliveryFee;
 
         var price = unitPrice ?? product.EffectivePrice;
+        optionIds ??= new List<int>();
+        var optionKey = string.Join(",", optionIds.OrderBy(x => x));
         var existing = _items.FirstOrDefault(i =>
             i.Product.Id == product.Id &&
             i.VariantId == variantId &&
             i.DealId == dealId &&
+            string.Join(",", i.OptionIds.OrderBy(x => x)) == optionKey &&
             i.Notes == notes);
 
         if (existing != null)
@@ -69,7 +74,9 @@ public class CartService
                 VariantId = variantId,
                 VariantName = variantName,
                 UnitPrice = price,
-                DealId = dealId
+                DealId = dealId,
+                OptionIds = optionIds.ToList(),
+                OptionsText = optionsText
             });
         }
 

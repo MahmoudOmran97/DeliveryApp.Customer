@@ -50,13 +50,42 @@ public partial class ProductOptionsViewModel : BaseViewModel
 
     public ObservableCollection<ProductVariant> Variants { get; } = new();
 
+    // ✅ FEATURE: مجموعات الاختيارات (اختار 2 صوص من 8 ...)
+    public ObservableCollection<ProductOptionGroup> OptionGroups { get; } = new();
+    public bool HasOptionGroups => OptionGroups.Count > 0;
+
+    IEnumerable<ProductOptionItem> SelectedOptions =>
+        OptionGroups.SelectMany(g => g.Items).Where(i => i.IsSelected);
+
+    // زيادة السعر من الاختيارات المختارة (الصوصات العادية = 0)
+    public decimal ExtrasTotal => SelectedOptions.Sum(i => i.ExtraPrice);
+
     // ✅ FIX: المنتج اللي معندوش اختيارات (Variants) مكانش ينفع يتضاف للسلة خالص
     // لأن CanAddToCart كانت بتعتمد بس على SelectedVariant != null.
     public bool HasVariants => Variants.Count > 0;
-    public bool CanAddToCart => !HasVariants || SelectedVariant != null;
-    public string AddButtonText => CanAddToCart
-        ? LocalizationService.Get("AddToCart")
-        : LocalizationService.Get("CompleteSelections");
+
+    // المقاس لو المنتج له مقاسات + كل مجموعة اختيارات وصلت لأقل عدد مطلوب منها
+    public bool CanAddToCart =>
+        (!HasVariants || SelectedVariant != null) && OptionGroups.All(g => g.IsSatisfied);
+
+    public decimal CurrentUnitPrice =>
+        (SelectedVariant?.Price ?? Product?.DiscountedPrice ?? Product?.Price ?? 0m) + ExtrasTotal;
+
+    public string AddButtonText => !CanAddToCart
+        ? LocalizationService.Get("CompleteSelections")
+        : ExtrasTotal > 0
+            ? $"{LocalizationService.Get("AddToCart")} · {CurrentUnitPrice * Quantity:F0} EGP"
+            : LocalizationService.Get("AddToCart");
+
+    partial void OnQuantityChanged(int value) => OnPropertyChanged(nameof(AddButtonText));
+
+    void RefreshAddState()
+    {
+        OnPropertyChanged(nameof(ExtrasTotal));
+        OnPropertyChanged(nameof(CurrentUnitPrice));
+        OnPropertyChanged(nameof(CanAddToCart));
+        OnPropertyChanged(nameof(AddButtonText));
+    }
 
     public ProductOptionsViewModel(CartService cart) => _cart = cart;
 
@@ -86,15 +115,51 @@ public partial class ProductOptionsViewModel : BaseViewModel
         if (Product == null) return;
         foreach (var v in Product.Variants.OrderBy(x => x.SortOrder))
             Variants.Add(v);
+
+        OptionGroups.Clear();
+        foreach (var g in Product.OptionGroups.OrderBy(x => x.SortOrder))
+        {
+            g.SelectedCount = 0;
+            foreach (var i in g.Items) { i.IsSelected = false; i.IsDisabled = false; }
+            OptionGroups.Add(g);
+        }
+
         OnPropertyChanged(nameof(HasVariants));
-        OnPropertyChanged(nameof(CanAddToCart));
-        OnPropertyChanged(nameof(AddButtonText));
+        OnPropertyChanged(nameof(HasOptionGroups));
+        RefreshAddState();
     }
 
-    partial void OnSelectedVariantChanged(ProductVariant? value)
+    partial void OnSelectedVariantChanged(ProductVariant? value) => RefreshAddState();
+
+    // ✅ اختيار/إلغاء اختيار عنصر من مجموعة (صوص مثلاً):
+    //   • أكبر عدد = 1  → بيشتغل زي Radio (اختيار جديد بيشيل القديم)
+    //   • أكبر عدد > 1  → لما توصل للحد الأقصى باقي الاختيارات بتتقفل لحد ما تشيل واحد
+    [RelayCommand]
+    void ToggleOption(ProductOptionItem item)
     {
-        OnPropertyChanged(nameof(CanAddToCart));
-        OnPropertyChanged(nameof(AddButtonText));
+        var group = OptionGroups.FirstOrDefault(g => g.Items.Contains(item));
+        if (group == null || item.IsDisabled) return;
+
+        if (item.IsSelected)
+        {
+            item.IsSelected = false;
+        }
+        else if (group.MaxSelect == 1)
+        {
+            foreach (var other in group.Items) other.IsSelected = false;
+            item.IsSelected = true;
+        }
+        else
+        {
+            if (group.Items.Count(i => i.IsSelected) >= group.MaxSelect) return;
+            item.IsSelected = true;
+        }
+
+        group.SelectedCount = group.Items.Count(i => i.IsSelected);
+        foreach (var i in group.Items)
+            i.IsDisabled = group.MaxSelect > 1 && !i.IsSelected && group.SelectedCount >= group.MaxSelect;
+
+        RefreshAddState();
     }
 
     [RelayCommand]
@@ -122,14 +187,20 @@ public partial class ProductOptionsViewModel : BaseViewModel
 
         // ✅ FIX: لو المنتج معندوش Variants، مفيش SelectedVariant أصلاً —
         // بنستخدم سعر المنتج نفسه (أو السعر بعد الخصم لو موجود) بدل ما نرجع من غير ما نضيف حاجة.
-        var unitPrice = SelectedVariant?.Price ?? Product.DiscountedPrice ?? Product.Price;
+        // ✅ السعر = المقاس/المنتج + إضافات الاختيارات (والسيرفر بيعيد الحساب بنفسه عند الطلب)
+        var unitPrice = CurrentUnitPrice;
+
+        var optionIds = SelectedOptions.Select(i => i.Id).ToList();
+        var optionsText = BuildOptionsText();
 
         var ok = _cart.AddItem(
             RestaurantId, Product, Quantity,
             deliveryFee: DeliveryFee,
             variantId: SelectedVariant?.Id,
             variantName: SelectedVariant?.Name,
-            unitPrice: unitPrice);
+            unitPrice: unitPrice,
+            optionIds: optionIds,
+            optionsText: optionsText);
 
         if (!ok)
         {
@@ -143,12 +214,23 @@ public partial class ProductOptionsViewModel : BaseViewModel
                 _cart.Clear();
                 _cart.AddItem(RestaurantId, Product, Quantity, deliveryFee: DeliveryFee,
                     variantId: SelectedVariant?.Id, variantName: SelectedVariant?.Name,
-                    unitPrice: unitPrice);
+                    unitPrice: unitPrice, optionIds: optionIds, optionsText: optionsText);
             }
             else return;
         }
 
         await Shell.Current.GoToAsync("..");
+    }
+
+    // نص الاختيارات للعرض في السلة: "اختار صوص: ثوم، باربكيو | إضافات: جبنة (+5 EGP)"
+    string? BuildOptionsText()
+    {
+        var parts = OptionGroups
+            .Select(g => (g, picked: g.Items.Where(i => i.IsSelected).OrderBy(i => i.SortOrder).ToList()))
+            .Where(x => x.picked.Count > 0)
+            .Select(x => $"{x.g.Name}: {string.Join("، ", x.picked.Select(i => i.HasExtra ? $"{i.Name} ({i.PriceText})" : i.Name))}")
+            .ToList();
+        return parts.Count == 0 ? null : string.Join(" | ", parts);
     }
 
     [RelayCommand]

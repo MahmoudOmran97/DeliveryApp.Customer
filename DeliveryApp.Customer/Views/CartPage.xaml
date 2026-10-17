@@ -77,6 +77,8 @@
                             <VerticalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
                                 <Label Text="{Binding DisplayName}"
                                        FontFamily="CairoBold" FontSize="14" TextColor="#212121"/>
+                                <Label Text="{Binding OptionsText}" IsVisible="{Binding HasOptionsText}"
+                                       FontFamily="CairoRegular" FontSize="12" TextColor="#757575"/>
                                 <Label Text="{Binding TotalPriceText}"
                                        FontFamily="CairoBold" FontSize="14" TextColor="#FF5722"/>
                             </VerticalStackLayout>
