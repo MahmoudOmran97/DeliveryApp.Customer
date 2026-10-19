@@ -29,7 +29,7 @@
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>4</ApplicationVersion>
+		<ApplicationVersion>5</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -63,6 +63,17 @@
 	</ItemGroup>
 
 	<!-- منع تعارض AppxManifest مع WindowsPackageType=None -->
+
+	<!-- ===== Android Release: تفعيل R8 (shrink + obfuscate) لكود الـ Java فقط ===== -->
+	<!-- ملاحظة: مفيش PublishTrimmed هنا عمداً، لأن التطبيق بيستخدم System.Text.Json بالـ reflection -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' and $(TargetFramework.Contains('-android'))">
+		<AndroidPackageFormat>aab</AndroidPackageFormat>
+		<AndroidLinkTool>r8</AndroidLinkTool>
+		<EnableProguard>true</EnableProguard>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(Configuration)' == 'Release' and $(TargetFramework.Contains('-android'))">
+		<ProguardConfiguration Include="proguard.cfg" />
+	</ItemGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
 		<GoogleServicesJson Include="Platforms\Android\google-services.json" />

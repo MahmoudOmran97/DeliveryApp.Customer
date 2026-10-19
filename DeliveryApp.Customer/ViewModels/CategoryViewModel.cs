@@ -26,6 +26,12 @@ public partial class CategoryViewModel : BaseViewModel
     bool _hasMore = true;
     [ObservableProperty] bool _isLoadingMore;
 
+    // ── Banners (بنر أعلى القسم: بيظهر بس لو البنر بيوجّه لمحل من نفس القسم وجوه الزون) ──
+    [ObservableProperty] int _currentBannerIndex;
+    int _bannerLoadId;
+    public ObservableCollection<Banner> Banners { get; } = new();
+
+
     /// <summary>نفس الـ Placeholder المستخدم في صفحة الرئيسية</summary>
     public string SearchHint => LocalizationService.Get("SearchPlaceholder");
 
@@ -109,8 +115,123 @@ public partial class CategoryViewModel : BaseViewModel
 
             _hasMore = result != null
                 && (result.TotalPages.HasValue ? _currentPage < result.TotalPages.Value : result.Data.Count == PageSize);
+
+            // البنرات بتتحمّل في الخلفية عشان متأخرش ظهور قايمة المحلات
+            _ = LoadBannersAsync(lat, lng, ++_bannerLoadId);
         }
         finally { IsBusy = false; OnPropertyChanged(nameof(HasNoResults)); }
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    //  Banners
+    //  - السيرفر بيفلتر البنرات بالزون (lat/lng/radiusKm) زي الرئيسية بالظبط
+    //  - هنا بنكمّل الفلترة: بنسيب بس البنرات اللي ActionUrl بتاعها "restaurant/{id}"
+    //    (أو "store/{id}") والمحل ده من نفس القسم المفتوح وجوه الزون
+    //  - لو مفيش بنر مناسب، البنر مبيظهرش خالص
+    // ══════════════════════════════════════════════════════════════
+    async Task LoadBannersAsync(double? lat, double? lng, int loadId)
+    {
+        try
+        {
+            var category = CategoryName;
+            // صفحة بحث (من غير قسم) أو بحث جوه القسم → من غير بنر
+            if (string.IsNullOrWhiteSpace(category) || !string.IsNullOrWhiteSpace(SearchText))
+            {
+                if (loadId == _bannerLoadId) ClearBanners();
+                return;
+            }
+
+            var radius = _location.ZoneRadiusKm;
+            var banners = await _api.GetBannersAsync(lat, lng, radius) ?? new();
+
+            var candidates = banners
+                .Select(b => (Banner: b, StoreId: TryGetStoreId(b.ActionUrl)))
+                .Where(x => x.StoreId.HasValue)
+                .ToList();
+
+            if (candidates.Count == 0)
+            {
+                if (loadId == _bannerLoadId) ClearBanners();
+                return;
+            }
+
+            var ids = candidates.Select(x => x.StoreId!.Value).Distinct().ToList();
+            var stores = await Task.WhenAll(ids.Select(id => _api.GetRestaurantAsync(id, lat, lng)));
+            var byId = new Dictionary<int, Restaurant>();
+            for (int i = 0; i < ids.Count; i++)
+                if (stores[i] != null) byId[ids[i]] = stores[i]!;
+
+            var visible = candidates
+                .Where(x => byId.TryGetValue(x.StoreId!.Value, out var r)
+                            && MatchesCategory(r, category)
+                            && IsInsideZone(r, lat, lng, radius))
+                .Select(x => x.Banner)
+                .ToList();
+
+            // لو اتعمل تحميل أحدث (أو القسم اتغير) نتجاهل النتيجة دي
+            if (loadId != _bannerLoadId || CategoryName != category) return;
+
+            Banners.Clear();
+            foreach (var b in visible) Banners.Add(b);
+            if (CurrentBannerIndex >= Banners.Count) CurrentBannerIndex = 0;
+        }
+        catch (Exception ex)
+        {
+            // البنر ميبوظش الصفحة لو حصل أي خطأ
+            System.Diagnostics.Debug.WriteLine($"LoadBannersAsync failed: {ex}");
+        }
+    }
+
+    void ClearBanners()
+    {
+        Banners.Clear();
+        CurrentBannerIndex = 0;
+    }
+
+    /// <summary>"restaurant/5" أو "store/5" → 5، أي صيغة تانية (رابط خارجي، category/...) → null</summary>
+    static int? TryGetStoreId(string? actionUrl)
+    {
+        var target = actionUrl?.Trim();
+        if (string.IsNullOrWhiteSpace(target)) return null;
+        var parts = target.Split('/', 2, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 2) return null;
+        var type = parts[0].ToLowerInvariant();
+        if (type != "restaurant" && type != "store") return null;
+        return int.TryParse(parts[1], out var id) ? id : null;
+    }
+
+    // نفس شرط السيرفر في /api/restaurants?category=... (StoreType == category)
+    // عشان البنر مايظهرش إلا لمحل هيظهر فعلاً في قايمة القسم ده
+    static bool MatchesCategory(Restaurant r, string category)
+        => string.Equals(r.StoreType?.Trim(), category.Trim(), StringComparison.OrdinalIgnoreCase);
+
+    static bool IsInsideZone(Restaurant r, double? lat, double? lng, double radiusKm)
+    {
+        if (!lat.HasValue || !lng.HasValue) return true;   // مفيش موقع محدد → زي الرئيسية، مفيش فلترة
+        double? dist = r.DistanceKm;
+        if (!dist.HasValue && (r.Latitude != 0 || r.Longitude != 0))
+            dist = LocationService.DistanceKm(lat.Value, lng.Value, r.Latitude, r.Longitude);
+        return !dist.HasValue || dist.Value <= radiusKm + 0.05;
+    }
+
+    /// <summary>الدوس على البنر → صفحة المحل اللي البنر موجّه ليه</summary>
+    [RelayCommand]
+    async Task OpenBanner(Banner? banner)
+    {
+        try
+        {
+            var id = TryGetStoreId(banner?.ActionUrl);
+            if (!id.HasValue) return;
+
+            IsBusy = true;
+            await Task.Yield();
+            await Shell.Current.GoToAsync($"RestaurantPage?id={id.Value}");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"OpenBanner failed: {ex}");
+        }
+        finally { IsBusy = false; }
     }
 
     /// <summary>
