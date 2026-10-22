@@ -104,60 +104,18 @@ public class FcmTokenService
                 return;
             }
 
+            // ✅ DUPLICATE FIX: كنا هنا بنعرض إشعار نظام (ShowLocalNotification) وفي نفس الوقت
+            // Plugin.Firebase بينادي ShowLocalNotificationAction (MainApplication) فيعرض إشعار تاني
+            // لنفس الرسالة → إشعارين. وإشعار الـ handler ده مكانش عليه actionUrl/orderId فالضغط عليه
+            // كان يفتح التطبيق بس. دلوقتي إشعار النظام بيتعرض من مكان واحد بس (MainApplication)،
+            // وهنا بنكتفي بالتنبيه الداخلي لو التطبيق مفتوح.
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                ShowLocalNotification(title, body);
                 TryShowInAppAlert(title, body);
             });
         };
 #endif
     }
-
-    // ── Android-only: show a real system notification bar entry ──────────────
-#if ANDROID
-    private static int _notifId = 1000;
-
-    private static void ShowLocalNotification(string title, string body)
-    {
-        try
-        {
-            var context = Android.App.Application.Context;
-
-            var builder = new AndroidX.Core.App.NotificationCompat.Builder(context, "default")
-                .SetContentTitle(title)
-                .SetContentText(body)
-                .SetPriority(AndroidX.Core.App.NotificationCompat.PriorityHigh)
-                .SetDefaults(AndroidX.Core.App.NotificationCompat.DefaultAll)
-                .SetAutoCancel(true)
-                .SetStyle(new AndroidX.Core.App.NotificationCompat.BigTextStyle().BigText(body));
-
-            NotificationHelper.ApplyBranding(builder, context);
-
-            var intent = context.PackageManager?.GetLaunchIntentForPackage(context.PackageName ?? "");
-            if (intent != null)
-            {
-                intent.SetFlags(Android.Content.ActivityFlags.SingleTop | Android.Content.ActivityFlags.ClearTop);
-                var pending = Android.App.PendingIntent.GetActivity(
-                    context, 0, intent,
-                    Android.App.PendingIntentFlags.UpdateCurrent | Android.App.PendingIntentFlags.Immutable);
-                builder.SetContentIntent(pending);
-            }
-
-            AndroidX.Core.App.NotificationManagerCompat.From(context).Notify(_notifId++, builder.Build());
-            System.Diagnostics.Debug.WriteLine($"[FCM] Local notification shown (id: {_notifId - 1})");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"[FCM] ShowLocalNotification error: {ex.Message}");
-        }
-    }
-#else
-    // iOS / MacCatalyst / Windows — Firebase handles its own display
-    private static void ShowLocalNotification(string title, string body)
-    {
-        System.Diagnostics.Debug.WriteLine($"[FCM] ShowLocalNotification (non-Android): {title}");
-    }
-#endif
 
     // ── In-app alert (foreground only) ───────────────────────────────────────
     private static void TryShowInAppAlert(string title, string body)
