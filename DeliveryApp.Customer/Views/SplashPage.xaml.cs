@@ -42,6 +42,10 @@ public partial class SplashPage : ContentPage
         if (_auth.IsLoggedIn)
         {
             await _fcm.RegisterAsync();
+
+            // لو المستخدم فاتح التطبيق من إشعار، منروحش لمحادثة الروشتة ونسيبه على مكان الإشعار
+            bool openedFromNotification = PendingNotificationNavigation.HasPending;
+
             var shell = IPlatformApplication.Current!.Services.GetService<AppShell>()!;
             Application.Current!.MainPage = shell;
 
@@ -50,6 +54,8 @@ public partial class SplashPage : ContentPage
             // كشبكة أمان لو تم إغلاق التطبيق قبل اكتمال الحفظ المحلي.
             try
             {
+                if (openedFromNotification) return;
+
                 var requests = await _api.GetMyPrescriptionRequestsAsync();
                 var activeRequest = requests?
                     .Where(r => r.Status is "Pending" or "Priced" or "Confirmed")

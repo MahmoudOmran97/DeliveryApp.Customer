@@ -180,8 +180,18 @@ public partial class App : Application
         });
     }
 
-    void TryNavigatePendingNotification()
+    /// <summary>
+    /// بيوجّه المستخدم لمكان الإشعار اللي ضغط عليه (actionUrl / orderId).
+    /// ✅ FIX: كان بيستهلك الإشعار المعلّق (TakePending) حتى لو التطبيق لسه على شاشة
+    /// الـ Splash/Login (Shell مش جاهز) فالتوجيه كان بيفشل ويضيع → التطبيق يفتح بس.
+    /// دلوقتي لو الـ Shell مش جاهز بنسيب الإشعار معلّق، وAppShell.Loaded بينادي الدالة دي
+    /// تاني أول ما الـ Shell يظهر.
+    /// </summary>
+    public void TryNavigatePendingNotification()
     {
+        if (!PendingNotificationNavigation.HasPending) return;
+        if (MainPage is not Shell) return;   // لسه Splash/Login/Onboarding
+
         var pending = PendingNotificationNavigation.TakePending();
         if (pending == null) return;
 
@@ -191,6 +201,8 @@ public partial class App : Application
         {
             try
             {
+                // مهلة صغيرة عشان الـ Shell يخلّص رسم أول صفحة قبل الـ GoToAsync
+                await Task.Delay(350);
                 await NotificationNavigationHelper.NavigateAsync(actionUrl, orderId);
             }
             catch (Exception ex)

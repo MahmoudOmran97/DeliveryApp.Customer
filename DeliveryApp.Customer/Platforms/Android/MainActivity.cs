@@ -23,7 +23,6 @@ namespace DeliveryApp.Customer
     public class MainActivity : MauiAppCompatActivity
     {
         private const int NotificationPermissionRequestCode = 1001;
-        private const string ChannelId = "default";
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
@@ -40,8 +39,6 @@ namespace DeliveryApp.Customer
             }
 
             HandleIntent(Intent);
-            CreateNotificationChannel();
-            SetupLocalNotificationAction();
             RequestNotificationPermissionIfNeeded();
         }
 
@@ -51,6 +48,11 @@ namespace DeliveryApp.Customer
             base.OnNewIntent(intent);
             Intent = intent;
             HandleIntent(intent);
+
+            // ✅ لو التطبيق مفتوح قدامك (foreground) والإشعار اتضغط عليه مش هيحصل OnResume،
+            // فبنوجّه من هنا مباشرة (والدالة بتتجاهل الطلب لو مفيش إشعار معلّق).
+            Microsoft.Maui.ApplicationModel.MainThread.BeginInvokeOnMainThread(() =>
+                (Microsoft.Maui.Controls.Application.Current as DeliveryApp.Customer.App)?.TryNavigatePendingNotification());
         }
 
         private static void HandleIntent(Intent? intent)
@@ -78,9 +80,11 @@ namespace DeliveryApp.Customer
 
             // ✅ NAV FIX — نوتيفيكيشن عادي (مش مكالمة) اتضغط عليها — نسجل type/orderId/actionUrl
             // عشان App.xaml.cs يوجّه المستخدم للمكان الصح بمجرد ما التطبيق يفتح.
-            var notifType = intent.GetStringExtra("Taly_notif_type");
-            var notifOrderIdStr = intent.GetStringExtra("Taly_notif_order_id");
-            var notifActionUrl = intent.GetStringExtra("Taly_notif_action_url");
+            // (وكمان نقرا مفاتيح FCM الخام type/orderId/actionUrl: لو النظام هو اللي عرض الإشعار
+            // مباشرة — زي رسالة فيها notification block — بيحطها كـ extras على الـ intent بالاسم ده.)
+            var notifType = intent.GetStringExtra("Taly_notif_type") ?? intent.GetStringExtra("type");
+            var notifOrderIdStr = intent.GetStringExtra("Taly_notif_order_id") ?? intent.GetStringExtra("orderId");
+            var notifActionUrl = intent.GetStringExtra("Taly_notif_action_url") ?? intent.GetStringExtra("actionUrl");
             if (!string.IsNullOrEmpty(notifType) || !string.IsNullOrEmpty(notifOrderIdStr) || !string.IsNullOrEmpty(notifActionUrl))
             {
                 DeliveryApp.Customer.Services.PendingNotificationNavigation.Type = notifType;
@@ -89,102 +93,6 @@ namespace DeliveryApp.Customer
                 if (!string.IsNullOrEmpty(notifActionUrl))
                     DeliveryApp.Customer.Services.PendingNotificationNavigation.ActionUrl = notifActionUrl;
             }
-        }
-
-        private void CreateNotificationChannel()
-        {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-            {
-                var channel = new NotificationChannel(ChannelId, "General Notifications", NotificationImportance.High)
-                {
-                    Description = "Default notification channel",
-                    LockscreenVisibility = NotificationVisibility.Public
-                };
-                channel.EnableLights(true);
-                channel.EnableVibration(true);
-
-                var manager = (NotificationManager?)GetSystemService(NotificationService);
-                manager?.CreateNotificationChannel(channel);
-
-                // ✅ Tell Plugin.Firebase which channel to use
-                FirebaseCloudMessagingImplementation.ChannelId = ChannelId;
-                Android.Util.Log.Debug("FCM", "Notification channel created!");
-            }
-        }
-
-        private void SetupLocalNotificationAction()
-        {
-            // ✅ This is the OFFICIAL Plugin.Firebase way to show local notifications.
-            // Plugin.Firebase calls this action automatically when a message arrives —
-            // both foreground AND background — so we never need NotificationReceived manually.
-            FirebaseCloudMessagingImplementation.ShowLocalNotificationAction = notification =>
-            {
-                try
-                {
-                    var context = ApplicationContext;
-
-                    // ✅ لو النوتيفيكيشن دي مكالمة واردة (type=IncomingCall) اعرضها كنوتيفيكيشن
-                    // full-screen بزرار قبول أخضر ورفض أحمر بدل النوتيفيكيشن العادي.
-                    var data = notification.Data;
-                    if (data != null
-                        && data.TryGetValue("type", out var type) && type == "IncomingCall"
-                        && data.TryGetValue("orderId", out var orderIdStr)
-                        && int.TryParse(orderIdStr, out var orderId))
-                    {
-                        IncomingCallNotificationHelper.Show(context, orderId, "المندوب");
-                        return;
-                    }
-
-                    var intent = PackageManager?.GetLaunchIntentForPackage(PackageName ?? "");
-                    if (intent != null)
-                    {
-                        intent.PutExtra(FirebaseCloudMessagingImplementation.IntentKeyFCMNotification,
-                            notification.ToBundle());
-                        intent.SetFlags(ActivityFlags.ClearTop | ActivityFlags.SingleTop);
-
-                        // ✅ NAV FIX — نحط type/orderId كـ extras بسيطة على الـ intent (زي فلو المكالمة)
-                        // عشان لما المستخدم يدوس على النوتيفيكيشن، الـ HandleIntent يقدر يوجّهه
-                        // لمكان محدد جوه التطبيق بدل ما يفتح على الهوم بس.
-                        if (data != null)
-                        {
-                            if (data.TryGetValue("type", out var notifType) && !string.IsNullOrEmpty(notifType))
-                                intent.PutExtra("Taly_notif_type", notifType);
-                            if (data.TryGetValue("orderId", out var notifOrderId) && !string.IsNullOrEmpty(notifOrderId))
-                                intent.PutExtra("Taly_notif_order_id", notifOrderId);
-                            if (data.TryGetValue("actionUrl", out var notifActionUrl) && !string.IsNullOrEmpty(notifActionUrl))
-                                intent.PutExtra("Taly_notif_action_url", notifActionUrl);
-                        }
-                    }
-
-                    var pendingIntent = intent != null
-                        ? PendingIntent.GetActivity(context, 0, intent,
-                            PendingIntentFlags.Immutable | PendingIntentFlags.UpdateCurrent)
-                        : null;
-
-                    var builder = new NotificationCompat.Builder(context, ChannelId)
-                        .SetContentTitle(notification.Title)
-                        .SetContentText(notification.Body)
-                        .SetPriority(NotificationCompat.PriorityHigh)
-                        .SetDefaults(NotificationCompat.DefaultAll)
-                        .SetAutoCancel(true)
-                        .SetStyle(new NotificationCompat.BigTextStyle().BigText(notification.Body));
-
-                    NotificationHelper.ApplyBranding(builder, context);
-
-                    if (pendingIntent != null)
-                        builder.SetContentIntent(pendingIntent);
-
-                    var notificationManager = NotificationManagerCompat.From(context);
-                    var notifId = (int)(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() % int.MaxValue);
-                    notificationManager.Notify(notifId, builder.Build());
-
-                    Android.Util.Log.Debug("FCM", $"Local notification shown: {notification.Title}");
-                }
-                catch (Exception ex)
-                {
-                    Android.Util.Log.Error("FCM", $"ShowLocalNotificationAction error: {ex.Message}");
-                }
-            };
         }
 
         private void RequestNotificationPermissionIfNeeded()

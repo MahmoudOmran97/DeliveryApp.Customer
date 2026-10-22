@@ -45,12 +45,22 @@ public static class NotificationNavigationHelper
                     await Shell.Current.GoToAsync($"RestaurantPage?id={restaurantId}");
                     break;
 
+                // صيغة قديمة كان الـ API بيبعتها لرد الدعم: chat/support/{sessionId} → نفس شات الدعم
+                case "chat" when value.StartsWith("support", StringComparison.OrdinalIgnoreCase):
+                    await Shell.Current.GoToAsync("SupportChatPage");
+                    break;
+
                 case "chat" when int.TryParse(value, out var chatOrderId) && chatOrderId > 0:
                     await Shell.Current.GoToAsync($"DriverChatPage?orderId={chatOrderId}");
                     break;
 
                 case "category" when !string.IsNullOrWhiteSpace(value):
                     await Shell.Current.GoToAsync($"CategoryPage?category={Uri.EscapeDataString(value)}");
+                    break;
+
+                case "prescription" when int.TryParse(value, out var prescriptionId) && prescriptionId > 0:
+                    // prescription/{requestId} — رسالة جديدة أو تحديد سعر من الصيدلية
+                    await Shell.Current.GoToAsync($"PrescriptionChatPage?requestId={prescriptionId}");
                     break;
 
                 case "supportchat":

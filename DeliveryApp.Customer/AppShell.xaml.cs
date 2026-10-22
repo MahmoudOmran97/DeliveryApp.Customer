@@ -23,6 +23,9 @@ public partial class AppShell : Shell
         Shell.SetTabBarIsVisible(this, false);
         Navigated += OnShellNavigated;
 
+        // ✅ لو التطبيق اتفتح من إشعار (cold start) فالتوجيه كان لازم يستنى الـ Shell يجهز
+        Loaded += (_, _) => (Application.Current as App)?.TryNavigatePendingNotification();
+
         Routing.RegisterRoute(nameof(RestaurantPage), typeof(RestaurantPage));
         Routing.RegisterRoute(nameof(ProductOptionsPage), typeof(ProductOptionsPage));
         Routing.RegisterRoute(nameof(ImageZoomPage), typeof(ImageZoomPage));

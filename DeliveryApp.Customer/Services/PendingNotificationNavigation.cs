@@ -9,6 +9,9 @@ public static class PendingNotificationNavigation
     public static string? Type;
     public static string? ActionUrl;
 
+    public static bool HasPending
+        => OrderId is not null || !string.IsNullOrEmpty(Type) || !string.IsNullOrEmpty(ActionUrl);
+
     public static (int? orderId, string type, string? actionUrl)? TakePending()
     {
         if (OrderId is null && string.IsNullOrEmpty(Type) && string.IsNullOrEmpty(ActionUrl)) return null;
