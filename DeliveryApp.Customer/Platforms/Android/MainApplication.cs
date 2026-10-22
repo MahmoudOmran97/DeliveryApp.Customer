@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using AndroidX.Core.App;
@@ -13,6 +14,7 @@ namespace DeliveryApp.Customer;
 public class MainApplication : MauiApplication
 {
     private const string ChannelId = "default";
+    private static readonly HttpClient ImageHttp = new() { Timeout = TimeSpan.FromSeconds(6) };
 
     public MainApplication(IntPtr handle, JniHandleOwnership ownership)
         : base(handle, ownership) { }
@@ -110,8 +112,26 @@ public class MainApplication : MauiApplication
                     .SetContentText(notification.Body)
                     .SetPriority(NotificationCompat.PriorityHigh)
                     .SetDefaults(NotificationCompat.DefaultAll)
-                    .SetAutoCancel(true)
-                    .SetStyle(new NotificationCompat.BigTextStyle().BigText(notification.Body));
+                    .SetAutoCancel(true);
+
+                // 🖼️ لو الإشعار فيه صورة (عرض/إعلان من الأدمن) بنعرضها كبيرة (BigPicture)،
+                // ولو التنزيل فشل أو اتأخر بنعرض الإشعار نصي عادي من غير ما نضيّعه.
+                Bitmap? picture = null;
+                if (data != null && data.TryGetValue("imageUrl", out var imageUrl) && !string.IsNullOrWhiteSpace(imageUrl))
+                    picture = DownloadBitmap(imageUrl);
+
+                if (picture != null)
+                {
+                    builder.SetLargeIcon(picture);
+                    builder.SetStyle(new NotificationCompat.BigPictureStyle()
+                        .BigPicture(picture)
+                        .BigLargeIcon((Bitmap?)null)
+                        .SetSummaryText(notification.Body));
+                }
+                else
+                {
+                    builder.SetStyle(new NotificationCompat.BigTextStyle().BigText(notification.Body));
+                }
 
                 NotificationHelper.ApplyBranding(builder, context);
 
@@ -127,5 +147,31 @@ public class MainApplication : MauiApplication
                 Android.Util.Log.Error("FCM", $"ShowLocalNotificationAction error: {ex.Message}");
             }
         };
+    }
+
+    // بينزّل صورة الإشعار (حد أقصى 6 ثواني) ويصغّرها لو عرضها كبير. بيرجّع null لو فشل.
+    private static Bitmap? DownloadBitmap(string url)
+    {
+        try
+        {
+            // ممكن تتنادى من الـ main thread لو التطبيق مفتوح → نشغّل التنزيل على thread تاني
+            var bytes = Task.Run(() => ImageHttp.GetByteArrayAsync(url)).GetAwaiter().GetResult();
+            var bitmap = BitmapFactory.DecodeByteArray(bytes, 0, bytes.Length);
+            if (bitmap == null) return null;
+
+            const int maxWidth = 1024;
+            if (bitmap.Width > maxWidth)
+            {
+                var height = (int)(bitmap.Height * (maxWidth / (double)bitmap.Width));
+                var scaled = Bitmap.CreateScaledBitmap(bitmap, maxWidth, height, true);
+                if (scaled != null) return scaled;
+            }
+            return bitmap;
+        }
+        catch (Exception ex)
+        {
+            Android.Util.Log.Warn("FCM", $"Notification image download failed: {ex.Message}");
+            return null;
+        }
     }
 }

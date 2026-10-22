@@ -13,6 +13,8 @@ public partial class App : Application
     readonly AuthService _auth;
     readonly SignalRService _signalR;
     readonly ApiService _api;
+    readonly LocationService _location;
+    (double lat, double lng)? _lastSentLocation;
 
     public static bool IsInForeground { get; private set; }
 
@@ -28,6 +30,10 @@ public partial class App : Application
         _auth = auth;
         _signalR = signalR;
         _api = api;
+
+        // 📍 بنبعت موقع التوصيل للسيرفر (للإشعارات حسب المنطقة) كل ما يتغير
+        _location = services.GetRequiredService<LocationService>();
+        _location.LocationChanged += () => _ = SyncLocationAsync();
 
         async Task HandleAccountDeactivatedAsync()
         {
@@ -68,6 +74,7 @@ public partial class App : Application
             if (auth.IsLoggedIn)
             {
                 await fcmToken.RegisterAsync();
+                await SyncLocationAsync();
                 await signalR.ConnectAsync(auth.GetToken());
                 await JoinActiveOrderGroupsAsync();
             }
@@ -132,6 +139,7 @@ public partial class App : Application
             {
                 await _auth.InitializeAsync();
                 await Task.Delay(500);
+                await SyncLocationAsync();
                 await _signalR.ConnectAsync(_auth.GetToken());
                 await JoinActiveOrderGroupsAsync();
 
@@ -210,6 +218,28 @@ public partial class App : Application
                 System.Diagnostics.Debug.WriteLine($"[Notif] Pending navigate failed: {ex.Message}");
             }
         });
+    }
+
+    // بيبعت آخر موقع توصيل اختاره العميل (لو متغيّر عن آخر مرة بعتناه)
+    async Task SyncLocationAsync()
+    {
+        try
+        {
+            if (!_auth.IsLoggedIn || !_location.HasLocation) return;
+
+            var lat = _location.Latitude;
+            var lng = _location.Longitude;
+            if (_lastSentLocation is { } last
+                && Math.Abs(last.lat - lat) < 0.0001 && Math.Abs(last.lng - lng) < 0.0001)
+                return;
+
+            await _api.UpdateMyLocationAsync(lat, lng);
+            _lastSentLocation = (lat, lng);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Location] sync failed: {ex.Message}");
+        }
     }
 
     async Task JoinActiveOrderGroupsAsync()

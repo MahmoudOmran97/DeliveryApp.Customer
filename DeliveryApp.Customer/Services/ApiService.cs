@@ -641,6 +641,27 @@ public class ApiService
         catch (Exception ex) { Debug(ex, "user/fcm-token"); }
     }
 
+    /// <summary>
+    /// بيبعت للسيرفر موقع التوصيل اللي العميل اختاره، عشان الأدمن يقدر يبعت إشعارات حسب المنطقة
+    /// (العميل ميوصلوش إشعار عن محل برّه منطقته).
+    /// </summary>
+    public async Task UpdateMyLocationAsync(double latitude, double longitude)
+    {
+        try
+        {
+            SetAuth();
+            if (string.IsNullOrEmpty(_auth.GetToken())) return;
+
+            var body = new StringContent(
+                JsonSerializer.Serialize(new { latitude, longitude }),
+                System.Text.Encoding.UTF8, "application/json");
+            var response = await _http.PutAsync($"{Base}/user/location", body);
+            if (!response.IsSuccessStatusCode)
+                System.Diagnostics.Debug.WriteLine($"[API] user/location failed: {(int)response.StatusCode} {response.ReasonPhrase}");
+        }
+        catch (Exception ex) { Debug(ex, "user/location"); }
+    }
+
     public async Task UpdateLanguagePreferenceAsync()
     {
         try
